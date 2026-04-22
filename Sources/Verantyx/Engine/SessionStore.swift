@@ -252,6 +252,17 @@ final class SessionStore: ObservableObject {
     private func save(_ session: ChatSession) {
         guard let data = try? JSONEncoder().encode(session) else { return }
         try? data.write(to: sessionURL(session.id))
+
+        // ── Progressive JCross archiving ──────────────────────────────
+        // Every 10 messages, distill the session into a .jcross node.
+        // The node is overwritten each time (fixed filename PROG_<id>.jcross),
+        // so the count stays bounded regardless of session length.
+        let userMessageCount = session.messages.filter { $0.role == .user }.count
+        if userMessageCount > 0 && userMessageCount % 5 == 0 {
+            Task.detached(priority: .background) {
+                SessionMemoryArchiver.shared.archiveProgressively(session: session)
+            }
+        }
     }
 
     private func loadAll() {

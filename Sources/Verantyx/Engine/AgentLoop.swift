@@ -48,6 +48,7 @@ actor AgentLoop {
         cortex: CortexEngine?,
         selfFixMode: Bool = false,
         isAIPriority: Bool = false,   // ←← drives turn policy
+        memoryLayer: JCrossLayer = .l2,   // ➤ cross-session injection depth
         onProgress: @escaping @Sendable (LoopEvent) async -> Void
     ) async {
 
@@ -124,8 +125,10 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
         }
 
         // ── Archived session memory (JCross) ─────────────────────────────
-        let archiveSection = SessionMemoryArchiver.shared
-            .buildArchiveInjection(topK: 5, relevantTo: instruction)
+        let archiveSection = SessionMemoryArchiver.shared.buildCrossSessionInjection(
+            topK: 5,
+            layer: memoryLayer
+        )
 
         // ── Mode-specific loop rules (injected into system prompt) ────────
         let loopRules: String

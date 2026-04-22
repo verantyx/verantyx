@@ -294,11 +294,39 @@ final class AppState: ObservableObject {
 
     /// Start a fresh chat  (old session saved automatically).
     func newChatSession() {
+        // Before clearing, archive the current session progressively
+        if let currentId = sessions.activeSessionId,
+           let current = sessions.sessions.first(where: { $0.id == currentId }),
+           !current.messages.filter({ $0.role != .system }).isEmpty {
+            SessionMemoryArchiver.shared.archiveProgressively(session: current)
+        }
+
         saveCurrentSession()
         messages.removeAll()
         pendingDiff = nil
         showDiff    = false
-        _ = sessions.newSession(messages: [], workspacePath: workspaceURL?.path)
+        let newSession = sessions.newSession(messages: [], workspacePath: workspaceURL?.path)
+
+        // ── Cross-session memory injection ───────────────────────────
+        // Inject past sessions' JCross memory at the correct layer depth.
+        let currentId = newSession.id
+        let layer = sessions.activeSession?.activeLayer ?? .l2
+        Task {
+            let injection = SessionMemoryArchiver.shared.buildCrossSessionInjection(
+                topK: 5,
+                layer: layer,
+                excludingSessionId: currentId
+            )
+            if !injection.isEmpty {
+                await MainActor.run {
+                    self.messages.insert(
+                        ChatMessage(role: .system, content: injection),
+                        at: 0
+                    )
+                    self.addSystemMessage("🧠 過去セッションの記憶を注入しました (\(layer.rawValue) レイヤー)")
+                }
+            }
+        }
     }
 
     /// Restore a past session by its ID (loads messages + memory injection).
@@ -497,7 +525,8 @@ final class AppState: ObservableObject {
             activeModel: snap_model,
             cortex: cortex,
             selfFixMode: snap_selfFix,
-            isAIPriority: snap_isAIPriority
+            isAIPriority: snap_isAIPriority,
+            memoryLayer: sessions.activeSession?.activeLayer ?? .l2
         ) { [weak self] event in
             guard let self else { return }
             await MainActor.run {
