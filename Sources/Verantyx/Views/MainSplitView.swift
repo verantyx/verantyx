@@ -1,21 +1,9 @@
 import SwiftUI
 
 // MARK: - MainSplitView
-// Verantyx IDE layout — all panels freely resizable with drag dividers.
-//
-//  ┌────┬─────────────────┬──────────────────────┬──────────────────────┐
-//  │    │  Left panel     │  Center chat/log      │  Right: Diff+Term    │
-//  │ 🔍 │  (Explorer/MCP) │  AgentChatView        │  SideBySideDiffView  │
-//  │ 📁 │                 │  ThinkingLogView       │  ─────────────────── │
-//  │ ⬡  │                 │                        │  TerminalPanelView   │
-//  └────┴─────────────────┴──────────────────────┴──────────────────────┘
-//  ← 48 →←  160–480  →←    300–700      →←    min 300          →
-//
-// Constraints (prevent panels from disappearing):
-//   Left     min 160  max 480
-//   Center   min 300  max 700
-//   Right    min 300  (fills rest)
-//   Diff/Term split: top min 200  bottom min 120
+// Verantyx IDE layout — switches between:
+//   • Human Mode   → 4-pane IDE (Activity + File Tree + Chat + Diff/Terminal)
+//   • AI Priority  → Full-screen 2-pane (Chat | Artifact) — AIModeLayoutView
 
 struct MainSplitView: View {
     @EnvironmentObject var app: AppState
@@ -23,32 +11,56 @@ struct MainSplitView: View {
     @State private var showModelPicker = false
 
     var body: some View {
+        Group {
+            if app.operationMode == .aiPriority {
+                // ── AI Priority: Gemini + Artifact layout ──────────────
+                AIModeLayoutView()
+                    .environmentObject(app)
+                    .transition(.asymmetric(
+                        insertion: .move(edge: .trailing).combined(with: .opacity),
+                        removal:   .move(edge: .trailing).combined(with: .opacity)
+                    ))
+            } else {
+                // ── Human Mode: standard 4-pane IDE ───────────────────
+                humanModeLayout
+                    .transition(.asymmetric(
+                        insertion: .move(edge: .leading).combined(with: .opacity),
+                        removal:   .move(edge: .leading).combined(with: .opacity)
+                    ))
+            }
+        }
+        .animation(.easeInOut(duration: 0.25), value: app.operationMode)
+        .toolbar { toolbarContent }
+        .onAppear { app.connectOllama() }
+    }
+
+    // MARK: - Human Mode (4-pane IDE)
+
+    private var humanModeLayout: some View {
         VStack(spacing: 0) {
-            // ── Main content area ──────────────────────────────────────
             HStack(spacing: 0) {
 
                 // ① Activity bar (fixed 48pt)
                 ActivityBarView(selectedSection: $activitySection)
                     .frame(width: 48)
 
-                // ② Left + Center + Right — three-pane resizable layout
+                // ② Left + Center + Right
                 ResizableHSplit(
                     minLeft: 160, maxLeft: 480, minRight: 600, initialLeft: 240
                 ) {
-                    // ── Left pane ──────────────────────────────────────
+                    // ── Left pane ─────────────────────────────────────
                     Group {
                         switch activitySection {
-                        case .mcp:      MCPView()
-                        default:        FileTreeView()
+                        case .mcp:  MCPView()
+                        default:    FileTreeView()
                         }
                     }
                     .frame(maxHeight: .infinity)
                 } right: {
-                    // ── Center + Right (another horizontal split) ──────
                     ResizableHSplit(
                         minLeft: 300, maxLeft: 700, minRight: 300, initialLeft: 420
                     ) {
-                        // ── Center: Chat + Process Log ─────────────────
+                        // ── Center: Chat ───────────────────────────────
                         VStack(spacing: 0) {
                             AgentChatView()
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -57,7 +69,7 @@ struct MainSplitView: View {
                                 ResizableVSplit(
                                     minTop: 200, maxTop: 99999, minBottom: 80, initialTop: 9999
                                 ) {
-                                    EmptyView()  // spacer — chat fills top
+                                    EmptyView()
                                 } bottom: {
                                     ThinkingLogView()
                                 }
@@ -65,11 +77,13 @@ struct MainSplitView: View {
                             }
                         }
                     } right: {
-                        // ── Right: Diff (top) + Terminal (bottom) ──────
+                        // ── Right: Artifact/Diff (top) + Terminal (bottom) ──
                         ResizableVSplit(
                             minTop: 200, maxTop: 99999, minBottom: 100, initialTop: 400
                         ) {
-                            SideBySideDiffView()
+                            // Artifact panel replaces / augments Diff view
+                            ArtifactPanelView()
+                                .environmentObject(app)
                         } bottom: {
                             TerminalPanelView(terminal: app.terminal)
                                 .environmentObject(app)
@@ -79,14 +93,11 @@ struct MainSplitView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            // ── Status bar ─────────────────────────────────────────────
             Divider().opacity(0.4)
             StatusBarView(terminal: app.terminal)
         }
         .background(Color(red: 0.11, green: 0.11, blue: 0.14))
         .toastOverlay()
-        .toolbar { toolbarContent }
-        .onAppear { app.connectOllama() }
     }
 
     // MARK: - Toolbar
@@ -106,6 +117,35 @@ struct MainSplitView: View {
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(Color(red: 0.85, green: 0.85, blue: 0.92))
             }
+        }
+
+        // ── Operation Mode switcher ─────────────────────────────────
+        ToolbarItem(placement: .automatic) {
+            Button {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    app.operationMode = app.operationMode == .aiPriority ? .human : .aiPriority
+                }
+            } label: {
+                HStack(spacing: 5) {
+                    Image(systemName: app.operationMode.icon)
+                        .font(.system(size: 11))
+                    Text(app.operationMode.rawValue)
+                        .font(.system(size: 11, weight: .semibold))
+                }
+                .foregroundStyle(app.operationMode.accentColor)
+                .padding(.horizontal, 9)
+                .padding(.vertical, 4)
+                .background(
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(app.operationMode.accentColor.opacity(0.12))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(app.operationMode.accentColor.opacity(0.35), lineWidth: 0.8)
+                        )
+                )
+            }
+            .buttonStyle(.plain)
+            .help("モード切替: \(app.operationMode == .aiPriority ? "Human Modeへ" : "AI Priorityへ")")
         }
 
         ToolbarItem(placement: .automatic) {
@@ -133,7 +173,7 @@ struct MainSplitView: View {
                                      ? Color(red: 0.3, green: 1.0, blue: 0.5)
                                      : .secondary)
             }
-            .help("Toggle Process Log (⌘⇧L)")
+            .help("Toggle Terminal (⌘⇧L)")
         }
 
         ToolbarItem(placement: .primaryAction) {

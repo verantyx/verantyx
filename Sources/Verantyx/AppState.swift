@@ -117,6 +117,21 @@ final class AppState: ObservableObject {
     @Published var pendingDiff: FileDiff?
     @Published var showDiff = false
 
+    // Operation Mode (AI Priority vs Human)
+    @Published var operationMode: OperationMode = .human {
+        didSet {
+            UserDefaults.standard.set(operationMode.rawValue, forKey: "operation_mode")
+            // Sync MCPEngine execution mode
+            let mcpMode: MCPServerConfig.ExecutionMode = operationMode == .aiPriority ? .ai : .human
+            Task { await MCPEngine.shared.setMode(mcpMode) }
+        }
+    }
+
+    // Artifacts (Claude-style live preview)
+    @Published var currentArtifact: Artifact? = nil
+    @Published var artifactHistory: [Artifact] = []
+    @Published var showArtifactPanel: Bool = false
+
     // Privacy Shield / Hybrid mode
     @Published var inferenceMode: InferenceMode = .localOnly {
         didSet { UserDefaults.standard.set(inferenceMode.rawValue, forKey: "inference_mode") }
@@ -402,17 +417,52 @@ final class AppState: ObservableObject {
         await MainActor.run {
             isGenerating = false
             lastMaskingStats = result.maskingStats
-            messages.append(ChatMessage(role: .assistant, content: result.explanation))
+            let rawContent = result.explanation
+            // Strip artifact tags from chat display
+            let displayContent = ArtifactParser.stripArtifactTags(from: rawContent)
+            messages.append(ChatMessage(role: .assistant, content: displayContent))
+
+            // Artifact detection
+            if let artifact = ArtifactParser.extract(from: rawContent) {
+                ingestArtifact(artifact)
+            }
+
             if let code = result.modifiedCode, !code.isEmpty, let fileURL = contextFile {
-                pendingDiff = FileDiff(
+                let diff = FileDiff(
                     fileURL: fileURL,
                     originalContent: selectedFileContent,
                     modifiedContent: code,
                     hunks: DiffEngine.compute(original: selectedFileContent, modified: code)
                 )
-                showDiff = true
+                if operationMode == .aiPriority {
+                    // AI Priority: auto-apply without confirmation
+                    autoApplyDiff(diff)
+                } else {
+                    pendingDiff = diff
+                    showDiff = true
+                }
             }
         }
+    }
+
+    /// Apply a diff immediately (AI Priority mode — no confirmation).
+    func autoApplyDiff(_ diff: FileDiff) {
+        do {
+            try diff.modifiedContent.write(to: diff.fileURL, atomically: true, encoding: .utf8)
+            selectedFileContent = diff.modifiedContent
+            addSystemMessage("⚡ [AI Priority] 差分を自動適用: \(diff.fileURL.lastPathComponent)")
+        } catch {
+            addSystemMessage("❌ 自動適用失敗: \(error.localizedDescription)")
+        }
+        pendingDiff = nil
+        showDiff = false
+    }
+
+    /// Save artifact and show panel.
+    func ingestArtifact(_ artifact: Artifact) {
+        currentArtifact = artifact
+        artifactHistory.insert(artifact, at: 0)
+        showArtifactPanel = true
     }
 
     // MARK: - Agent Loop (multi-turn, scaffolding)

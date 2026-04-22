@@ -164,6 +164,16 @@ final class MCPEngine: ObservableObject {
 
     private static let storageKey = "mcp_servers_v1"
 
+    /// Current execution mode — updated when OperationMode changes.
+    @Published var currentExecutionMode: MCPServerConfig.ExecutionMode = .human
+
+    /// Called by AppState when OperationMode switches.
+    func setMode(_ mode: MCPServerConfig.ExecutionMode) {
+        DispatchQueue.main.async {
+            self.currentExecutionMode = mode
+        }
+    }
+
     init() { loadServers() }
 
     // MARK: - Server CRUD
@@ -213,10 +223,11 @@ final class MCPEngine: ObservableObject {
 
     // MARK: - Tool execution
 
-    /// Call a tool. Mode (.ai = no timeout, .human = 60s).
+    /// Call a tool. Mode defaults to currentExecutionMode (set by OperationMode).
     func callTool(serverName: String, toolName: String,
                   arguments: [String: Any],
-                  mode: MCPServerConfig.ExecutionMode) async -> String {
+                  mode: MCPServerConfig.ExecutionMode? = nil) async -> String {
+        let resolvedMode = mode ?? currentExecutionMode
         guard let server = servers.first(where: { $0.name == serverName && $0.isEnabled }) else {
             return "[MCP] Server '\(serverName)' not found or disabled"
         }
@@ -240,7 +251,7 @@ final class MCPEngine: ObservableObject {
 
         do {
             let result: String
-            if mode == .human {
+            if resolvedMode == .human {
                 // 60-second timeout for human mode
                 result = try await withTimeout(seconds: 60, task: execTask)
             } else {
