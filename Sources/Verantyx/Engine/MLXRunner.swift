@@ -84,6 +84,14 @@ actor MLXRunner {
         container = nil; isLoaded = false; currentModelId = nil
         await MainActor.run { progressHandler("⟳ Loading \(modelId) into Unified Memory…") }
 
+        // ── Auto-patch config.json if needed ─────────────────────────────────
+        // Gemma-4 and newer models use a mixed quantization format where the
+        // "quantization" dict contains BOTH top-level keys (group_size, bits, mode)
+        // AND per-layer keys (e.g. "language_model.model.layers.0.mlp.gate_proj": {...}).
+        // MLXLMCommon ≤ 2.21 cannot decode this mixed structure → Type mismatch error.
+        // We patch the JSON in-place before loading (idempotent).
+        patchQuantizationConfig(modelId: modelId, log: progressHandler)
+
         var hub = defaultHubApi
         if let token = hfToken { hub = HubApi(hfToken: token) }
 
@@ -97,6 +105,54 @@ actor MLXRunner {
 
         container = loaded; currentModelId = modelId; isLoaded = true
         await MainActor.run { progressHandler("✅ \(modelId) loaded — ready") }
+    }
+
+    // MARK: - Config.json quantization patcher
+
+    /// Fixes models (e.g. Gemma-4) whose config.json mixes top-level quant fields
+    /// with per-layer entries inside the same "quantization" dictionary.
+    /// MLXLMCommon expects ONLY {group_size, bits, mode?} at the top level.
+    /// Per-layer entries are moved to "quantization_per_layer" (ignored by MLXLMCommon).
+    /// This operation is idempotent.
+    private func patchQuantizationConfig(modelId: String, log: @Sendable (String) -> Void) {
+        let cacheRoot = MLXRunner.cacheDir
+        let dirName   = "models--" + modelId.replacingOccurrences(of: "/", with: "--")
+        let modelDir  = cacheRoot.appendingPathComponent(dirName)
+
+        guard let snapshotsDir = try? FileManager.default
+            .contentsOfDirectory(at: modelDir.appendingPathComponent("snapshots"),
+                                 includingPropertiesForKeys: nil)
+            .first(where: { $0.hasDirectoryPath })
+        else { return }
+
+        let configPath = snapshotsDir.appendingPathComponent("config.json")
+        guard FileManager.default.fileExists(atPath: configPath.path),
+              let data = try? Data(contentsOf: configPath),
+              var json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              var quant = json["quantization"] as? [String: Any]
+        else { return }
+
+        // Already patched if quantization_per_layer exists
+        guard json["quantization_per_layer"] == nil else { return }
+
+        // Split: dict values → per_layer, non-dict values → keep in quantization
+        var topLevel:  [String: Any] = [:]
+        var perLayer:  [String: Any] = [:]
+        for (k, v) in quant {
+            if v is [String: Any] { perLayer[k] = v } else { topLevel[k] = v }
+        }
+
+        guard !perLayer.isEmpty else { return }   // nothing to fix
+
+        json["quantization"]           = topLevel
+        json["quantization_per_layer"] = perLayer
+
+        if let patched = try? JSONSerialization.data(withJSONObject: json,
+                                                      options: [.prettyPrinted, .sortedKeys]) {
+            try? patched.write(to: configPath)
+            // Log inline (sync) — no Task needed since patchQuantizationConfig is sync
+            log("🔧 Patched config.json: moved \(perLayer.count) per-layer quant entries to quantization_per_layer")
+        }
     }
 
     // MARK: - Token-by-token streaming
