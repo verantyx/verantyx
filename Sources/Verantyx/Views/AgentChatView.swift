@@ -337,12 +337,62 @@ struct AgentChatView: View {
                 .buttonStyle(.plain)
                 .help("ファイルを添付")
 
+                // ── ✦ SELF FIX BUTTON ────────────────────────────────
+                Button {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        app.selfFixMode.toggle()
+                    }
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: app.selfFixMode
+                              ? "wrench.and.screwdriver.fill"
+                              : "wrench.and.screwdriver")
+                            .font(.system(size: 12))
+                        if app.selfFixMode {
+                            Text("Self Fix")
+                                .font(.system(size: 10, weight: .bold, design: .monospaced))
+                        }
+                    }
+                    .foregroundStyle(app.selfFixMode
+                                     ? Color.black
+                                     : Color(red: 0.55, green: 0.55, blue: 0.65))
+                    .padding(.horizontal, app.selfFixMode ? 8 : 4)
+                    .padding(.vertical, 4)
+                    .background(
+                        app.selfFixMode
+                            ? Color(red: 1.0, green: 0.65, blue: 0.15)
+                            : Color.clear,
+                        in: RoundedRectangle(cornerRadius: 5)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 5)
+                            .stroke(
+                                app.selfFixMode
+                                    ? Color(red: 1.0, green: 0.65, blue: 0.15)
+                                    : Color.white.opacity(0.08),
+                                lineWidth: app.selfFixMode ? 0 : 0.5
+                            )
+                    )
+                }
+                .buttonStyle(.plain)
+                .help(app.selfFixMode
+                      ? "Self Fix モード: 次の入力はIDEのソースを修正します (タップで解除)"
+                      : "Self Fix: 入力をIDEの自己修正モードに切り替えます")
+                .animation(.spring(response: 0.25, dampingFraction: 0.8), value: app.selfFixMode)
+                // ── END SELF FIX ──────────────────────────────────────
+
                 // Text editor with placeholder
                 ZStack(alignment: .topLeading) {
                     if app.inputText.isEmpty {
-                        Text(app.selectedFile == nil ? "Ask VerantyxAgent anything…" : "Describe the changes you want…")
+                        Text(app.selfFixMode
+                             ? "このIDEを修正… (Self Fix モード)"
+                             : (app.selectedFile == nil ? "Ask VerantyxAgent anything…" : "Describe the changes you want…"))
                             .font(.system(size: 13))
-                            .foregroundStyle(Color(red: 0.38, green: 0.38, blue: 0.45))
+                            .foregroundStyle(
+                                app.selfFixMode
+                                    ? Color(red: 1.0, green: 0.65, blue: 0.15).opacity(0.55)
+                                    : Color(red: 0.38, green: 0.38, blue: 0.45)
+                            )
                             .padding(.leading, 4).padding(.top, 9)
                     }
                     TextEditor(text: $app.inputText)
@@ -360,7 +410,21 @@ struct AgentChatView: View {
                 }
             }
             .padding(.horizontal, 10).padding(.vertical, 6)
-            .background(Color(red: 0.17, green: 0.17, blue: 0.21))
+            .background(
+                app.selfFixMode
+                    ? Color(red: 0.22, green: 0.16, blue: 0.08)  // warm amber tint in self-fix mode
+                    : Color(red: 0.17, green: 0.17, blue: 0.21)
+            )
+            .overlay(
+                // Top border glows orange in self-fix mode
+                Rectangle()
+                    .fill(app.selfFixMode
+                          ? Color(red: 1.0, green: 0.60, blue: 0.10)
+                          : Color.clear)
+                    .frame(height: 1.5),
+                alignment: .top
+            )
+            .animation(.easeInOut(duration: 0.2), value: app.selfFixMode)
             // Drag-and-drop images onto the input bar
             .onDrop(of: [.image, .fileURL], isTargeted: nil) { providers in
                 handleDrop(providers: providers)

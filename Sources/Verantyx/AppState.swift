@@ -65,6 +65,10 @@ final class AppState: ObservableObject {
     @Published var inputText: String = ""
     @Published var isGenerating = false
 
+    // Self-Fix mode — when true, next message(s) target IDE self-modification
+    // Must be explicitly toggled by user pressing the "Self Fix" button.
+    @Published var selfFixMode: Bool = false
+
     // Attachments (images + files for multimodal inference)
     @Published var attachedImages: [AttachedImage] = []
     @Published var attachedFiles: [URL] = []
@@ -476,6 +480,10 @@ final class AppState: ObservableObject {
         let snap_model = activeOllamaModel
         let snap_status = modelStatus
 
+        // Capture and reset selfFixMode (one-shot per message)
+        let snap_selfFix = selfFixMode
+        selfFixMode = false
+
         await AgentLoop.shared.run(
             instruction: instruction,
             contextFile: context,
@@ -483,7 +491,8 @@ final class AppState: ObservableObject {
             workspaceURL: snap_workspace,
             modelStatus: snap_status,
             activeModel: snap_model,
-            cortex: cortex
+            cortex: cortex,
+            selfFixMode: snap_selfFix
         ) { [weak self] event in
             guard let self else { return }
             await MainActor.run {

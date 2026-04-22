@@ -27,6 +27,7 @@ actor AgentLoop {
         modelStatus: AppState.ModelStatus,
         activeModel: String,
         cortex: CortexEngine?,
+        selfFixMode: Bool = false,   // ←← explicit: user pressed [Self Fix] button
         onProgress: @escaping @Sendable (LoopEvent) async -> Void
     ) async {
 
@@ -38,67 +39,63 @@ actor AgentLoop {
         let memorySection = await cortex?.buildMemoryPrompt(for: instruction) ?? ""
         let isWorkspaceless = workspaceURL == nil
 
-        // ── Self-evolution context (IDE source awareness) ─────────────
-        // Auto-index if: user is asking about the IDE AND nodes not yet loaded
-        let looksLikeSelfMod = instruction.localizedCaseInsensitiveContains("fix")
-                            || instruction.localizedCaseInsensitiveContains("change")
-                            || instruction.localizedCaseInsensitiveContains("add feature")
-                            || instruction.localizedCaseInsensitiveContains("modify")
-                            || instruction.localizedCaseInsensitiveContains("update")
-                            || instruction.localizedCaseInsensitiveContains("improve")
-                            || instruction.localizedCaseInsensitiveContains("resize")
-                            || instruction.localizedCaseInsensitiveContains("width")
-                            || instruction.localizedCaseInsensitiveContains("window")
-                            || instruction.localizedCaseInsensitiveContains("UI")
-                            || instruction.localizedCaseInsensitiveContains("pane")
+        // ── Self-evolution context (明示的に Self Fix モードの時のみ注入) ───────
+        // ❗［重要＼ キーワード推測なし。ユーザーが [Self Fix] ボタンを押した時のみ有効。
+        let selfEvoContext: String
+        if selfFixMode {
+            // Auto-index if not yet done (user explicitly requested self-fix)
+            let nodesEmpty = await MainActor.run { SelfEvolutionEngine.shared.sourceNodes.isEmpty }
+            if nodesEmpty {
+                await onProgress(.aiMessage("🔍 IDE ソースを自動インデックス中…"))
+                await SelfEvolutionEngine.shared.indexSourceTree()
+            }
 
-        let nodesEmpty = await MainActor.run { SelfEvolutionEngine.shared.sourceNodes.isEmpty }
-        if looksLikeSelfMod && nodesEmpty {
-            await onProgress(.aiMessage("🔍 IDE ソースをインデックス中…（初回のみ）"))
-            await SelfEvolutionEngine.shared.indexSourceTree()
-        }
+            selfEvoContext = await MainActor.run {
+                let nodes = SelfEvolutionEngine.shared.sourceNodes
+                if nodes.isEmpty {
+                    return """
 
-        let selfEvoContext = await MainActor.run {
-            let nodes = SelfEvolutionEngine.shared.sourceNodes
-            if nodes.isEmpty {
-                // Soft fallback: tell AI not to explore filesystem
+## SELF-FIX MODE (Index not found)
+The source could not be indexed. Please:
+1. Open the VerantyxIDE folder as workspace (Cmd+Shift+O)
+2. Click [Index Source] in the Self-Evolution panel (⟳ icon)
+Then try again.
+Do NOT run ls or shell commands.
+"""
+                }
+                let indexSummary = nodes.prefix(60).map { n in
+                    "  • \(n.relativePath) — \(n.summary)"
+                }.joined(separator: "\n")
                 return """
 
-## IDE Self-Modification Note
-If the user is asking you to fix or change the IDE itself:
-- Do NOT run `ls` or shell commands to explore the source.
-- Instead, ask the user to click [Index Source] in the Self-Evolution panel (⟳ icon in Activity Bar).
-- Once indexed, you will receive the full file list and can output [PATCH_FILE:] blocks.
-"""
-            }
-            let indexSummary = nodes.prefix(60).map { n in
-                "  • \(n.relativePath) — \(n.summary)"
-            }.joined(separator: "\n")
-            return """
+## SELF-FIX MODE ACTIVE ⚠️
 
-## SELF-EVOLUTION (IDE Source Awareness)
+You are in SELF-FIX mode. The user has explicitly requested that you modify
+the Verantyx IDE's own source code to address their request.
 
-You are operating INSIDE the Verantyx IDE and can modify its own Swift source code.
 The IDE source is indexed. Key files:
 \(indexSummary)
 
-When the user asks you to modify the IDE itself (add feature, change UI, etc.):
+Instructions:
 1. Identify the relevant Swift file(s) from the index above.
-2. Output the COMPLETE modified file content using this format:
+2. Output the COMPLETE modified file content using EXACTLY this format:
 
 [PATCH_FILE: Sources/Verantyx/Views/ExampleView.swift]
 ```swift
-// ... complete new file content ...
+// complete new file content here
 ```
 
-The IDE will detect these PATCH_FILE blocks, register them as FilePatch objects,
-and show them in the Self-Evolution panel for Apply & Rebuild.
+3. You may output multiple PATCH_FILE blocks if needed.
+4. Do NOT run `ls`, `find`, or any shell commands — all files are listed above.
+5. The IDE will detect PATCH_FILE blocks and show them in the Self-Evolution panel.
+6. After outputting patches, briefly explain what you changed and why.
 
-IMPORTANT: Do NOT run shell commands like ls or find to explore the source.
-All relevant files are already listed above.
-
-For artifact output use <artifact type="html"> tags.
+For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
 """
+            }
+        } else {
+            // Normal mode — no self-evolution context injected
+            selfEvoContext = ""
         }
 
         let systemPrompt = """
