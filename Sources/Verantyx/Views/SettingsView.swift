@@ -51,107 +51,171 @@ struct SettingsView: View {
         }
     }
 
+    var onDismiss: (() -> Void)? = nil
+
     var body: some View {
-        HStack(spacing: 0) {
+        VStack(spacing: 0) {
 
-            // ── Sidebar ───────────────────────────────────────────────
-            VStack(alignment: .leading, spacing: 2) {
-                Text("SETTINGS")
-                    .font(.system(size: 9, weight: .semibold, design: .monospaced))
-                    .foregroundStyle(.tertiary)
-                    .padding(.horizontal, 12)
-                    .padding(.top, 16)
-                    .padding(.bottom, 8)
-
-                ForEach(SettingsTab.allCases, id: \.self) { tab in
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.12)) { selectedTab = tab }
-                    } label: {
-                        HStack(spacing: 8) {
-                            Image(systemName: tab.icon)
-                                .font(.system(size: 11))
-                                .frame(width: 16)
-                                .foregroundStyle(selectedTab == tab ? tab.color : .secondary)
-                            Text(tab.rawValue)
-                                .font(.system(size: 12, weight: .medium))
-
-                            // Badge for API Keys
-                            if tab == .apiKeys &&
-                               (app.anthropicApiKey.isEmpty || app.activeAnthropicModel.isEmpty) {
-                                Spacer()
-                                Circle()
-                                    .fill(Color(red: 0.9, green: 0.4, blue: 0.2))
-                                    .frame(width: 6, height: 6)
-                            }
-                        }
-                        .foregroundStyle(selectedTab == tab ? .white : Color(red: 0.6, green: 0.6, blue: 0.7))
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 7)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(
-                            selectedTab == tab
-                                ? tab.color.opacity(0.15)
-                                : Color.clear,
-                            in: RoundedRectangle(cornerRadius: 6)
-                        )
-                        .overlay(
-                            selectedTab == tab
-                                ? RoundedRectangle(cornerRadius: 6)
-                                    .strokeBorder(tab.color.opacity(0.3), lineWidth: 0.5)
-                                : nil
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .padding(.horizontal, 6)
+            // ── Header bar ─────────────────────────────────────────────────
+            HStack(spacing: 10) {
+                // Close button
+                Button {
+                    onDismiss?()
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.7))
+                        .frame(width: 22, height: 22)
+                        .background(Color.white.opacity(0.07), in: Circle())
                 }
+                .buttonStyle(.plain)
+                .keyboardShortcut(.escape, modifiers: [])
+                .help("設定を閉じる (Esc)")
 
                 Spacer()
 
-                // Bottom: version info
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Verantyx v0.1")
-                        .font(.system(size: 9, design: .monospaced))
-                        .foregroundStyle(.tertiary)
-                    Text("Apple Silicon native")
-                        .font(.system(size: 9, design: .monospaced))
-                        .foregroundStyle(.quaternary)
-                }
-                .padding(.horizontal, 12)
-                .padding(.bottom, 14)
+                Text("Settings")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(Color(red: 0.75, green: 0.75, blue: 0.88))
+
+                Spacer()
+
+                // Version badge
+                Text("v0.1")
+                    .font(.system(size: 9, design: .monospaced))
+                    .foregroundStyle(.quaternary)
+                    .frame(width: 22)
             }
-            .frame(width: 155)
-            .background(Color(red: 0.09, green: 0.09, blue: 0.12))
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .background(Color(red: 0.10, green: 0.10, blue: 0.13))
+            .overlay(Rectangle().fill(Color.white.opacity(0.07)).frame(height: 0.5), alignment: .bottom)
 
-            Divider().opacity(0.3)
+            // ── Main body (sidebar + content) — FIXED HEIGHT ───────────────
+            HStack(spacing: 0) {
 
-            // ── Content area ──────────────────────────────────────────
-            Group {
-                if selectedTab == .mcp {
-                    // MCP uses its own full view
-                    MCPView()
-                        .environmentObject(app)
-                } else {
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 20) {
-                            switch selectedTab {
-                            case .general: generalSettings
-                            case .model:   modelSettings
-                            case .apiKeys: apiKeysSettings
-                            case .tools:   toolsSettings
-                            case .agent:   agentSettings
-                            case .memory:  memorySettings
-                            case .privacy: privacySettings
-                            case .mcp:     EmptyView()
+                // ── Sidebar ─────────────────────────────────────────────────
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("SETTINGS")
+                        .font(.system(size: 9, weight: .semibold, design: .monospaced))
+                        .foregroundStyle(.tertiary)
+                        .padding(.horizontal, 12)
+                        .padding(.top, 14)
+                        .padding(.bottom, 6)
+
+                    ForEach(SettingsTab.allCases, id: \.self) { tab in
+                        Button {
+                            // Do NOT animate size — just switch content
+                            selectedTab = tab
+                        } label: {
+                            HStack(spacing: 8) {
+                                Image(systemName: tab.icon)
+                                    .font(.system(size: 11))
+                                    .frame(width: 16)
+                                    .foregroundStyle(selectedTab == tab ? tab.color : .secondary)
+                                Text(tab.rawValue)
+                                    .font(.system(size: 12, weight: .medium))
+
+                                if tab == .apiKeys &&
+                                   (app.anthropicApiKey.isEmpty || app.activeAnthropicModel.isEmpty) {
+                                    Spacer()
+                                    Circle()
+                                        .fill(Color(red: 0.9, green: 0.4, blue: 0.2))
+                                        .frame(width: 6, height: 6)
+                                }
                             }
+                            .foregroundStyle(selectedTab == tab ? .white : Color(red: 0.6, green: 0.6, blue: 0.7))
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 7)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(
+                                selectedTab == tab
+                                    ? tab.color.opacity(0.15)
+                                    : Color.clear,
+                                in: RoundedRectangle(cornerRadius: 6)
+                            )
+                            .overlay(
+                                selectedTab == tab
+                                    ? RoundedRectangle(cornerRadius: 6)
+                                        .strokeBorder(tab.color.opacity(0.3), lineWidth: 0.5)
+                                    : nil
+                            )
                         }
-                        .padding(24)
+                        .buttonStyle(.plain)
+                        .padding(.horizontal, 6)
+                    }
+
+                    Spacer()
+                }
+                // FIXED width — tab clicks must NOT change sidebar size
+                .frame(width: 155, alignment: .topLeading)
+                .background(Color(red: 0.09, green: 0.09, blue: 0.12))
+
+                Divider().opacity(0.3)
+
+                // ── Content area — FIXED width, scrolls internally ──────────
+                Group {
+                    if selectedTab == .mcp {
+                        // MCP: wrap inside ScrollView so height stays fixed
+                        ScrollView {
+                            MCPView()
+                                .environmentObject(app)
+                                .frame(width: 521)   // 525 - 4 for scrollbar
+                        }
+                    } else {
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 20) {
+                                switch selectedTab {
+                                case .general: generalSettings
+                                case .model:   modelSettings
+                                case .apiKeys: apiKeysSettings
+                                case .tools:   toolsSettings
+                                case .agent:   agentSettings
+                                case .memory:  memorySettings
+                                case .privacy: privacySettings
+                                case .mcp:     EmptyView()
+                                }
+                            }
+                            .padding(22)
+                            // Match exact content width so inner cards don't stretch
+                            .frame(width: 521, alignment: .topLeading)
+                        }
                     }
                 }
+                // FIXED width — prevents any expansion when scrolling content
+                .frame(width: 525, alignment: .topLeading)
+                .background(Color(red: 0.11, green: 0.11, blue: 0.15))
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color(red: 0.11, green: 0.11, blue: 0.15))
+            // This height = total 560 - 44 (header) - 46 (footer)
+            .frame(width: 680, height: 470)
+
+            // ── Footer bar ─────────────────────────────────────────────────
+            HStack(spacing: 10) {
+                Spacer()
+                Button("キャンセル") {
+                    onDismiss?()
+                }
+                .keyboardShortcut(.escape, modifiers: [])
+                .buttonStyle(.bordered)
+                .controlSize(.regular)
+
+                Button("完了") {
+                    onDismiss?()
+                }
+                .keyboardShortcut(.return, modifiers: [.command])
+                .buttonStyle(.borderedProminent)
+                .controlSize(.regular)
+                .tint(Color(red: 0.25, green: 0.45, blue: 0.85))
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background(Color(red: 0.10, green: 0.10, blue: 0.13))
+            .overlay(Rectangle().fill(Color.white.opacity(0.07)).frame(height: 0.5), alignment: .top)
         }
-        .frame(minWidth: 650, minHeight: 520)
+        // FIXED total size — prevents any window resize
+        .frame(width: 680, height: 560)
+        .background(Color(red: 0.10, green: 0.10, blue: 0.13))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
     // MARK: - General Settings (Language, Appearance)
@@ -324,12 +388,148 @@ struct SettingsView: View {
 
                     Divider().opacity(0.2)
 
-                    rowLabel("MLX model") {
-                        TextField("mlx-community/...", text: $app.activeMlxModel)
-                            .textFieldStyle(.roundedBorder)
-                            .font(.system(size: 11, design: .monospaced))
-                            .frame(width: 260)
+                    // ── MLX Model Selector ──────────────────────────────────
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Text("MLX model")
+                                .font(.system(size: 11, design: .monospaced))
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                            // Show currently loaded MLX model
+                            if case .mlxReady(let m) = app.modelStatus {
+                                HStack(spacing: 4) {
+                                    Circle().fill(Color.green).frame(width: 6, height: 6)
+                                    Text(m.components(separatedBy: "/").last ?? m)
+                                        .font(.system(size: 10, design: .monospaced))
+                                        .foregroundStyle(.green)
+                                }
+                            }
+                        }
+
+                        // Popular models list
+                        VStack(spacing: 4) {
+                            ForEach(MLXRunner.popularModels) { model in
+                                let isSelected = app.activeMlxModel == model.id
+                                let isLoaded: Bool = {
+                                    if case .mlxReady(let m) = app.modelStatus { return m == model.id }
+                                    return false
+                                }()
+
+                                Button {
+                                    app.activeMlxModel = model.id
+                                } label: {
+                                    HStack(spacing: 10) {
+                                        // Selection indicator
+                                        ZStack {
+                                            Circle()
+                                                .stroke(isSelected
+                                                    ? Color(red: 0.4, green: 0.7, blue: 1.0)
+                                                    : Color.white.opacity(0.2),
+                                                    lineWidth: isSelected ? 2 : 1)
+                                                .frame(width: 14, height: 14)
+                                            if isSelected {
+                                                Circle()
+                                                    .fill(Color(red: 0.4, green: 0.7, blue: 1.0))
+                                                    .frame(width: 8, height: 8)
+                                            }
+                                        }
+
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text(model.displayName)
+                                                .font(.system(size: 11, weight: isSelected ? .semibold : .regular))
+                                                .foregroundStyle(isSelected ? .white : Color(red: 0.75, green: 0.75, blue: 0.88))
+                                                .lineLimit(1)
+                                            Text(model.id)
+                                                .font(.system(size: 9, design: .monospaced))
+                                                .foregroundStyle(.tertiary)
+                                                .lineLimit(1)
+                                        }
+
+                                        Spacer()
+
+                                        // Tags
+                                        HStack(spacing: 3) {
+                                            ForEach(model.tags.prefix(2), id: \.self) { tag in
+                                                Text(tag)
+                                                    .font(.system(size: 8, weight: .medium))
+                                                    .foregroundStyle(Color(red: 0.4, green: 0.7, blue: 1.0))
+                                                    .padding(.horizontal, 5)
+                                                    .padding(.vertical, 2)
+                                                    .background(Color(red: 0.4, green: 0.7, blue: 1.0).opacity(0.12),
+                                                                in: Capsule())
+                                            }
+                                        }
+
+                                        // Size badge
+                                        Text("\(String(format: "%.0f", model.sizeGB))GB")
+                                            .font(.system(size: 9, weight: .semibold, design: .monospaced))
+                                            .foregroundStyle(Color(red: 0.5, green: 0.5, blue: 0.65))
+                                            .frame(width: 30)
+
+                                        // Download status
+                                        Image(systemName: model.isDownloaded ? "checkmark.circle.fill" : "arrow.down.circle")
+                                            .font(.system(size: 11))
+                                            .foregroundStyle(model.isDownloaded
+                                                ? Color(red: 0.35, green: 0.85, blue: 0.5)
+                                                : Color(red: 0.45, green: 0.45, blue: 0.6))
+                                    }
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 7)
+                                    .background(
+                                        isLoaded
+                                            ? Color(red: 0.15, green: 0.30, blue: 0.18).opacity(0.7)
+                                            : isSelected
+                                                ? Color(red: 0.18, green: 0.22, blue: 0.35).opacity(0.7)
+                                                : Color.white.opacity(0.03),
+                                        in: RoundedRectangle(cornerRadius: 7)
+                                    )
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 7)
+                                            .strokeBorder(
+                                                isLoaded
+                                                    ? Color(red: 0.3, green: 0.8, blue: 0.45).opacity(0.5)
+                                                    : isSelected
+                                                        ? Color(red: 0.4, green: 0.6, blue: 1.0).opacity(0.4)
+                                                        : Color.white.opacity(0.05),
+                                                lineWidth: isSelected || isLoaded ? 1 : 0.5
+                                            )
+                                    )
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+
+                        // Load button
+                        HStack(spacing: 8) {
+                            Button {
+                                app.loadMLXModel(model: app.activeMlxModel)
+                            } label: {
+                                HStack(spacing: 6) {
+                                    if case .connecting = app.modelStatus {
+                                        ProgressView().scaleEffect(0.65).frame(width: 12, height: 12)
+                                        Text("Loading…")
+                                    } else {
+                                        Image(systemName: "bolt.fill")
+                                        Text("MLXを起動")
+                                    }
+                                }
+                                .font(.system(size: 12, weight: .semibold))
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .controlSize(.regular)
+                            .tint(Color(red: 0.25, green: 0.55, blue: 0.35))
+                            .disabled({
+                                if case .connecting = app.modelStatus { return true }
+                                return false
+                            }())
+
+                            // Custom path field
+                            TextField("または HF ID を直接入力…", text: $app.activeMlxModel)
+                                .textFieldStyle(.roundedBorder)
+                                .font(.system(size: 10, design: .monospaced))
+                        }
                     }
+
                 }
             }
 

@@ -17,37 +17,50 @@ struct MainSplitView: View {
     }
 
     var body: some View {
-        Group {
-            if app.operationMode == .aiPriority {
-                // ── AI Priority: Gemini + Artifact layout ──────────────
-                AIModeLayoutView()
-                    .environmentObject(app)
-                    .transition(.asymmetric(
-                        insertion: .move(edge: .trailing).combined(with: .opacity),
-                        removal:   .move(edge: .trailing).combined(with: .opacity)
-                    ))
-            } else {
-                // ── Human Mode: standard 4-pane IDE ───────────────────
-                humanModeLayout
-                    .transition(.asymmetric(
-                        insertion: .move(edge: .leading).combined(with: .opacity),
-                        removal:   .move(edge: .leading).combined(with: .opacity)
-                    ))
+        ZStack {
+            Group {
+                if app.operationMode == .aiPriority {
+                    // ── AI Priority: Gemini + Artifact layout ──────────────
+                    AIModeLayoutView()
+                        .environmentObject(app)
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .trailing).combined(with: .opacity),
+                            removal:   .move(edge: .trailing).combined(with: .opacity)
+                        ))
+                } else {
+                    // ── Human Mode: standard 4-pane IDE ───────────────────
+                    humanModeLayout
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .leading).combined(with: .opacity),
+                            removal:   .move(edge: .leading).combined(with: .opacity)
+                        ))
+                }
+            }
+            .animation(.easeInOut(duration: 0.25), value: app.operationMode)
+
+            // ── Settings overlay ──────────────────────────────────────────
+            if showSettings {
+                // Dim background — tap to close
+                Color.black.opacity(0.55)
+                    .ignoresSafeArea()
+                    .onTapGesture { withAnimation(.easeOut(duration: 0.18)) { showSettings = false } }
+                    .transition(.opacity)
+
+                // Settings panel — centered, FIXED size, no resize
+                SettingsView(onDismiss: {
+                    withAnimation(.easeOut(duration: 0.18)) { showSettings = false }
+                })
+                .environmentObject(app)
+                .transition(.scale(scale: 0.96).combined(with: .opacity))
+                .zIndex(10)
             }
         }
-        .animation(.easeInOut(duration: 0.25), value: app.operationMode)
         .toolbar { toolbarContent }
         .onAppear { app.connectOllama() }
-        // ── Settings sheet ─────────────────────────────────────────────────
-        .sheet(isPresented: $showSettings) {
-            SettingsView()
-                .environmentObject(app)
-        }
-        // ── Open Settings sheet when gear is tapped ────────────────────────
+        // ── Open Settings when gear is tapped ──────────────────────────────
         .onChange(of: activitySection) { section in
             if section == .settings {
-                showSettings = true
-                // Reset so the bar doesn't stay highlighted
+                withAnimation(.easeOut(duration: 0.18)) { showSettings = true }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                     activitySection = .explorer
                 }
