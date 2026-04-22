@@ -39,6 +39,12 @@ struct ArtifactPanelView: View {
             // Auto-switch to preview when a new artifact arrives
             if app.currentArtifact != nil { activeTab = .preview }
         }
+        .onChange(of: app.pendingDiff != nil) { hasDiff in
+            // Auto-switch to Diff tab when AI proposes a file change
+            if hasDiff {
+                withAnimation(.easeInOut(duration: 0.15)) { activeTab = .diff }
+            }
+        }
     }
 
     // MARK: - Header

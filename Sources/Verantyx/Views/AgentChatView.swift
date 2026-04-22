@@ -586,18 +586,30 @@ struct AgentMessageView: View {
         return result.isEmpty ? [(false, message.content)] : result
     }
 
+    @State private var isHovered   = false
+    @State private var copied       = false
+
     var body: some View {
         switch message.role {
         case .user:
-            HStack(alignment: .top, spacing: 0) {
-                Spacer(minLength: 50)
+            HStack(alignment: .top, spacing: 6) {
+                // Copy button — appears on hover to the left of the bubble
+                if isHovered {
+                    copyButton
+                        .transition(.opacity.combined(with: .scale(scale: 0.8)))
+                }
+                Spacer(minLength: isHovered ? 0 : 50)
                 Text(message.content)
                     .font(.system(size: 13))
                     .foregroundStyle(Color.white)
+                    .textSelection(.enabled)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
-                    .background(Color(red: 0.2, green: 0.35, blue: 0.7), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .background(Color(red: 0.2, green: 0.35, blue: 0.7),
+                                in: RoundedRectangle(cornerRadius: 12, style: .continuous))
             }
+            .onHover { isHovered = $0 }
+            .animation(.easeInOut(duration: 0.12), value: isHovered)
 
         case .assistant:
             HStack(alignment: .top, spacing: 10) {
@@ -611,9 +623,17 @@ struct AgentMessageView: View {
                 .frame(width: 28, height: 28)
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("VerantyxAgent")
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundStyle(Color(red: 0.4, green: 0.7, blue: 1.0))
+                    HStack(spacing: 6) {
+                        Text("VerantyxAgent")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(Color(red: 0.4, green: 0.7, blue: 1.0))
+                        Spacer()
+                        // Copy button — appears on hover
+                        if isHovered {
+                            copyButton
+                                .transition(.opacity.combined(with: .scale(scale: 0.8)))
+                        }
+                    }
 
                     VStack(alignment: .leading, spacing: 6) {
                         ForEach(Array(parts.enumerated()), id: \.offset) { _, part in
@@ -627,6 +647,8 @@ struct AgentMessageView: View {
                 }
                 Spacer(minLength: 20)
             }
+            .onHover { isHovered = $0 }
+            .animation(.easeInOut(duration: 0.12), value: isHovered)
 
         case .system:
             HStack(spacing: 6) {
@@ -636,6 +658,29 @@ struct AgentMessageView: View {
             .foregroundStyle(Color(red: 0.45, green: 0.45, blue: 0.6))
             .frame(maxWidth: .infinity, alignment: .center)
         }
+    }
+
+    // MARK: - Copy button
+
+    private var copyButton: some View {
+        Button {
+            NSPasteboard.general.clearContents()
+            NSPasteboard.general.setString(message.content, forType: .string)
+            withAnimation { copied = true }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                withAnimation { copied = false }
+            }
+        } label: {
+            Image(systemName: copied ? "checkmark" : "doc.on.doc")
+                .font(.system(size: 10))
+                .foregroundStyle(copied
+                    ? Color(red: 0.3, green: 0.9, blue: 0.5)
+                    : Color(red: 0.45, green: 0.45, blue: 0.6))
+                .frame(width: 22, height: 22)
+                .background(Color.white.opacity(0.06), in: RoundedRectangle(cornerRadius: 5))
+        }
+        .buttonStyle(.plain)
+        .help(copied ? "コピーしました！" : "メッセージをコピー")
     }
 
     private func thinkingTag(_ text: String) -> some View {
