@@ -175,23 +175,67 @@ struct ArtifactPanelView: View {
     // MARK: - Empty state
 
     private var emptyState: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 20) {
             Spacer()
-            Image(systemName: "rectangle.on.rectangle.angled")
-                .font(.system(size: 40))
-                .foregroundStyle(Color(red: 0.25, green: 0.25, blue: 0.35))
-            VStack(spacing: 6) {
-                Text("Artifact Preview")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(Color(red: 0.45, green: 0.45, blue: 0.58))
-                Text("AIが <artifact> タグ付きのコンテンツを生成すると\nここにライブプレビューが表示されます")
-                    .font(.system(size: 11))
-                    .foregroundStyle(Color(red: 0.38, green: 0.38, blue: 0.48))
-                    .multilineTextAlignment(.center)
+
+            // Animated icon
+            ZStack {
+                Circle()
+                    .fill(Color(red: 0.15, green: 0.20, blue: 0.30).opacity(0.6))
+                    .frame(width: 80, height: 80)
+                Image(systemName: "rectangle.on.rectangle.angled")
+                    .font(.system(size: 32))
+                    .foregroundStyle(Color(red: 0.35, green: 0.55, blue: 0.85).opacity(0.8))
             }
+
+            VStack(spacing: 8) {
+                Text("Artifact Preview")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(Color(red: 0.60, green: 0.65, blue: 0.80))
+
+                Text("AIがコードや画面を生成すると\nここに自動表示されます")
+                    .font(.system(size: 11))
+                    .foregroundStyle(Color(red: 0.40, green: 0.40, blue: 0.55))
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(3)
+            }
+
+            // Quick help cards
+            VStack(spacing: 8) {
+                hintRow(icon: "chevron.left.forwardslash.chevron.right",
+                        color: Color(red: 0.6, green: 0.4, blue: 1.0),
+                        text: "コードブロック (```swift ...) → 自動表示")
+                hintRow(icon: "globe",
+                        color: Color(red: 0.9, green: 0.5, blue: 0.2),
+                        text: "HTMLを生成して → ライブプレビュー")
+                hintRow(icon: "arrow.triangle.branch",
+                        color: Color(red: 0.3, green: 0.8, blue: 1.0),
+                        text: "Mermaid図を描いて → グラフ表示")
+                hintRow(icon: "arrow.left.arrow.right.square",
+                        color: Color(red: 0.4, green: 0.85, blue: 0.5),
+                        text: "ファイル変更 → Diffタブに表示")
+            }
+            .padding(.horizontal, 24)
+
             Spacer()
         }
         .frame(maxWidth: .infinity)
+    }
+
+    private func hintRow(icon: String, color: Color, text: String) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: icon)
+                .font(.system(size: 11))
+                .foregroundStyle(color)
+                .frame(width: 20)
+            Text(text)
+                .font(.system(size: 11))
+                .foregroundStyle(Color(red: 0.50, green: 0.52, blue: 0.65))
+            Spacer()
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 7)
+        .background(Color.white.opacity(0.03), in: RoundedRectangle(cornerRadius: 6))
     }
 
     // MARK: - History menu

@@ -15,6 +15,7 @@ struct SettingsView: View {
     @State private var showOpenAIKey = false
 
     enum SettingsTab: String, CaseIterable {
+        case general = "General"
         case model   = "Model"
         case apiKeys = "API Keys"
         case tools   = "Tools"
@@ -25,6 +26,7 @@ struct SettingsView: View {
 
         var icon: String {
             switch self {
+            case .general: return "gearshape"
             case .model:   return "cpu"
             case .apiKeys: return "key.fill"
             case .tools:   return "puzzlepiece.extension"
@@ -37,6 +39,7 @@ struct SettingsView: View {
 
         var color: Color {
             switch self {
+            case .general: return Color(red: 0.7, green: 0.7, blue: 0.8)
             case .model:   return Color(red: 0.4, green: 0.7, blue: 1.0)
             case .apiKeys: return Color(red: 0.9, green: 0.7, blue: 0.3)
             case .tools:   return Color(red: 0.6, green: 0.4, blue: 1.0)
@@ -131,6 +134,7 @@ struct SettingsView: View {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 20) {
                             switch selectedTab {
+                            case .general: generalSettings
                             case .model:   modelSettings
                             case .apiKeys: apiKeysSettings
                             case .tools:   toolsSettings
@@ -150,7 +154,118 @@ struct SettingsView: View {
         .frame(minWidth: 650, minHeight: 520)
     }
 
+    // MARK: - General Settings (Language, Appearance)
+
+    private var generalSettings: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            sectionHeader("Language / 言語", icon: "globe")
+
+            settingsCard {
+                VStack(alignment: .leading, spacing: 16) {
+                    // Language selector - big cards
+                    HStack(spacing: 10) {
+                        ForEach(AppState.UILanguage.allCases, id: \.self) { lang in
+                            Button {
+                                withAnimation(.easeInOut(duration: 0.15)) {
+                                    app.appLanguage = lang
+                                }
+                            } label: {
+                                VStack(spacing: 8) {
+                                    Text(lang.flag)
+                                        .font(.system(size: 28))
+                                    Text(lang.rawValue)
+                                        .font(.system(size: 11, weight: .semibold))
+                                        .foregroundStyle(app.appLanguage == lang ? .white : Color(red: 0.55, green: 0.55, blue: 0.7))
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 14)
+                                .background(
+                                    app.appLanguage == lang
+                                        ? Color(red: 0.25, green: 0.35, blue: 0.60).opacity(0.7)
+                                        : Color.white.opacity(0.04),
+                                    in: RoundedRectangle(cornerRadius: 8)
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .strokeBorder(
+                                            app.appLanguage == lang
+                                                ? Color(red: 0.4, green: 0.6, blue: 1.0).opacity(0.6)
+                                                : Color.white.opacity(0.06),
+                                            lineWidth: 1
+                                        )
+                                )
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+
+                    if app.appLanguage == .system {
+                        HStack(spacing: 6) {
+                            Image(systemName: "info.circle")
+                                .font(.system(size: 10))
+                                .foregroundStyle(.secondary)
+                            Text("System language: \(Locale.current.localizedString(forLanguageCode: Locale.current.language.languageCode?.identifier ?? "en") ?? "Unknown")")
+                                .font(.system(size: 10))
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            }
+
+            sectionHeader("Appearance", icon: "paintbrush")
+
+            settingsCard {
+                VStack(alignment: .leading, spacing: 14) {
+                    rowLabel("Theme") {
+                        Text("Dark (fixed)")
+                            .font(.system(size: 11, design: .monospaced))
+                            .foregroundStyle(.secondary)
+                    }
+                    Text("Verantyx uses a fixed high-contrast dark theme optimised for code editing.")
+                        .font(.system(size: 10)).foregroundStyle(.tertiary)
+
+                    Divider().opacity(0.2)
+
+                    rowLabel("Font size (code)") {
+                        Text("\(app.codeFontSize)pt")
+                            .font(.system(size: 11, weight: .semibold, design: .monospaced))
+                            .foregroundStyle(Color(red: 0.4, green: 0.8, blue: 0.5))
+                            .frame(width: 40)
+                    }
+                    Slider(value: Binding(
+                        get: { Double(app.codeFontSize) },
+                        set: { app.codeFontSize = Int($0) }
+                    ), in: 9...18, step: 1)
+                    .tint(Color(red: 0.4, green: 0.7, blue: 1.0))
+                }
+            }
+
+            sectionHeader("Notifications", icon: "bell")
+
+            settingsCard {
+                VStack(alignment: .leading, spacing: 0) {
+                    toolToggleRow(
+                        icon: "checkmark.circle.fill",
+                        iconColor: Color(red: 0.3, green: 0.9, blue: 0.5),
+                        title: "Diff applied",
+                        description: "Notify when AI changes are applied to a file",
+                        isOn: $app.notifyOnDiffApply
+                    )
+                    Divider().opacity(0.15)
+                    toolToggleRow(
+                        icon: "exclamationmark.triangle.fill",
+                        iconColor: Color(red: 0.9, green: 0.7, blue: 0.2),
+                        title: "Agent errors",
+                        description: "Notify when the agent loop encounters an error",
+                        isOn: $app.notifyOnError
+                    )
+                }
+            }
+        }
+    }
+
     // MARK: - Model Settings
+
 
     private var modelSettings: some View {
         VStack(alignment: .leading, spacing: 20) {

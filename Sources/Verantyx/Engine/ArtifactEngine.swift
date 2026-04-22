@@ -83,10 +83,7 @@ struct Artifact: Identifiable {
 
         // Whether this type can be live-rendered in WKWebView
         var isWebRenderable: Bool {
-            switch self {
-            case .html, .markdown, .mermaid, .svg: return true
-            case .code:                              return false
-            }
+            return true  // ALL types are rendered via WKWebView (code uses highlight.js)
         }
 
         static func detect(from tag: String) -> ArtifactType {
@@ -107,7 +104,19 @@ struct Artifact: Identifiable {
 enum ArtifactParser {
 
     // Extract the last (or only) artifact from a complete AI response string.
+    // Priority: <artifact> tag > ``` code block > markdown detection
     static func extract(from text: String) -> Artifact? {
+        // 1. Try <artifact> tag first (explicit)
+        if let art = extractFromTag(text) { return art }
+
+        // 2. Fallback: fenced code block (```lang ... ```)
+        if let art = extractFromCodeBlock(text) { return art }
+
+        return nil
+    }
+
+    // MARK: - <artifact> tag parser (original)
+    static func extractFromTag(_ text: String) -> Artifact? {
         // Pattern: <artifact type="html" title="My Page"> ... </artifact>
         let pattern = #"<artifact(?:\s+type=\"([^\"]*?)\")?(?:\s+title=\"([^\"]*?)\")?\s*>([\s\S]*?)</artifact>"#
         guard let regex = try? NSRegularExpression(pattern: pattern, options: .dotMatchesLineSeparators),
@@ -119,6 +128,50 @@ enum ArtifactParser {
         let content   = (match.group(3, in: text) ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
 
         let artType = Artifact.ArtifactType.detect(from: typeName)
+        return Artifact(type: artType, content: content, title: title)
+    }
+
+    // MARK: - Fenced code block fallback (``` lang ... ```)
+    // Picks the LARGEST code block in the response (most likely the main output)
+    static func extractFromCodeBlock(_ text: String) -> Artifact? {
+        // Match fenced code blocks: ```lang\ncode\n```
+        let pattern = #"```(\w*)\n([\s\S]*?)```"#
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: .dotMatchesLineSeparators)
+        else { return nil }
+
+        let matches = regex.matches(in: text, range: NSRange(text.startIndex..., in: text))
+        guard !matches.isEmpty else { return nil }
+
+        // Pick the largest block (most content)
+        let best = matches.max { a, b in
+            let aLen = Range(a.range(at: 2), in: text).map { text[$0].count } ?? 0
+            let bLen = Range(b.range(at: 2), in: text).map { text[$0].count } ?? 0
+            return aLen < bLen
+        }
+
+        guard let match = best,
+              let langRange    = Range(match.range(at: 1), in: text),
+              let contentRange = Range(match.range(at: 2), in: text)
+        else { return nil }
+
+        let lang    = String(text[langRange]).lowercased()
+        let content = String(text[contentRange])
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // Too short to bother showing
+        guard content.count > 20 else { return nil }
+
+        // Map language string → ArtifactType
+        let artType: Artifact.ArtifactType
+        switch lang {
+        case "html", "htm":              artType = .html
+        case "mermaid":                  artType = .mermaid
+        case "svg":                      artType = .svg
+        case "md", "markdown":           artType = .markdown
+        default:                         artType = .code
+        }
+
+        let title = lang.isEmpty ? "Code" : lang.capitalized
         return Artifact(type: artType, content: content, title: title)
     }
 

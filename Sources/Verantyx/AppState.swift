@@ -202,6 +202,66 @@ final class AppState: ObservableObject {
         didSet { UserDefaults.standard.set(gemmaSemanticMaskingEnabled, forKey: "gemma_semantic_masking") }
     }
 
+    // ── UI Language ──
+    enum UILanguage: String, CaseIterable, Codable {
+        case system  = "System"
+        case english = "English"
+        case japanese = "日本語"
+
+        var localeIdentifier: String {
+            switch self {
+            case .system:   return Locale.current.identifier
+            case .english:  return "en"
+            case .japanese: return "ja"
+            }
+        }
+
+        var flag: String {
+            switch self {
+            case .system:   return "🌐"
+            case .english:  return "🇺🇸"
+            case .japanese: return "🇯🇵"
+            }
+        }
+    }
+
+    @Published var appLanguage: UILanguage = {
+        let raw = UserDefaults.standard.string(forKey: "app_language") ?? UILanguage.system.rawValue
+        return UILanguage(rawValue: raw) ?? .system
+    }() {
+        didSet { UserDefaults.standard.set(appLanguage.rawValue, forKey: "app_language") }
+    }
+
+    // MARK: - Localized string helper
+    func t(_ en: String, _ ja: String) -> String {
+        switch appLanguage {
+        case .japanese: return ja
+        case .english:  return en
+        case .system:
+            return Locale.current.language.languageCode?.identifier == "ja" ? ja : en
+        }
+    }
+
+    // MARK: - UI Preferences
+
+    @Published var codeFontSize: Int = {
+        let v = UserDefaults.standard.integer(forKey: "code_font_size")
+        return v > 0 ? v : 12
+    }() {
+        didSet { UserDefaults.standard.set(codeFontSize, forKey: "code_font_size") }
+    }
+
+    @Published var notifyOnDiffApply: Bool = UserDefaults.standard.bool(forKey: "notify_diff_apply") {
+        didSet { UserDefaults.standard.set(notifyOnDiffApply, forKey: "notify_diff_apply") }
+    }
+
+    @Published var notifyOnError: Bool = {
+        let v = UserDefaults.standard.object(forKey: "notify_error") as? Bool
+        return v ?? true
+    }() {
+        didSet { UserDefaults.standard.set(notifyOnError, forKey: "notify_error") }
+    }
+
     // ── Multimodal capability detection ──
     var isMultimodalModel: Bool {
         switch modelStatus {
