@@ -22,7 +22,13 @@ enum AgentTool {
     case runCommand(String)
     case setWorkspace(String)
     case done(message: String)
-    case readFile(String)          // future: AI can request file content
+    case readFile(String)
+    // ── Browser tools ──────────────────────────────────────────────
+    case browse(url: String)                   // verantyx-browser (stealth WKWebView)
+    case search(query: String)                 // DuckDuckGo via verantyx-browser
+    case evalJS(script: String)                // JS eval in verantyx-browser  
+    case openSafari(url: String)               // Open URL in Safari via AppleScript
+    case openChrome(url: String)               // Open URL in Chrome via AppleScript
 }
 
 // MARK: - AgentToolCall (result wrapper)
@@ -41,6 +47,11 @@ struct AgentToolCall: Identifiable {
         case .setWorkspace(let p):     return "workspace: \(p)"
         case .done(let m):             return "✓ \(m)"
         case .readFile(let p):         return "read ← \(p)"
+        case .browse(let url):         return "🌐 browse \(url)"
+        case .search(let q):           return "🔍 search: \(q)"
+        case .evalJS(let s):           return "⚡ eval_js: \(s.prefix(40))"
+        case .openSafari(let url):     return "🧡 safari: \(url)"
+        case .openChrome(let url):     return "🟢 chrome: \(url)"
         }
     }
 }
@@ -64,7 +75,12 @@ struct AgentToolParser {
     [/WRITE]                            — end of file content
     [RUN: command]                      — run a shell command
     [WORKSPACE: /absolute/path]         — set/open workspace folder
-    [DONE: summary message]            — signal task completion
+    [DONE: summary message]             — signal task completion
+    [BROWSE: https://url]               — fetch a URL (stealth WebKit browser, returns Markdown)
+    [SEARCH: query terms]               — web search (DuckDuckGo, returns page text)
+    [EVAL_JS: javascript code]          — run JS in current browser page
+    [SAFARI: https://url]               — open URL in Safari (uses your session/cookies)
+    [CHROME: https://url]               — open URL in Chrome (uses your session/cookies)
 
     RULES:
     - Always use [MKDIR] before [WRITE] if the directory doesn't exist
@@ -73,6 +89,9 @@ struct AgentToolParser {
     - After creating all files, use [RUN] to verify the project works  
     - End every task with [DONE: brief summary]
     - You can write multiple files in sequence
+    - Use [SEARCH: query] to look up documentation or current information
+    - Use [BROWSE: url] to read specific pages for API docs or reference
+    - Use [SAFARI: url] or [CHROME: url] when you need authenticated access
 
     EXAMPLE — user says "create a Python calculator":
     Okay, I'll create a Python calculator project.
@@ -137,6 +156,17 @@ struct AgentToolParser {
                 tools.append(.done(message: m.isEmpty ? "Task complete." : m))
             } else if let m = match(trimmed, pattern: #"^\[READ:\s*([^\]]+)\]$"#) {
                 tools.append(.readFile(expandHome(m)))
+            // ── Browser tools ────────────────────────────────────────
+            } else if let m = match(trimmed, pattern: #"^\[BROWSE:\s*([^\]]+)\]$"#) {
+                tools.append(.browse(url: m))
+            } else if let m = match(trimmed, pattern: #"^\[SEARCH:\s*([^\]]+)\]$"#) {
+                tools.append(.search(query: m))
+            } else if let m = match(trimmed, pattern: #"^\[EVAL_JS:\s*([^\]]+)\]$"#) {
+                tools.append(.evalJS(script: m))
+            } else if let m = match(trimmed, pattern: #"^\[SAFARI:\s*([^\]]+)\]$"#) {
+                tools.append(.openSafari(url: m))
+            } else if let m = match(trimmed, pattern: #"^\[CHROME:\s*([^\]]+)\]$"#) {
+                tools.append(.openChrome(url: m))
             } else {
                 resultLines.append(line)
             }
@@ -212,6 +242,49 @@ actor AgentToolExecutor {
                 return "FILE CONTENT (\(url.lastPathComponent)):\n\(content.prefix(4000))"
             }
             return "✗ Could not read: \(path)"
+
+        // ── Browser tools ────────────────────────────────────────────────
+
+        case .browse(let url):
+            let result = await WebSearchEngine.shared.browse(url: url, preferredSource: .verantyxBrowser)
+            return """
+            [WEB PAGE: \(result.url)]
+            \(result.contextSnippet)
+            [END WEB PAGE]
+            """
+
+        case .search(let query):
+            let result = await WebSearchEngine.shared.search(query: query)
+            return """
+            [SEARCH RESULTS for: \(query)]
+            Source: \(result.url)
+            \(result.contextSnippet)
+            [END SEARCH RESULTS]
+            """
+
+        case .evalJS(let script):
+            do {
+                let result = try await BrowserBridge.shared.evalJS(script)
+                return "[JS RESULT] \(result)"
+            } catch {
+                return "[JS ERROR] \(error.localizedDescription)"
+            }
+
+        case .openSafari(let url):
+            let result = await WebSearchEngine.shared.browse(url: url, preferredSource: .safari)
+            return """
+            [SAFARI: \(result.url)]
+            \(result.contextSnippet)
+            [END SAFARI]
+            """
+
+        case .openChrome(let url):
+            let result = await WebSearchEngine.shared.browse(url: url, preferredSource: .chrome)
+            return """
+            [CHROME: \(result.url)]
+            \(result.contextSnippet)
+            [END CHROME]
+            """
         }
     }
 
