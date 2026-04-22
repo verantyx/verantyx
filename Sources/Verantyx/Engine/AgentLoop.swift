@@ -217,13 +217,13 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
                 await onProgress(.aiMessage("🧠 [Memory] 会話履歴を圧縮してコンテキストをオフロードしました"))
             }
 
-            // ── Call LLM ─────────────────────────────────────────────────
-            let prompt = buildConversationPrompt(conversation)
+            // ── Call LLM (streaming) ──────────────────────────────────────
             guard let rawResponse = await callModel(
-                prompt: prompt,
+                conversation: conversation,
                 modelStatus: modelStatus,
                 activeModel: activeModel,
-                profile: profile
+                profile: profile,
+                onProgress: onProgress    // ← onToken コールバックで .streamToken を発行
             ) else {
                 await onProgress(.error("Model returned nil response"))
                 return
@@ -360,30 +360,62 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
         return result
     }
 
-    // MARK: - LLM call
+    // MARK: - LLM call (streaming)
+    // openclaw の StreamFn パターンを参考:
+    //   - Ollama: stream:true + NDJSON + onToken コールバック
+    //   - Anthropic: SSE + content_block_delta → text_delta
+    // AgentLoop では UI へのリアルタイム配信のために onProgress(.streamToken) を emit
 
     private func callModel(
-        prompt: String,
+        conversation: [(role: String, content: String)],
         modelStatus: AppState.ModelStatus,
         activeModel: String,
-        profile: ModelProfile = ModelProfileDetector.detect(modelId: "default")
+        profile: ModelProfile = ModelProfileDetector.detect(modelId: "default"),
+        onProgress: @escaping @Sendable (LoopEvent) async -> Void
     ) async -> String? {
         switch modelStatus {
+
         case .ollamaReady(let model):
-            return await OllamaClient.shared.generate(
+            // multi-turn 会話配列を直接渡す（prompt string に変換不要）
+            return await OllamaClient.shared.generateConversation(
                 model: model,
-                prompt: prompt,
+                messages: conversation,
                 maxTokens: profile.tier.maxTokens,
-                temperature: profile.tier.temperature
+                temperature: profile.tier.temperature,
+                onToken: { token in
+                    Task { await onProgress(.streamToken(token)) }
+                }
             )
+
+        case .anthropicReady(let model, _):
+            // system prompt を分離
+            let systemContent = conversation.first(where: { $0.role == "system" })?.content ?? ""
+            let chatMessages  = conversation.filter { $0.role != "system" }
+            let isThinking    = model.contains("3-7") || model.contains("claude-3-7")
+            return await AnthropicClient.shared.generate(
+                model: model,
+                systemPrompt: systemContent,
+                messages: chatMessages,
+                maxTokens: max(profile.tier.maxTokens, 8096),  // Anthropic は大きめに
+                temperature: profile.tier.temperature,
+                enableThinking: isThinking,
+                onToken: { token in
+                    Task { await onProgress(.streamToken(token)) }
+                },
+                onThinking: { _ in }  // thinking は今は捨てる（将来 .thinkToken 追加）
+            )
+
         case .ready:
-            return "MLX not connected. Please use Ollama."
+            return "MLX (local) is active — switch to Ollama or Anthropic for agent mode."
+
         default:
             return nil
         }
     }
 
-    // MARK: - Conversation builder
+    // MARK: - Conversation builder (Ollama用フォールバック)
+    // NOTE: Ollama generateConversation() は messages を直接受け取るため
+    // このメソッドは Anthropic 以外では不要になった。互換性のため残す。
 
     private func buildConversationPrompt(_ conversation: [(role: String, content: String)]) -> String {
         conversation.map { turn in
@@ -402,7 +434,8 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
 enum LoopEvent: @unchecked Sendable {
     case start(instruction: String)
     case thinking(turn: Int)
-    case aiMessage(String)
+    case streamToken(String)          // NEW: リアルタイムトークン（UIがダイレクト・ストリーミング表示用）
+    case aiMessage(String)             // 完成テキストブロック
     case toolCall(AgentToolCall)
     case toolResult(AgentToolCall)
     case workspaceChanged(URL)

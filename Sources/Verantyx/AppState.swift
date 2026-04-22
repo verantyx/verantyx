@@ -57,6 +57,16 @@ final class AppState: ObservableObject {
     @Published var modelStatus: ModelStatus = .none
     @Published var ollamaModels: [String] = []
     @Published var activeOllamaModel: String = "gemma4:26b"
+    @Published var anthropicApiKey: String = "" {
+        didSet {
+            // Anthropic API キーを AnthropicClient に反映
+            Task { await AnthropicClient.shared.configure(apiKey: anthropicApiKey) }
+            UserDefaults.standard.set(anthropicApiKey, forKey: "anthropic_api_key")
+        }
+    }
+    @Published var activeAnthropicModel: String = "claude-sonnet-4-5" {
+        didSet { UserDefaults.standard.set(activeAnthropicModel, forKey: "anthropic_model") }
+    }
     @Published var customHFRepoId: String = "mlx-community/Qwen2.5-Coder-7B-Instruct-4bit"
     @Published var downloadProgress: Double = 0
 
@@ -208,6 +218,7 @@ final class AppState: ObservableObject {
         case downloading(progress: Double)
         case ready(name: String)
         case ollamaReady(model: String)
+        case anthropicReady(model: String, maskedKey: String)  // NEW: Anthropic API
         case mlxReady(model: String)          // ← MLX server running at localhost:8080
         case mlxDownloading(model: String)    // ← mlx_lm download in progress
         case error(String)
@@ -534,6 +545,15 @@ final class AppState: ObservableObject {
                 case .start:
                     break
 
+                case .streamToken(let token):
+                    // リアルタイムトークンを現在の assistant メッセージに追記
+                    if let lastIdx = self.messages.indices.last,
+                       self.messages[lastIdx].role == .assistant {
+                        self.messages[lastIdx].content += token
+                    } else {
+                        self.messages.append(ChatMessage(role: .assistant, content: token))
+                    }
+
                 case .thinking(let t):
                     if t > 1 {
                         self.messages.append(ChatMessage(role: .system,
@@ -650,15 +670,18 @@ final class AppState: ObservableObject {
         // ── Ollama path (unchanged) ─────────────────────────────────────────
         case .ollamaReady(let model):
             logProcess("Ollama/\(model)  temp=\(temperature)  maxTok=\(maxTokensOllama)", kind: .system)
+            let msgId = UUID()
+            messages.append(ChatMessage(id: msgId, role: .assistant, content: ""))
+            let simpleMessages: [(role: String, content: String)] = [(role: "user", content: prompt)]
             let stream = OllamaClient.shared.streamGenerate(
-                model: model, prompt: prompt,
+                model: model,
+                messages: simpleMessages,
                 maxTokens: maxTokensOllama,
                 temperature: temperature
             )
-            let msgId = UUID()
-            messages.append(ChatMessage(id: msgId, role: .assistant, content: ""))
             do {
-                for try await token in stream {
+                for try await event in stream {
+                    guard case .token(let token) = event else { continue }
                     tokenCount += 1; totalTokensGenerated += 1
                     if let idx = self.messages.firstIndex(where: { $0.id == msgId }) {
                         self.messages[idx].content += token
@@ -907,6 +930,7 @@ final class AppState: ObservableObject {
         case .downloading(let p):            return "Downloading \(Int(p * 100))%"
         case .ready(let n):                  return n
         case .ollamaReady(let m):            return "Ollama: \(m.components(separatedBy: ":").first ?? m)"
+        case .anthropicReady(let m, _):      return "Claude: \(m)"
         case .mlxReady(let m):              return "MLX: \(m.components(separatedBy: "/").last ?? m)"
         case .mlxDownloading(let m):        return "⏬ \(m.components(separatedBy: "/").last ?? m)"
         case .error(let e):                  return "Error: \(e)"
@@ -915,7 +939,7 @@ final class AppState: ObservableObject {
 
     var statusColor: Color {
         switch modelStatus {
-        case .ready, .ollamaReady, .mlxReady: return .green
+        case .ready, .ollamaReady, .mlxReady, .anthropicReady: return .green
         case .error:                           return .red
         case .downloading, .connecting,
              .mlxDownloading:                  return .orange
