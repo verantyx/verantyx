@@ -30,9 +30,16 @@ struct MainSplitView: View {
 
                 Divider().opacity(0.3)
 
-                // ② File tree
-                FileTreeView()
-                    .frame(minWidth: 180, idealWidth: 220, maxWidth: 300)
+                // ② Left panel — switches based on activity section
+                Group {
+                    switch activitySection {
+                    case .mcp:
+                        MCPView()
+                    default:
+                        FileTreeView()
+                    }
+                }
+                .frame(minWidth: 180, idealWidth: 240, maxWidth: 340)
 
                 Divider().opacity(0.3)
 

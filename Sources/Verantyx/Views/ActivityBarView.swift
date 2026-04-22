@@ -11,6 +11,7 @@ struct ActivityBarView: View {
         case explorer    = "folder"
         case search      = "magnifyingglass"
         case git         = "arrow.triangle.branch"
+        case mcp         = "puzzlepiece.extension"
         case extensions  = "puzzlepiece"
         case settings    = "gearshape"
     }
@@ -25,7 +26,7 @@ struct ActivityBarView: View {
                     .foregroundStyle(Color(red: 0.4, green: 0.7, blue: 1.0))
                     .padding(.bottom, 12)
 
-                ForEach([ActivitySection.explorer, .search, .git], id: \.self) { section in
+                ForEach([ActivitySection.explorer, .search, .git, .mcp], id: \.self) { section in
                     activityButton(section)
                 }
             }
@@ -55,26 +56,47 @@ struct ActivityBarView: View {
         Button {
             selectedSection = section
         } label: {
-            Image(systemName: section.rawValue)
-                .font(.system(size: 18))
-                .foregroundStyle(selectedSection == section
-                    ? Color.white
-                    : Color(red: 0.55, green: 0.55, blue: 0.60))
-                .frame(width: 48, height: 44)
-                .background(
-                    selectedSection == section
-                        ? Color.white.opacity(0.08)
-                        : Color.clear
-                )
-                .overlay(
-                    Rectangle()
-                        .fill(Color(red: 0.4, green: 0.7, blue: 1.0))
-                        .frame(width: 2)
-                        .frame(maxHeight: selectedSection == section ? 24 : 0),
-                    alignment: .leading
-                )
+            ZStack(alignment: .topTrailing) {
+                Image(systemName: section.rawValue)
+                    .font(.system(size: 18))
+                    .foregroundStyle(selectedSection == section
+                        ? Color.white
+                        : Color(red: 0.55, green: 0.55, blue: 0.60))
+                    .frame(width: 48, height: 44)
+                    .background(
+                        selectedSection == section
+                            ? Color.white.opacity(0.08)
+                            : Color.clear
+                    )
+                    .overlay(
+                        Rectangle()
+                            .fill(Color(red: 0.4, green: 0.7, blue: 1.0))
+                            .frame(width: 2)
+                            .frame(maxHeight: selectedSection == section ? 24 : 0),
+                        alignment: .leading
+                    )
+
+                // MCP kill-switch badge — red dot when tool is running
+                if section == .mcp, MCPEngine.shared.activeCall != nil {
+                    Circle()
+                        .fill(Color.red)
+                        .frame(width: 8, height: 8)
+                        .offset(x: -6, y: 6)
+                }
+            }
         }
         .buttonStyle(.plain)
-        .help(section.rawValue.capitalized)
+        .help(helpLabel(section))
+    }
+
+    private func helpLabel(_ section: ActivitySection) -> String {
+        switch section {
+        case .mcp:       return "MCP Servers"
+        case .explorer:  return "Explorer"
+        case .search:    return "Search"
+        case .git:       return "Source Control"
+        case .extensions: return "Extensions"
+        case .settings:  return "Settings"
+        }
     }
 }

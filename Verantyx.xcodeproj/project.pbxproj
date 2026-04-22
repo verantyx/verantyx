@@ -24,6 +24,7 @@
 		4F74BBA8D8892CF5A08BFEAC /* AgentLoop.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABE4F19CD033EC88CE775297 /* AgentLoop.swift */; };
 		506021C3BDB86670D434BBE7 /* CloudAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCB5E227D30DCFCF698F28FD /* CloudAPIClient.swift */; };
 		525874995CEE5ACAA12F838A /* SyntaxHighlighter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F44C7CACCD10CB9F7836B4A7 /* SyntaxHighlighter.swift */; };
+		5501BBD59DC8AA6357BA1F92 /* MCPView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5721938F21F94496234B39 /* MCPView.swift */; };
 		57CC8D875A2870E56B674276 /* MainSplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5F0016C4911F099545301D /* MainSplitView.swift */; };
 		582245E341F93D3E1ECE5CBF /* WorkspaceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD8BBB55D4627EE66EB79331 /* WorkspaceManager.swift */; };
 		5B221D76CBAF7F8637DD80F9 /* MLX in Frameworks */ = {isa = PBXBuildFile; productRef = E7B730AC2C30A6B4C265330D /* MLX */; };
@@ -37,6 +38,7 @@
 		96B9213F6B0070B3B58D8117 /* ChatPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 338130D0F6553F90814F3B05 /* ChatPanelView.swift */; };
 		9FB76DC5C4E4B0DF21FDCACD /* MLXRandom in Frameworks */ = {isa = PBXBuildFile; productRef = A68E46F8CFDC14DEF2D55FC5 /* MLXRandom */; };
 		A531E331E9BA5755DA223AAB /* HybridEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AED536E86FE739129AF444 /* HybridEngine.swift */; };
+		A5350F03EAF2B9602619D5C0 /* MCPEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DAA99AF46D25BCBCE4FD6D8 /* MCPEngine.swift */; };
 		A6FB0E5DAFC79CA704D67754 /* AppleScriptBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC500C787B15580CEAAC2B1 /* AppleScriptBridge.swift */; };
 		BAA142F996EB155712321FA7 /* AgentEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8900CE64BBFB018EC941426D /* AgentEngine.swift */; };
 		D38B10B52D88BBB770793AB6 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBFBBB5831368FECD08DF846 /* AppState.swift */; };
@@ -54,6 +56,7 @@
 		22B0F334C1BF16C8A60C5017 /* PrivacyProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyProxy.swift; sourceTree = "<group>"; };
 		238D55123A3C10747F1E2D53 /* WebSearchEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSearchEngine.swift; sourceTree = "<group>"; };
 		263AF59FC377D184685C7A9F /* FileTreeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTreeView.swift; sourceTree = "<group>"; };
+		2DAA99AF46D25BCBCE4FD6D8 /* MCPEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCPEngine.swift; sourceTree = "<group>"; };
 		2EC500C787B15580CEAAC2B1 /* AppleScriptBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleScriptBridge.swift; sourceTree = "<group>"; };
 		338130D0F6553F90814F3B05 /* ChatPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatPanelView.swift; sourceTree = "<group>"; };
 		34F90A23BE1370B3E68FB7BC /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
@@ -85,6 +88,7 @@
 		E5C8788156A4713EDD89F173 /* Verantyx.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Verantyx.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9A706F7BAC4CFDA999E202D /* MLXRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLXRunner.swift; sourceTree = "<group>"; };
 		F44C7CACCD10CB9F7836B4A7 /* SyntaxHighlighter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyntaxHighlighter.swift; sourceTree = "<group>"; };
+		FA5721938F21F94496234B39 /* MCPView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCPView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,6 +137,7 @@
 				0676432D69FA1C167E518CC9 /* DiffPanelView.swift */,
 				263AF59FC377D184685C7A9F /* FileTreeView.swift */,
 				5B5F0016C4911F099545301D /* MainSplitView.swift */,
+				FA5721938F21F94496234B39 /* MCPView.swift */,
 				6C3A66E6CFDB45051738F2D3 /* ModelPickerView.swift */,
 				AF413A3E752CA6446C0FD0A7 /* PrivacyShieldView.swift */,
 				851696E9486FDE35D2146141 /* SettingsView.swift */,
@@ -174,6 +179,7 @@
 				DC25A03DB54A65B9B740D72A /* CortexEngine.swift */,
 				4BEAFD1ACA2A20312B98C1A6 /* DiffEngine.swift */,
 				92AED536E86FE739129AF444 /* HybridEngine.swift */,
+				2DAA99AF46D25BCBCE4FD6D8 /* MCPEngine.swift */,
 				E9A706F7BAC4CFDA999E202D /* MLXRunner.swift */,
 				4E2075CF721733CD4BDFF767 /* OllamaClient.swift */,
 				22B0F334C1BF16C8A60C5017 /* PrivacyProxy.swift */,
@@ -269,6 +275,8 @@
 				05A047EA46A5C3ACB146C539 /* DiffPanelView.swift in Sources */,
 				292F06655B38F087BBD57724 /* FileTreeView.swift in Sources */,
 				A531E331E9BA5755DA223AAB /* HybridEngine.swift in Sources */,
+				A5350F03EAF2B9602619D5C0 /* MCPEngine.swift in Sources */,
+				5501BBD59DC8AA6357BA1F92 /* MCPView.swift in Sources */,
 				0A63761D3E2C49ED80D1D4A9 /* MLXRunner.swift in Sources */,
 				57CC8D875A2870E56B674276 /* MainSplitView.swift in Sources */,
 				74402A6B62B43AD8399A9847 /* ModelPickerView.swift in Sources */,
