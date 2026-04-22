@@ -2,18 +2,22 @@ import SwiftUI
 
 // MARK: - ResizableHSplit
 // Custom horizontal split container with drag divider.
-// Obeys minWidth/maxWidth constraints on both panes so neither disappears.
+//
+// Fix: Replaced @GestureState dragOffset with @State leftWidth direct-update
+// so the left pane width is mutated immediately on every onChanged event,
+// eliminating the one-frame lag that caused jittery resizing.
+// The divider hit area is also widened to 8pt for easier grabbing.
 
 struct ResizableHSplit<Left: View, Right: View>: View {
     var minLeft: CGFloat
     var maxLeft: CGFloat
     var minRight: CGFloat
-    var initialLeft: CGFloat
+
     let left: Left
     let right: Right
 
     @State private var leftWidth: CGFloat
-    @GestureState private var dragOffset: CGFloat = 0
+    @State private var isDragging: Bool = false
 
     init(
         minLeft: CGFloat = 160,
@@ -23,10 +27,9 @@ struct ResizableHSplit<Left: View, Right: View>: View {
         @ViewBuilder left: () -> Left,
         @ViewBuilder right: () -> Right
     ) {
-        self.minLeft    = minLeft
-        self.maxLeft    = maxLeft
-        self.minRight   = minRight
-        self.initialLeft = initialLeft
+        self.minLeft   = minLeft
+        self.maxLeft   = maxLeft
+        self.minRight  = minRight
         self.left  = left()
         self.right = right()
         _leftWidth = State(initialValue: initialLeft)
@@ -36,10 +39,10 @@ struct ResizableHSplit<Left: View, Right: View>: View {
         GeometryReader { geo in
             HStack(spacing: 0) {
                 left
-                    .frame(width: clampedLeft(geo.size.width))
+                    .frame(width: clampedLeft(geo.size.width, proposed: leftWidth))
                     .clipped()
 
-                divider(geo.size.width)
+                divider(totalWidth: geo.size.width)
 
                 right
                     .frame(maxWidth: .infinity)
@@ -48,31 +51,40 @@ struct ResizableHSplit<Left: View, Right: View>: View {
         }
     }
 
-    private func clampedLeft(_ totalWidth: CGFloat) -> CGFloat {
-        let proposed = leftWidth + dragOffset
-        let maxAllowed = Swift.min(maxLeft, totalWidth - minRight - 6)
+    private func clampedLeft(_ totalWidth: CGFloat, proposed: CGFloat) -> CGFloat {
+        let maxAllowed = Swift.min(maxLeft, totalWidth - minRight - 8)
         return Swift.max(minLeft, Swift.min(proposed, maxAllowed))
     }
 
-    private func divider(_ totalWidth: CGFloat) -> some View {
-        Rectangle()
-            .fill(Color.white.opacity(0.09))
-            .frame(width: 6)
-            .overlay(
-                Rectangle()
-                    .fill(Color.white.opacity(0.18))
-                    .frame(width: 1)
-            )
-            .gesture(
-                DragGesture()
-                    .updating($dragOffset) { value, state, _ in state = value.translation.width }
-                    .onEnded { value in
-                        let proposed = leftWidth + value.translation.width
-                        let maxAllowed = Swift.min(maxLeft, totalWidth - minRight - 6)
-                        leftWidth = Swift.max(minLeft, Swift.min(proposed, maxAllowed))
-                    }
-            )
-            .cursor(.resizeLeftRight)
+    private func divider(totalWidth: CGFloat) -> some View {
+        ZStack {
+            // Visual stripe (1pt)
+            Rectangle()
+                .fill(isDragging
+                      ? Color(red: 0.4, green: 0.65, blue: 1.0).opacity(0.60)
+                      : Color.white.opacity(0.10))
+                .frame(width: 1)
+                .animation(.easeInOut(duration: 0.12), value: isDragging)
+
+            // Invisible 8pt hit area — wider = easier to grab
+            Color.clear
+                .frame(width: 8)
+                .contentShape(Rectangle())
+        }
+        .frame(width: 8)
+        .cursor(.resizeLeftRight)
+        .gesture(
+            DragGesture(minimumDistance: 0, coordinateSpace: .global)
+                .onChanged { value in
+                    if !isDragging { isDragging = true }
+                    // Commit width directly every event — no accumulated offset lag
+                    let proposed = leftWidth + value.translation.width
+                    leftWidth = clampedLeft(totalWidth, proposed: proposed)
+                }
+                .onEnded { _ in
+                    isDragging = false
+                }
+        )
     }
 }
 
@@ -82,12 +94,12 @@ struct ResizableVSplit<Top: View, Bottom: View>: View {
     var minTop: CGFloat
     var maxTop: CGFloat
     var minBottom: CGFloat
-    var initialTop: CGFloat
+
     let top: Top
     let bottom: Bottom
 
     @State private var topHeight: CGFloat
-    @GestureState private var dragOffset: CGFloat = 0
+    @State private var isDragging: Bool = false
 
     init(
         minTop: CGFloat = 200,
@@ -100,7 +112,6 @@ struct ResizableVSplit<Top: View, Bottom: View>: View {
         self.minTop    = minTop
         self.maxTop    = maxTop
         self.minBottom = minBottom
-        self.initialTop = initialTop
         self.top    = top()
         self.bottom = bottom()
         _topHeight = State(initialValue: initialTop)
@@ -109,38 +120,48 @@ struct ResizableVSplit<Top: View, Bottom: View>: View {
     var body: some View {
         GeometryReader { geo in
             VStack(spacing: 0) {
-                top.frame(height: clampedTop(geo.size.height)).clipped()
-                hDivider(geo.size.height)
-                bottom.frame(maxHeight: .infinity).clipped()
+                top
+                    .frame(height: clampedTop(geo.size.height, proposed: topHeight))
+                    .clipped()
+                hDivider(totalHeight: geo.size.height)
+                bottom
+                    .frame(maxHeight: .infinity)
+                    .clipped()
             }
         }
     }
 
-    private func clampedTop(_ totalHeight: CGFloat) -> CGFloat {
-        let proposed = topHeight + dragOffset
-        let maxAllowed = Swift.min(maxTop, totalHeight - minBottom - 6)
+    private func clampedTop(_ totalHeight: CGFloat, proposed: CGFloat) -> CGFloat {
+        let maxAllowed = Swift.min(maxTop, totalHeight - minBottom - 8)
         return Swift.max(minTop, Swift.min(proposed, maxAllowed))
     }
 
-    private func hDivider(_ totalHeight: CGFloat) -> some View {
-        Rectangle()
-            .fill(Color.white.opacity(0.09))
-            .frame(height: 6)
-            .overlay(
-                Rectangle()
-                    .fill(Color.white.opacity(0.18))
-                    .frame(height: 1)
-            )
-            .gesture(
-                DragGesture()
-                    .updating($dragOffset) { v, state, _ in state = v.translation.height }
-                    .onEnded { v in
-                        let proposed = topHeight + v.translation.height
-                        let maxAllowed = Swift.min(maxTop, totalHeight - minBottom - 6)
-                        topHeight = Swift.max(minTop, Swift.min(proposed, maxAllowed))
-                    }
-            )
-            .cursor(.resizeUpDown)
+    private func hDivider(totalHeight: CGFloat) -> some View {
+        ZStack {
+            Rectangle()
+                .fill(isDragging
+                      ? Color(red: 0.4, green: 0.65, blue: 1.0).opacity(0.60)
+                      : Color.white.opacity(0.10))
+                .frame(height: 1)
+                .animation(.easeInOut(duration: 0.12), value: isDragging)
+
+            Color.clear
+                .frame(height: 8)
+                .contentShape(Rectangle())
+        }
+        .frame(height: 8)
+        .cursor(.resizeUpDown)
+        .gesture(
+            DragGesture(minimumDistance: 0, coordinateSpace: .global)
+                .onChanged { value in
+                    if !isDragging { isDragging = true }
+                    let proposed = topHeight + value.translation.height
+                    topHeight = clampedTop(totalHeight, proposed: proposed)
+                }
+                .onEnded { _ in
+                    isDragging = false
+                }
+        )
     }
 }
 
