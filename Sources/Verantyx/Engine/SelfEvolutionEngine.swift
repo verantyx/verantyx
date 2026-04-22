@@ -176,11 +176,35 @@ final class SelfEvolutionEngine: ObservableObject {
         guard let node = sourceNodes.first(where: { $0.relativePath == relativePath }) else {
             return
         }
+        // ── Sanitize: strip Markdown code fences AI sometimes adds by mistake ──
+        // e.g. AI writes ```swift\n...\n``` but we need only the inner content
+        let sanitized = Self.stripCodeFences(from: newContent)
+
         let patch = FilePatch(relativePath: relativePath,
                               originalContent: node.content,
-                              patchedContent: newContent)
+                              patchedContent: sanitized)
         pendingPatches.removeAll { $0.relativePath == relativePath }
         pendingPatches.append(patch)
+    }
+
+    /// Strip leading/trailing Markdown code fences from AI-generated content.
+    /// Handles: ```swift\n...\n```, ```\n...\n```, and lone ``` at line start.
+    static func stripCodeFences(from content: String) -> String {
+        var lines = content.components(separatedBy: "\n")
+
+        // Remove leading fence line (```swift, ```Swift, ```, etc.)
+        if let first = lines.first,
+           first.trimmingCharacters(in: .whitespaces).hasPrefix("```") {
+            lines.removeFirst()
+        }
+
+        // Remove trailing fence line (```)
+        if let last = lines.last,
+           last.trimmingCharacters(in: .whitespaces) == "```" {
+            lines.removeLast()
+        }
+
+        return lines.joined(separator: "\n")
     }
 
     /// Write all pending patches to disk (in-place edit of source files).

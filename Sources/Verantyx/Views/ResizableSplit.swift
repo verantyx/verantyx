@@ -3,10 +3,8 @@ import SwiftUI
 // MARK: - ResizableHSplit
 // Custom horizontal split container with drag divider.
 //
-// Fix: Replaced @GestureState dragOffset with @State leftWidth direct-update
-// so the left pane width is mutated immediately on every onChanged event,
-// eliminating the one-frame lag that caused jittery resizing.
-// The divider hit area is also widened to 8pt for easier grabbing.
+// Fix: Uses @GestureState to track drag offset relative to a base width.
+// This prevents the exponential growth bug where translation was added to an already-updated width.
 
 struct ResizableHSplit<Left: View, Right: View>: View {
     var minLeft: CGFloat
@@ -16,7 +14,8 @@ struct ResizableHSplit<Left: View, Right: View>: View {
     let left: Left
     let right: Right
 
-    @State private var leftWidth: CGFloat
+    @State private var baseWidth: CGFloat
+    @GestureState private var dragOffset: CGFloat = 0
     @State private var isDragging: Bool = false
 
     init(
@@ -32,14 +31,16 @@ struct ResizableHSplit<Left: View, Right: View>: View {
         self.minRight  = minRight
         self.left  = left()
         self.right = right()
-        _leftWidth = State(initialValue: initialLeft)
+        _baseWidth = State(initialValue: initialLeft)
     }
 
     var body: some View {
         GeometryReader { geo in
+            let currentWidth = clampedLeft(geo.size.width, proposed: baseWidth + dragOffset)
+            
             HStack(spacing: 0) {
                 left
-                    .frame(width: clampedLeft(geo.size.width, proposed: leftWidth))
+                    .frame(width: currentWidth)
                     .clipped()
 
                 divider(totalWidth: geo.size.width)
@@ -75,14 +76,15 @@ struct ResizableHSplit<Left: View, Right: View>: View {
         .cursor(.resizeLeftRight)
         .gesture(
             DragGesture(minimumDistance: 0, coordinateSpace: .global)
-                .onChanged { value in
-                    if !isDragging { isDragging = true }
-                    // Commit width directly every event — no accumulated offset lag
-                    let proposed = leftWidth + value.translation.width
-                    leftWidth = clampedLeft(totalWidth, proposed: proposed)
+                .updating($dragOffset) { value, state, _ in
+                    state = value.translation.width
                 }
-                .onEnded { _ in
+                .onChanged { _ in
+                    if !isDragging { isDragging = true }
+                }
+                .onEnded { value in
                     isDragging = false
+                    baseWidth = clampedLeft(totalWidth, proposed: baseWidth + value.translation.width)
                 }
         )
     }
@@ -98,7 +100,8 @@ struct ResizableVSplit<Top: View, Bottom: View>: View {
     let top: Top
     let bottom: Bottom
 
-    @State private var topHeight: CGFloat
+    @State private var baseHeight: CGFloat
+    @GestureState private var dragOffset: CGFloat = 0
     @State private var isDragging: Bool = false
 
     init(
@@ -114,14 +117,16 @@ struct ResizableVSplit<Top: View, Bottom: View>: View {
         self.minBottom = minBottom
         self.top    = top()
         self.bottom = bottom()
-        _topHeight = State(initialValue: initialTop)
+        _baseHeight = State(initialValue: initialTop)
     }
 
     var body: some View {
         GeometryReader { geo in
+            let currentHeight = clampedTop(geo.size.height, proposed: baseHeight + dragOffset)
+            
             VStack(spacing: 0) {
                 top
-                    .frame(height: clampedTop(geo.size.height, proposed: topHeight))
+                    .frame(height: currentHeight)
                     .clipped()
                 hDivider(totalHeight: geo.size.height)
                 bottom
@@ -153,13 +158,15 @@ struct ResizableVSplit<Top: View, Bottom: View>: View {
         .cursor(.resizeUpDown)
         .gesture(
             DragGesture(minimumDistance: 0, coordinateSpace: .global)
-                .onChanged { value in
-                    if !isDragging { isDragging = true }
-                    let proposed = topHeight + value.translation.height
-                    topHeight = clampedTop(totalHeight, proposed: proposed)
+                .updating($dragOffset) { value, state, _ in
+                    state = value.translation.height
                 }
-                .onEnded { _ in
+                .onChanged { _ in
+                    if !isDragging { isDragging = true }
+                }
+                .onEnded { value in
                     isDragging = false
+                    baseHeight = clampedTop(totalHeight, proposed: baseHeight + value.translation.height)
                 }
         )
     }
