@@ -10,6 +10,7 @@
 		01CE941270A2625978ADF74A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851696E9486FDE35D2146141 /* SettingsView.swift */; };
 		049BFE44D04F9FA1E5027996 /* BrowserBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C6D2F73754A7AA12136F9AC /* BrowserBridge.swift */; };
 		05A047EA46A5C3ACB146C539 /* DiffPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0676432D69FA1C167E518CC9 /* DiffPanelView.swift */; };
+		0A63761D3E2C49ED80D1D4A9 /* MLXRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A706F7BAC4CFDA999E202D /* MLXRunner.swift */; };
 		0D4B76D739C32EFAAC10D844 /* PrivacyShieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF413A3E752CA6446C0FD0A7 /* PrivacyShieldView.swift */; };
 		0DA8357EFE373A06984D6B27 /* SideBySideDiffView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77A7E899F70A18AE4543BB93 /* SideBySideDiffView.swift */; };
 		0F2343EF3C5679D871DEC983 /* AgentTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4FB2130D8251C87DD0E8274 /* AgentTool.swift */; };
@@ -78,6 +79,7 @@
 		DC25A03DB54A65B9B740D72A /* CortexEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CortexEngine.swift; sourceTree = "<group>"; };
 		DD8BBB55D4627EE66EB79331 /* WorkspaceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceManager.swift; sourceTree = "<group>"; };
 		E5C8788156A4713EDD89F173 /* Verantyx.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Verantyx.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E9A706F7BAC4CFDA999E202D /* MLXRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLXRunner.swift; sourceTree = "<group>"; };
 		F44C7CACCD10CB9F7836B4A7 /* SyntaxHighlighter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyntaxHighlighter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -166,6 +168,7 @@
 				DC25A03DB54A65B9B740D72A /* CortexEngine.swift */,
 				4BEAFD1ACA2A20312B98C1A6 /* DiffEngine.swift */,
 				92AED536E86FE739129AF444 /* HybridEngine.swift */,
+				E9A706F7BAC4CFDA999E202D /* MLXRunner.swift */,
 				4E2075CF721733CD4BDFF767 /* OllamaClient.swift */,
 				22B0F334C1BF16C8A60C5017 /* PrivacyProxy.swift */,
 				F44C7CACCD10CB9F7836B4A7 /* SyntaxHighlighter.swift */,
@@ -260,6 +263,7 @@
 				05A047EA46A5C3ACB146C539 /* DiffPanelView.swift in Sources */,
 				292F06655B38F087BBD57724 /* FileTreeView.swift in Sources */,
 				A531E331E9BA5755DA223AAB /* HybridEngine.swift in Sources */,
+				0A63761D3E2C49ED80D1D4A9 /* MLXRunner.swift in Sources */,
 				57CC8D875A2870E56B674276 /* MainSplitView.swift in Sources */,
 				74402A6B62B43AD8399A9847 /* ModelPickerView.swift in Sources */,
 				81CDD3782608E05A14C9A31D /* OllamaClient.swift in Sources */,

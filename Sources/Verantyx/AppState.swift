@@ -79,6 +79,8 @@ final class AppState: ObservableObject {
         case downloading(progress: Double)
         case ready(name: String)
         case ollamaReady(model: String)
+        case mlxReady(model: String)          // ← MLX server running at localhost:8080
+        case mlxDownloading(model: String)    // ← mlx_lm download in progress
         case error(String)
     }
 
@@ -87,6 +89,10 @@ final class AppState: ObservableObject {
     let agent = AgentEngine()
     let terminal = TerminalRunner()
     let cortex = CortexEngine()
+
+    // MLX state
+    @Published var activeMlxModel: String = "mlx-community/gemma-3-27b-it-4bit"
+    @Published var mlxServerLogs: [String] = []
 
     // Agent loop
     @Published var agentLoopEnabled: Bool = true {
@@ -384,28 +390,97 @@ final class AppState: ObservableObject {
 
     var isReady: Bool {
         switch modelStatus {
-        case .ready, .ollamaReady: return true
+        case .ready, .ollamaReady, .mlxReady: return true
         default: return false
         }
     }
 
     var statusLabel: String {
         switch modelStatus {
-        case .none:                    return "No model"
-        case .connecting:              return "Connecting…"
-        case .downloading(let p):      return "Downloading \(Int(p * 100))%"
-        case .ready(let n):            return n
-        case .ollamaReady(let m):      return "Ollama: \(m)"
-        case .error(let e):            return "Error: \(e)"
+        case .none:                          return "No model"
+        case .connecting:                    return "Connecting…"
+        case .downloading(let p):            return "Downloading \(Int(p * 100))%"
+        case .ready(let n):                  return n
+        case .ollamaReady(let m):            return "Ollama: \(m.components(separatedBy: ":").first ?? m)"
+        case .mlxReady(let m):              return "MLX: \(m.components(separatedBy: "/").last ?? m)"
+        case .mlxDownloading(let m):        return "⏬ \(m.components(separatedBy: "/").last ?? m)"
+        case .error(let e):                  return "Error: \(e)"
         }
     }
 
     var statusColor: Color {
         switch modelStatus {
-        case .ready, .ollamaReady:     return .green
-        case .error:                   return .red
-        case .downloading, .connecting: return .orange
-        case .none:                    return .gray
+        case .ready, .ollamaReady, .mlxReady: return .green
+        case .error:                           return .red
+        case .downloading, .connecting,
+             .mlxDownloading:                  return .orange
+        case .none:                            return .gray
+        }
+    }
+
+    // MARK: - MLX Actions
+
+    func startMLXServer(model: String? = nil) {
+        let modelId = model ?? activeMlxModel
+        modelStatus = .connecting
+        mlxServerLogs.removeAll()
+
+        Task {
+            do {
+                try await MLXRunner.shared.startServer(model: modelId) { @Sendable log in
+                    Task { @MainActor in
+                        self.mlxServerLogs.append(log)
+                        // Suppress verbose model loading from chat
+                    }
+                }
+                await MainActor.run {
+                    self.modelStatus = .mlxReady(model: modelId)
+                    self.activeMlxModel = modelId
+                    ToastManager.shared.show(
+                        "MLX: \(modelId.components(separatedBy: "/").last ?? modelId) ready 🚀",
+                        icon: "cpu",
+                        color: Color(red: 0.4, green: 0.85, blue: 0.6)
+                    )
+                }
+            } catch {
+                await MainActor.run {
+                    self.modelStatus = .error(error.localizedDescription)
+                    ToastManager.shared.show(
+                        "MLX error: \(error.localizedDescription)",
+                        icon: "exclamationmark.triangle.fill",
+                        color: .orange,
+                        duration: 5
+                    )
+                }
+            }
+        }
+    }
+
+    func downloadMLXModel(repoId: String) {
+        modelStatus = .mlxDownloading(model: repoId)
+        mlxServerLogs.removeAll()
+
+        Task {
+            do {
+                try await MLXRunner.shared.downloadModel(repoId: repoId) { @Sendable log in
+                    Task { @MainActor in
+                        self.mlxServerLogs.append(log)
+                    }
+                }
+                await MainActor.run {
+                    ToastManager.shared.show(
+                        "Downloaded: \(repoId.components(separatedBy: "/").last ?? repoId)",
+                        icon: "checkmark.circle.fill",
+                        color: .green,
+                        duration: 4
+                    )
+                    self.startMLXServer(model: repoId)
+                }
+            } catch {
+                await MainActor.run {
+                    self.modelStatus = .error("Download failed: \(error.localizedDescription)")
+                }
+            }
         }
     }
 }

@@ -41,11 +41,19 @@ actor AgentEngine {
                 maxTokens: 2048,
                 temperature: 0.1
             )
+        case .mlxReady:
+            // MLX server at localhost:8080 — OpenAI-compatible, fastest on Apple Silicon
+            rawOutput = await MLXRunner.shared.generate(
+                prompt: prompt,
+                systemPrompt: "You are Verantyx, an expert AI coding assistant running on Apple Silicon via MLX (high-speed unified memory inference).",
+                maxTokens: 4096,
+                temperature: 0.1
+            )
         case .ready:
             rawOutput = await callMLX(prompt: prompt)
         default:
             return AgentResult(
-                explanation: "⚠️ No model loaded. Use the model picker to connect Ollama or download a model.",
+                explanation: "⚠️ No model loaded. Use the model picker to connect Ollama, start MLX server, or download a model.",
                 diff: nil
             )
         }

@@ -9,6 +9,7 @@ struct ModelPickerView: View {
 
     enum Tab: String, CaseIterable {
         case ollama = "Ollama"
+        case mlx    = "MLX 🚀"
         case huggingface = "HuggingFace"
     }
 
@@ -26,11 +27,125 @@ struct ModelPickerView: View {
             Divider()
 
             switch tab {
-            case .ollama:  ollamaTab
+            case .ollama:      ollamaTab
+            case .mlx:         mlxTab
             case .huggingface: huggingFaceTab
             }
         }
         .padding(.bottom, 8)
+    }
+
+    // MARK: - MLX tab
+
+    private var mlxTab: some View {
+        VStack(alignment: .leading, spacing: 12) {
+
+            // Status badge
+            HStack(spacing: 8) {
+                Circle().fill(app.statusColor).frame(width: 8, height: 8)
+                Text(app.statusLabel).font(.callout).lineLimit(1)
+                    .foregroundStyle(app.statusColor)
+                Spacer()
+                if case .mlxReady = app.modelStatus {
+                    Label("Running", systemImage: "checkmark.circle.fill")
+                        .font(.caption).foregroundStyle(.green)
+                }
+            }
+
+            Divider()
+
+            Text("モデル選択").font(.caption2).foregroundStyle(.tertiary)
+
+            // Model list
+            ScrollView {
+                VStack(alignment: .leading, spacing: 6) {
+                    ForEach(MLXRunner.popularModels) { model in
+                        Button {
+                            app.activeMlxModel = model.id
+                        } label: {
+                            HStack(alignment: .top) {
+                                Image(systemName: app.activeMlxModel == model.id
+                                      ? "checkmark.circle.fill" : "circle")
+                                    .foregroundStyle(app.activeMlxModel == model.id
+                                                     ? Color.accentColor : .secondary)
+                                    .frame(width: 16)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(model.displayName)
+                                        .font(.caption)
+                                        .foregroundStyle(.primary)
+                                    Text("\(String(format: "%.1f", model.sizeGB)) GB  •  \(model.tags.joined(separator: ", "))")
+                                        .font(.caption2)
+                                        .foregroundStyle(.tertiary)
+                                }
+                                Spacer()
+                                if model.id == "mlx-community/gemma-3-27b-it-4bit" {
+                                    Text("推奨")
+                                        .font(.caption2)
+                                        .padding(.horizontal, 5).padding(.vertical, 2)
+                                        .background(Color.accentColor.opacity(0.2), in: Capsule())
+                                        .foregroundStyle(Color.accentColor)
+                                }
+                            }
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+            .frame(maxHeight: 180)
+
+            Divider()
+
+            // Action buttons
+            HStack(spacing: 8) {
+                Button {
+                    app.startMLXServer()
+                } label: {
+                    Label("Start MLX", systemImage: "play.fill")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled({
+                    if case .connecting = app.modelStatus { return true }
+                    if case .mlxReady(let m) = app.modelStatus { return m == app.activeMlxModel }
+                    return false
+                }())
+
+                Button {
+                    app.downloadMLXModel(repoId: app.activeMlxModel)
+                } label: {
+                    Label("Download", systemImage: "arrow.down.circle")
+                }
+                .buttonStyle(.bordered)
+                .disabled({
+                    if case .mlxDownloading = app.modelStatus { return true }
+                    return false
+                }())
+            }
+
+            // MLX Server Log (last 5 lines)
+            if !app.mlxServerLogs.isEmpty {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Server log").font(.caption2).foregroundStyle(.tertiary)
+                    ForEach(app.mlxServerLogs.suffix(5), id: \.self) { log in
+                        Text(log)
+                            .font(.system(size: 9, design: .monospaced))
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
+                }
+                .padding(6)
+                .background(Color(red: 0.1, green: 0.1, blue: 0.12), in: RoundedRectangle(cornerRadius: 6))
+            }
+
+            // Download tip
+            Text("初回はターミナルで:\n/usr/local/bin/python3 -m mlx_lm download \\\n  --model mlx-community/gemma-3-27b-it-4bit")
+                .font(.system(size: 9, design: .monospaced))
+                .foregroundStyle(.tertiary)
+                .padding(6)
+                .background(Color(red: 0.1, green: 0.1, blue: 0.12), in: RoundedRectangle(cornerRadius: 6))
+        }
+        .padding(12)
     }
 
     // MARK: - Ollama tab
