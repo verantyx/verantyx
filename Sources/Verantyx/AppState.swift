@@ -438,11 +438,58 @@ final class AppState: ObservableObject {
         let contextFile = selectedFile
         await MainActor.run { self.privacySteps = [] }
 
-        let snap_mode = inferenceMode
+        let snap_mode     = inferenceMode
         let snap_provider = cloudProvider
-        let snap_model = activeOllamaModel
-        let snap_status = modelStatus
+        let snap_model    = activeOllamaModel
+        let snap_status   = modelStatus
 
+        // ── Privacy Shield: PrivacyGateway (Phase 1 + Phase 2 + JCross) ──
+        // cloudDirect: HybridEngine (マスキングなし、直接送信)
+        if snap_mode == .privacyShield, let fileContent = context, let fileName = contextFile?.lastPathComponent {
+
+            let gatewayResult = await PrivacyGateway.shared.processWithGateway(
+                instruction: instruction,
+                fileContent: fileContent,
+                fileName: fileName,
+                fileURL: contextFile,
+                modelStatus: snap_status,
+                activeModel: snap_model,
+                provider: snap_provider,
+                cortex: cortex
+            ) { [weak self] step in
+                guard let self else { return }
+                await MainActor.run {
+                    self.privacySteps.append(step)
+                    self.messages.append(ChatMessage(role: .system, content: step))
+                }
+            }
+
+            await MainActor.run {
+                isGenerating = false
+                // GatewayStats → MaskingStats 変換 (UI表示用)
+                lastMaskingStats = MaskingStats(
+                    functions: gatewayResult.maskingStats.phase1RegexMasked,
+                    classes:   0,
+                    variables: gatewayResult.maskingStats.phase2SemanticMasked,
+                    strings:   gatewayResult.maskingStats.secretsBlocked,
+                    paths:     gatewayResult.maskingStats.pathsProtected
+                )
+                messages.append(ChatMessage(role: .assistant, content: gatewayResult.explanation))
+                if let code = gatewayResult.restoredCode, !code.isEmpty, let fileURL = contextFile {
+                    let diff = FileDiff(
+                        fileURL: fileURL,
+                        originalContent: selectedFileContent,
+                        modifiedContent: code,
+                        hunks: DiffEngine.compute(original: selectedFileContent, modified: code)
+                    )
+                    if operationMode == .aiPriority { autoApplyDiff(diff) }
+                    else { pendingDiff = diff; showDiff = true }
+                }
+            }
+            return
+        }
+
+        // ── Cloud Direct (or no file selected in Shield mode): HybridEngine ──
         let result = await HybridEngine.shared.process(
             instruction: instruction,
             fileContent: context,
