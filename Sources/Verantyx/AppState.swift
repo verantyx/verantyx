@@ -688,10 +688,22 @@ final class AppState: ObservableObject {
                         if let artifact = ArtifactParser.extract(from: text) {
                             self.ingestArtifact(artifact)
                         }
-                        // Strip both from chat display
+                        // Strip patch/artifact markup from display text
                         let stripped = PatchFileParser.strip(from: ArtifactParser.stripArtifactTags(from: text))
-                        if !stripped.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                            self.messages.append(ChatMessage(role: .assistant, content: stripped))
+                            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+                        if !stripped.isEmpty {
+                            // ── Anti-duplicate guard ────────────────────────
+                            // If streamToken already wrote a matching assistant msg,
+                            // finalise it in-place instead of appending a second copy.
+                            if let lastIdx = self.messages.indices.last,
+                               self.messages[lastIdx].role == .assistant {
+                                // Replace with the clean/stripped version
+                                self.messages[lastIdx].content = stripped
+                            } else {
+                                // No streamed message yet → create new one
+                                self.messages.append(ChatMessage(role: .assistant, content: stripped))
+                            }
                         }
                         // Notify if patches detected
                         if !patches.isEmpty {

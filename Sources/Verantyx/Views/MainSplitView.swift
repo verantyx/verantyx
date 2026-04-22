@@ -9,6 +9,7 @@ struct MainSplitView: View {
     @EnvironmentObject var app: AppState
     @State private var activitySection: ActivityBarView.ActivitySection = .explorer
     @State private var showModelPicker = false
+    @State private var showSettings    = false
 
     /// True once any non-system message exists — locks the mode toggle
     private var chatStarted: Bool {
@@ -37,7 +38,22 @@ struct MainSplitView: View {
         .animation(.easeInOut(duration: 0.25), value: app.operationMode)
         .toolbar { toolbarContent }
         .onAppear { app.connectOllama() }
-    }
+        // ── Settings sheet ─────────────────────────────────────────────────
+        .sheet(isPresented: $showSettings) {
+            SettingsView()
+                .environmentObject(app)
+        }
+        // ── Open Settings sheet when gear is tapped ────────────────────────
+        .onChange(of: activitySection) { section in
+            if section == .settings {
+                showSettings = true
+                // Reset so the bar doesn't stay highlighted
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                    activitySection = .explorer
+                }
+            }
+        }
+    } // end body
 
     // MARK: - Human Mode (4-pane IDE)
 

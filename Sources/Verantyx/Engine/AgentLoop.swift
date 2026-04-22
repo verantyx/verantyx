@@ -683,20 +683,32 @@ enum ModelProfileDetector {
     static func detect(modelId: String) -> ModelProfile {
         let id = modelId.lowercased()
 
-        // ── Nano ~2B ─────────────────────────────────────────────────────────
-        let nanoKeywords = ["e2b", "2b", "1b", "0.5b", "nano", "mini",
-                            "tiny", "small-2b", "1.5b", "phi-mini", "gemma-mini"]
-        if nanoKeywords.contains(where: { id.contains($0) }) {
-            return ModelProfile(modelId: modelId, tier: .nano,
-                                parameterBillions: 2.0, supportsThinkTags: false)
+        // ── Giant 70B+ (must check BEFORE large to avoid substring collision) ──
+        let giantKeywords = ["70b", "72b", "65b", "llama-3-70", "qwen2.5-72",
+                             "mixtral-8x7", "mixtral-8x22", "deepseek-r1-70"]
+        if giantKeywords.contains(where: { id.contains($0) }) {
+            return ModelProfile(modelId: modelId, tier: .giant,
+                                parameterBillions: 70.0, supportsThinkTags: true)
         }
 
-        // ── Small ~7B ─────────────────────────────────────────────────────────
-        let smallKeywords = ["7b", "8b", "6b", "mistral-7", "qwen-7", "llama-3-8b",
-                             "phi-4", "phi4", "codellama-7", "deepseek-r1-7"]
-        if smallKeywords.contains(where: { id.contains($0) }) {
-            return ModelProfile(modelId: modelId, tier: .small,
-                                parameterBillions: 7.0, supportsThinkTags: id.contains("think"))
+        // ── Large ~26-32B (check BEFORE small/mid to stop "6b" in "26b" matching) ──
+        let largeKeywords = ["26b", "27b", "32b", "gemma-3-27", "gemma-4-26",
+                             "gemma4-26", "qwen2.5-32", "deepseek-r1-32",
+                             // Ollama short names that represent large models
+                             "gemma4:26", "gemma4:27", "gemma3:27", "gemma3:26"]
+        if largeKeywords.contains(where: { id.contains($0) }) {
+            let supportsThink = id.contains("gemma-4") || id.contains("gemma4") || id.contains("think")
+            return ModelProfile(modelId: modelId, tier: .large,
+                                parameterBillions: 26.0, supportsThinkTags: supportsThink)
+        }
+
+        // ── Gemma4 / gemma3 base names with no B suffix (Ollama: "gemma4:26b") ──
+        // Handle case where Ollama sends "gemma4:26b" → already caught above via "26b"
+        // But "gemma4" alone (no size) → treat as large
+        if (id.hasPrefix("gemma4") || id.hasPrefix("gemma-4")) && !id.contains("2b") && !id.contains("e2b") {
+            let supportsThink = true
+            return ModelProfile(modelId: modelId, tier: .large,
+                                parameterBillions: 26.0, supportsThinkTags: supportsThink)
         }
 
         // ── Mid ~12-14B ───────────────────────────────────────────────────────
@@ -707,21 +719,24 @@ enum ModelProfileDetector {
                                 parameterBillions: 12.0, supportsThinkTags: true)
         }
 
-        // ── Large ~26-32B ─────────────────────────────────────────────────────
-        let largeKeywords = ["26b", "27b", "32b", "gemma-3-27", "gemma-4-26",
-                             "gemma4-26", "a4b", "qwen2.5-32", "deepseek-r1-32"]
-        if largeKeywords.contains(where: { id.contains($0) }) {
-            let supportsThink = id.contains("gemma-4") || id.contains("gemma4") || id.contains("think")
-            return ModelProfile(modelId: modelId, tier: .large,
-                                parameterBillions: 26.0, supportsThinkTags: supportsThink)
+        // ── Nano ~2B (check before small to avoid "2b" matching "12b") ────────
+        // Note: checked after large/mid so "e2b" in "gemma4:e2b" doesn't hit large
+        let nanoKeywords = ["e2b", ":2b", "-2b", "1b", "0.5b", "nano", "mini",
+                            "tiny", "small-2b", "1.5b", "phi-mini", "gemma-mini",
+                            "gemma2b", "gemma-2b"]
+        if nanoKeywords.contains(where: { id.contains($0) }) {
+            return ModelProfile(modelId: modelId, tier: .nano,
+                                parameterBillions: 2.0, supportsThinkTags: false)
         }
 
-        // ── Giant 70B+ ────────────────────────────────────────────────────────
-        let giantKeywords = ["70b", "72b", "65b", "llama-3-70", "qwen2.5-72",
-                             "mixtral-8x7", "mixtral-8x22", "deepseek-r1-70"]
-        if giantKeywords.contains(where: { id.contains($0) }) {
-            return ModelProfile(modelId: modelId, tier: .giant,
-                                parameterBillions: 70.0, supportsThinkTags: true)
+        // ── Small ~7B ────────────────────────────────────────────────────────
+        let smallKeywords = ["7b", "8b", "6b", "mistral-7", "qwen-7", "llama-3-8b",
+                             "codellama-7", "deepseek-r1-7",
+                             // phi-4 is ~14B but behaves like small in terms of context
+                             "phi-4", "phi4"]
+        if smallKeywords.contains(where: { id.contains($0) }) {
+            return ModelProfile(modelId: modelId, tier: .small,
+                                parameterBillions: 7.0, supportsThinkTags: id.contains("think"))
         }
 
         // ── Default: treat as Large ────────────────────────────────────────────

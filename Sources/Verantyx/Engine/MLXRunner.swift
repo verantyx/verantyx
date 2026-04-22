@@ -109,49 +109,116 @@ actor MLXRunner {
 
     // MARK: - Config.json quantization patcher
 
-    /// Fixes models (e.g. Gemma-4) whose config.json mixes top-level quant fields
-    /// with per-layer entries inside the same "quantization" dictionary.
-    /// MLXLMCommon expects ONLY {group_size, bits, mode?} at the top level.
-    /// Per-layer entries are moved to "quantization_per_layer" (ignored by MLXLMCommon).
-    /// This operation is idempotent.
+    /// Fixes models (e.g. Gemma-4, gemma-3-27b-it-4bit) whose config.json mixes
+    /// top-level quant fields with per-layer entries inside the same "quantization" key.
+    ///
+    /// Gemma-4 mixed format (causes "Type mismatch at 'quantization.mode'"):
+    ///   "quantization": {
+    ///     "group_size": 64,
+    ///     "bits": 4,
+    ///     "mode": "flex",             ← string (fine)
+    ///     "language_model.layers.0.mlp.gate_proj": {"group_size":64,"bits":4}  ← dict ← BREAKS
+    ///   }
+    ///
+    /// Fix: move all dict-valued keys → "quantization_per_layer" (ignored by MLXLMCommon).
+    /// Also handles "mode" being a nested dict (alternate Gemma-4 format).
+    /// Searches ALL config.json files under the model snapshot directory (recursive).
+    /// Idempotent: skips if quantization_per_layer already exists.
     private func patchQuantizationConfig(modelId: String, log: @Sendable (String) -> Void) {
         let cacheRoot = MLXRunner.cacheDir
         let dirName   = "models--" + modelId.replacingOccurrences(of: "/", with: "--")
         let modelDir  = cacheRoot.appendingPathComponent(dirName)
 
-        guard let snapshotsDir = try? FileManager.default
-            .contentsOfDirectory(at: modelDir.appendingPathComponent("snapshots"),
-                                 includingPropertiesForKeys: nil)
-            .first(where: { $0.hasDirectoryPath })
-        else { return }
-
-        let configPath = snapshotsDir.appendingPathComponent("config.json")
-        guard FileManager.default.fileExists(atPath: configPath.path),
-              let data = try? Data(contentsOf: configPath),
-              var json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-              var quant = json["quantization"] as? [String: Any]
-        else { return }
-
-        // Already patched if quantization_per_layer exists
-        guard json["quantization_per_layer"] == nil else { return }
-
-        // Split: dict values → per_layer, non-dict values → keep in quantization
-        var topLevel:  [String: Any] = [:]
-        var perLayer:  [String: Any] = [:]
-        for (k, v) in quant {
-            if v is [String: Any] { perLayer[k] = v } else { topLevel[k] = v }
+        // ── Find all config.json files under the model dir (snapshots/blobs) ──
+        let fm = FileManager.default
+        guard fm.fileExists(atPath: modelDir.path) else {
+            log("⚠️ Model cache dir not found: \(modelDir.path)")
+            return
         }
 
-        guard !perLayer.isEmpty else { return }   // nothing to fix
+        var configPaths: [URL] = []
+        if let enumerator = fm.enumerator(at: modelDir,
+                                           includingPropertiesForKeys: [.isRegularFileKey],
+                                           options: [.skipsHiddenFiles]) {
+            for case let file as URL in enumerator {
+                if file.lastPathComponent == "config.json" {
+                    configPaths.append(file)
+                }
+            }
+        }
 
-        json["quantization"]           = topLevel
-        json["quantization_per_layer"] = perLayer
+        if configPaths.isEmpty {
+            log("⚠️ No config.json found under \(modelDir.lastPathComponent)")
+            return
+        }
 
-        if let patched = try? JSONSerialization.data(withJSONObject: json,
-                                                      options: [.prettyPrinted, .sortedKeys]) {
-            try? patched.write(to: configPath)
-            // Log inline (sync) — no Task needed since patchQuantizationConfig is sync
-            log("🔧 Patched config.json: moved \(perLayer.count) per-layer quant entries to quantization_per_layer")
+        for configPath in configPaths {
+            patchSingleConfig(at: configPath, log: log)
+        }
+    }
+
+    /// Patch a single config.json file in-place (idempotent).
+    private func patchSingleConfig(at configPath: URL, log: @Sendable (String) -> Void) {
+        guard let data = try? Data(contentsOf: configPath),
+              var json = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
+        else { return }
+
+        // Already patched?
+        if json["quantization_per_layer"] != nil { return }
+
+        // ── Case 1: "quantization" is a dict with mixed top-level + per-layer keys ──
+        if var quant = json["quantization"] as? [String: Any] {
+            var topLevel:  [String: Any] = [:]
+            var perLayer:  [String: Any] = [:]
+
+            for (k, v) in quant {
+                if v is [String: Any] {
+                    // Any nested dict → move to per_layer
+                    // This covers both actual layer entries AND "mode": {"key": ...}
+                    perLayer[k] = v
+                } else {
+                    topLevel[k] = v
+                }
+            }
+
+            guard !perLayer.isEmpty else { return }  // nothing to fix
+
+            json["quantization"]           = topLevel
+            json["quantization_per_layer"] = perLayer
+
+            if let patched = try? JSONSerialization.data(withJSONObject: json,
+                                                          options: [.prettyPrinted, .sortedKeys]) {
+                do {
+                    try patched.write(to: configPath)
+                    log("🔧 Patched config.json: moved \(perLayer.count) keys → quantization_per_layer (\(configPath.deletingLastPathComponent().lastPathComponent))")
+                } catch {
+                    log("❌ Failed to write patched config.json: \(error.localizedDescription)")
+                }
+            }
+            return
+        }
+
+        // ── Case 2: "quantization" is an Array (some newer MLX models) ──────────
+        // e.g. "quantization": [{"key": "layer.0", "bits": 4, "group_size": 64}, ...]
+        // MLXLMCommon 2.21+ can handle array format, so we just leave it.
+        // If it fails anyway, convert to per_layer dict keyed by "key" field.
+        if let quantArray = json["quantization"] as? [[String: Any]] {
+            var perLayer: [String: Any] = [:]
+            for entry in quantArray {
+                if let key = entry["key"] as? String {
+                    var layerEntry = entry
+                    layerEntry.removeValue(forKey: "key")
+                    perLayer[key] = layerEntry
+                }
+            }
+            guard !perLayer.isEmpty else { return }
+            json["quantization"]           = [String: Any]()  // empty top-level
+            json["quantization_per_layer"] = perLayer
+            if let patched = try? JSONSerialization.data(withJSONObject: json,
+                                                          options: [.prettyPrinted, .sortedKeys]) {
+                try? patched.write(to: configPath)
+                log("🔧 Patched config.json (array→dict): \(perLayer.count) layers migrated")
+            }
         }
     }
 
