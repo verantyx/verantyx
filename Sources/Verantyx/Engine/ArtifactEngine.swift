@@ -151,3 +151,44 @@ private extension NSTextCheckingResult {
         return String(text[r])
     }
 }
+
+// MARK: - PatchFileParser
+// Detects [PATCH_FILE: relative/path.swift] ... ``` blocks produced by
+// the Self-Evolution system prompt and registers them as FilePatch objects.
+
+enum PatchFileParser {
+
+    /// Extract all (relativePath, content) pairs from an AI response.
+    /// Expected format:
+    ///   [PATCH_FILE: Sources/Verantyx/Views/SomeView.swift]
+    ///   ```swift
+    ///   // ... content ...
+    ///   ```
+    static func extract(from text: String) -> [(relativePath: String, content: String)] {
+        let pattern = #"\[PATCH_FILE:\s*([^\]]+)\]\s*```(?:swift|)?\n([\s\S]*?)```"#
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: .dotMatchesLineSeparators)
+        else { return [] }
+
+        let range = NSRange(text.startIndex..., in: text)
+        let matches = regex.matches(in: text, range: range)
+
+        return matches.compactMap { m -> (String, String)? in
+            guard let pathRange    = Range(m.range(at: 1), in: text),
+                  let contentRange = Range(m.range(at: 2), in: text)
+            else { return nil }
+            let path    = String(text[pathRange]).trimmingCharacters(in: .whitespaces)
+            let content = String(text[contentRange])
+            return (path, content)
+        }
+    }
+
+    /// Strip [PATCH_FILE:...] blocks from chat display text.
+    static func strip(from text: String) -> String {
+        let pattern = #"\[PATCH_FILE:[^\]]+\]\s*```(?:swift|)?[\s\S]*?```"#
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: .dotMatchesLineSeparators)
+        else { return text }
+        return regex.stringByReplacingMatches(
+            in: text, range: NSRange(text.startIndex..., in: text), withTemplate: ""
+        ).trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+}

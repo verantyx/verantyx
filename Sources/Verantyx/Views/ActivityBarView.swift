@@ -12,6 +12,7 @@ struct ActivityBarView: View {
         case search      = "magnifyingglass"
         case git         = "arrow.triangle.branch"
         case mcp         = "puzzlepiece.extension"
+        case evolution   = "arrow.triangle.2.circlepath"  // Self-Evolution
         case extensions  = "puzzlepiece"
         case settings    = "gearshape"
     }
@@ -26,7 +27,7 @@ struct ActivityBarView: View {
                     .foregroundStyle(Color(red: 0.4, green: 0.7, blue: 1.0))
                     .padding(.bottom, 12)
 
-                ForEach([ActivitySection.explorer, .search, .git, .mcp], id: \.self) { section in
+                ForEach([ActivitySection.explorer, .search, .git, .mcp, .evolution], id: \.self) { section in
                     activityButton(section)
                 }
             }
@@ -83,6 +84,20 @@ struct ActivityBarView: View {
                         .frame(width: 8, height: 8)
                         .offset(x: -6, y: 6)
                 }
+                // Evolution badge — spinning when building
+                if section == .evolution {
+                    if case .building(_) = SelfEvolutionEngine.shared.buildState {
+                        ProgressView()
+                            .scaleEffect(0.35)
+                            .frame(width: 8, height: 8)
+                            .offset(x: -6, y: 6)
+                    } else if !SelfEvolutionEngine.shared.pendingPatches.isEmpty {
+                        Circle()
+                            .fill(Color(red: 1.0, green: 0.65, blue: 0.2))
+                            .frame(width: 8, height: 8)
+                            .offset(x: -6, y: 6)
+                    }
+                }
             }
         }
         .buttonStyle(.plain)
@@ -95,6 +110,7 @@ struct ActivityBarView: View {
         case .explorer:  return "Explorer"
         case .search:    return "Search"
         case .git:       return "Source Control"
+        case .evolution: return "Self-Evolution"
         case .extensions: return "Extensions"
         case .settings:  return "Settings"
         }

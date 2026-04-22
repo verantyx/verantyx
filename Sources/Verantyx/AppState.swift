@@ -497,7 +497,24 @@ final class AppState: ObservableObject {
 
                 case .aiMessage(let text):
                     if !text.isEmpty {
-                        self.messages.append(ChatMessage(role: .assistant, content: text))
+                        // Detect PATCH_FILE blocks → register in SelfEvolutionEngine
+                        let patches = PatchFileParser.extract(from: text)
+                        for (relPath, content) in patches {
+                            SelfEvolutionEngine.shared.registerPatch(for: relPath, newContent: content)
+                        }
+                        // Detect <artifact> tags
+                        if let artifact = ArtifactParser.extract(from: text) {
+                            self.ingestArtifact(artifact)
+                        }
+                        // Strip both from chat display
+                        let stripped = PatchFileParser.strip(from: ArtifactParser.stripArtifactTags(from: text))
+                        if !stripped.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                            self.messages.append(ChatMessage(role: .assistant, content: stripped))
+                        }
+                        // Notify if patches detected
+                        if !patches.isEmpty {
+                            self.addSystemMessage("🧬 \(patches.count) 個のパッチを検出 — Self-Evolution パネルで確認できます")
+                        }
                     }
 
                 case .toolCall(let call):

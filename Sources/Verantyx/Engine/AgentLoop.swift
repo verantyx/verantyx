@@ -38,9 +38,41 @@ actor AgentLoop {
         let memorySection = await cortex?.buildMemoryPrompt(for: instruction) ?? ""
         let isWorkspaceless = workspaceURL == nil
 
+        // ── Self-evolution context (IDE source awareness) ─────────────
+        let selfEvoContext = await MainActor.run {
+            let nodes = SelfEvolutionEngine.shared.sourceNodes
+            guard !nodes.isEmpty else { return "" }
+            let indexSummary = nodes.prefix(60).map { n in
+                "  • \(n.relativePath) — \(n.summary)"
+            }.joined(separator: "\n")
+            return """
+
+## SELF-EVOLUTION (IDE Source Awareness)
+
+You are operating INSIDE the Verantyx IDE and can modify its own Swift source code.
+The IDE source is indexed. Key files:
+\(indexSummary)
+
+When the user asks you to modify the IDE itself (add feature, change UI, etc.):
+1. Identify the relevant Swift file(s) from the index above.
+2. Output the COMPLETE modified file content using this format:
+
+[PATCH_FILE: Sources/Verantyx/Views/ExampleView.swift]
+```swift
+// ... complete new file content ...
+```
+
+The IDE will detect these PATCH_FILE blocks, register them as FilePatch objects,
+and show them in the Self-Evolution panel for Apply & Rebuild.
+
+For artifact output use <artifact type="html"> tags.
+"""
+        }
+
         let systemPrompt = """
         \(AgentToolParser.toolInstructions)
         \(memorySection)
+        \(selfEvoContext)
         \(isWorkspaceless ? "\nNOTE: No workspace is open. If the task requires a project, create one with [WORKSPACE:] and [MKDIR:]." : "")
         \(contextFile.map { "CURRENT FILE (\(contextFileName ?? "file")):\n```\n\($0.prefix(6000))\n```" } ?? "")
         """

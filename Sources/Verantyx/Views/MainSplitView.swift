@@ -51,8 +51,9 @@ struct MainSplitView: View {
                     // ── Left pane ─────────────────────────────────────
                     Group {
                         switch activitySection {
-                        case .mcp:  MCPView()
-                        default:    FileTreeView()
+                        case .mcp:       MCPView()
+                        case .evolution: SelfEvolutionView().environmentObject(app)
+                        default:         FileTreeView()
                         }
                     }
                     .frame(maxHeight: .infinity)
