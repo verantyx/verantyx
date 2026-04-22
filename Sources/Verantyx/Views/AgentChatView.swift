@@ -305,95 +305,94 @@ struct AgentChatView: View {
             }
 
             // ── Text input + action buttons ───────────────────────────
-            HStack(alignment: .bottom, spacing: 6) {
-                // Attach image button
-                Button {
-                    let picked = AttachmentManager.pickImages()
-                    app.attachedImages.append(contentsOf: picked)
-                } label: {
-                    Image(systemName: "photo.badge.plus")
-                        .font(.system(size: 15))
-                        .foregroundStyle(
-                            app.isMultimodalModel
-                            ? Color(red: 0.6, green: 0.8, blue: 1.0)
-                            : Color(red: 0.35, green: 0.35, blue: 0.45)
-                        )
-                }
-                .buttonStyle(.plain)
-                .disabled(!app.isMultimodalModel)
-                .help(app.isMultimodalModel
-                      ? "画像を添付"
-                      : "このモデルはマルチモーダル非対応です")
+            HStack(alignment: .bottom, spacing: 8) {
 
-                // Attach file button
-                Button {
-                    let picked = AttachmentManager.pickFiles()
-                    app.attachedFiles.append(contentsOf: picked)
-                } label: {
-                    Image(systemName: "paperclip")
-                        .font(.system(size: 15))
-                        .foregroundStyle(Color(red: 0.6, green: 0.7, blue: 0.85))
-                }
-                .buttonStyle(.plain)
-                .help("ファイルを添付")
-
-                // ── ✦ SELF FIX BUTTON ────────────────────────────────
-                Button {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        app.selfFixMode.toggle()
+                // ── Fixed-width action button group ──────────────────────
+                // IMPORTANT: fixed frame prevents Self Fix toggle from
+                // shifting the TextEditor to the right
+                HStack(spacing: 2) {
+                    // Attach image
+                    Button {
+                        let picked = AttachmentManager.pickImages()
+                        app.attachedImages.append(contentsOf: picked)
+                    } label: {
+                        Image(systemName: "photo.badge.plus")
+                            .font(.system(size: 15))
+                            .foregroundStyle(
+                                app.isMultimodalModel
+                                ? Color(red: 0.6, green: 0.8, blue: 1.0)
+                                : Color(red: 0.35, green: 0.35, blue: 0.45)
+                            )
+                            .frame(width: 26, height: 26)
                     }
-                } label: {
-                    HStack(spacing: 4) {
+                    .buttonStyle(.plain)
+                    .disabled(!app.isMultimodalModel)
+                    .help(app.isMultimodalModel ? "画像を添付" : "このモデルはマルチモーダル非対応です")
+
+                    // Attach file
+                    Button {
+                        let picked = AttachmentManager.pickFiles()
+                        app.attachedFiles.append(contentsOf: picked)
+                    } label: {
+                        Image(systemName: "paperclip")
+                            .font(.system(size: 15))
+                            .foregroundStyle(Color(red: 0.6, green: 0.7, blue: 0.85))
+                            .frame(width: 26, height: 26)
+                    }
+                    .buttonStyle(.plain)
+                    .help("ファイルを添付")
+
+                    // ── Self Fix — icon-only, fixed frame ────────────────
+                    // Using just the icon + background color (no expanding text)
+                    // so width never changes and TextEditor stays in place.
+                    Button {
+                        app.selfFixMode.toggle()
+                    } label: {
                         Image(systemName: app.selfFixMode
                               ? "wrench.and.screwdriver.fill"
                               : "wrench.and.screwdriver")
-                            .font(.system(size: 12))
-                        if app.selfFixMode {
-                            Text("Self Fix")
-                                .font(.system(size: 10, weight: .bold, design: .monospaced))
-                        }
-                    }
-                    .foregroundStyle(app.selfFixMode
-                                     ? Color.black
-                                     : Color(red: 0.55, green: 0.55, blue: 0.65))
-                    .padding(.horizontal, app.selfFixMode ? 8 : 4)
-                    .padding(.vertical, 4)
-                    .background(
-                        app.selfFixMode
-                            ? Color(red: 1.0, green: 0.65, blue: 0.15)
-                            : Color.clear,
-                        in: RoundedRectangle(cornerRadius: 5)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 5)
-                            .stroke(
+                            .font(.system(size: 13))
+                            .foregroundStyle(app.selfFixMode
+                                             ? Color.black
+                                             : Color(red: 0.55, green: 0.55, blue: 0.65))
+                            .frame(width: 26, height: 26)
+                            .background(
                                 app.selfFixMode
                                     ? Color(red: 1.0, green: 0.65, blue: 0.15)
-                                    : Color.white.opacity(0.08),
-                                lineWidth: app.selfFixMode ? 0 : 0.5
+                                    : Color.white.opacity(0.06),
+                                in: RoundedRectangle(cornerRadius: 5)
                             )
-                    )
+                    }
+                    .buttonStyle(.plain)
+                    .help(app.selfFixMode
+                          ? "Self Fix モード ON — タップで解除"
+                          : "Self Fix: IDEソースを自己修正")
                 }
-                .buttonStyle(.plain)
-                .help(app.selfFixMode
-                      ? "Self Fix モード: 次の入力はIDEのソースを修正します (タップで解除)"
-                      : "Self Fix: 入力をIDEの自己修正モードに切り替えます")
-                .animation(.spring(response: 0.25, dampingFraction: 0.8), value: app.selfFixMode)
-                // ── END SELF FIX ──────────────────────────────────────
+                // FIXED width — never changes regardless of selfFixMode
+                .frame(width: 86, alignment: .leading)
 
-                // Text editor with placeholder
+                // ── TextEditor + placeholder ───────────────────────────
+                // Placeholder padding must match NSTextView's internal insets:
+                //   lineFragmentPadding ≈ 5pt (leading)
+                //   textContainerInset.y ≈ 5-7pt (top)
                 ZStack(alignment: .topLeading) {
                     if app.inputText.isEmpty {
                         Text(app.selfFixMode
                              ? "このIDEを修正… (Self Fix モード)"
-                             : (app.selectedFile == nil ? "Ask VerantyxAgent anything…" : "Describe the changes you want…"))
+                             : (app.selectedFile == nil
+                                ? "Ask VerantyxAgent anything…"
+                                : "Describe the changes you want…"))
                             .font(.system(size: 13))
                             .foregroundStyle(
                                 app.selfFixMode
                                     ? Color(red: 1.0, green: 0.65, blue: 0.15).opacity(0.55)
                                     : Color(red: 0.38, green: 0.38, blue: 0.45)
                             )
-                            .padding(.leading, 4).padding(.top, 9)
+                            // Matches NSTextView's default lineFragmentPadding (5) + inset (~6)
+                            .padding(.leading, 5)
+                            .padding(.top, 6)
+                            // No pointer interaction so clicks pass through to TextEditor
+                            .allowsHitTesting(false)
                     }
                     TextEditor(text: $app.inputText)
                         .font(.system(size: 13))
@@ -402,13 +401,13 @@ struct AgentChatView: View {
                         .frame(minHeight: 44, maxHeight: 110)
                         .focused($inputFocused)
                         .onKeyPress(.return) {
-                            // ⌘+Return to send
                             guard NSEvent.modifierFlags.contains(.command) else { return .ignored }
                             sendMessage()
                             return .handled
                         }
                 }
             }
+
             .padding(.horizontal, 10).padding(.vertical, 6)
             .background(
                 app.selfFixMode
