@@ -120,6 +120,43 @@ final class AppState: ObservableObject {
     @Published var lastMaskingStats: MaskingStats?
     @Published var privacySteps: [String] = []
 
+    // ── Model configuration (all persisted via UserDefaults) ──
+    @Published var temperature: Double = 0.1 {
+        didSet { UserDefaults.standard.set(temperature, forKey: "model_temperature") }
+    }
+    @Published var maxTokensOllama: Int = 2048 {
+        didSet { UserDefaults.standard.set(maxTokensOllama, forKey: "max_tokens_ollama") }
+    }
+    @Published var maxTokensMLX: Int = 4096 {
+        didSet { UserDefaults.standard.set(maxTokensMLX, forKey: "max_tokens_mlx") }
+    }
+    @Published var ollamaEndpoint: String = "http://localhost:11434" {
+        didSet { UserDefaults.standard.set(ollamaEndpoint, forKey: "ollama_endpoint") }
+    }
+    @Published var systemPrompt: String = "You are Verantyx, an expert AI coding assistant running on Apple Silicon. Be concise and precise. Prefer code over prose." {
+        didSet { UserDefaults.standard.set(systemPrompt, forKey: "system_prompt") }
+    }
+    @Published var streamingEnabled: Bool = true {
+        didSet { UserDefaults.standard.set(streamingEnabled, forKey: "streaming_enabled") }
+    }
+
+    // ── Tool toggles ──
+    @Published var toolBrowserEnabled: Bool = true {
+        didSet { UserDefaults.standard.set(toolBrowserEnabled, forKey: "tool_browser") }
+    }
+    @Published var toolWebSearchEnabled: Bool = true {
+        didSet { UserDefaults.standard.set(toolWebSearchEnabled, forKey: "tool_web_search") }
+    }
+    @Published var toolTerminalEnabled: Bool = true {
+        didSet { UserDefaults.standard.set(toolTerminalEnabled, forKey: "tool_terminal") }
+    }
+    @Published var toolDiffEnabled: Bool = true {
+        didSet { UserDefaults.standard.set(toolDiffEnabled, forKey: "tool_diff") }
+    }
+    @Published var toolJCrossEnabled: Bool = true {
+        didSet { UserDefaults.standard.set(toolJCrossEnabled, forKey: "tool_jcross") }
+    }
+
     enum ModelStatus: Equatable {
         case none
         case connecting
@@ -377,20 +414,23 @@ final class AppState: ObservableObject {
         logProcess("inference start [", kind: .system)
         logProcess("prompt \(prompt.count) chars", kind: .system)
 
-        // Build the stream based on active model
+        // Build the stream based on active model — use live settings
         let stream: AsyncThrowingStream<String, Error>
         switch snap_status {
         case .ollamaReady(let model):
-            logProcess("Ollama/\(model)", kind: .system)
-            // OllamaClient is an actor — call from nonisolated context via Task
+            logProcess("Ollama/\(model)  temp=\(temperature)  maxTok=\(maxTokensOllama)", kind: .system)
             stream = OllamaClient.shared.streamGenerate(
-                model: model, prompt: prompt, maxTokens: 2048, temperature: 0.1
+                model: model, prompt: prompt,
+                maxTokens: maxTokensOllama,
+                temperature: temperature
             )
         case .mlxReady:
             let m = activeMlxModel.components(separatedBy: "/").last ?? activeMlxModel
-            logProcess("MLX/\(m) @ localhost:8080", kind: .system)
+            logProcess("MLX/\(m) @ localhost:8080  temp=\(temperature)  maxTok=\(maxTokensMLX)", kind: .system)
             stream = await MLXRunner.shared.streamGenerate(
-                prompt: prompt, maxTokens: 4096, temperature: 0.1
+                prompt: prompt,
+                maxTokens: maxTokensMLX,
+                temperature: temperature
             )
         default:
             messages.append(ChatMessage(role: .assistant,
