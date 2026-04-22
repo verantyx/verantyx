@@ -43,6 +43,8 @@ struct MemoryNode: Identifiable, Codable {
 @MainActor
 final class CortexEngine: ObservableObject {
 
+    static weak var shared: CortexEngine?
+
     // MARK: - State
     @Published var nodes: [MemoryNode] = []
     @Published var compressedCount: Int = 0
@@ -69,6 +71,7 @@ final class CortexEngine: ObservableObject {
         self.isEnabled = UserDefaults.standard.object(forKey: "cortex_enabled") as? Bool ?? true
         self.contextThreshold = UserDefaults.standard.object(forKey: "cortex_threshold") as? Int ?? 3000
         loadFromDisk()
+        CortexEngine.shared = self  // register singleton
     }
 
     // MARK: - Public API

@@ -98,9 +98,16 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
             selfEvoContext = ""
         }
 
+        // ── Archived session memory (JCross) ─────────────────────────
+        // Facts from deleted sessions are permanently stored on disk.
+        // Inject the top-5 most relevant archived node summaries here.
+        let archiveSection = SessionMemoryArchiver.shared
+            .buildArchiveInjection(topK: 5, relevantTo: instruction)
+
         let systemPrompt = """
         \(AgentToolParser.toolInstructions)
         \(memorySection)
+        \(archiveSection)
         \(selfEvoContext)
         \(isWorkspaceless ? "\nNOTE: No workspace is open. If the task requires a project, create one with [WORKSPACE:] and [MKDIR:]." : "")
         \(contextFile.map { "CURRENT FILE (\(contextFileName ?? "file")):\n```\n\($0.prefix(6000))\n```" } ?? "")

@@ -146,7 +146,15 @@ final class SessionStore: ObservableObject {
         save(sessions[idx])
     }
 
+    /// Delete a session. The **conversation messages** are removed, but the
+    /// session's key facts are immortalized as a JCross node BEFORE deletion.
     func delete(_ sessionId: UUID) {
+        // ── Step 1: Archive to JCross (永続化) ─────────────────────────
+        if let session = sessions.first(where: { $0.id == sessionId }) {
+            SessionMemoryArchiver.shared.archiveBeforeDelete(session: session)
+        }
+
+        // ── Step 2: Remove the session JSON (会話は消す) ────────────────
         sessions.removeAll { $0.id == sessionId }
         let url = sessionURL(sessionId)
         try? FileManager.default.removeItem(at: url)
