@@ -36,7 +36,7 @@ struct MainSplitView: View {
 
                 Divider().opacity(0.3)
 
-                // ③ Center column: Chat + ProcessLog (bottom)
+                // ③ Center column: Chat + ProcessLog
                 VStack(spacing: 0) {
                     AgentChatView()
                         .frame(minHeight: 300)
@@ -45,12 +45,6 @@ struct MainSplitView: View {
                         Divider().opacity(0.3)
                         ThinkingLogView()
                             .frame(height: 180)
-                    }
-
-                    if app.selectedFile != nil {
-                        Divider().opacity(0.2)
-                        FilePaneView()
-                            .frame(minHeight: 80, maxHeight: 220)
                     }
                 }
                 .frame(minWidth: 340, idealWidth: 440, maxWidth: 620)

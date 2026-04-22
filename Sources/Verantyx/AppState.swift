@@ -151,21 +151,41 @@ final class AppState: ObservableObject {
     func openWorkspace() {
         guard let url = workspace.pickFolder() else { return }
         workspaceURL = url
+        workspaceFiles = []          // clear instantly for UI responsiveness
+        selectedFile = nil
+        selectedFileContent = ""
         terminal.workingDirectory = url
-        refreshFiles()
-        addSystemMessage("📂 Workspace opened: \(url.lastPathComponent)")
+        addSystemMessage("📂 Workspace: \(url.lastPathComponent)")
+        refreshFiles()               // async scan in background
     }
 
+    /// Async directory scan — never blocks the main thread.
     func refreshFiles() {
         guard let root = workspaceURL else { return }
-        workspaceFiles = workspace.listFiles(in: root,
-            extensions: ["swift","py","ts","js","go","rs","kt","java","c","cpp","h","md","json","yaml","toml"])
+        let exts = ["swift","py","ts","js","go","rs","kt","java","c","cpp","h",
+                    "md","json","yaml","toml","html","css","sh","rb","php"]
+        Task.detached(priority: .userInitiated) { [weak self] in
+            guard let self else { return }
+            let files = await self.workspace.listFilesAsync(in: root, extensions: exts)
+            await MainActor.run { self.workspaceFiles = files }
+        }
     }
 
+    /// Instant selection — show name immediately, read content async.
     func selectFile(_ url: URL) {
-        selectedFile = url
-        selectedFileContent = (try? String(contentsOf: url, encoding: .utf8)) ?? ""
-        addSystemMessage("📄 Context: \(url.lastPathComponent)")
+        selectedFile = url          // highlight instantly (no wait)
+        selectedFileContent = ""    // clear old content immediately
+        Task.detached(priority: .userInitiated) { [weak self] in
+            guard let self else { return }
+            // Read on background thread — never blocks UI
+            let content = (try? String(contentsOf: url, encoding: .utf8)) ??
+                          (try? String(contentsOf: url, encoding: .isoLatin1)) ?? ""
+            await MainActor.run {
+                // Only update if this file is still selected
+                guard self.selectedFile == url else { return }
+                self.selectedFileContent = content
+            }
+        }
     }
 
     // MARK: - Agent actions

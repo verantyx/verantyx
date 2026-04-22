@@ -22,10 +22,19 @@ final class WorkspaceManager {
         return panel.url
     }
 
-    // MARK: - Directory scan
+    // MARK: - Directory scan (sync — for legacy use)
 
-    /// Returns all files recursively matching given extensions.
     func listFiles(in root: URL, extensions: [String]) -> [URL] {
+        _scanDirectory(root: root, extensions: extensions)
+    }
+
+    // MARK: - Directory scan (async — preferred, never blocks main thread)
+
+    func listFilesAsync(in root: URL, extensions: [String]) async -> [URL] {
+        _scanDirectory(root: root, extensions: extensions)
+    }
+
+    private func _scanDirectory(root: URL, extensions: [String]) -> [URL] {
         var results: [URL] = []
         let fm = FileManager.default
         guard let enumerator = fm.enumerator(
