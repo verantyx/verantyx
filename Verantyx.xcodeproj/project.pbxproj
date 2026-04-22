@@ -43,6 +43,7 @@
 		DCE174A0A5C275ADA7206152 /* CortexEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC25A03DB54A65B9B740D72A /* CortexEngine.swift */; };
 		F18CCD15A913F15F96F0381A /* ActivityBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DC28C3194186DC74952BEAC /* ActivityBarView.swift */; };
 		F3B24E9BE65F23A9DE26AEE2 /* TerminalRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E5B4F881C230B229B05580 /* TerminalRunner.swift */; };
+		FBC092ADE581586CB3217611 /* VXMarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B542227025FB98F4433139B0 /* VXMarkView.swift */; };
 		FC30D048578E58D554A2F9D5 /* PrivacyProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B0F334C1BF16C8A60C5017 /* PrivacyProxy.swift */; };
 /* End PBXBuildFile section */
 
@@ -75,6 +76,7 @@
 		AB8C07A2395C323F940350C6 /* Verantyx.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Verantyx.entitlements; sourceTree = "<group>"; };
 		ABE4F19CD033EC88CE775297 /* AgentLoop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentLoop.swift; sourceTree = "<group>"; };
 		AF413A3E752CA6446C0FD0A7 /* PrivacyShieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyShieldView.swift; sourceTree = "<group>"; };
+		B542227025FB98F4433139B0 /* VXMarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VXMarkView.swift; sourceTree = "<group>"; };
 		BBFBBB5831368FECD08DF846 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		C4FB2130D8251C87DD0E8274 /* AgentTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentTool.swift; sourceTree = "<group>"; };
 		CCB5E227D30DCFCF698F28FD /* CloudAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudAPIClient.swift; sourceTree = "<group>"; };
@@ -139,6 +141,7 @@
 				91CC363258520DDB5548056F /* TerminalPanelView.swift */,
 				0990B0239FC0773B512E1863 /* ThinkingLogView.swift */,
 				34F90A23BE1370B3E68FB7BC /* ToastView.swift */,
+				B542227025FB98F4433139B0 /* VXMarkView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -280,6 +283,7 @@
 				F3B24E9BE65F23A9DE26AEE2 /* TerminalRunner.swift in Sources */,
 				302978F1B371B48CF5673CC8 /* ThinkingLogView.swift in Sources */,
 				3D65C40A8DC505214322CDD0 /* ToastView.swift in Sources */,
+				FBC092ADE581586CB3217611 /* VXMarkView.swift in Sources */,
 				830E1B4FD07FA788D91A09C0 /* VerantyxApp.swift in Sources */,
 				38463790F63CCF562DE29226 /* WebSearchEngine.swift in Sources */,
 				582245E341F93D3E1ECE5CBF /* WorkspaceManager.swift in Sources */,

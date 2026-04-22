@@ -100,10 +100,9 @@ struct MainSplitView: View {
         }
 
         ToolbarItem(placement: .principal) {
-            HStack(spacing: 8) {
-                Image(systemName: "v.circle.fill")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(Color(red: 0.4, green: 0.7, blue: 1.0))
+            HStack(spacing: 7) {
+                VXMarkView(size: 14,
+                           color: Color(red: 0.88, green: 0.88, blue: 0.94))
                 Text("Verantyx")
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(Color(red: 0.85, green: 0.85, blue: 0.92))
