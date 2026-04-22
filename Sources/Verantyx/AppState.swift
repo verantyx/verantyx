@@ -478,7 +478,10 @@ final class AppState: ObservableObject {
             if inferenceMode == .cloudDirect || inferenceMode == .privacyShield {
                 await runHybrid(instruction: text)
             } else if agentLoopEnabled {
-                await runAgentLoop(instruction: text)
+                // Pass images to agent loop so the model can see them
+                await runAgentLoop(instruction: text,
+                                   images: snapshotImages,
+                                   files: snapshotFiles)
             } else {
                 await runSinglePass(instruction: text,
                                     images: snapshotImages,
@@ -631,7 +634,9 @@ final class AppState: ObservableObject {
 
     // MARK: - Agent Loop (multi-turn, scaffolding)
 
-    private func runAgentLoop(instruction: String) async {
+    private func runAgentLoop(instruction: String,
+                              images: [AttachedImage] = [],
+                              files: [URL] = []) async {
         let context = selectedFileContent.isEmpty ? nil : selectedFileContent
         let contextFile = selectedFile
         let snap_workspace = workspaceURL
@@ -640,12 +645,26 @@ final class AppState: ObservableObject {
 
         // Capture and reset selfFixMode (one-shot per message)
         let snap_selfFix = selfFixMode
-        selfFixMode = false
+        await MainActor.run { self.selfFixMode = false }
 
         let snap_isAIPriority = (operationMode == .aiPriority)
 
+        // Build image context suffix so models that read text still see the filename
+        var imageContext = ""
+        if !images.isEmpty {
+            imageContext = "\n\n[Attached images: " +
+                images.map { $0.name }.joined(separator: ", ") + "]"
+        }
+        let fullInstruction = instruction + imageContext
+
+        // ── UUID-based streaming message tracker ─────────────────────
+        // Tracking by UUID prevents the duplicate-response bug that
+        // occurred when system/tool messages were inserted AFTER the
+        // streaming assistant message, making the "last role" check fail.
+        var streamingMsgId: UUID? = nil
+
         await AgentLoop.shared.run(
-            instruction: instruction,
+            instruction: fullInstruction,
             contextFile: context,
             contextFileName: contextFile?.lastPathComponent,
             workspaceURL: snap_workspace,
@@ -660,15 +679,19 @@ final class AppState: ObservableObject {
             await MainActor.run {
                 switch event {
                 case .start:
-                    break
+                    // Reset per-turn streaming ID when a new loop turn starts
+                    streamingMsgId = nil
 
                 case .streamToken(let token):
-                    // リアルタイムトークンを現在の assistant メッセージに追記
-                    if let lastIdx = self.messages.indices.last,
-                       self.messages[lastIdx].role == .assistant {
-                        self.messages[lastIdx].content += token
+                    if let sid = streamingMsgId,
+                       let idx = self.messages.firstIndex(where: { $0.id == sid }) {
+                        // Append token to the tracked streaming message
+                        self.messages[idx].content += token
                     } else {
-                        self.messages.append(ChatMessage(role: .assistant, content: token))
+                        // First token of this turn — create a new message and track it
+                        let msg = ChatMessage(role: .assistant, content: token)
+                        streamingMsgId = msg.id
+                        self.messages.append(msg)
                     }
 
                 case .thinking(let t):
@@ -689,21 +712,27 @@ final class AppState: ObservableObject {
                             self.ingestArtifact(artifact)
                         }
                         // Strip patch/artifact markup from display text
-                        let stripped = PatchFileParser.strip(from: ArtifactParser.stripArtifactTags(from: text))
-                            .trimmingCharacters(in: .whitespacesAndNewlines)
+                        let stripped = PatchFileParser.strip(
+                            from: ArtifactParser.stripArtifactTags(from: text)
+                        ).trimmingCharacters(in: .whitespacesAndNewlines)
 
                         if !stripped.isEmpty {
-                            // ── Anti-duplicate guard ────────────────────────
-                            // If streamToken already wrote a matching assistant msg,
-                            // finalise it in-place instead of appending a second copy.
-                            if let lastIdx = self.messages.indices.last,
-                               self.messages[lastIdx].role == .assistant {
-                                // Replace with the clean/stripped version
-                                self.messages[lastIdx].content = stripped
+                            // ── UUID-based anti-duplicate guard ─────────────
+                            // Find the exact streaming message by its UUID.
+                            // This is safe even when tool/system messages follow
+                            // the streaming message ("last role" check would fail).
+                            if let sid = streamingMsgId,
+                               let idx = self.messages.firstIndex(where: { $0.id == sid }) {
+                                // Finalise in-place with the clean stripped version
+                                self.messages[idx].content = stripped
                             } else {
-                                // No streamed message yet → create new one
-                                self.messages.append(ChatMessage(role: .assistant, content: stripped))
+                                // No streaming message for this turn → new bubble
+                                let msg = ChatMessage(role: .assistant, content: stripped)
+                                streamingMsgId = msg.id
+                                self.messages.append(msg)
                             }
+                            // Reset ID after finalising so next turn starts fresh
+                            streamingMsgId = nil
                         }
                         // Notify if patches detected
                         if !patches.isEmpty {
@@ -714,7 +743,6 @@ final class AppState: ObservableObject {
                 case .toolCall(let call):
                     self.messages.append(ChatMessage(role: .system,
                         content: "⚙️ \(call.displayLabel)"))
-                    // Also log to terminal
                     if case .runCommand(let cmd) = call.tool {
                         Task { await self.terminal.run(cmd, in: self.workspaceURL, initiatedByAI: true) }
                     }
@@ -739,9 +767,14 @@ final class AppState: ObservableObject {
                         self.terminal.workingDirectory = ws
                         self.refreshFiles()
                     }
+                    // Only emit done message if it differs from the last message
+                    // (prevents duplicate when .aiMessage already handled the final text)
                     if !msg.isEmpty {
-                        self.messages.append(ChatMessage(role: .assistant,
-                            content: "✅ \(msg)"))
+                        let lastContent = self.messages.last?.content ?? ""
+                        if !lastContent.hasSuffix(msg) {
+                            self.messages.append(ChatMessage(role: .assistant,
+                                content: "✅ \(msg)"))
+                        }
                     }
 
                 case .error(let err):
