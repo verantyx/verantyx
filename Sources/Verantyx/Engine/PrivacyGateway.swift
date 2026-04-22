@@ -229,6 +229,7 @@ actor PrivacyGateway {
         activeModel: String,
         provider: CloudProvider,
         cortex: CortexEngine,
+        useGemmaSemanticMasking: Bool = true,   // AppState.gemmaSemanticMaskingEnabled で制御
         onStep: @escaping @Sendable (String) async -> Void
     ) async -> GatewayResult {
 
@@ -255,18 +256,32 @@ actor PrivacyGateway {
         await onStep("🔒 Phase 1 masked \(stats1.total) identifiers (funcs/classes/vars/secrets)")
 
         // ── Step 3: Phase 2 (Gemmaセマンティックマスキング) ───────────────
-        await onStep("🧠 Step 3/5: Phase 2 — Gemma semantic deep scan…")
+        let finalMasked: String
+        let allMappings: [String: String]
 
-        let (finalMasked, allMappings) = await gemmaSemanticMask(
-            code: fileContent,
-            phase1MaskedCode: masked1,
-            phase1Map: map1,
-            modelStatus: modelStatus,
-            activeModel: activeModel,
-            onStep: onStep
-        )
+        if useGemmaSemanticMasking {
+            await onStep("🧠 Step 3/5: Phase 2 — Gemma semantic deep scan…")
+            (finalMasked, allMappings) = await gemmaSemanticMask(
+                code: fileContent,
+                phase1MaskedCode: masked1,
+                phase1Map: map1,
+                modelStatus: modelStatus,
+                activeModel: activeModel,
+                onStep: onStep
+            )
+        } else {
+            await onStep("⏩ Step 3/5: Gemma semantic scan skipped (disabled in Settings)")
+            // Phase 1のみ使用
+            var p1Map = [String: String]()
+            for (k, v) in map1.funcMap  { p1Map[k] = v }
+            for (k, v) in map1.classMap { p1Map[k] = v }
+            for (k, v) in map1.varMap   { p1Map[k] = v }
+            for (k, v) in map1.pathMap  { p1Map[k] = v }
+            finalMasked = masked1
+            allMappings = p1Map
+        }
 
-        let p2Count = allMappings.count - stats1.total
+        let p2Count = useGemmaSemanticMasking ? allMappings.count - stats1.total : 0
 
         // マッピングをJCrossに保存 (セッションキー付き)
         let gatewaySessionKey = "gateway_map_\(sessionId)"

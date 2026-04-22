@@ -195,6 +195,13 @@ final class AppState: ObservableObject {
         didSet { UserDefaults.standard.set(toolJCrossEnabled, forKey: "tool_jcross") }
     }
 
+    // ── Privacy Gateway: Gemma semantic masking ──
+    /// Gemmaによるセマンティックマスキング (Phase 2) の有効/無効
+    /// OFF時は Phase 1 正規表現マスキングのみ使用（高速、Gemma不要）
+    @Published var gemmaSemanticMaskingEnabled: Bool = true {
+        didSet { UserDefaults.standard.set(gemmaSemanticMaskingEnabled, forKey: "gemma_semantic_masking") }
+    }
+
     // ── Multimodal capability detection ──
     var isMultimodalModel: Bool {
         switch modelStatus {
@@ -447,6 +454,8 @@ final class AppState: ObservableObject {
         // cloudDirect: HybridEngine (マスキングなし、直接送信)
         if snap_mode == .privacyShield, let fileContent = context, let fileName = contextFile?.lastPathComponent {
 
+            let snap_gemma = gemmaSemanticMaskingEnabled
+
             let gatewayResult = await PrivacyGateway.shared.processWithGateway(
                 instruction: instruction,
                 fileContent: fileContent,
@@ -455,7 +464,8 @@ final class AppState: ObservableObject {
                 modelStatus: snap_status,
                 activeModel: snap_model,
                 provider: snap_provider,
-                cortex: cortex
+                cortex: cortex,
+                useGemmaSemanticMasking: snap_gemma
             ) { [weak self] step in
                 guard let self else { return }
                 await MainActor.run {
