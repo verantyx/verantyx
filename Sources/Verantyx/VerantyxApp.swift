@@ -6,8 +6,38 @@ import AppKit
 final class AppDelegate: NSObject, NSApplicationDelegate {
 
     var appState: AppState?
+    private var safeModeWindowController: NSWindowController?
 
-    // Called when Cmd+Q or File > Quit is pressed
+    // MARK: - Safe Mode — Shift Key Hardware Hook
+    //
+    // This is the FIRST thing that runs, before ANY SwiftUI scene.
+    // CGEventSource reads physical keyboard state directly from hardware.
+    // AI cannot modify this logic because it runs before the agent system initializes.
+
+    func applicationWillFinishLaunching(_ notification: Notification) {
+        guard SafeModeGuard.shared.checkOnLaunch() else { return }
+
+        // Show Safe Mode window BLOCKING the normal UI
+        let window = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 760, height: 540),
+            styleMask: [.titled, .closable, .miniaturizable, .resizable],
+            backing: .buffered, defer: false
+        )
+        window.title = "⚠️ Verantyx — SAFE MODE"
+        window.center()
+        window.isMovableByWindowBackground = true
+        window.backgroundColor = NSColor(red: 0.08, green: 0.04, blue: 0.04, alpha: 1)
+        window.contentView = NSHostingView(
+            rootView: SafeModeWindow()
+                .environmentObject(SafeModeGuard.shared)
+        )
+
+        let wc = NSWindowController(window: window)
+        wc.showWindow(nil)
+        window.makeKeyAndOrderFront(nil)
+        safeModeWindowController = wc
+    }
+
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         guard let state = appState, state.isDirty else { return .terminateNow }
 

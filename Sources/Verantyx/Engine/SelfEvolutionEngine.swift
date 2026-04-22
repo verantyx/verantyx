@@ -203,20 +203,76 @@ final class SelfEvolutionEngine: ObservableObject {
 
     // MARK: - Rebuild
 
-    /// Apply patches + commit to git branch + xcodebuild + hot-swap.
+    // CI mode: validated route (default). Set to false to bypass.
+    var ciEnabled: Bool = true
+
+    /// Apply patches → CI validation loop → commit → xcodebuild → hot-swap.
     func applyPatchesAndRebuild(featureName: String, gitCommitMessage: String) async {
         guard let root = repoRoot else {
             buildState = .failed(log: "❌ Repo root not found")
             return
         }
 
-        buildState = .building(progress: 0.05)
+        buildState = .building(progress: 0.03)
         appendLog("⚡ 自己再構築を開始: \(featureName)")
 
-        // 1. Back up stable binary
+        // 1. Back up stable binary FIRST (always, before any mutation)
         backupStableBinary()
 
-        // 2. Apply patches to disk
+        // ── Phase A: 仮想 CI/CD ────────────────────────────────────────
+        if ciEnabled && !pendingPatches.isEmpty {
+            appendLog("\n🔬 仮想CI/CD を起動 (最大 \(CIValidationEngine.shared.MAX_RETRIES) 回)…")
+            buildState = .building(progress: 0.08)
+
+            let scheme = detectXcodeScheme(in: root) ?? "Verantyx"
+            let ci = CIValidationEngine.shared
+
+            let ciPassed = await ci.runValidationLoop(
+                repoRoot: root,
+                scheme: scheme,
+                patches: pendingPatches
+            ) { [weak self] errors -> [FilePatch] in
+                // AI auto-retry: send error digest back through AppState → AgentLoop
+                guard let self else { return [] }
+                let digest = ci.buildErrorDigest(errors: errors, patches: self.pendingPatches)
+                appendLog("🤖 AI にエラーを送信:\n\(digest.prefix(400))")
+
+                // Post error digest as a chat message → triggers next AI response
+                await MainActor.run {
+                    NotificationCenter.default.post(
+                        name: .selfEvolutionCIError,
+                        object: nil,
+                        userInfo: ["digest": digest, "errors": errors]
+                    )
+                }
+
+                // Wait up to 90s for AI to produce new patches
+                var waited = 0
+                let initialCount = self.pendingPatches.count
+                while waited < 90 {
+                    try? await Task.sleep(nanoseconds: 2_000_000_000) // 2s
+                    waited += 2
+                    if self.pendingPatches.count != initialCount { break }
+                }
+                return self.pendingPatches
+            }
+
+            // Relay CI log to our build log
+            appendLog(ci.ciLog)
+
+            if !ciPassed {
+                buildState = .failed(log: buildLog + "\n❌ CI/CD 失敗 — パッチは破棄されました")
+                appendLog("🛡 安定版バイナリを復元します")
+                restoreStableBinary()
+                return
+            }
+
+            appendLog("✅ CI/CD 通過 — メインビルドを開始します")
+        }
+
+        buildState = .building(progress: 0.20)
+
+        // ── Phase B: Apply patches (CI already wrote them on its branch) ──
         do {
             try applyAllPatches()
             appendLog("✅ パッチ適用完了 (\(pendingPatches.count) ファイル)")
@@ -225,35 +281,31 @@ final class SelfEvolutionEngine: ObservableObject {
             return
         }
 
-        buildState = .building(progress: 0.15)
+        buildState = .building(progress: 0.30)
 
-        // 3. Git: checkout -b custom-features/<name>
+        // ── Phase C: git commit on feature branch ─────────────────────
         let safeName = featureName.lowercased().replacingOccurrences(of: " ", with: "-").prefix(40)
         let branch = "custom-features/\(safeName)-\(Int(Date().timeIntervalSince1970))"
         customBranch = branch
 
         let gitBranch = await runGit(["checkout", "-b", branch], in: root)
         appendLog("🌿 ブランチ: \(branch)\n\(gitBranch)")
-
         let gitAdd = await runGit(["add", "-A"], in: root)
         appendLog("📂 git add: \(gitAdd)")
-
         let gitCommit = await runGit(
             ["commit", "-m", gitCommitMessage.isEmpty ? "feat: \(featureName)" : gitCommitMessage],
             in: root
         )
         appendLog("💾 git commit: \(gitCommit)")
 
-        buildState = .building(progress: 0.30)
+        buildState = .building(progress: 0.40)
 
-        // 4. xcodebuild
+        // ── Phase D: Release build ─────────────────────────────────────
         let scheme = detectXcodeScheme(in: root) ?? "Verantyx"
         let derivedData = safeDir.path.appending("/DerivedData")
-        appendLog("🔨 xcodebuild -scheme \(scheme)…")
+        appendLog("🔨 xcodebuild -scheme \(scheme) (Release)…")
 
-        let buildSuccess = await runXcodeBuild(
-            in: root, scheme: scheme, derivedDataPath: derivedData
-        )
+        let buildSuccess = await runXcodeBuild(in: root, scheme: scheme, derivedDataPath: derivedData)
 
         if buildSuccess {
             buildState = .building(progress: 0.95)
@@ -264,10 +316,8 @@ final class SelfEvolutionEngine: ObservableObject {
                 buildState = .succeeded(binaryURL: bin)
                 appendLog("🚀 新バイナリ: \(bin.lastPathComponent)")
 
-                // Register applied feature
                 let feature = AppliedFeature(
-                    id: UUID(), name: featureName,
-                    description: gitCommitMessage,
+                    id: UUID(), name: featureName, description: gitCommitMessage,
                     branchName: branch, appliedAt: Date(), prURL: nil
                 )
                 appliedFeatures.insert(feature, at: 0)
@@ -278,7 +328,7 @@ final class SelfEvolutionEngine: ObservableObject {
             }
         } else {
             buildState = .failed(log: buildLog)
-            appendLog("❌ ビルド失敗 — セーフモードへ")
+            appendLog("❌ Release ビルド失敗 — セーフモードへ")
             restoreStableBinary()
         }
     }

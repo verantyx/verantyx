@@ -756,6 +756,8 @@ final class AppState: ObservableObject {
     // MARK: - Model actions
 
     func connectOllama() {
+        // Wire CI/CD error → agent auto-reply loop (once)
+        registerCIErrorHook()
         Task {
             modelStatus = .connecting
             let models = await OllamaClient.shared.listModels()
@@ -788,6 +790,34 @@ final class AppState: ObservableObject {
         // Only show agent-loop tool events — NOT model load events (those use Toast)
         guard !text.hasPrefix("🟢") && !text.hasPrefix("🔌") else { return }
         messages.append(ChatMessage(role: .system, content: text))
+    }
+
+    // MARK: - CI/CD Auto-Reply Hook
+    //
+    // When CIValidationEngine detects a compile error after an AI-generated patch,
+    // it broadcasts selfEvolutionCIError. We automatically feed the error digest
+    // back to the agent as a new user message, so the agent self-corrects.
+
+    func registerCIErrorHook() {
+        NotificationCenter.default.addObserver(
+            forName: .selfEvolutionCIError,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            guard let self,
+                  let digest = notification.userInfo?["digest"] as? String else { return }
+
+            // Show in chat
+            self.messages.append(ChatMessage(
+                role: .system,
+                content: "🔬 CI エラー検出 — AI が自動修正を試みます"
+            ))
+
+            // Auto-send to agent
+            Task { @MainActor in
+                await self.sendMessage(with: digest)
+            }
+        }
     }
 
     var isReady: Bool {

@@ -8,6 +8,7 @@ struct SelfEvolutionView: View {
     @EnvironmentObject var app: AppState
     @StateObject private var evo = SelfEvolutionEngine.shared
     @StateObject private var pr  = GitHubPREngine.shared
+    @StateObject private var ci  = CIValidationEngine.shared
 
     @State private var activeSection: Section = .index
     @State private var featureName: String = ""
@@ -235,8 +236,29 @@ struct SelfEvolutionView: View {
                     patchCard(patch)
                 }
 
+                // CI/CD status card
+                ciStatusCard
+
                 // Feature name + Apply button
                 VStack(alignment: .leading, spacing: 8) {
+                    // CI toggle
+                    HStack {
+                        Toggle(isOn: Binding(
+                            get: { evo.ciEnabled },
+                            set: { evo.ciEnabled = $0 }
+                        )) {
+                            HStack(spacing: 5) {
+                                Image(systemName: "checkmark.shield")
+                                    .font(.system(size: 10))
+                                Text("仮想 CI/CD (推奨)")
+                                    .font(.system(size: 10))
+                            }
+                        }
+                        .toggleStyle(.switch)
+                        .controlSize(.mini)
+                        .foregroundStyle(Color(red: 0.70, green: 0.70, blue: 0.82))
+                        Spacer()
+                    }
                     Text("機能名")
                         .font(.system(size: 10)).foregroundStyle(.secondary)
                     TextField("例: チャット背景を深紫に変更", text: $featureName)
@@ -303,6 +325,59 @@ struct SelfEvolutionView: View {
         .padding(10)
         .background(Color.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 8))
         .padding(.horizontal, 10)
+    }
+
+    // MARK: - CI Status Card
+
+    @ViewBuilder
+    private var ciStatusCard: some View {
+        if ci.isRunning || ci.currentPhase != .idle {
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 6) {
+                    if ci.isRunning {
+                        ProgressView().scaleEffect(0.5).frame(width: 10, height: 10)
+                    } else {
+                        Image(systemName: ci.currentPhase == .passed
+                              ? "checkmark.shield.fill" : "shield.slash.fill")
+                            .font(.system(size: 10))
+                    }
+                    Text(ci.statusSummary)
+                        .font(.system(size: 10, weight: .semibold))
+                    Spacer()
+                    if ci.retryCount > 0 {
+                        Text("試行 \(ci.retryCount)/\(ci.MAX_RETRIES)")
+                            .font(.system(size: 9, design: .monospaced))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .foregroundStyle(ci.phaseColor)
+
+                // Error list (if any)
+                if !ci.lastErrors.isEmpty {
+                    VStack(alignment: .leading, spacing: 1) {
+                        ForEach(ci.lastErrors.prefix(5)) { err in
+                            Text("\(err.severity == "error" ? "❌" : "⚠️") \(err.file):\(err.line) \(err.message.prefix(60))")
+                                .font(.system(size: 8, design: .monospaced))
+                                .foregroundStyle(err.severity == "error" ? .red : .orange)
+                                .lineLimit(1)
+                        }
+                        if ci.lastErrors.count > 5 {
+                            Text("… 他 \(ci.lastErrors.count - 5) 件")
+                                .font(.system(size: 8)).foregroundStyle(.secondary)
+                        }
+                    }
+                    .padding(6)
+                    .background(Color.red.opacity(0.08), in: RoundedRectangle(cornerRadius: 4))
+                }
+            }
+            .padding(10)
+            .background(ci.phaseColor.opacity(0.06), in: RoundedRectangle(cornerRadius: 8))
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(ci.phaseColor.opacity(0.3), lineWidth: 0.8)
+            )
+            .padding(.horizontal, 10)
+        }
     }
 
     private var applyAndRebuildButton: some View {
