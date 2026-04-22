@@ -29,8 +29,9 @@ struct ArtifactPanelView: View {
             case .code:
                 codeView
             case .diff:
-                // Hand off to the existing diff view
+                // Hand off to the existing diff view — must pass EnvironmentObject
                 SideBySideDiffView()
+                    .environmentObject(app)
             }
         }
         .background(Color(red: 0.10, green: 0.10, blue: 0.13))

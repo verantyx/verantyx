@@ -10,6 +10,11 @@ struct MainSplitView: View {
     @State private var activitySection: ActivityBarView.ActivitySection = .explorer
     @State private var showModelPicker = false
 
+    /// True once any non-system message exists — locks the mode toggle
+    private var chatStarted: Bool {
+        app.messages.contains { $0.role != .system }
+    }
+
     var body: some View {
         Group {
             if app.operationMode == .aiPriority {
@@ -82,7 +87,7 @@ struct MainSplitView: View {
                         ResizableVSplit(
                             minTop: 200, maxTop: 99999, minBottom: 100, initialTop: 400
                         ) {
-                            // Artifact panel replaces / augments Diff view
+                            // Artifact panel — has Diff tab built-in
                             ArtifactPanelView()
                                 .environmentObject(app)
                         } bottom: {
@@ -94,11 +99,84 @@ struct MainSplitView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
+            // ── Human Mode: pending approval banner ──────────────────
+            if app.operationMode == .human, let diff = app.pendingDiff {
+                humanApprovalBanner(diff: diff)
+            }
+
             Divider().opacity(0.4)
             StatusBarView(terminal: app.terminal)
         }
         .background(Color(red: 0.11, green: 0.11, blue: 0.14))
         .toastOverlay()
+    }
+
+    // MARK: - Human Mode: approval banner
+
+    private func humanApprovalBanner(diff: FileDiff) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .foregroundStyle(Color(red: 1.0, green: 0.75, blue: 0.2))
+                .font(.system(size: 13))
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("承認待ち: \(diff.fileURL.lastPathComponent)")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(Color(red: 0.95, green: 0.88, blue: 0.60))
+                Text("AIが変更を提案しています。Diffタブで内容を確認してください。")
+                    .font(.system(size: 11))
+                    .foregroundStyle(Color(red: 0.65, green: 0.65, blue: 0.75))
+            }
+
+            Spacer()
+
+            // Quick Reject
+            Button {
+                app.pendingDiff = nil
+                app.showDiff    = false
+                app.addSystemMessage("↩️ 変更を却下しました")
+            } label: {
+                Text("却下")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(Color(red: 0.9, green: 0.4, blue: 0.4))
+                    .padding(.horizontal, 16).padding(.vertical, 5)
+                    .background(Color(red: 0.35, green: 0.12, blue: 0.12).opacity(0.6),
+                                in: RoundedRectangle(cornerRadius: 6))
+                    .overlay(RoundedRectangle(cornerRadius: 6)
+                        .stroke(Color(red: 0.9, green: 0.4, blue: 0.4).opacity(0.5), lineWidth: 1))
+            }
+            .buttonStyle(.plain)
+
+            // Quick Approve
+            Button {
+                do {
+                    try diff.modifiedContent.write(to: diff.fileURL, atomically: true, encoding: .utf8)
+                    app.selectedFileContent = diff.modifiedContent
+                    app.pendingDiff = nil
+                    app.showDiff    = false
+                    app.addSystemMessage("✅ 変更を承認・適用しました: \(diff.fileURL.lastPathComponent)")
+                } catch {
+                    app.addSystemMessage("❌ 書き込み失敗: \(error.localizedDescription)")
+                }
+            } label: {
+                Text("承認")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(Color(red: 0.3, green: 0.9, blue: 0.45))
+                    .padding(.horizontal, 16).padding(.vertical, 5)
+                    .background(Color(red: 0.12, green: 0.30, blue: 0.18).opacity(0.7),
+                                in: RoundedRectangle(cornerRadius: 6))
+                    .overlay(RoundedRectangle(cornerRadius: 6)
+                        .stroke(Color(red: 0.3, green: 0.9, blue: 0.45).opacity(0.5), lineWidth: 1))
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(Color(red: 0.16, green: 0.14, blue: 0.08))
+        .overlay(Rectangle().fill(Color(red: 1.0, green: 0.75, blue: 0.2).opacity(0.3)).frame(height: 1),
+                 alignment: .top)
+        .transition(.move(edge: .bottom).combined(with: .opacity))
+        .animation(.easeInOut(duration: 0.2), value: app.pendingDiff != nil)
     }
 
     // MARK: - Toolbar
@@ -123,6 +201,7 @@ struct MainSplitView: View {
         // ── Operation Mode switcher ─────────────────────────────────
         ToolbarItem(placement: .automatic) {
             Button {
+                guard !chatStarted else { return }
                 withAnimation(.easeInOut(duration: 0.2)) {
                     app.operationMode = app.operationMode == .aiPriority ? .human : .aiPriority
                 }
@@ -132,21 +211,33 @@ struct MainSplitView: View {
                         .font(.system(size: 11))
                     Text(app.operationMode.rawValue)
                         .font(.system(size: 11, weight: .semibold))
+                    // Show lock once chat has started
+                    if chatStarted {
+                        Image(systemName: "lock.fill")
+                            .font(.system(size: 9))
+                            .opacity(0.5)
+                    }
                 }
-                .foregroundStyle(app.operationMode.accentColor)
+                .foregroundStyle(chatStarted
+                                 ? app.operationMode.accentColor.opacity(0.45)
+                                 : app.operationMode.accentColor)
                 .padding(.horizontal, 9)
                 .padding(.vertical, 4)
                 .background(
                     RoundedRectangle(cornerRadius: 6)
-                        .fill(app.operationMode.accentColor.opacity(0.12))
+                        .fill(app.operationMode.accentColor.opacity(chatStarted ? 0.05 : 0.12))
                         .overlay(
                             RoundedRectangle(cornerRadius: 6)
-                                .stroke(app.operationMode.accentColor.opacity(0.35), lineWidth: 0.8)
+                                .stroke(app.operationMode.accentColor.opacity(chatStarted ? 0.15 : 0.35),
+                                        lineWidth: 0.8)
                         )
                 )
             }
             .buttonStyle(.plain)
-            .help("モード切替: \(app.operationMode == .aiPriority ? "Human Modeへ" : "AI Priorityへ")")
+            .disabled(chatStarted)
+            .help(chatStarted
+                  ? "モードはチャット開始後に変更できません（新しいセッションで切り替えてください）"
+                  : "モード切替: \(app.operationMode == .aiPriority ? "Human Modeへ" : "AI Priorityへ")")
         }
 
         ToolbarItem(placement: .automatic) {
