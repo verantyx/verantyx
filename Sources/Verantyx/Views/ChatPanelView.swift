@@ -104,7 +104,10 @@ struct ChatPanelView: View {
             .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 10))
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
-                    .strokeBorder(isFocused ? Color.accentColor : Color(nsColor: .separatorColor), lineWidth: 1)
+                    .strokeBorder(
+                        isFocused ? Color.accentColor.opacity(0.6) : Color(nsColor: .separatorColor),
+                        lineWidth: isFocused ? 1.5 : 0.5
+                    )
             )
 
             // Send button

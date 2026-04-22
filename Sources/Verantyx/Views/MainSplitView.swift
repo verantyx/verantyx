@@ -23,6 +23,10 @@ struct MainSplitView: View {
             toolbarContent
         }
         .background(Color(nsColor: .windowBackgroundColor))
+        .onAppear {
+            // Auto-probe Ollama on launch
+            app.connectOllama()
+        }
     }
 
     @ToolbarContentBuilder

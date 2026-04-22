@@ -44,8 +44,11 @@ struct ModelPickerView: View {
                     .frame(width: 8, height: 8)
                 Text(app.statusLabel)
                     .font(.callout)
+                    .lineLimit(1)
                 Spacer()
                 Button("Refresh") {
+                    // Clear error state before re-probing
+                    app.modelStatus = .none
                     Task { await OllamaClient.shared.resetAvailability() }
                     app.connectOllama()
                 }
@@ -88,6 +91,7 @@ struct ModelPickerView: View {
             }
 
             Button {
+                app.modelStatus = .none  // clear prior errors
                 app.connectOllama()
             } label: {
                 Label("Connect Ollama", systemImage: "link")
