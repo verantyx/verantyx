@@ -65,6 +65,13 @@ final class AppState: ObservableObject {
     @Published var inputText: String = ""
     @Published var isGenerating = false
 
+    // Attachments (images + files for multimodal inference)
+    @Published var attachedImages: [AttachedImage] = []
+    @Published var attachedFiles: [URL] = []
+
+    // Inference task handle (for cancellation)
+    private var inferenceTask: Task<Void, Never>? = nil
+
     // ── Performance metrics (the "Apple Silicon violence" numbers) ──
     @Published var tokensPerSecond: Double = 0       // live tok/s display
     @Published var totalTokensGenerated: Int = 0     // session total
@@ -155,6 +162,23 @@ final class AppState: ObservableObject {
     }
     @Published var toolJCrossEnabled: Bool = true {
         didSet { UserDefaults.standard.set(toolJCrossEnabled, forKey: "tool_jcross") }
+    }
+
+    // ── Multimodal capability detection ──
+    var isMultimodalModel: Bool {
+        switch modelStatus {
+        case .ollamaReady(let m):
+            let mm = m.lowercased()
+            return mm.contains("llava") || mm.contains("vision")
+                || mm.contains("gemma") || mm.contains("qwen") && mm.contains("vl")
+                || mm.contains("minicpm") || mm.contains("moondream")
+                || mm.contains("bakllava") || mm.contains("cogvlm")
+        case .mlxReady(let m):
+            let mm = m.lowercased()
+            return mm.contains("vision") || mm.contains("gemma-4")
+                || mm.contains("qwen-vl") || mm.contains("llava") || mm.contains("llm3.2")
+        default: return false
+        }
     }
 
     enum ModelStatus: Equatable {
@@ -286,10 +310,27 @@ final class AppState: ObservableObject {
 
     func sendMessage(with overrideText: String? = nil) {
         let text = (overrideText ?? inputText).trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !text.isEmpty, !isGenerating else { return }
+        let hasAttachments = !attachedImages.isEmpty || !attachedFiles.isEmpty
+        guard !text.isEmpty || hasAttachments, !isGenerating else { return }
         inputText = ""
 
-        messages.append(ChatMessage(role: .user, content: text))
+        // Build the user message (with attachment summary if present)
+        var displayContent = text
+        if !attachedImages.isEmpty {
+            displayContent += attachedImages.count == 1
+                ? "\n📎 [Image: \(attachedImages[0].name)]"
+                : "\n📎 [\(attachedImages.count) images attached]"
+        }
+        if !attachedFiles.isEmpty {
+            for f in attachedFiles { displayContent += "\n📎 [File: \(f.lastPathComponent)]" }
+        }
+
+        let snapshotImages = attachedImages
+        let snapshotFiles  = attachedFiles
+        attachedImages.removeAll()
+        attachedFiles.removeAll()
+
+        messages.append(ChatMessage(role: .user, content: displayContent))
         isGenerating = true
 
         // Auto-create session if there isn't one yet
@@ -297,7 +338,7 @@ final class AppState: ObservableObject {
             _ = sessions.newSession(messages: messages, workspacePath: workspaceURL?.path)
         }
 
-        Task {
+        inferenceTask = Task {
             // Compress context if needed (Cortex anti-Alzheimer's)
             let trimmed = cortex.compressIfNeeded(messages: messages)
             if trimmed.count < messages.count {
@@ -310,12 +351,22 @@ final class AppState: ObservableObject {
             } else if agentLoopEnabled {
                 await runAgentLoop(instruction: text)
             } else {
-                await runSinglePass(instruction: text)
+                await runSinglePass(instruction: text,
+                                    images: snapshotImages,
+                                    files: snapshotFiles)
             }
 
             // Persist session after each exchange
             sessions.updateActiveSession(messages: messages, workspacePath: workspaceURL?.path)
         }
+    }
+
+    /// Cancel the currently running inference.
+    func cancelGeneration() {
+        inferenceTask?.cancel()
+        inferenceTask = nil
+        isGenerating = false
+        addSystemMessage("⏹ 推論を中断しました")
     }
 
     // MARK: - Hybrid Engine (Privacy Shield / Cloud Direct)
@@ -448,7 +499,9 @@ final class AppState: ObservableObject {
     // Streams tokens directly into the chat bubble in real-time.
     // Tracks tok/s and emits process log entries.
 
-    private func runSinglePass(instruction: String) async {
+    private func runSinglePass(instruction: String,
+                               images: [AttachedImage] = [],
+                               files: [URL] = []) async {
         let context = selectedFileContent.isEmpty ? nil : selectedFileContent
         let contextFile = selectedFile
 

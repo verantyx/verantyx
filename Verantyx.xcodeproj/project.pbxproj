@@ -46,6 +46,7 @@
 		BAA142F996EB155712321FA7 /* AgentEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8900CE64BBFB018EC941426D /* AgentEngine.swift */; };
 		D38B10B52D88BBB770793AB6 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBFBBB5831368FECD08DF846 /* AppState.swift */; };
 		DCE174A0A5C275ADA7206152 /* CortexEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC25A03DB54A65B9B740D72A /* CortexEngine.swift */; };
+		EFB61FE0375DABC3AE733DFC /* AttachmentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B0DCDAD39999CBC0A66718 /* AttachmentManager.swift */; };
 		F18CCD15A913F15F96F0381A /* ActivityBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DC28C3194186DC74952BEAC /* ActivityBarView.swift */; };
 		F3B24E9BE65F23A9DE26AEE2 /* TerminalRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E5B4F881C230B229B05580 /* TerminalRunner.swift */; };
 		F999748874AF05602BF67DCB /* Counter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEE54E7C0348CE92B4AE07FD /* Counter.swift */; };
@@ -65,6 +66,7 @@
 		2EC500C787B15580CEAAC2B1 /* AppleScriptBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleScriptBridge.swift; sourceTree = "<group>"; };
 		338130D0F6553F90814F3B05 /* ChatPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatPanelView.swift; sourceTree = "<group>"; };
 		34F90A23BE1370B3E68FB7BC /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
+		37B0DCDAD39999CBC0A66718 /* AttachmentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentManager.swift; sourceTree = "<group>"; };
 		4BEAFD1ACA2A20312B98C1A6 /* DiffEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiffEngine.swift; sourceTree = "<group>"; };
 		4DC28C3194186DC74952BEAC /* ActivityBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityBarView.swift; sourceTree = "<group>"; };
 		4E2075CF721733CD4BDFF767 /* OllamaClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OllamaClient.swift; sourceTree = "<group>"; };
@@ -184,6 +186,7 @@
 				ABE4F19CD033EC88CE775297 /* AgentLoop.swift */,
 				C4FB2130D8251C87DD0E8274 /* AgentTool.swift */,
 				2EC500C787B15580CEAAC2B1 /* AppleScriptBridge.swift */,
+				37B0DCDAD39999CBC0A66718 /* AttachmentManager.swift */,
 				6C6D2F73754A7AA12136F9AC /* BrowserBridge.swift */,
 				CCB5E227D30DCFCF698F28FD /* CloudAPIClient.swift */,
 				DC25A03DB54A65B9B740D72A /* CortexEngine.swift */,
@@ -278,6 +281,7 @@
 				0F2343EF3C5679D871DEC983 /* AgentTool.swift in Sources */,
 				D38B10B52D88BBB770793AB6 /* AppState.swift in Sources */,
 				A6FB0E5DAFC79CA704D67754 /* AppleScriptBridge.swift in Sources */,
+				EFB61FE0375DABC3AE733DFC /* AttachmentManager.swift in Sources */,
 				049BFE44D04F9FA1E5027996 /* BrowserBridge.swift in Sources */,
 				96B9213F6B0070B3B58D8117 /* ChatPanelView.swift in Sources */,
 				506021C3BDB86670D434BBE7 /* CloudAPIClient.swift in Sources */,

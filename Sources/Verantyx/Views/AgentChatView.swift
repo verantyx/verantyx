@@ -197,98 +197,264 @@ struct AgentChatView: View {
     // MARK: - Model selector bar
 
     private var modelSelectorBar: some View {
-        HStack(spacing: 0) {
-            // Model chip
+        HStack(spacing: 8) {
+            // ── Model chip ────────────────────────────────────────────
             Button {
                 app.connectOllama()
             } label: {
                 HStack(spacing: 8) {
-                    // MLX chip
                     Text("MLX")
                         .font(.system(size: 10, weight: .bold, design: .monospaced))
                         .foregroundStyle(Color(red: 0.3, green: 0.3, blue: 0.35))
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Color(red: 0.6, green: 0.9, blue: 0.6), in: RoundedRectangle(cornerRadius: 3))
+                        .padding(.horizontal, 6).padding(.vertical, 2)
+                        .background(Color(red: 0.6, green: 0.9, blue: 0.6),
+                                    in: RoundedRectangle(cornerRadius: 3))
 
                     Text(modelDisplayName)
                         .font(.system(size: 12, design: .monospaced))
                         .foregroundStyle(Color(red: 0.75, green: 0.75, blue: 0.85))
 
+                    // Multimodal badge
+                    if app.isMultimodalModel {
+                        Text("👁")
+                            .font(.system(size: 10))
+                            .help("Multimodal — images supported")
+                    }
+
                     Image(systemName: "chevron.down")
                         .font(.system(size: 9))
                         .foregroundStyle(Color(red: 0.5, green: 0.5, blue: 0.6))
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
+                .padding(.horizontal, 12).padding(.vertical, 6)
                 .background(Color.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 6))
-                .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(Color.white.opacity(0.1), lineWidth: 0.5))
+                .overlay(RoundedRectangle(cornerRadius: 6)
+                    .strokeBorder(Color.white.opacity(0.1), lineWidth: 0.5))
             }
             .buttonStyle(.plain)
 
             Spacer()
 
-            // Send button
-            Button {
-                sendMessage()
-            } label: {
-                Image(systemName: app.isGenerating ? "stop.fill" : "paperplane.fill")
-                    .font(.system(size: 13))
-                    .foregroundStyle(app.inputText.isEmpty ? Color(red: 0.4, green: 0.4, blue: 0.5) : Color(red: 0.4, green: 0.7, blue: 1.0))
-                    .padding(8)
+            // ── Stop button (visible only while generating) ───────────
+            if app.isGenerating {
+                Button {
+                    app.cancelGeneration()
+                } label: {
+                    HStack(spacing: 5) {
+                        Image(systemName: "stop.fill").font(.system(size: 11))
+                        Text("停止").font(.system(size: 11, weight: .semibold))
+                    }
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 10).padding(.vertical, 5)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(Color(red: 0.8, green: 0.2, blue: 0.2))
+                    )
+                }
+                .buttonStyle(.plain)
+                .transition(.scale.combined(with: .opacity))
             }
-            .buttonStyle(.plain)
-            .disabled(app.inputText.trimmingCharacters(in: .whitespaces).isEmpty || app.isGenerating)
+
+            // ── Send button ───────────────────────────────────────────
+            if !app.isGenerating {
+                Button { sendMessage() } label: {
+                    Image(systemName: "paperplane.fill")
+                        .font(.system(size: 13))
+                        .foregroundStyle(
+                            (app.inputText.isEmpty && app.attachedImages.isEmpty && app.attachedFiles.isEmpty)
+                            ? Color(red: 0.4, green: 0.4, blue: 0.5)
+                            : Color(red: 0.4, green: 0.7, blue: 1.0)
+                        )
+                        .padding(8)
+                }
+                .buttonStyle(.plain)
+                .disabled(app.inputText.trimmingCharacters(in: .whitespaces).isEmpty
+                          && app.attachedImages.isEmpty
+                          && app.attachedFiles.isEmpty)
+            }
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 4)
+        .padding(.horizontal, 10).padding(.vertical, 4)
         .background(Color(red: 0.15, green: 0.15, blue: 0.19))
+        .animation(.easeInOut(duration: 0.15), value: app.isGenerating)
     }
 
     // MARK: - Input bar
 
     private var inputBar: some View {
         VStack(spacing: 0) {
-            // Context file badge
+            // ── Attachment preview strip ──────────────────────────────
+            if !app.attachedImages.isEmpty || !app.attachedFiles.isEmpty {
+                attachmentStrip
+                Divider().opacity(0.3)
+            }
+
+            // ── Selected code-file badge ──────────────────────────────
             if let file = app.selectedFile {
                 HStack(spacing: 6) {
-                    Image(systemName: "doc.text")
-                        .font(.system(size: 10))
-                    Text(file.lastPathComponent)
-                        .font(.system(size: 11, design: .monospaced))
+                    Image(systemName: FileIcons.icon(for: file)).font(.system(size: 10))
+                    Text(file.lastPathComponent).font(.system(size: 11, design: .monospaced))
                     Spacer()
                     Button {
                         app.selectedFile = nil; app.selectedFileContent = ""
                     } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 10))
-                    }
-                    .buttonStyle(.plain)
+                        Image(systemName: "xmark.circle.fill").font(.system(size: 10))
+                    }.buttonStyle(.plain)
                 }
                 .foregroundStyle(Color(red: 0.5, green: 0.7, blue: 0.9))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 5)
+                .padding(.horizontal, 12).padding(.vertical, 5)
                 .background(Color(red: 0.2, green: 0.3, blue: 0.45).opacity(0.5))
             }
 
-            ZStack(alignment: .topLeading) {
-                if app.inputText.isEmpty {
-                    Text(app.selectedFile == nil ? "Ask VerantyxAgent anything…" : "Describe the changes you want…")
-                        .font(.system(size: 13))
-                        .foregroundStyle(Color(red: 0.38, green: 0.38, blue: 0.45))
-                        .padding(.leading, 4)
-                        .padding(.top, 9)
+            // ── Text input + action buttons ───────────────────────────
+            HStack(alignment: .bottom, spacing: 6) {
+                // Attach image button
+                Button {
+                    let picked = AttachmentManager.pickImages()
+                    app.attachedImages.append(contentsOf: picked)
+                } label: {
+                    Image(systemName: "photo.badge.plus")
+                        .font(.system(size: 15))
+                        .foregroundStyle(
+                            app.isMultimodalModel
+                            ? Color(red: 0.6, green: 0.8, blue: 1.0)
+                            : Color(red: 0.35, green: 0.35, blue: 0.45)
+                        )
                 }
-                TextEditor(text: $app.inputText)
-                    .font(.system(size: 13))
-                    .foregroundStyle(Color(red: 0.88, green: 0.88, blue: 0.92))
-                    .scrollContentBackground(.hidden)
-                    .frame(minHeight: 44, maxHeight: 110)
-                    .focused($inputFocused)
+                .buttonStyle(.plain)
+                .disabled(!app.isMultimodalModel)
+                .help(app.isMultimodalModel
+                      ? "画像を添付"
+                      : "このモデルはマルチモーダル非対応です")
+
+                // Attach file button
+                Button {
+                    let picked = AttachmentManager.pickFiles()
+                    app.attachedFiles.append(contentsOf: picked)
+                } label: {
+                    Image(systemName: "paperclip")
+                        .font(.system(size: 15))
+                        .foregroundStyle(Color(red: 0.6, green: 0.7, blue: 0.85))
+                }
+                .buttonStyle(.plain)
+                .help("ファイルを添付")
+
+                // Text editor with placeholder
+                ZStack(alignment: .topLeading) {
+                    if app.inputText.isEmpty {
+                        Text(app.selectedFile == nil ? "Ask VerantyxAgent anything…" : "Describe the changes you want…")
+                            .font(.system(size: 13))
+                            .foregroundStyle(Color(red: 0.38, green: 0.38, blue: 0.45))
+                            .padding(.leading, 4).padding(.top, 9)
+                    }
+                    TextEditor(text: $app.inputText)
+                        .font(.system(size: 13))
+                        .foregroundStyle(Color(red: 0.88, green: 0.88, blue: 0.92))
+                        .scrollContentBackground(.hidden)
+                        .frame(minHeight: 44, maxHeight: 110)
+                        .focused($inputFocused)
+                        .onKeyPress(.return) {
+                            // ⌘+Return to send
+                            guard NSEvent.modifierFlags.contains(.command) else { return .ignored }
+                            sendMessage()
+                            return .handled
+                        }
+                }
             }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 4)
+            .padding(.horizontal, 10).padding(.vertical, 6)
             .background(Color(red: 0.17, green: 0.17, blue: 0.21))
+            // Drag-and-drop images onto the input bar
+            .onDrop(of: [.image, .fileURL], isTargeted: nil) { providers in
+                handleDrop(providers: providers)
+                return true
+            }
+        }
+    }
+
+    // MARK: - Attachment Strip
+
+    private var attachmentStrip: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                // Image thumbnails
+                ForEach(app.attachedImages) { img in
+                    ZStack(alignment: .topTrailing) {
+                        img.swiftUIImage
+                            .resizable().scaledToFill()
+                            .frame(width: 56, height: 56)
+                            .clipShape(RoundedRectangle(cornerRadius: 6))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
+                            )
+
+                        Button {
+                            app.attachedImages.removeAll { $0.id == img.id }
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.system(size: 13))
+                                .foregroundStyle(.white)
+                                .background(Circle().fill(Color.black.opacity(0.55)))
+                        }
+                        .buttonStyle(.plain)
+                        .offset(x: 4, y: -4)
+                    }
+                }
+
+                // File chips
+                ForEach(app.attachedFiles, id: \.absoluteString) { url in
+                    HStack(spacing: 5) {
+                        Image(systemName: FileIcons.icon(for: url))
+                            .font(.system(size: 10))
+                            .foregroundStyle(FileIcons.color(for: url))
+                        Text(url.lastPathComponent)
+                            .font(.system(size: 10, design: .monospaced))
+                            .lineLimit(1)
+                        Button {
+                            app.attachedFiles.removeAll { $0 == url }
+                        } label: {
+                            Image(systemName: "xmark").font(.system(size: 8))
+                        }.buttonStyle(.plain)
+                    }
+                    .foregroundStyle(Color(red: 0.75, green: 0.75, blue: 0.85))
+                    .padding(.horizontal, 8).padding(.vertical, 4)
+                    .background(
+                        RoundedRectangle(cornerRadius: 5)
+                            .fill(Color.white.opacity(0.07))
+                    )
+                }
+            }
+            .padding(.horizontal, 10).padding(.vertical, 6)
+        }
+        .background(Color(red: 0.14, green: 0.14, blue: 0.18))
+    }
+
+    // MARK: - Drag-and-drop handler
+
+    private func handleDrop(providers: [NSItemProvider]) {
+        for provider in providers {
+            if provider.hasItemConformingToTypeIdentifier("public.image") {
+                _ = provider.loadDataRepresentation(forTypeIdentifier: "public.image") { data, _ in
+                    guard let data, let img = AttachmentManager.loadImage(from: data) else { return }
+                    Task { @MainActor in
+                        guard app.isMultimodalModel else { return }
+                        app.attachedImages.append(img)
+                    }
+                }
+            } else if provider.hasItemConformingToTypeIdentifier("public.file-url") {
+                _ = provider.loadItem(forTypeIdentifier: "public.file-url") { item, _ in
+                    guard let data = item as? Data,
+                          let url = URL(dataRepresentation: data, relativeTo: nil) else { return }
+                    Task { @MainActor in
+                        // If it's an image and model supports multimodal, attach as image
+                        let imgExts: Set<String> = ["png","jpg","jpeg","gif","webp","heic","tiff"]
+                        if imgExts.contains(url.pathExtension.lowercased()), app.isMultimodalModel,
+                           let img = AttachmentManager.loadImage(from: url) {
+                            app.attachedImages.append(img)
+                        } else {
+                            app.attachedFiles.append(url)
+                        }
+                    }
+                }
+            }
         }
     }
 
