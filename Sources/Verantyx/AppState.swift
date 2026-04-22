@@ -65,6 +65,7 @@ final class AppState: ObservableObject {
 
     enum ModelStatus: Equatable {
         case none
+        case connecting
         case downloading(progress: Double)
         case ready(name: String)
         case ollamaReady(model: String)
@@ -232,6 +233,7 @@ final class AppState: ObservableObject {
     var statusLabel: String {
         switch modelStatus {
         case .none:                    return "No model"
+        case .connecting:              return "Connecting…"
         case .downloading(let p):      return "Downloading \(Int(p * 100))%"
         case .ready(let n):            return n
         case .ollamaReady(let m):      return "Ollama: \(m)"
@@ -241,10 +243,10 @@ final class AppState: ObservableObject {
 
     var statusColor: Color {
         switch modelStatus {
-        case .ready, .ollamaReady: return .green
-        case .error:               return .red
-        case .downloading:         return .orange
-        case .none:                return .gray
+        case .ready, .ollamaReady:     return .green
+        case .error:                   return .red
+        case .downloading, .connecting: return .orange
+        case .none:                    return .gray
         }
     }
 }
