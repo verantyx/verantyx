@@ -484,6 +484,8 @@ final class AppState: ObservableObject {
         let snap_selfFix = selfFixMode
         selfFixMode = false
 
+        let snap_isAIPriority = (operationMode == .aiPriority)
+
         await AgentLoop.shared.run(
             instruction: instruction,
             contextFile: context,
@@ -492,7 +494,8 @@ final class AppState: ObservableObject {
             modelStatus: snap_status,
             activeModel: snap_model,
             cortex: cortex,
-            selfFixMode: snap_selfFix
+            selfFixMode: snap_selfFix,
+            isAIPriority: snap_isAIPriority
         ) { [weak self] event in
             guard let self else { return }
             await MainActor.run {

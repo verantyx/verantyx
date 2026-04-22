@@ -9,13 +9,32 @@ import Foundation
 //  2. Call LLM
 //  3. Parse tool calls from response
 //  4. Execute tools (MKDIR, WRITE_FILE, RUN, WORKSPACE)
-//  5. Feed results back → repeat until [DONE] or max turns
+//  5. Feed results back → repeat until [DONE] or safety gate
+//
+// ── Turn Limit Policy ──────────────────────────────────────────────────────
+//  • AI Priority Mode : UNLIMITED turns. Circuit breaker kills loops where
+//    AI repeats the exact same tool call 3 times in a row (hash比較).
+//  • Human Mode       : UNLIMITED turns. After 5 consecutive unanswered tool
+//    calls, AI must emit a Yield — a status report asking the user to confirm.
+//
+// ── OOM Prevention ────────────────────────────────────────────────────────
+//  When conversation grows beyond COMPRESS_THRESHOLD chars, old turns are
+//  offloaded to CortexEngine and pruned from the live context window.
 
 actor AgentLoop {
 
     static let shared = AgentLoop()
     private let executor = AgentToolExecutor()
-    let maxTurns = 12  // safety limit
+
+    // ── Safety gates (not a hard turn limit) ──────────────────────────────
+    /// AI Priority: abort if the last N AI outputs are identical (stuck loop)
+    private let circuitBreakerWindow = 3
+
+    /// Human Mode: after this many consecutive tool-only turns, emit a Yield
+    private let yieldAfterToolTurns = 5
+
+    /// Compress conversation when it exceeds this many characters (~4000 tokens)
+    private let compressThreshold = 16_000
 
     // MARK: - Main loop
 
@@ -27,23 +46,30 @@ actor AgentLoop {
         modelStatus: AppState.ModelStatus,
         activeModel: String,
         cortex: CortexEngine?,
-        selfFixMode: Bool = false,   // ←← explicit: user pressed [Self Fix] button
+        selfFixMode: Bool = false,
+        isAIPriority: Bool = false,   // ←← drives turn policy
         onProgress: @escaping @Sendable (LoopEvent) async -> Void
     ) async {
 
         var currentWorkspace = workspaceURL
-        var converstation: [(role: String, content: String)] = []
+        var conversation: [(role: String, content: String)] = []
         var turn = 0
 
-        // ── Build initial system prompt ──────────────────────────────
+        // ── Safety state ──────────────────────────────────────────────────
+        /// Circuit breaker: rolling hash of last N raw responses (AI Priority)
+        var recentResponseHashes: [Int] = []
+        /// Yield counter: consecutive turns where AI only called tools (Human Mode)
+        var consecutiveToolOnlyTurns = 0
+        /// Total chars in conversation (for OOM guard)
+        var totalConversationChars = 0
+
+        // ── Build initial system prompt ───────────────────────────────────
         let memorySection = await cortex?.buildMemoryPrompt(for: instruction) ?? ""
         let isWorkspaceless = workspaceURL == nil
 
-        // ── Self-evolution context (明示的に Self Fix モードの時のみ注入) ───────
-        // ❗［重要＼ キーワード推測なし。ユーザーが [Self Fix] ボタンを押した時のみ有効。
+        // ── Self-evolution context ────────────────────────────────────────
         let selfEvoContext: String
         if selfFixMode {
-            // Auto-index if not yet done (user explicitly requested self-fix)
             let nodesEmpty = await MainActor.run { SelfEvolutionEngine.shared.sourceNodes.isEmpty }
             if nodesEmpty {
                 await onProgress(.aiMessage("🔍 IDE ソースを自動インデックス中…"))
@@ -94,18 +120,40 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
 """
             }
         } else {
-            // Normal mode — no self-evolution context injected
             selfEvoContext = ""
         }
 
-        // ── Archived session memory (JCross) ─────────────────────────
-        // Facts from deleted sessions are permanently stored on disk.
-        // Inject the top-5 most relevant archived node summaries here.
+        // ── Archived session memory (JCross) ─────────────────────────────
         let archiveSection = SessionMemoryArchiver.shared
             .buildArchiveInjection(topK: 5, relevantTo: instruction)
 
+        // ── Mode-specific loop rules (injected into system prompt) ────────
+        let loopRules: String
+        if isAIPriority {
+            loopRules = """
+
+## LOOP POLICY — AI Priority Mode (Unlimited)
+- You have NO turn limit. Keep working until [DONE].
+- Call tools as many times as needed without stopping.
+- Only stop when the task is truly complete.
+- Do NOT apologize or ask permission mid-task; just keep going.
+"""
+        } else {
+            loopRules = """
+
+## LOOP POLICY — Human Mode (Unlimited + Yield)
+- You have NO turn limit. Keep working until [DONE].
+- However, if you have called tools 5 times in a row without resolving the issue,
+  you MUST emit a Yield: stop tool calls and write a brief status report to the user
+  explaining what you tried, what failed, and what decision you need from them.
+  Example: "I've tried X and Y. The build still fails because Z. Should I try A or B?"
+- After the user replies, continue working.
+"""
+        }
+
         let systemPrompt = """
         \(AgentToolParser.toolInstructions)
+        \(loopRules)
         \(memorySection)
         \(archiveSection)
         \(selfEvoContext)
@@ -113,19 +161,30 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
         \(contextFile.map { "CURRENT FILE (\(contextFileName ?? "file")):\n```\n\($0.prefix(6000))\n```" } ?? "")
         """
 
-        converstation.append((role: "system", content: systemPrompt))
-        converstation.append((role: "user",   content: instruction))
+        conversation.append((role: "system", content: systemPrompt))
+        conversation.append((role: "user",   content: instruction))
+        totalConversationChars = systemPrompt.count + instruction.count
 
         await onProgress(.start(instruction: instruction))
 
-        // ── Agent loop ───────────────────────────────────────────────
-        while turn < maxTurns {
+        // ── Agent loop — no hard turn cap ─────────────────────────────────
+        while true {
             turn += 1
-
             await onProgress(.thinking(turn: turn))
 
-            // Call LLM
-            let prompt = buildConversationPrompt(converstation)
+            // ── OOM guard: compress if balloon ──────────────────────────
+            if totalConversationChars > compressThreshold {
+                conversation = await compressConversation(
+                    conversation,
+                    cortex: cortex,
+                    instruction: instruction
+                )
+                totalConversationChars = conversation.reduce(0) { $0 + $1.content.count }
+                await onProgress(.aiMessage("🧠 [Memory] 会話履歴を圧縮してコンテキストをオフロードしました"))
+            }
+
+            // ── Call LLM ─────────────────────────────────────────────────
+            let prompt = buildConversationPrompt(conversation)
             guard let rawResponse = await callModel(
                 prompt: prompt,
                 modelStatus: modelStatus,
@@ -135,24 +194,45 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
                 return
             }
 
-            // Store in cortex
+            // ── AI Priority circuit breaker ───────────────────────────────
+            if isAIPriority {
+                let hash = rawResponse.hashValue
+                recentResponseHashes.append(hash)
+                if recentResponseHashes.count > circuitBreakerWindow {
+                    recentResponseHashes.removeFirst()
+                }
+                if recentResponseHashes.count == circuitBreakerWindow
+                    && Set(recentResponseHashes).count == 1 {
+                    let msg = "⚡ [Circuit Breaker] AIが同じ出力を\(circuitBreakerWindow)回繰り返しました。無限ループを検知して停止します。"
+                    await onProgress(.error(msg))
+                    await cortex?.remember(
+                        key: "circuit_break_\(turn)",
+                        value: "Loop at turn \(turn): \(rawResponse.prefix(100))",
+                        importance: 0.9,
+                        zone: .near
+                    )
+                    return
+                }
+            }
+
+            // ── Store in cortex ───────────────────────────────────────────
             await cortex?.extractAndStore(from: rawResponse, userInstruction: instruction)
 
-            // Parse tool calls
+            // ── Parse tool calls ──────────────────────────────────────────
             let (tools, cleanText) = AgentToolParser.parse(from: rawResponse)
 
-            // Emit the AI's explanation text
             if !cleanText.isEmpty {
                 await onProgress(.aiMessage(cleanText))
             }
 
-            // If no tools → done (conversational answer)
+            // If no tools → conversational answer → done
             if tools.isEmpty {
+                consecutiveToolOnlyTurns = 0
                 await onProgress(.done(message: cleanText, workspace: currentWorkspace))
                 return
             }
 
-            // Execute tools sequentially
+            // ── Execute tools ─────────────────────────────────────────────
             var toolResults: [String] = []
             var isDone = false
 
@@ -162,7 +242,6 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
 
                 var result: String
 
-                // Handle workspace switch (needs to update currentWorkspace on MainActor side)
                 if case .setWorkspace(let path) = tool {
                     let wsURL = URL(fileURLWithPath: path)
                     currentWorkspace = wsURL
@@ -183,13 +262,67 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
 
             if isDone { return }
 
-            // Feed results back for next turn
-            let toolResultSummary = "TOOL RESULTS:\n" + toolResults.map { "  \($0)" }.joined(separator: "\n")
-            converstation.append((role: "assistant", content: rawResponse))
-            converstation.append((role: "user",      content: toolResultSummary + "\n\nContinue if there's more to do, or [DONE] if complete."))
-        }
+            // ── Yield check (Human Mode) ──────────────────────────────────
+            consecutiveToolOnlyTurns += 1
+            if !isAIPriority && consecutiveToolOnlyTurns >= yieldAfterToolTurns {
+                consecutiveToolOnlyTurns = 0
+                let yieldMsg = """
+                ⏸ [Yield — ターン\(turn)] \(yieldAfterToolTurns)回連続でツールを呼び出しましたが、\
+                まだ完了していません。現状を報告します：
 
-        await onProgress(.error("Max turns (\(maxTurns)) reached without [DONE]"))
+                \(toolResults.suffix(3).joined(separator: "\n"))
+
+                次のステップについて確認してください。続行しますか？または別のアプローチを指定してください。
+                """
+                await onProgress(.aiMessage(yieldMsg))
+                // Pause — wait for user's next message via the normal chat flow
+                return
+            }
+
+            // ── Feed results back → next turn ────────────────────────────
+            let toolResultSummary = "TOOL RESULTS:\n" + toolResults.map { "  \($0)" }.joined(separator: "\n")
+            conversation.append((role: "assistant", content: rawResponse))
+            conversation.append((role: "user",      content: toolResultSummary + "\n\nContinue if there's more to do, or [DONE] if complete."))
+            totalConversationChars += rawResponse.count + toolResultSummary.count
+        }
+    }
+
+    // MARK: - Context compression (OOM guard)
+
+    /// Compress old conversation turns into CortexEngine, then prune them.
+    /// Keeps the last 4 turns intact (most recent context).
+    private func compressConversation(
+        _ conversation: [(role: String, content: String)],
+        cortex: CortexEngine?,
+        instruction: String
+    ) async -> [(role: String, content: String)] {
+        guard conversation.count > 6 else { return conversation }
+
+        let keepCount = 4   // always keep the latest 4 entries
+        let toCompress = Array(conversation.dropFirst(1).dropLast(keepCount)) // skip system prompt
+        let toKeep     = Array(conversation.prefix(1) + conversation.suffix(keepCount))
+
+        // Build a text digest of what's being dropped
+        let digest = toCompress.map { turn in
+            let prefix = turn.role == "assistant" ? "A" : "U"
+            return "\(prefix): \(String(turn.content.prefix(150)))"
+        }.joined(separator: " | ")
+
+        await cortex?.remember(
+            key: "loop_compression_t\(toCompress.count)",
+            value: digest,
+            importance: 0.8,
+            zone: .near
+        )
+
+        // Insert a compression notice so the model knows context was trimmed
+        var result = toKeep
+        let notice = (
+            role: "user",
+            content: "🧠 [Context trimmed — \(toCompress.count) older turns offloaded to memory. Key task: \(instruction.prefix(100))]"
+        )
+        result.insert(notice, at: 1)
+        return result
     }
 
     // MARK: - LLM call
