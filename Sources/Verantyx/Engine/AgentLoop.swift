@@ -33,8 +33,7 @@ actor AgentLoop {
     /// Human Mode: after this many consecutive tool-only turns, emit a Yield
     private let yieldAfterToolTurns = 5
 
-    /// Compress conversation when it exceeds this many characters (~4000 tokens)
-    private let compressThreshold = 16_000
+    // compressThreshold is now per-model (from ModelProfile)
 
     // MARK: - Main loop
 
@@ -49,12 +48,21 @@ actor AgentLoop {
         selfFixMode: Bool = false,
         isAIPriority: Bool = false,   // ←← drives turn policy
         memoryLayer: JCrossLayer = .l2,   // ➤ cross-session injection depth
+        isFirstSession: Bool = false,         // ➤ inject self-awareness task on first turn
         onProgress: @escaping @Sendable (LoopEvent) async -> Void
     ) async {
 
         var currentWorkspace = workspaceURL
         var conversation: [(role: String, content: String)] = []
         var turn = 0
+
+        // ── Model tier detection ──────────────────────────────────────────
+        let profile = ModelProfileDetector.detect(modelId: activeModel)
+        let compressThreshold = profile.tier.compressThreshold
+        await onProgress(.aiMessage(
+            "🤖 モデルプロファイル: \(activeModel) → \(profile.tier.displayName) | " +
+            "Max tokens: \(profile.tier.maxTokens) | Temp: \(profile.tier.temperature)"
+        ))
 
         // ── Safety state ──────────────────────────────────────────────────
         /// Circuit breaker: rolling hash of last N raw responses (AI Priority)
@@ -154,17 +162,40 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
 """
         }
 
+        // Use tier-appropriate system prompt (nano gets a simplified version)
+        let contextSection: String
+        if let file = contextFile {
+            let limit = profile.tier == .nano ? 2000 : 6000
+            let name  = contextFileName ?? "file"
+            contextSection = "CURRENT FILE (\(name)):\n```\n\(file.prefix(limit))\n```"
+        } else {
+            contextSection = ""
+        }
         let systemPrompt = """
-        \(AgentToolParser.toolInstructions)
+        \(profile.systemPrompt)
         \(loopRules)
         \(memorySection)
         \(archiveSection)
         \(selfEvoContext)
         \(isWorkspaceless ? "\nNOTE: No workspace is open. If the task requires a project, create one with [WORKSPACE:] and [MKDIR:]." : "")
-        \(contextFile.map { "CURRENT FILE (\(contextFileName ?? "file")):\n```\n\($0.prefix(6000))\n```" } ?? "")
+        \(contextSection)
         """
 
         conversation.append((role: "system", content: systemPrompt))
+
+        // ── Self-awareness task (first session only) ──────────────────────
+        // モデルが自分の能力を把握するための初回タスク
+        if isFirstSession {
+            let selfTask = profile.selfAwarenessTask
+            conversation.append((role: "user", content: selfTask))
+            let toolScope = profile.tier == .nano ? "simple file tools only" : "the full tool set"
+            let responseStyle = profile.tier == .nano ? "very short" : "focused and structured"
+            let ack = "I am \(activeModel), a \(profile.tier.displayName) model (\(Int(profile.parameterBillions))B params). " +
+                      "I will use \(toolScope) and keep responses \(responseStyle)."
+            conversation.append((role: "assistant", content: ack))
+            await onProgress(.aiMessage("\u{1F9E0} [Self-Aware] \(ack)"))
+        }
+
         conversation.append((role: "user",   content: instruction))
         totalConversationChars = systemPrompt.count + instruction.count
 
@@ -191,7 +222,8 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
             guard let rawResponse = await callModel(
                 prompt: prompt,
                 modelStatus: modelStatus,
-                activeModel: activeModel
+                activeModel: activeModel,
+                profile: profile
             ) else {
                 await onProgress(.error("Model returned nil response"))
                 return
@@ -330,11 +362,19 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
 
     // MARK: - LLM call
 
-    private func callModel(prompt: String, modelStatus: AppState.ModelStatus, activeModel: String) async -> String? {
+    private func callModel(
+        prompt: String,
+        modelStatus: AppState.ModelStatus,
+        activeModel: String,
+        profile: ModelProfile = ModelProfileDetector.detect(modelId: "default")
+    ) async -> String? {
         switch modelStatus {
         case .ollamaReady(let model):
             return await OllamaClient.shared.generate(
-                model: model, prompt: prompt, maxTokens: 3072, temperature: 0.15
+                model: model,
+                prompt: prompt,
+                maxTokens: profile.tier.maxTokens,
+                temperature: profile.tier.temperature
             )
         case .ready:
             return "MLX not connected. Please use Ollama."
@@ -368,4 +408,291 @@ enum LoopEvent: @unchecked Sendable {
     case workspaceChanged(URL)
     case done(message: String, workspace: URL?)
     case error(String)
+}
+import Foundation
+
+// MARK: - ModelProfile
+// モデルの能力に基づいてシステムプロンプトと動作パラメータを自動調整する。
+//
+// 分類基準 (パラメータ数):
+//   nano  : ~2B  (gemma4:e2b, gemma-mini, phi-mini など)
+//   small : ~7B  (Mistral-7B, Qwen-7B など)
+//   mid   : ~14B (Qwen-14B, gemma-3-12b など)
+//   large : ~27B (gemma-3-27b, Qwen-32B など)
+//   giant : ~70B+ (Llama-3-70B など)
+
+// MARK: - ModelTier
+
+enum ModelTier: String, Sendable {
+    case nano   = "nano"    // ~2B  — 最小
+    case small  = "small"   // ~7B  — 小型
+    case mid    = "mid"     // ~12-14B — 中型
+    case large  = "large"   // ~26-32B — 大型
+    case giant  = "giant"   // ~70B+ — 最大
+
+    // 使えるツールのサブセット（nano ほど少ない）
+    var enabledToolCategories: Set<ToolCategory> {
+        switch self {
+        case .nano:
+            // nano: ファイル操作のみ。Web/JCross/Gitは混乱するのでオフ
+            return [.filesystem, .done]
+        case .small:
+            // small: ファイル + 単純な検索
+            return [.filesystem, .web_simple, .done]
+        case .mid:
+            // mid: ほぼフル。JCrossとGitは除く
+            return [.filesystem, .web_full, .done, .selffix]
+        case .large, .giant:
+            // large/giant: 全ツール有効
+            return [.filesystem, .web_full, .jcross, .git, .human, .done, .selffix]
+        }
+    }
+
+    var maxTokens: Int {
+        switch self {
+        case .nano:   return 512
+        case .small:  return 1024
+        case .mid:    return 2048
+        case .large:  return 3072
+        case .giant:  return 4096
+        }
+    }
+
+    var compressThreshold: Int {
+        switch self {
+        case .nano:   return 4_000
+        case .small:  return 8_000
+        case .mid:    return 12_000
+        case .large:  return 16_000
+        case .giant:  return 24_000
+        }
+    }
+
+    var temperature: Double {
+        switch self {
+        case .nano:   return 0.05  // 確定的に
+        case .small:  return 0.1
+        case .mid:    return 0.12
+        case .large:  return 0.15
+        case .giant:  return 0.2
+        }
+    }
+
+    var displayName: String {
+        switch self {
+        case .nano:   return "Nano (~2B)"
+        case .small:  return "Small (~7B)"
+        case .mid:    return "Medium (~12B)"
+        case .large:  return "Large (~27B)"
+        case .giant:  return "Giant (70B+)"
+        }
+    }
+}
+
+enum ToolCategory {
+    case filesystem, web_simple, web_full, jcross, git, human, done, selffix
+}
+
+// MARK: - ModelProfile
+
+struct ModelProfile: Sendable {
+    let modelId: String
+    let tier: ModelTier
+    let parameterBillions: Double
+    let supportsThinkTags: Bool   // <think>...</think> 対応モデル
+
+    // ── System prompt adapted to this model's capabilities ──────────────────
+    var systemPrompt: String {
+        switch tier {
+        case .nano:
+            return nanoPrompt
+        case .small:
+            return smallPrompt
+        case .mid:
+            return midPrompt
+        case .large, .giant:
+            return largePrompt
+        }
+    }
+
+    // ── First-turn self-awareness message ────────────────────────────────────
+    // モデルロード直後に AI 自身に自分の能力を伝えるプロンプト
+    var selfAwarenessTask: String {
+        """
+        [SYSTEM: Model Capability Report]
+        You are running as: \(modelId)
+        Parameter scale: \(parameterBillions)B parameters (\(tier.displayName))
+        Context window: ~\(tier.compressThreshold / 4) tokens
+        Max output: \(tier.maxTokens) tokens per turn
+        \(supportsThinkTags ? "Thinking: You can use <think>...</think> for internal reasoning." : "Thinking: Keep reasoning concise, no special tags.")
+
+        \(tier == .nano ? nanoSelfNote : "")
+        \(tier == .small ? smallSelfNote : "")
+        \(tier == .mid ? midSelfNote : "")
+        \(tier == .large || tier == .giant ? largeSelfNote : "")
+
+        Acknowledge by describing in 1 sentence what you can and cannot do in this configuration.
+        """
+    }
+
+    // MARK: - Tier-specific notes
+
+    private var nanoSelfNote: String { """
+        CONSTRAINTS: You are a nano model (~2B params). Your capabilities are limited.
+        - Only use these tools: MKDIR, WRITE, READ, LIST_DIR, EDIT_LINES, RUN, DONE
+        - Do NOT attempt multi-step reasoning chains — keep each response focused
+        - If unsure, write a simple answer rather than using tools
+        - One task at a time. Short responses only.
+        """ }
+
+    private var smallSelfNote: String { """
+        CAPABILITIES: Small model (~7B). Good for single-file tasks and simple searches.
+        - Use SEARCH for factual queries; avoid SEARCH_MULTI (too complex)
+        - Keep reasoning under 3 steps per turn
+        """ }
+
+    private var midSelfNote: String { """
+        CAPABILITIES: Medium model (~12B). Capable of multi-file tasks and web grounding.
+        - Use SEARCH and BROWSE freely; avoid JCROSS_QUERY/STORE (not yet reliable)
+        - You can use <think>...</think> for planning
+        """ }
+
+    private var largeSelfNote: String { """
+        CAPABILITIES: Large model (~26B+). Full autonomous agent capabilities.
+        - Use ALL tools including JCROSS, GIT_COMMIT, ASK_HUMAN
+        - Follow the full ReAct 4-phase loop: OBSERVE → ACT → EVOLVE → CONSOLIDATE
+        - You can handle complex multi-session, multi-file tasks autonomously
+        """ }
+
+    // MARK: - Tier prompts
+
+    private var nanoPrompt: String { """
+        You are VerantyxAgent (Nano). You are a small, fast AI assistant.
+        Keep answers SHORT and FOCUSED. Use simple language.
+
+        Available tools (use ONLY these):
+        [LIST_DIR: path]     — list files in a directory
+        [READ: path]         — read a file
+        [MKDIR: path]        — create directory
+        [WRITE: path]        — write file
+        [EDIT_LINES: path]   — edit specific lines in a file
+        [RUN: command]       — run a shell command
+        [DONE: message]      — finish the task
+
+        RULES:
+        - ONE tool per turn maximum
+        - Keep explanations under 3 sentences
+        - If you don't know something, say "I don't know"
+        - End every completed task with [DONE]
+        """ }
+
+    private var smallPrompt: String { """
+        You are VerantyxAgent (Small). An efficient coding assistant.
+
+        Available tools:
+        [LIST_DIR: path]       — list directory
+        [READ: path]           — read file
+        [MKDIR: path]          — create directory
+        [WRITE: path]          — write file
+        [EDIT_LINES: path]     — partial file edit
+        [RUN: command]         — shell command
+        [SEARCH: query]        — web search
+        [BROWSE: url]          — fetch URL
+        [WORKSPACE: path]      — set workspace
+        [DONE: message]        — finish
+
+        RULES:
+        - Check files before editing: LIST_DIR → READ → EDIT
+        - Use SEARCH for recent/unknown info
+        - Maximum 2 tools per turn
+        - End with [DONE]
+        """ }
+
+    private var midPrompt: String { """
+        You are VerantyxAgent (Medium). A capable autonomous coding assistant.
+
+        Available tools:
+        [LIST_DIR: path]       — list directory (tree)
+        [READ: path]           — read file
+        [MKDIR: path]          — create directory
+        [WRITE: path]          — write whole file
+        [EDIT_LINES: path]     — partial line edit
+        [RUN: command]         — shell command
+        [SEARCH: query]        — web search
+        [SEARCH_MULTI: query]  — parallel multi-source search
+        [BROWSE: url]          — fetch URL
+        [APPLY_PATCH: path]    — patch IDE source
+        [BUILD_IDE]            — compile IDE
+        [WORKSPACE: path]      — set workspace
+        [DONE: message]        — finish
+
+        WORKFLOW:
+        1. Explore: LIST_DIR → READ relevant files
+        2. Plan: <think>what to change</think>
+        3. Act: EDIT_LINES or APPLY_PATCH
+        4. Verify: RUN or BUILD_IDE
+        5. Done: DONE
+
+        Use SEARCH_MULTI when you need current information.
+        """ }
+
+    private var largePrompt: String {
+        // Full ReAct prompt — same as AgentToolParser.toolInstructions
+        AgentToolParser.toolInstructions
+    }
+}
+
+// MARK: - ModelProfileDetector
+
+enum ModelProfileDetector {
+
+    /// モデルIDからパラメータ数とティアを推定する
+    static func detect(modelId: String) -> ModelProfile {
+        let id = modelId.lowercased()
+
+        // ── Nano ~2B ─────────────────────────────────────────────────────────
+        let nanoKeywords = ["e2b", "2b", "1b", "0.5b", "nano", "mini",
+                            "tiny", "small-2b", "1.5b", "phi-mini", "gemma-mini"]
+        if nanoKeywords.contains(where: { id.contains($0) }) {
+            return ModelProfile(modelId: modelId, tier: .nano,
+                                parameterBillions: 2.0, supportsThinkTags: false)
+        }
+
+        // ── Small ~7B ─────────────────────────────────────────────────────────
+        let smallKeywords = ["7b", "8b", "6b", "mistral-7", "qwen-7", "llama-3-8b",
+                             "phi-4", "phi4", "codellama-7", "deepseek-r1-7"]
+        if smallKeywords.contains(where: { id.contains($0) }) {
+            return ModelProfile(modelId: modelId, tier: .small,
+                                parameterBillions: 7.0, supportsThinkTags: id.contains("think"))
+        }
+
+        // ── Mid ~12-14B ───────────────────────────────────────────────────────
+        let midKeywords = ["12b", "13b", "14b", "gemma-3-12", "codellama-13",
+                           "qwen2.5-14", "deepseek-r1-14"]
+        if midKeywords.contains(where: { id.contains($0) }) {
+            return ModelProfile(modelId: modelId, tier: .mid,
+                                parameterBillions: 12.0, supportsThinkTags: true)
+        }
+
+        // ── Large ~26-32B ─────────────────────────────────────────────────────
+        let largeKeywords = ["26b", "27b", "32b", "gemma-3-27", "gemma-4-26",
+                             "gemma4-26", "a4b", "qwen2.5-32", "deepseek-r1-32"]
+        if largeKeywords.contains(where: { id.contains($0) }) {
+            let supportsThink = id.contains("gemma-4") || id.contains("gemma4") || id.contains("think")
+            return ModelProfile(modelId: modelId, tier: .large,
+                                parameterBillions: 26.0, supportsThinkTags: supportsThink)
+        }
+
+        // ── Giant 70B+ ────────────────────────────────────────────────────────
+        let giantKeywords = ["70b", "72b", "65b", "llama-3-70", "qwen2.5-72",
+                             "mixtral-8x7", "mixtral-8x22", "deepseek-r1-70"]
+        if giantKeywords.contains(where: { id.contains($0) }) {
+            return ModelProfile(modelId: modelId, tier: .giant,
+                                parameterBillions: 70.0, supportsThinkTags: true)
+        }
+
+        // ── Default: treat as Large ────────────────────────────────────────────
+        return ModelProfile(modelId: modelId, tier: .large,
+                            parameterBillions: 26.0, supportsThinkTags: false)
+    }
 }
