@@ -2,10 +2,13 @@ import Foundation
 
 // MARK: - AgentEngine
 // Orchestrates: instruction + context → LLM inference → (explanation, modifiedCode)
+// Approach B: AI can emit [RUN: command] in its response to execute shell commands.
 
 struct AgentResult {
     var explanation: String
-    var diff: String?          // full modified file content (nil if no code change)
+    var diff: String?              // full modified file content
+    var ranCommands: [String] = [] // commands AI executed
+    var commandOutputs: [String] = []
 }
 
 actor AgentEngine {
@@ -17,13 +20,16 @@ actor AgentEngine {
         contextFileContent: String?,
         contextFileName: String?,
         modelStatus: AppState.ModelStatus,
-        activeOllamaModel: String
+        activeOllamaModel: String,
+        hasTerminal: Bool = false,
+        workspaceURL: URL? = nil
     ) async -> AgentResult {
 
         let prompt = buildPrompt(
             instruction: instruction,
             fileContent: contextFileContent,
-            fileName: contextFileName
+            fileName: contextFileName,
+            hasTerminal: hasTerminal
         )
 
         let rawOutput: String?
@@ -36,7 +42,6 @@ actor AgentEngine {
                 temperature: 0.1
             )
         case .ready:
-            // MLX path — will be connected in Phase 2
             rawOutput = await callMLX(prompt: prompt)
         default:
             return AgentResult(
@@ -52,12 +57,36 @@ actor AgentEngine {
         return parseOutput(output, originalContent: contextFileContent)
     }
 
+    /// Second pass: given terminal error output, attempt to produce a fix.
+    func fixWithErrorOutput(
+        originalAIResponse: String,
+        errorOutput: String,
+        contextFileContent: String?,
+        contextFileName: String?,
+        activeOllamaModel: String
+    ) async -> AgentResult {
+        let fixPrompt = buildErrorFixPrompt(
+            original: originalAIResponse,
+            errorOutput: errorOutput,
+            fileContent: contextFileContent,
+            fileName: contextFileName
+        )
+        let fixOutput = await OllamaClient.shared.generate(
+            model: activeOllamaModel,
+            prompt: fixPrompt,
+            maxTokens: 2048,
+            temperature: 0.1
+        ) ?? ""
+        return parseOutput(fixOutput, originalContent: contextFileContent)
+    }
+
     // MARK: - Prompt builder
 
     private func buildPrompt(
         instruction: String,
         fileContent: String?,
-        fileName: String?
+        fileName: String?,
+        hasTerminal: Bool = false
     ) -> String {
         let codeSection: String
         if let content = fileContent, !content.isEmpty, let name = fileName {
@@ -72,17 +101,24 @@ actor AgentEngine {
             codeSection = ""
         }
 
+        let terminalSection = hasTerminal ? """
+
+        TOOL: You can execute shell commands by writing [RUN: command] anywhere in your response.
+        Example: [RUN: cargo check] or [RUN: swift build] or [RUN: python -m pytest]
+        Use this to verify your changes compile/pass tests. The output will be shown to the user.
+        """ : ""
+
         return """
-        You are Verantyx, an expert AI coding assistant running locally on Apple Silicon.
+        You are Verantyx, an expert AI coding assistant running locally on Apple Silicon.\(terminalSection)
 
         Your task:
         1. Read the user's instruction carefully.
         2. If code changes are needed, output the COMPLETE modified file in a fenced code block.
         3. After the code block, write a brief explanation of what you changed and why.
         4. If no code changes are needed, just answer conversationally.
+        5. If relevant, include [RUN: command] to verify your changes (e.g. [RUN: cargo check]).
 
         RULE: When outputting modified code, output the ENTIRE file — not just the changed lines.
-        This allows the diff view to highlight exactly what changed.
 
         \(codeSection)USER INSTRUCTION: \(instruction)
 
@@ -90,31 +126,75 @@ actor AgentEngine {
         """
     }
 
+    // MARK: - Error fix prompt
+
+    private func buildErrorFixPrompt(
+        original: String,
+        errorOutput: String,
+        fileContent: String?,
+        fileName: String?
+    ) -> String {
+        let fileSection = fileContent.map { "CURRENT FILE:\n```\n\($0.prefix(6000))\n```\n" } ?? ""
+        return """
+        You previously attempted a code change, but the build/test failed.
+
+        YOUR PREVIOUS RESPONSE:
+        \(original.prefix(2000))
+
+        BUILD/TEST ERROR:
+        ```
+        \(errorOutput.prefix(2000))
+        ```
+
+        \(fileSection)
+        Please fix the error. Output the COMPLETE corrected file in a fenced code block,
+        then explain what went wrong and how you fixed it.
+
+        CORRECTED RESPONSE:
+        """
+    }
+
     // MARK: - Output parser
 
     private func parseOutput(_ raw: String, originalContent: String?) -> AgentResult {
-        // Extract fenced code block (```...```)
+        // 1. Extract [RUN: cmd] tool calls
+        let runPattern = #"\[RUN:\s*([^\]]+)\]"#
+        var ranCommands: [String] = []
+        if let regex = try? NSRegularExpression(pattern: runPattern) {
+            let matches = regex.matches(in: raw, range: NSRange(raw.startIndex..., in: raw))
+            ranCommands = matches.compactMap { m in
+                Range(m.range(at: 1), in: raw).map { String(raw[$0]).trimmingCharacters(in: .whitespaces) }
+            }
+        }
+        // Remove [RUN:...] tags from display text
+        let cleanedRaw = raw.replacingOccurrences(of: runPattern, with: "", options: .regularExpression)
+
+        // 2. Extract fenced code block
         let pattern = #"```(?:\w+)?\n([\s\S]*?)```"#
         if let regex = try? NSRegularExpression(pattern: pattern),
-           let match = regex.firstMatch(in: raw, range: NSRange(raw.startIndex..., in: raw)),
-           let range = Range(match.range(at: 1), in: raw) {
+           let match = regex.firstMatch(in: cleanedRaw, range: NSRange(cleanedRaw.startIndex..., in: cleanedRaw)),
+           let range = Range(match.range(at: 1), in: cleanedRaw) {
 
-            let modifiedCode = String(raw[range])
-            // Explanation = everything after the last ``` block
-            let afterCode = raw.components(separatedBy: "```").last ?? ""
+            let modifiedCode = String(cleanedRaw[range])
+            let afterCode = cleanedRaw.components(separatedBy: "```").last ?? ""
             let explanation = afterCode.trimmingCharacters(in: .whitespacesAndNewlines)
 
-            // Only emit diff if content actually changed
-            if let orig = originalContent, modifiedCode.trimmingCharacters(in: .whitespacesAndNewlines) != orig.trimmingCharacters(in: .whitespacesAndNewlines) {
+            if let orig = originalContent,
+               modifiedCode.trimmingCharacters(in: .whitespacesAndNewlines) != orig.trimmingCharacters(in: .whitespacesAndNewlines) {
                 return AgentResult(
                     explanation: explanation.isEmpty ? "Changes applied." : explanation,
-                    diff: modifiedCode
+                    diff: modifiedCode,
+                    ranCommands: ranCommands
                 )
             }
         }
 
         // No code block — conversational answer
-        return AgentResult(explanation: raw.trimmingCharacters(in: .whitespacesAndNewlines), diff: nil)
+        return AgentResult(
+            explanation: cleanedRaw.trimmingCharacters(in: .whitespacesAndNewlines),
+            diff: nil,
+            ranCommands: ranCommands
+        )
     }
 
     // MARK: - MLX placeholder (Phase 2)

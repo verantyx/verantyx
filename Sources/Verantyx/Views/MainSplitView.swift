@@ -7,17 +7,30 @@ struct MainSplitView: View {
     @EnvironmentObject var app: AppState
 
     var body: some View {
-        NavigationSplitView(columnVisibility: .constant(.all)) {
-            // ── Left: File tree ────────────────────────────────
-            FileTreeView()
-                .navigationSplitViewColumnWidth(min: 180, ideal: 220, max: 320)
-        } content: {
-            // ── Center: Chat ──────────────────────────────────
-            ChatPanelView()
+        VStack(spacing: 0) {
+            NavigationSplitView(columnVisibility: .constant(.all)) {
+                // ── Left: File tree ────────────────────────────────
+                FileTreeView()
+                    .navigationSplitViewColumnWidth(min: 180, ideal: 220, max: 320)
+            } content: {
+                // ── Center: Chat + File preview ───────────────────
+                VSplitView {
+                    ChatPanelView()
+                        .frame(minHeight: 280)
+                    if app.selectedFile != nil {
+                        FilePaneView()
+                            .frame(minHeight: 120, maxHeight: 300)
+                    }
+                }
                 .navigationSplitViewColumnWidth(min: 340, ideal: 420, max: 600)
-        } detail: {
-            // ── Right: Diff ───────────────────────────────────
-            DiffPanelView()
+            } detail: {
+                // ── Right: Diff ───────────────────────────────────
+                DiffPanelView()
+            }
+
+            // ── Bottom: Terminal (Approach B) ─────────────────────
+            TerminalPanelView(terminal: app.terminal)
+                .environmentObject(app)
         }
         .toolbar {
             toolbarContent

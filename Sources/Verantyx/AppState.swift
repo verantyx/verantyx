@@ -74,12 +74,14 @@ final class AppState: ObservableObject {
     // Workspace manager (lazy)
     private let workspace = WorkspaceManager()
     let agent = AgentEngine()
+    let terminal = TerminalRunner()
 
     // MARK: - Workspace actions
 
     func openWorkspace() {
         guard let url = workspace.pickFolder() else { return }
         workspaceURL = url
+        terminal.workingDirectory = url
         refreshFiles()
         addSystemMessage("📂 Workspace opened: \(url.lastPathComponent)")
     }
@@ -115,7 +117,9 @@ final class AppState: ObservableObject {
                 contextFileContent: context,
                 contextFileName: contextFile?.lastPathComponent,
                 modelStatus: modelStatus,
-                activeOllamaModel: activeOllamaModel
+                activeOllamaModel: activeOllamaModel,
+                hasTerminal: workspaceURL != nil,
+                workspaceURL: workspaceURL
             )
 
             await MainActor.run {
@@ -130,6 +134,40 @@ final class AppState: ObservableObject {
                         hunks: DiffEngine.compute(original: selectedFileContent, modified: diff)
                     )
                     showDiff = true
+                }
+            }
+
+            // Execute [RUN: cmd] commands found in AI response (on MainActor via TerminalRunner)
+            if !result.ranCommands.isEmpty {
+                for cmd in result.ranCommands {
+                    let termResult = await terminal.run(cmd, in: workspaceURL, initiatedByAI: true)
+
+                    // Auto-fix loop: if build fails and we have a context file
+                    if !termResult.succeeded, let fileContent = context, let fileName = contextFile?.lastPathComponent {
+                        await MainActor.run {
+                            self.addSystemMessage("🔧 Build failed — asking AI to auto-fix…")
+                        }
+                        let firstAIResponse = result.explanation + (result.diff ?? "")
+                        let fixResult = await agent.fixWithErrorOutput(
+                            originalAIResponse: firstAIResponse,
+                            errorOutput: termResult.combinedForAI,
+                            contextFileContent: fileContent,
+                            contextFileName: fileName,
+                            activeOllamaModel: activeOllamaModel
+                        )
+                        await MainActor.run {
+                            messages.append(ChatMessage(role: .assistant, content: fixResult.explanation))
+                            if let fixDiff = fixResult.diff, let fileURL = contextFile {
+                                pendingDiff = FileDiff(
+                                    fileURL: fileURL,
+                                    originalContent: selectedFileContent,
+                                    modifiedContent: fixDiff,
+                                    hunks: DiffEngine.compute(original: selectedFileContent, modified: fixDiff)
+                                )
+                                showDiff = true
+                            }
+                        }
+                    }
                 }
             }
         }
