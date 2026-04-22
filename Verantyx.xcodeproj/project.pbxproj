@@ -1,0 +1,441 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		05A047EA46A5C3ACB146C539 /* DiffPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0676432D69FA1C167E518CC9 /* DiffPanelView.swift */; };
+		17713B505E12627E142F65ED /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = AD2463FBE07B767ADB2B3207 /* MLXLLM */; };
+		292F06655B38F087BBD57724 /* FileTreeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263AF59FC377D184685C7A9F /* FileTreeView.swift */; };
+		3AEA0F47626531CB4448C096 /* DiffEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BEAFD1ACA2A20312B98C1A6 /* DiffEngine.swift */; };
+		57CC8D875A2870E56B674276 /* MainSplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5F0016C4911F099545301D /* MainSplitView.swift */; };
+		582245E341F93D3E1ECE5CBF /* WorkspaceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD8BBB55D4627EE66EB79331 /* WorkspaceManager.swift */; };
+		5B221D76CBAF7F8637DD80F9 /* MLX in Frameworks */ = {isa = PBXBuildFile; productRef = E7B730AC2C30A6B4C265330D /* MLX */; };
+		5BCBF6FA95B78375C6615004 /* Transformers in Frameworks */ = {isa = PBXBuildFile; productRef = 4B24BD083022CA071C0C39AE /* Transformers */; };
+		74402A6B62B43AD8399A9847 /* ModelPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C3A66E6CFDB45051738F2D3 /* ModelPickerView.swift */; };
+		81CDD3782608E05A14C9A31D /* OllamaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2075CF721733CD4BDFF767 /* OllamaClient.swift */; };
+		830E1B4FD07FA788D91A09C0 /* VerantyxApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D6335B9FE38BA61EA5696E /* VerantyxApp.swift */; };
+		96B9213F6B0070B3B58D8117 /* ChatPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 338130D0F6553F90814F3B05 /* ChatPanelView.swift */; };
+		9FB76DC5C4E4B0DF21FDCACD /* MLXRandom in Frameworks */ = {isa = PBXBuildFile; productRef = A68E46F8CFDC14DEF2D55FC5 /* MLXRandom */; };
+		BAA142F996EB155712321FA7 /* AgentEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8900CE64BBFB018EC941426D /* AgentEngine.swift */; };
+		D38B10B52D88BBB770793AB6 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBFBBB5831368FECD08DF846 /* AppState.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0676432D69FA1C167E518CC9 /* DiffPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiffPanelView.swift; sourceTree = "<group>"; };
+		17D6335B9FE38BA61EA5696E /* VerantyxApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerantyxApp.swift; sourceTree = "<group>"; };
+		263AF59FC377D184685C7A9F /* FileTreeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTreeView.swift; sourceTree = "<group>"; };
+		338130D0F6553F90814F3B05 /* ChatPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatPanelView.swift; sourceTree = "<group>"; };
+		4BEAFD1ACA2A20312B98C1A6 /* DiffEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiffEngine.swift; sourceTree = "<group>"; };
+		4E2075CF721733CD4BDFF767 /* OllamaClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OllamaClient.swift; sourceTree = "<group>"; };
+		5B5F0016C4911F099545301D /* MainSplitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainSplitView.swift; sourceTree = "<group>"; };
+		6C3A66E6CFDB45051738F2D3 /* ModelPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelPickerView.swift; sourceTree = "<group>"; };
+		86BF1813B77EAA7D02EC11BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		8900CE64BBFB018EC941426D /* AgentEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentEngine.swift; sourceTree = "<group>"; };
+		AB8C07A2395C323F940350C6 /* Verantyx.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Verantyx.entitlements; sourceTree = "<group>"; };
+		BBFBBB5831368FECD08DF846 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		DD8BBB55D4627EE66EB79331 /* WorkspaceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceManager.swift; sourceTree = "<group>"; };
+		E5C8788156A4713EDD89F173 /* Verantyx.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Verantyx.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F3AA225F597254C51D1CC89B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B221D76CBAF7F8637DD80F9 /* MLX in Frameworks */,
+				9FB76DC5C4E4B0DF21FDCACD /* MLXRandom in Frameworks */,
+				17713B505E12627E142F65ED /* MLXLLM in Frameworks */,
+				5BCBF6FA95B78375C6615004 /* Transformers in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		30A0EF58CBE75A17F6A560C2 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				811C438A35B8CA37A8B30DFD /* Verantyx */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		811C438A35B8CA37A8B30DFD /* Verantyx */ = {
+			isa = PBXGroup;
+			children = (
+				BBFBBB5831368FECD08DF846 /* AppState.swift */,
+				86BF1813B77EAA7D02EC11BB /* Info.plist */,
+				AB8C07A2395C323F940350C6 /* Verantyx.entitlements */,
+				17D6335B9FE38BA61EA5696E /* VerantyxApp.swift */,
+				EE42CA61A8486C58BA1BA57B /* Engine */,
+				8D2D1719768C35642AA83A9D /* Views */,
+			);
+			path = Verantyx;
+			sourceTree = "<group>";
+		};
+		8D2D1719768C35642AA83A9D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				338130D0F6553F90814F3B05 /* ChatPanelView.swift */,
+				0676432D69FA1C167E518CC9 /* DiffPanelView.swift */,
+				263AF59FC377D184685C7A9F /* FileTreeView.swift */,
+				5B5F0016C4911F099545301D /* MainSplitView.swift */,
+				6C3A66E6CFDB45051738F2D3 /* ModelPickerView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		8FFF89542FF965C824C76418 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E5C8788156A4713EDD89F173 /* Verantyx.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E9D6DD9C5670831B5DCE0351 = {
+			isa = PBXGroup;
+			children = (
+				30A0EF58CBE75A17F6A560C2 /* Sources */,
+				8FFF89542FF965C824C76418 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		EE42CA61A8486C58BA1BA57B /* Engine */ = {
+			isa = PBXGroup;
+			children = (
+				8900CE64BBFB018EC941426D /* AgentEngine.swift */,
+				4BEAFD1ACA2A20312B98C1A6 /* DiffEngine.swift */,
+				4E2075CF721733CD4BDFF767 /* OllamaClient.swift */,
+				DD8BBB55D4627EE66EB79331 /* WorkspaceManager.swift */,
+			);
+			path = Engine;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C702940F6955F440B1A49920 /* Verantyx */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 79E04AD3856679EEFB1C270B /* Build configuration list for PBXNativeTarget "Verantyx" */;
+			buildPhases = (
+				A6DDCEC14AF707C9CC57E054 /* Sources */,
+				F3AA225F597254C51D1CC89B /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Verantyx;
+			packageProductDependencies = (
+				E7B730AC2C30A6B4C265330D /* MLX */,
+				A68E46F8CFDC14DEF2D55FC5 /* MLXRandom */,
+				AD2463FBE07B767ADB2B3207 /* MLXLLM */,
+				4B24BD083022CA071C0C39AE /* Transformers */,
+			);
+			productName = Verantyx;
+			productReference = E5C8788156A4713EDD89F173 /* Verantyx.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F70212F399422283187C0074 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					C702940F6955F440B1A49920 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = C88462B890709BC2774DE9BE /* Build configuration list for PBXProject "Verantyx" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = E9D6DD9C5670831B5DCE0351;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				DAE191BA1D74215883383547 /* XCRemoteSwiftPackageReference "swift-transformers" */,
+				63D1B2D7DF90BC507ED2CEB8 /* XCRemoteSwiftPackageReference "mlx-swift" */,
+				215603989B65D2DB9B14270D /* XCRemoteSwiftPackageReference "mlx-swift-examples" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 8FFF89542FF965C824C76418 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C702940F6955F440B1A49920 /* Verantyx */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A6DDCEC14AF707C9CC57E054 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BAA142F996EB155712321FA7 /* AgentEngine.swift in Sources */,
+				D38B10B52D88BBB770793AB6 /* AppState.swift in Sources */,
+				96B9213F6B0070B3B58D8117 /* ChatPanelView.swift in Sources */,
+				3AEA0F47626531CB4448C096 /* DiffEngine.swift in Sources */,
+				05A047EA46A5C3ACB146C539 /* DiffPanelView.swift in Sources */,
+				292F06655B38F087BBD57724 /* FileTreeView.swift in Sources */,
+				57CC8D875A2870E56B674276 /* MainSplitView.swift in Sources */,
+				74402A6B62B43AD8399A9847 /* ModelPickerView.swift in Sources */,
+				81CDD3782608E05A14C9A31D /* OllamaClient.swift in Sources */,
+				830E1B4FD07FA788D91A09C0 /* VerantyxApp.swift in Sources */,
+				582245E341F93D3E1ECE5CBF /* WorkspaceManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		28CEC8112FB3F21CC6D570B4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = "";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.verantyx.ide;
+				PRODUCT_NAME = Verantyx;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		34CF3285CF3A74A6CBAAD780 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/Verantyx/Verantyx.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = Sources/Verantyx/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.verantyx.ide;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		B185CB9D8BEFE3F3B3B21A5C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/Verantyx/Verantyx.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = Sources/Verantyx/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.verantyx.ide;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		F171F317D254B3E72A140B5C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = "";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.verantyx.ide;
+				PRODUCT_NAME = Verantyx;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		79E04AD3856679EEFB1C270B /* Build configuration list for PBXNativeTarget "Verantyx" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				34CF3285CF3A74A6CBAAD780 /* Debug */,
+				B185CB9D8BEFE3F3B3B21A5C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C88462B890709BC2774DE9BE /* Build configuration list for PBXProject "Verantyx" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F171F317D254B3E72A140B5C /* Debug */,
+				28CEC8112FB3F21CC6D570B4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		215603989B65D2DB9B14270D /* XCRemoteSwiftPackageReference "mlx-swift-examples" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ml-explore/mlx-swift-examples";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.21.0;
+			};
+		};
+		63D1B2D7DF90BC507ED2CEB8 /* XCRemoteSwiftPackageReference "mlx-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ml-explore/mlx-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.21.0;
+			};
+		};
+		DAE191BA1D74215883383547 /* XCRemoteSwiftPackageReference "swift-transformers" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/huggingface/swift-transformers";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.15;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4B24BD083022CA071C0C39AE /* Transformers */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DAE191BA1D74215883383547 /* XCRemoteSwiftPackageReference "swift-transformers" */;
+			productName = Transformers;
+		};
+		A68E46F8CFDC14DEF2D55FC5 /* MLXRandom */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 63D1B2D7DF90BC507ED2CEB8 /* XCRemoteSwiftPackageReference "mlx-swift" */;
+			productName = MLXRandom;
+		};
+		AD2463FBE07B767ADB2B3207 /* MLXLLM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 215603989B65D2DB9B14270D /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXLLM;
+		};
+		E7B730AC2C30A6B4C265330D /* MLX */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 63D1B2D7DF90BC507ED2CEB8 /* XCRemoteSwiftPackageReference "mlx-swift" */;
+			productName = MLX;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = F70212F399422283187C0074 /* Project object */;
+}
