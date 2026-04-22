@@ -238,7 +238,7 @@ struct AgentChatView: View {
 
             ZStack(alignment: .topLeading) {
                 if app.inputText.isEmpty {
-                    Text(app.selectedFile == nil ? "Ask AntigravityAgent anything…" : "Describe the changes you want…")
+                    Text(app.selectedFile == nil ? "Ask VerantyxAgent anything…" : "Describe the changes you want…")
                         .font(.system(size: 13))
                         .foregroundStyle(Color(red: 0.38, green: 0.38, blue: 0.45))
                         .padding(.leading, 4)
@@ -262,8 +262,10 @@ struct AgentChatView: View {
     private func sendMessage() {
         let text = app.inputText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty, !app.isGenerating else { return }
+        // Pass text BEFORE clearing — AppState.sendMessage reads inputText
+        // so we pass it explicitly to avoid the empty-string race
         app.inputText = ""
-        app.sendMessage()
+        app.sendMessage(with: text)
     }
 
     private var modelDisplayName: String {
@@ -344,7 +346,7 @@ struct AgentMessageView: View {
                 .frame(width: 28, height: 28)
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("AntigravityAgent")
+                    Text("VerantyxAgent")
                         .font(.system(size: 11, weight: .semibold))
                         .foregroundStyle(Color(red: 0.4, green: 0.7, blue: 1.0))
 
@@ -422,7 +424,7 @@ struct AgentThinkingView: View {
             .frame(width: 28, height: 28)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text("AntigravityAgent")
+                Text("VerantyxAgent")
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundStyle(Color(red: 0.4, green: 0.7, blue: 1.0))
 

@@ -1,7 +1,7 @@
 import SwiftUI
 
 // MARK: - MainSplitView
-// AntigravityIDE layout (matches reference image):
+// Verantyx layout (matches reference image):
 //
 //  ┌────┬──────────────────┬───────────────────────────────────────┐
 //  │    │  Explorer        │  Center (Agent Chat)  │  Right Column  │
@@ -13,7 +13,7 @@ import SwiftUI
 //  │    │                  ├───────────────────────│────────────────│
 //  │    │                  │  README.md (preview)  │  Terminal      │
 //  └────┴──────────────────┴───────────────────────┴────────────────┘
-//  │ ● AntigravityIDE v0.1    mlx-swift             JCross 0 nodes  │
+//  │ ● Verantyx v0.1    mlx-swift             JCross 0 nodes  │
 //  └────────────────────────────────────────────────────────────────┘
 
 struct MainSplitView: View {
@@ -67,6 +67,7 @@ struct MainSplitView: View {
             StatusBarView(terminal: app.terminal)
         }
         .background(Color(red: 0.11, green: 0.11, blue: 0.14))
+        .toastOverlay()
         .toolbar { toolbarContent }
         .onAppear { app.connectOllama() }
     }
@@ -93,10 +94,10 @@ struct MainSplitView: View {
 
         ToolbarItem(placement: .principal) {
             HStack(spacing: 8) {
-                Image(systemName: "atom")
+                Image(systemName: "v.circle.fill")
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(Color(red: 0.4, green: 0.7, blue: 1.0))
-                Text("AntigravityIDE")
+                Text("Verantyx")
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(Color(red: 0.85, green: 0.85, blue: 0.92))
             }

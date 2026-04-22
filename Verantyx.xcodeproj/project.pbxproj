@@ -16,6 +16,7 @@
 		292F06655B38F087BBD57724 /* FileTreeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263AF59FC377D184685C7A9F /* FileTreeView.swift */; };
 		2B20F7F1B2F19DC07E1559EF /* StatusBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 727212A297B010E2A72ED242 /* StatusBarView.swift */; };
 		3AEA0F47626531CB4448C096 /* DiffEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BEAFD1ACA2A20312B98C1A6 /* DiffEngine.swift */; };
+		3D65C40A8DC505214322CDD0 /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F90A23BE1370B3E68FB7BC /* ToastView.swift */; };
 		4F74BBA8D8892CF5A08BFEAC /* AgentLoop.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABE4F19CD033EC88CE775297 /* AgentLoop.swift */; };
 		506021C3BDB86670D434BBE7 /* CloudAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCB5E227D30DCFCF698F28FD /* CloudAPIClient.swift */; };
 		525874995CEE5ACAA12F838A /* SyntaxHighlighter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F44C7CACCD10CB9F7836B4A7 /* SyntaxHighlighter.swift */; };
@@ -46,6 +47,7 @@
 		22B0F334C1BF16C8A60C5017 /* PrivacyProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyProxy.swift; sourceTree = "<group>"; };
 		263AF59FC377D184685C7A9F /* FileTreeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTreeView.swift; sourceTree = "<group>"; };
 		338130D0F6553F90814F3B05 /* ChatPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatPanelView.swift; sourceTree = "<group>"; };
+		34F90A23BE1370B3E68FB7BC /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
 		4BEAFD1ACA2A20312B98C1A6 /* DiffEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiffEngine.swift; sourceTree = "<group>"; };
 		4DC28C3194186DC74952BEAC /* ActivityBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityBarView.swift; sourceTree = "<group>"; };
 		4E2075CF721733CD4BDFF767 /* OllamaClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OllamaClient.swift; sourceTree = "<group>"; };
@@ -125,6 +127,7 @@
 				77A7E899F70A18AE4543BB93 /* SideBySideDiffView.swift */,
 				727212A297B010E2A72ED242 /* StatusBarView.swift */,
 				91CC363258520DDB5548056F /* TerminalPanelView.swift */,
+				34F90A23BE1370B3E68FB7BC /* ToastView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -257,6 +260,7 @@
 				525874995CEE5ACAA12F838A /* SyntaxHighlighter.swift in Sources */,
 				92FCF716C85EB142F0F687C0 /* TerminalPanelView.swift in Sources */,
 				F3B24E9BE65F23A9DE26AEE2 /* TerminalRunner.swift in Sources */,
+				3D65C40A8DC505214322CDD0 /* ToastView.swift in Sources */,
 				830E1B4FD07FA788D91A09C0 /* VerantyxApp.swift in Sources */,
 				582245E341F93D3E1ECE5CBF /* WorkspaceManager.swift in Sources */,
 			);

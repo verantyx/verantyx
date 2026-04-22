@@ -13,7 +13,7 @@ struct StatusBarView: View {
             HStack(spacing: 8) {
                 Image(systemName: "atom")
                     .font(.system(size: 11))
-                Text("AntigravityIDE v0.1")
+                Text("Verantyx v0.1")
                     .font(.system(size: 11, design: .monospaced))
             }
             .foregroundStyle(Color(red: 0.8, green: 0.8, blue: 0.85))

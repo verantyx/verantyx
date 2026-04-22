@@ -117,8 +117,8 @@ final class AppState: ObservableObject {
 
     // MARK: - Agent actions
 
-    func sendMessage() {
-        let text = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
+    func sendMessage(with overrideText: String? = nil) {
+        let text = (overrideText ?? inputText).trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty, !isGenerating else { return }
         inputText = ""
 
@@ -349,21 +349,26 @@ final class AppState: ObservableObject {
 
     func connectOllama() {
         Task {
+            modelStatus = .connecting
             let models = await OllamaClient.shared.listModels()
             await MainActor.run {
                 ollamaModels = models
-                if models.contains("gemma4:26b") || models.contains(activeOllamaModel) {
-                    let m = models.contains(activeOllamaModel) ? activeOllamaModel : models.first!
-                    modelStatus = .ollamaReady(model: m)
-                    activeOllamaModel = m
-                    addSystemMessage("🟢 Ollama ready: \(m)")
+                if models.contains(activeOllamaModel) {
+                    modelStatus = .ollamaReady(model: activeOllamaModel)
+                    ToastManager.shared.show("\(activeOllamaModel) ready", icon: "checkmark.circle.fill", color: .green)
+                } else if models.contains("gemma4:26b") {
+                    activeOllamaModel = "gemma4:26b"
+                    modelStatus = .ollamaReady(model: "gemma4:26b")
+                    ToastManager.shared.show("gemma4:26b ready", icon: "checkmark.circle.fill", color: .green)
                 } else if !models.isEmpty {
                     let m = models.first!
                     activeOllamaModel = m
                     modelStatus = .ollamaReady(model: m)
-                    addSystemMessage("🟢 Ollama ready: \(m)")
+                    ToastManager.shared.show("\(m) ready", icon: "checkmark.circle.fill", color: .green)
                 } else {
-                    modelStatus = .error("No Ollama models found. Run: ollama pull gemma4:26b")
+                    modelStatus = .error("No Ollama models found")
+                    ToastManager.shared.show("No Ollama models. Run: ollama pull gemma4:26b",
+                                            icon: "exclamationmark.triangle.fill", color: .orange, duration: 4.5)
                 }
             }
         }
@@ -372,6 +377,8 @@ final class AppState: ObservableObject {
     // MARK: - Helpers
 
     func addSystemMessage(_ text: String) {
+        // Only show agent-loop tool events — NOT model load events (those use Toast)
+        guard !text.hasPrefix("🟢") && !text.hasPrefix("🔌") else { return }
         messages.append(ChatMessage(role: .system, content: text))
     }
 

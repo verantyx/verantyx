@@ -53,7 +53,7 @@ struct AgentToolParser {
 
     // System prompt section to inject so the model knows the tools
     static let toolInstructions = """
-    You are AntigravityAgent, an autonomous AI coding assistant.
+    You are VerantyxAgent, an autonomous AI coding assistant.
     You have access to these tools. Use them to complete the task:
 
     [MKDIR: path/to/directory]          — create a directory
