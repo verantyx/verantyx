@@ -76,6 +76,12 @@ final class AppState: ObservableObject {
     private let workspace = WorkspaceManager()
     let agent = AgentEngine()
     let terminal = TerminalRunner()
+    let cortex = CortexEngine()
+
+    // Agent loop
+    @Published var agentLoopEnabled: Bool = true {
+        didSet { UserDefaults.standard.set(agentLoopEnabled, forKey: "agent_loop_enabled") }
+    }
 
     // MARK: - Workspace actions
 
@@ -110,64 +116,151 @@ final class AppState: ObservableObject {
         isGenerating = true
 
         Task {
-            let context = selectedFileContent.isEmpty ? nil : selectedFileContent
-            let contextFile = selectedFile
-
-            let result = await agent.process(
-                instruction: text,
-                contextFileContent: context,
-                contextFileName: contextFile?.lastPathComponent,
-                modelStatus: modelStatus,
-                activeOllamaModel: activeOllamaModel,
-                hasTerminal: workspaceURL != nil,
-                workspaceURL: workspaceURL
-            )
-
-            await MainActor.run {
-                messages.append(ChatMessage(role: .assistant, content: result.explanation))
-                isGenerating = false
-
-                if let diff = result.diff, !selectedFileContent.isEmpty, let fileURL = contextFile {
-                    pendingDiff = FileDiff(
-                        fileURL: fileURL,
-                        originalContent: selectedFileContent,
-                        modifiedContent: diff,
-                        hunks: DiffEngine.compute(original: selectedFileContent, modified: diff)
-                    )
-                    showDiff = true
-                }
+            // Compress context if needed (Cortex anti-Alzheimer's)
+            let trimmed = cortex.compressIfNeeded(messages: messages)
+            if trimmed.count < messages.count {
+                await MainActor.run { self.messages = trimmed }
             }
 
-            // Execute [RUN: cmd] commands found in AI response (on MainActor via TerminalRunner)
-            if !result.ranCommands.isEmpty {
-                for cmd in result.ranCommands {
-                    let termResult = await terminal.run(cmd, in: workspaceURL, initiatedByAI: true)
+            if agentLoopEnabled {
+                await runAgentLoop(instruction: text)
+            } else {
+                await runSinglePass(instruction: text)
+            }
+        }
+    }
 
-                    // Auto-fix loop: if build fails and we have a context file
-                    if !termResult.succeeded, let fileContent = context, let fileName = contextFile?.lastPathComponent {
-                        await MainActor.run {
-                            self.addSystemMessage("🔧 Build failed — asking AI to auto-fix…")
-                        }
-                        let firstAIResponse = result.explanation + (result.diff ?? "")
-                        let fixResult = await agent.fixWithErrorOutput(
-                            originalAIResponse: firstAIResponse,
-                            errorOutput: termResult.combinedForAI,
-                            contextFileContent: fileContent,
-                            contextFileName: fileName,
-                            activeOllamaModel: activeOllamaModel
+    // MARK: - Agent Loop (multi-turn, scaffolding)
+
+    private func runAgentLoop(instruction: String) async {
+        let context = selectedFileContent.isEmpty ? nil : selectedFileContent
+        let contextFile = selectedFile
+        let snap_workspace = workspaceURL
+        let snap_model = activeOllamaModel
+        let snap_status = modelStatus
+
+        await AgentLoop.shared.run(
+            instruction: instruction,
+            contextFile: context,
+            contextFileName: contextFile?.lastPathComponent,
+            workspaceURL: snap_workspace,
+            modelStatus: snap_status,
+            activeModel: snap_model,
+            cortex: cortex
+        ) { [weak self] event in
+            guard let self else { return }
+            await MainActor.run {
+                switch event {
+                case .start:
+                    break
+
+                case .thinking(let t):
+                    if t > 1 {
+                        self.messages.append(ChatMessage(role: .system,
+                            content: "🔄 Agent loop turn \(t)…"))
+                    }
+
+                case .aiMessage(let text):
+                    if !text.isEmpty {
+                        self.messages.append(ChatMessage(role: .assistant, content: text))
+                    }
+
+                case .toolCall(let call):
+                    self.messages.append(ChatMessage(role: .system,
+                        content: "⚙️ \(call.displayLabel)"))
+                    // Also log to terminal
+                    if case .runCommand(let cmd) = call.tool {
+                        Task { await self.terminal.run(cmd, in: self.workspaceURL, initiatedByAI: true) }
+                    }
+
+                case .toolResult(let call):
+                    if !call.result.isEmpty {
+                        let icon = call.succeeded ? "✅" : "❌"
+                        self.messages.append(ChatMessage(role: .system,
+                            content: "\(icon) \(call.result.prefix(120))"))
+                    }
+
+                case .workspaceChanged(let url):
+                    self.workspaceURL = url
+                    self.terminal.workingDirectory = url
+                    self.refreshFiles()
+                    self.addSystemMessage("📂 Workspace: \(url.lastPathComponent)")
+
+                case .done(let msg, let ws):
+                    self.isGenerating = false
+                    if let ws = ws, self.workspaceURL == nil {
+                        self.workspaceURL = ws
+                        self.terminal.workingDirectory = ws
+                        self.refreshFiles()
+                    }
+                    if !msg.isEmpty {
+                        self.messages.append(ChatMessage(role: .assistant,
+                            content: "✅ \(msg)"))
+                    }
+
+                case .error(let err):
+                    self.isGenerating = false
+                    self.addSystemMessage("❌ Agent error: \(err)")
+                }
+            }
+        }
+
+        await MainActor.run { self.isGenerating = false }
+    }
+
+    // MARK: - Single pass (original behavior)
+
+    private func runSinglePass(instruction: String) async {
+        let context = selectedFileContent.isEmpty ? nil : selectedFileContent
+        let contextFile = selectedFile
+
+        let result = await agent.process(
+            instruction: instruction,
+            contextFileContent: context,
+            contextFileName: contextFile?.lastPathComponent,
+            modelStatus: modelStatus,
+            activeOllamaModel: activeOllamaModel,
+            hasTerminal: workspaceURL != nil,
+            workspaceURL: workspaceURL
+        )
+
+        await MainActor.run {
+            messages.append(ChatMessage(role: .assistant, content: result.explanation))
+            isGenerating = false
+
+            if let diff = result.diff, !selectedFileContent.isEmpty, let fileURL = contextFile {
+                pendingDiff = FileDiff(
+                    fileURL: fileURL,
+                    originalContent: selectedFileContent,
+                    modifiedContent: diff,
+                    hunks: DiffEngine.compute(original: selectedFileContent, modified: diff)
+                )
+                showDiff = true
+            }
+        }
+
+        // Execute [RUN: cmd] commands found in AI response
+        for cmd in result.ranCommands {
+            let termResult = await terminal.run(cmd, in: workspaceURL, initiatedByAI: true)
+            if !termResult.succeeded, let fileContent = context, let fileName = contextFile?.lastPathComponent {
+                await MainActor.run { self.addSystemMessage("🔧 Build failed — asking AI to fix…") }
+                let fixResult = await agent.fixWithErrorOutput(
+                    originalAIResponse: result.explanation + (result.diff ?? ""),
+                    errorOutput: termResult.combinedForAI,
+                    contextFileContent: fileContent,
+                    contextFileName: fileName,
+                    activeOllamaModel: activeOllamaModel
+                )
+                await MainActor.run {
+                    messages.append(ChatMessage(role: .assistant, content: fixResult.explanation))
+                    if let fixDiff = fixResult.diff, let fileURL = contextFile {
+                        pendingDiff = FileDiff(
+                            fileURL: fileURL,
+                            originalContent: selectedFileContent,
+                            modifiedContent: fixDiff,
+                            hunks: DiffEngine.compute(original: selectedFileContent, modified: fixDiff)
                         )
-                        await MainActor.run {
-                            messages.append(ChatMessage(role: .assistant, content: fixResult.explanation))
-                            if let fixDiff = fixResult.diff, let fileURL = contextFile {
-                                pendingDiff = FileDiff(
-                                    fileURL: fileURL,
-                                    originalContent: selectedFileContent,
-                                    modifiedContent: fixDiff,
-                                    hunks: DiffEngine.compute(original: selectedFileContent, modified: fixDiff)
-                                )
-                                showDiff = true
-                            }
-                        }
+                        showDiff = true
                     }
                 }
             }
