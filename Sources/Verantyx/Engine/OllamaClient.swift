@@ -90,8 +90,9 @@ public actor OllamaClient {
     }
 
     // MARK: - Streaming (for chat UI)
+    // nonisolated: returns a stream immediately; the async work happens inside the Task
 
-    public func streamGenerate(
+    nonisolated public func streamGenerate(
         model: String,
         prompt: String,
         maxTokens: Int = 2048,

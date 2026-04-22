@@ -55,10 +55,14 @@ actor MLXRunner {
 
     // MLX-recommended models for code editing
     static let popularModels: [MLXModel] = [
+        MLXModel(id: "mlx-community/gemma-4-26b-a4b-it-4bit",
+                 displayName: "Gemma 4 26B (4bit) ⭐ 最新・最高性能",
+                 sizeGB: 17.0,
+                 tags: ["thinking", "latest", "recommended"]),
         MLXModel(id: "mlx-community/gemma-3-27b-it-4bit",
-                 displayName: "Gemma 3 27B (4bit) ← gemma4:26b相当",
+                 displayName: "Gemma 3 27B (4bit) — 安定版",
                  sizeGB: 18.0,
-                 tags: ["thinking", "recommended"]),
+                 tags: ["thinking", "stable"]),
         MLXModel(id: "mlx-community/gemma-3-12b-it-4bit",
                  displayName: "Gemma 3 12B (4bit) — 軽量版",
                  sizeGB: 8.0,

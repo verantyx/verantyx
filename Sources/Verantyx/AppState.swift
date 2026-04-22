@@ -5,10 +5,16 @@ import AppKit
 // MARK: - Core data models
 
 struct ChatMessage: Identifiable, Equatable {
-    let id = UUID()
+    var id: UUID
     var role: Role
     var content: String
     var timestamp = Date()
+
+    init(id: UUID = UUID(), role: Role, content: String) {
+        self.id = id
+        self.role = role
+        self.content = content
+    }
 
     enum Role { case user, assistant, system }
 }
@@ -59,6 +65,47 @@ final class AppState: ObservableObject {
     @Published var inputText: String = ""
     @Published var isGenerating = false
 
+    // ── Performance metrics (the "Apple Silicon violence" numbers) ──
+    @Published var tokensPerSecond: Double = 0       // live tok/s display
+    @Published var totalTokensGenerated: Int = 0     // session total
+    @Published var streamingText: String = ""        // current token buffer for live render
+    @Published var inferenceMs: Int = 0              // last response latency ms
+
+    // ── Process log ("what is the AI thinking right now") ──
+    @Published var processLog: [ProcessLogEntry] = []   // raw live log
+    @Published var showProcessLog: Bool = true
+
+    struct ProcessLogEntry: Identifiable {
+        let id = UUID()
+        let timestamp: Date
+        var text: String
+        var kind: Kind
+
+        enum Kind { case memory, tool, browser, thinking, system, perf }
+
+        var prefix: String {
+            switch kind {
+            case .memory:   return "→ MEM  "
+            case .tool:     return "→ TOOL "
+            case .browser:  return "→ DOM  "
+            case .thinking: return "▶ THINK"
+            case .system:   return "⋯ SYS  "
+            case .perf:     return "⚡ PERF "
+            }
+        }
+
+        var color: Color {
+            switch kind {
+            case .memory:   return Color(red: 0.4, green: 0.9, blue: 0.6)
+            case .tool:     return Color(red: 0.4, green: 0.8, blue: 1.0)
+            case .browser:  return Color(red: 0.9, green: 0.7, blue: 0.3)
+            case .thinking: return Color(red: 0.8, green: 0.8, blue: 1.0)
+            case .system:   return Color(red: 0.6, green: 0.6, blue: 0.6)
+            case .perf:     return Color(red: 0.3, green: 1.0, blue: 0.5)
+            }
+        }
+    }
+
     // Diff
     @Published var pendingDiff: FileDiff?
     @Published var showDiff = false
@@ -91,7 +138,7 @@ final class AppState: ObservableObject {
     let cortex = CortexEngine()
 
     // MLX state
-    @Published var activeMlxModel: String = "mlx-community/gemma-3-27b-it-4bit"
+    @Published var activeMlxModel: String = "mlx-community/gemma-4-26b-a4b-it-4bit"
     @Published var mlxServerLogs: [String] = []
 
     // Agent loop
@@ -275,62 +322,147 @@ final class AppState: ObservableObject {
 
     // MARK: - Single pass (original behavior)
 
+    // MARK: - Single pass (streaming)
+    // Streams tokens directly into the chat bubble in real-time.
+    // Tracks tok/s and emits process log entries.
+
     private func runSinglePass(instruction: String) async {
         let context = selectedFileContent.isEmpty ? nil : selectedFileContent
         let contextFile = selectedFile
 
-        let result = await agent.process(
-            instruction: instruction,
-            contextFileContent: context,
-            contextFileName: contextFile?.lastPathComponent,
-            modelStatus: modelStatus,
-            activeOllamaModel: activeOllamaModel,
-            hasTerminal: workspaceURL != nil,
-            workspaceURL: workspaceURL
-        )
+        let snap_status = modelStatus
+        let snap_model  = activeOllamaModel
 
-        await MainActor.run {
-            messages.append(ChatMessage(role: .assistant, content: result.explanation))
+        // Build prompt (same as AgentEngine)
+        let fileSection = context.map { content in
+            let name = contextFile?.lastPathComponent ?? "file"
+            return "FILE: \(name)\n```\n\(content.prefix(8000))\n```\n\n"
+        } ?? ""
+
+        let prompt = """
+        You are Verantyx, an expert AI coding assistant running on Apple Silicon.
+
+        \(fileSection)USER: \(instruction)
+
+        ASSISTANT:
+        """
+
+        // Reset streaming state
+        streamingText = ""
+        tokensPerSecond = 0
+        var tokenCount = 0
+        let startTime = Date()
+        var lastPerfLog = Date()
+
+        logProcess("inference start [", kind: .system)
+        logProcess("prompt \(prompt.count) chars", kind: .system)
+
+        // Build the stream based on active model
+        let stream: AsyncThrowingStream<String, Error>
+        switch snap_status {
+        case .ollamaReady(let model):
+            logProcess("Ollama/\(model)", kind: .system)
+            // OllamaClient is an actor — call from nonisolated context via Task
+            stream = OllamaClient.shared.streamGenerate(
+                model: model, prompt: prompt, maxTokens: 2048, temperature: 0.1
+            )
+        case .mlxReady:
+            let m = activeMlxModel.components(separatedBy: "/").last ?? activeMlxModel
+            logProcess("MLX/\(m) @ localhost:8080", kind: .system)
+            stream = await MLXRunner.shared.streamGenerate(
+                prompt: prompt, maxTokens: 4096, temperature: 0.1
+            )
+        default:
+            messages.append(ChatMessage(role: .assistant,
+                content: "⚠️ No model. Connect Ollama or start MLX server."))
             isGenerating = false
-
-            if let diff = result.diff, !selectedFileContent.isEmpty, let fileURL = contextFile {
-                pendingDiff = FileDiff(
-                    fileURL: fileURL,
-                    originalContent: selectedFileContent,
-                    modifiedContent: diff,
-                    hunks: DiffEngine.compute(original: selectedFileContent, modified: diff)
-                )
-                showDiff = true
-            }
+            return
         }
 
-        // Execute [RUN: cmd] commands found in AI response
-        for cmd in result.ranCommands {
-            let termResult = await terminal.run(cmd, in: workspaceURL, initiatedByAI: true)
-            if !termResult.succeeded, let fileContent = context, let fileName = contextFile?.lastPathComponent {
-                await MainActor.run { self.addSystemMessage("🔧 Build failed — asking AI to fix…") }
-                let fixResult = await agent.fixWithErrorOutput(
-                    originalAIResponse: result.explanation + (result.diff ?? ""),
-                    errorOutput: termResult.combinedForAI,
-                    contextFileContent: fileContent,
-                    contextFileName: fileName,
-                    activeOllamaModel: activeOllamaModel
-                )
+        // Reserve a slot in messages for the streaming assistant reply
+        let msgId = UUID()
+        await MainActor.run {
+            messages.append(ChatMessage(id: msgId, role: .assistant, content: ""))
+        }
+
+        // Stream tokens
+        do {
+            for try await token in stream {
+                tokenCount += 1
+                totalTokensGenerated += 1
+
                 await MainActor.run {
-                    messages.append(ChatMessage(role: .assistant, content: fixResult.explanation))
-                    if let fixDiff = fixResult.diff, let fileURL = contextFile {
-                        pendingDiff = FileDiff(
-                            fileURL: fileURL,
-                            originalContent: selectedFileContent,
-                            modifiedContent: fixDiff,
-                            hunks: DiffEngine.compute(original: selectedFileContent, modified: fixDiff)
-                        )
-                        showDiff = true
+                    // Update in-place streaming message
+                    if let idx = self.messages.firstIndex(where: { $0.id == msgId }) {
+                        self.messages[idx].content += token
+                    }
+                    self.streamingText += token
+
+                    // Update tok/s every 0.25s
+                    let elapsed = Date().timeIntervalSince(startTime)
+                    if elapsed > 0.1 {
+                        self.tokensPerSecond = Double(tokenCount) / elapsed
                     }
                 }
+
+                // Perf log every 2s
+                if Date().timeIntervalSince(lastPerfLog) > 2 {
+                    let elapsed = Date().timeIntervalSince(startTime)
+                    let tps = Double(tokenCount) / max(elapsed, 0.001)
+                    logProcess(String(format: "%.1f tok/s  │  %d tokens", tps, tokenCount), kind: .perf)
+                    lastPerfLog = Date()
+                }
             }
+        } catch {
+            logProcess("stream error: \(error.localizedDescription)", kind: .system)
+        }
+
+        // Final state
+        let elapsed = Date().timeIntervalSince(startTime)
+        let finalTps = Double(tokenCount) / max(elapsed, 0.001)
+        inferenceMs = Int(elapsed * 1000)
+        tokensPerSecond = finalTps
+
+        logProcess(String(format: "done  %.1f tok/s  │  %d tok  │  %.1fs",
+                          finalTps, tokenCount, elapsed), kind: .perf)
+
+        // Parse agent tools from the final streamed content
+        let finalContent: String
+        if let idx = messages.firstIndex(where: { $0.id == msgId }) {
+            finalContent = messages[idx].content
+        } else { finalContent = "" }
+
+        let (toolCalls, _) = AgentToolParser.parse(from: finalContent)
+        let executor = AgentToolExecutor()
+
+        for tool in toolCalls {
+            logProcess("\(tool)", kind: .tool)
+            let result = await executor.execute(tool, workspaceURL: workspaceURL)
+
+            // Workspace switch side-effect
+            if case .setWorkspace(let path) = tool {
+                let url = URL(fileURLWithPath: path)
+                workspaceURL = url
+                terminal.workingDirectory = url
+                refreshFiles()
+            }
+            addSystemMessage(result)
+        }
+
+        isGenerating = false
+    }
+
+    // MARK: - Process log helpers
+
+    func logProcess(_ text: String, kind: ProcessLogEntry.Kind) {
+        let entry = ProcessLogEntry(timestamp: Date(), text: text, kind: kind)
+        DispatchQueue.main.async {
+            if self.processLog.count > 500 { self.processLog.removeFirst(100) }
+            self.processLog.append(entry)
         }
     }
+
+    func clearProcessLog() { processLog.removeAll() }
 
     func applyDiff() {
         guard let diff = pendingDiff else { return }

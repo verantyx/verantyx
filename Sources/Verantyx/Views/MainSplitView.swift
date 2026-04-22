@@ -36,17 +36,24 @@ struct MainSplitView: View {
 
                 Divider().opacity(0.3)
 
-                // ③ Center column: Chat (top) + File preview (bottom)
-                VSplitView {
+                // ③ Center column: Chat + ProcessLog (bottom)
+                VStack(spacing: 0) {
                     AgentChatView()
                         .frame(minHeight: 300)
 
+                    if app.showProcessLog {
+                        Divider().opacity(0.3)
+                        ThinkingLogView()
+                            .frame(height: 180)
+                    }
+
                     if app.selectedFile != nil {
+                        Divider().opacity(0.2)
                         FilePaneView()
-                            .frame(minHeight: 100, maxHeight: 260)
+                            .frame(minHeight: 80, maxHeight: 220)
                     }
                 }
-                .frame(minWidth: 340, idealWidth: 440, maxWidth: 600)
+                .frame(minWidth: 340, idealWidth: 440, maxWidth: 620)
 
                 Divider().opacity(0.3)
 
@@ -125,23 +132,40 @@ struct MainSplitView: View {
         }
 
         ToolbarItem(placement: .primaryAction) {
+            // Process log toggle
+            Button {
+                withAnimation(.easeInOut(duration: 0.15)) {
+                    app.showProcessLog.toggle()
+                }
+            } label: {
+                Image(systemName: "terminal")
+                    .symbolVariant(app.showProcessLog ? .fill : .none)
+                    .foregroundStyle(app.showProcessLog
+                                     ? Color(red: 0.3, green: 1.0, blue: 0.5)
+                                     : .secondary)
+            }
+            .help("Toggle Process Log")
+        }
+
+        ToolbarItem(placement: .primaryAction) {
             Button {
                 NSApp.terminate(nil)
             } label: {
-                Text("Restart to Update ++")
-                    .font(.system(size: 11, weight: .semibold))
+                Text("Quit")
+                    .font(.system(size: 11))
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.bordered)
             .controlSize(.small)
         }
     }
 
     private var shortModelLabel: String {
         switch app.modelStatus {
-        case .ollamaReady(let m): return "● \(m)"
-        case .connecting:         return "● Connecting…"
-        case .error:              return "● Error"
-        default:                  return "● No model"
+        case .ollamaReady(let m): return m.components(separatedBy: ":").first ?? m
+        case .mlxReady(let m):   return "MLX:".appending(m.components(separatedBy: "/").last ?? m)
+        case .connecting:         return "connecting…"
+        case .error:              return "error"
+        default:                  return "no model"
         }
     }
 }

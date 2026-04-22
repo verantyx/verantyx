@@ -17,6 +17,7 @@
 		17713B505E12627E142F65ED /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = AD2463FBE07B767ADB2B3207 /* MLXLLM */; };
 		292F06655B38F087BBD57724 /* FileTreeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 263AF59FC377D184685C7A9F /* FileTreeView.swift */; };
 		2B20F7F1B2F19DC07E1559EF /* StatusBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 727212A297B010E2A72ED242 /* StatusBarView.swift */; };
+		302978F1B371B48CF5673CC8 /* ThinkingLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0990B0239FC0773B512E1863 /* ThinkingLogView.swift */; };
 		38463790F63CCF562DE29226 /* WebSearchEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 238D55123A3C10747F1E2D53 /* WebSearchEngine.swift */; };
 		3AEA0F47626531CB4448C096 /* DiffEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BEAFD1ACA2A20312B98C1A6 /* DiffEngine.swift */; };
 		3D65C40A8DC505214322CDD0 /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F90A23BE1370B3E68FB7BC /* ToastView.swift */; };
@@ -47,6 +48,7 @@
 
 /* Begin PBXFileReference section */
 		0676432D69FA1C167E518CC9 /* DiffPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiffPanelView.swift; sourceTree = "<group>"; };
+		0990B0239FC0773B512E1863 /* ThinkingLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThinkingLogView.swift; sourceTree = "<group>"; };
 		17D6335B9FE38BA61EA5696E /* VerantyxApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerantyxApp.swift; sourceTree = "<group>"; };
 		22B0F334C1BF16C8A60C5017 /* PrivacyProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyProxy.swift; sourceTree = "<group>"; };
 		238D55123A3C10747F1E2D53 /* WebSearchEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSearchEngine.swift; sourceTree = "<group>"; };
@@ -135,6 +137,7 @@
 				77A7E899F70A18AE4543BB93 /* SideBySideDiffView.swift */,
 				727212A297B010E2A72ED242 /* StatusBarView.swift */,
 				91CC363258520DDB5548056F /* TerminalPanelView.swift */,
+				0990B0239FC0773B512E1863 /* ThinkingLogView.swift */,
 				34F90A23BE1370B3E68FB7BC /* ToastView.swift */,
 			);
 			path = Views;
@@ -275,6 +278,7 @@
 				525874995CEE5ACAA12F838A /* SyntaxHighlighter.swift in Sources */,
 				92FCF716C85EB142F0F687C0 /* TerminalPanelView.swift in Sources */,
 				F3B24E9BE65F23A9DE26AEE2 /* TerminalRunner.swift in Sources */,
+				302978F1B371B48CF5673CC8 /* ThinkingLogView.swift in Sources */,
 				3D65C40A8DC505214322CDD0 /* ToastView.swift in Sources */,
 				830E1B4FD07FA788D91A09C0 /* VerantyxApp.swift in Sources */,
 				38463790F63CCF562DE29226 /* WebSearchEngine.swift in Sources */,

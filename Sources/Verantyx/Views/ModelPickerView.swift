@@ -78,7 +78,7 @@ struct ModelPickerView: View {
                                         .foregroundStyle(.tertiary)
                                 }
                                 Spacer()
-                                if model.id == "mlx-community/gemma-3-27b-it-4bit" {
+                                if model.id == "mlx-community/gemma-4-26b-a4b-it-4bit" {
                                     Text("推奨")
                                         .font(.caption2)
                                         .padding(.horizontal, 5).padding(.vertical, 2)
@@ -139,7 +139,7 @@ struct ModelPickerView: View {
             }
 
             // Download tip
-            Text("初回はターミナルで:\n/usr/local/bin/python3 -m mlx_lm download \\\n  --model mlx-community/gemma-3-27b-it-4bit")
+            Text("初回はターミナルで:\n/usr/local/bin/python3 -m mlx_lm download \\\n  --model mlx-community/gemma-4-26b-a4b-it-4bit")
                 .font(.system(size: 9, design: .monospaced))
                 .foregroundStyle(.tertiary)
                 .padding(6)
