@@ -81,7 +81,23 @@ struct VerantyxApp: App {
             MainSplitView()
                 .environmentObject(appState)
                 .frame(minWidth: 900, minHeight: 580)
-                .onAppear { delegate.appState = appState }
+                .onAppear {
+                    delegate.appState = appState
+                    appState.registerCIErrorHook()
+                    appState.registerRestartHook()
+                }
+                // ── AI-triggered restart dialog ──────────────────────
+                .alert("🔨 ビルド完了 — 再起動しますか？",
+                       isPresented: $appState.showRestartAlert) {
+                    Button("再起動する", role: .destructive) {
+                        appState.performRestart()
+                    }
+                    Button("後で", role: .cancel) {
+                        appState.showRestartAlert = false
+                    }
+                } message: {
+                    Text("AI がパッチを適用してビルドに成功しました。\nアプリを終了してリビルドすると変更が有効になります。")
+                }
                 // CloseButton guard via SwiftUI scene lifecycle
                 .onReceive(
                     NotificationCenter.default.publisher(

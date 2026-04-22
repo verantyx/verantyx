@@ -29,6 +29,10 @@ enum AgentTool {
     case evalJS(script: String)                // JS eval in verantyx-browser  
     case openSafari(url: String)               // Open URL in Safari via AppleScript
     case openChrome(url: String)               // Open URL in Chrome via AppleScript
+    // ── Self-Fix build pipeline ───────────────────────────────────
+    case applyPatch(relativePath: String, content: String)  // Write patch to IDE source
+    case buildIDE                              // Run xcodebuild, return errors to AI
+    case restartIDE                            // Ask user to restart (shows dialog)
 }
 
 // MARK: - AgentToolCall (result wrapper)
@@ -41,17 +45,20 @@ struct AgentToolCall: Identifiable {
 
     var displayLabel: String {
         switch tool {
-        case .makeDir(let p):          return "mkdir \(p)"
-        case .writeFile(let p, _):     return "write → \(p)"
-        case .runCommand(let cmd):     return "$ \(cmd)"
-        case .setWorkspace(let p):     return "workspace: \(p)"
-        case .done(let m):             return "✓ \(m)"
-        case .readFile(let p):         return "read ← \(p)"
-        case .browse(let url):         return "🌐 browse \(url)"
-        case .search(let q):           return "🔍 search: \(q)"
-        case .evalJS(let s):           return "⚡ eval_js: \(s.prefix(40))"
-        case .openSafari(let url):     return "🧡 safari: \(url)"
-        case .openChrome(let url):     return "🟢 chrome: \(url)"
+        case .makeDir(let p):              return "mkdir \(p)"
+        case .writeFile(let p, _):         return "write → \(p)"
+        case .runCommand(let cmd):         return "$ \(cmd)"
+        case .setWorkspace(let p):         return "workspace: \(p)"
+        case .done(let m):                 return "✓ \(m)"
+        case .readFile(let p):             return "read ← \(p)"
+        case .browse(let url):             return "🌐 browse \(url)"
+        case .search(let q):               return "🔍 search: \(q)"
+        case .evalJS(let s):               return "⚡ eval_js: \(s.prefix(40))"
+        case .openSafari(let url):         return "🧡 safari: \(url)"
+        case .openChrome(let url):         return "🟢 chrome: \(url)"
+        case .applyPatch(let p, _):        return "📦 patch → \(p)"
+        case .buildIDE:                    return "🔨 xcodebuild"
+        case .restartIDE:                  return "🔄 restart IDE"
         }
     }
 }
@@ -81,6 +88,22 @@ struct AgentToolParser {
     [EVAL_JS: javascript code]          — run JS in current browser page
     [SAFARI: https://url]               — open URL in Safari (uses your session/cookies)
     [CHROME: https://url]               — open URL in Chrome (uses your session/cookies)
+
+    ── SELF-FIX TOOLS (only available in Self-Fix mode) ──
+    [APPLY_PATCH: Sources/Verantyx/Views/Foo.swift]
+    ```swift
+    // complete new file content
+    ```
+    [/APPLY_PATCH]                      — write patched content to IDE source file
+    [BUILD_IDE]                         — run xcodebuild on the IDE project; returns errors or BUILD SUCCEEDED
+    [RESTART_IDE]                       — show restart confirmation dialog to user
+
+    SELF-FIX WORKFLOW (use this pattern when modifying the IDE):
+    1. Write the fix using [APPLY_PATCH: ...] ... [/APPLY_PATCH]
+    2. Run [BUILD_IDE] to verify it compiles
+    3. If errors: read them, fix the file with another [APPLY_PATCH], repeat [BUILD_IDE]
+    4. When BUILD SUCCEEDED: use [RESTART_IDE] to ask user to restart
+    5. Then [DONE: what was changed]
 
     RULES:
     - Always use [MKDIR] before [WRITE] if the directory doesn't exist
@@ -139,6 +162,22 @@ struct AgentToolParser {
             }
         }
 
+        // ── 1b. Parse [APPLY_PATCH: path] ... ``` content ``` [/APPLY_PATCH] ──
+        let patchPattern = #"\[APPLY_PATCH:\s*([^\]]+)\]\s*```(?:\w+)?\n?([\s\S]*?)```\s*\[/APPLY_PATCH\]"#
+        if let regex = try? NSRegularExpression(pattern: patchPattern) {
+            let matches = regex.matches(in: cleaned, range: NSRange(cleaned.startIndex..., in: cleaned))
+            for match in matches.reversed() {
+                if let pathRange = Range(match.range(at: 1), in: cleaned),
+                   let contentRange = Range(match.range(at: 2), in: cleaned),
+                   let fullRange = Range(match.range, in: cleaned) {
+                    let path    = String(cleaned[pathRange]).trimmingCharacters(in: .whitespaces)
+                    let content = String(cleaned[contentRange])
+                    tools.insert(.applyPatch(relativePath: path, content: content), at: 0)
+                    cleaned = cleaned.replacingCharacters(in: fullRange, with: "")
+                }
+            }
+        }
+
         // ── 2. Parse single-line tags ──────────────────────────────────────
         let lines = cleaned.components(separatedBy: "\n")
         var resultLines: [String] = []
@@ -167,6 +206,11 @@ struct AgentToolParser {
                 tools.append(.openSafari(url: m))
             } else if let m = match(trimmed, pattern: #"^\[CHROME:\s*([^\]]+)\]$"#) {
                 tools.append(.openChrome(url: m))
+            // ── Self-Fix build pipeline ───────────────────────────
+            } else if trimmed == "[BUILD_IDE]" {
+                tools.append(.buildIDE)
+            } else if trimmed == "[RESTART_IDE]" {
+                tools.append(.restartIDE)
             } else {
                 resultLines.append(line)
             }
@@ -285,6 +329,26 @@ actor AgentToolExecutor {
             \(result.contextSnippet)
             [END CHROME]
             """
+
+        // ── Self-Fix build pipeline ───────────────────────────────────
+
+        case .applyPatch(let relativePath, let content):
+            // Sanitize fences and write to IDE source via SelfEvolutionEngine
+            return await MainActor.run {
+                let sanitized = SelfEvolutionEngine.stripCodeFences(from: content)
+                SelfEvolutionEngine.shared.registerPatch(for: relativePath, newContent: sanitized)
+                return "✅ PATCH_REGISTERED: \(relativePath) (\(sanitized.components(separatedBy: "\n").count) lines)"
+            }
+
+        case .buildIDE:
+            return await runIDEBuild()
+
+        case .restartIDE:
+            // Fire the restart request on MainActor and return a message for the AI
+            await MainActor.run {
+                NotificationCenter.default.post(name: .agentRequestsRestart, object: nil)
+            }
+            return "RESTART_REQUESTED: User will be asked to restart the app."
         }
     }
 
@@ -325,4 +389,74 @@ actor AgentToolExecutor {
             return result.isEmpty ? "[exit: \(process.terminationStatus)]" : result
         }.value
     }
+
+    // ── BUILD_IDE: xcodebuild with error filtering ────────────────────────
+    // Returns only actionable error/warning lines (not all the noise).
+    // Caps output at 3000 chars so it fits in AI context.
+
+    private func runIDEBuild() async -> String {
+        await Task.detached(priority: .userInitiated) {
+            // Locate the Xcode project next to the running app's bundle
+            let derivedData = NSHomeDirectory() + "/Library/Developer/Xcode/DerivedData"
+            // Find the xcodeproj we want to build
+            let projectPath = NSHomeDirectory() + "/verantyx-cli/VerantyxIDE/Verantyx.xcodeproj"
+
+            guard FileManager.default.fileExists(atPath: projectPath) else {
+                return "BUILD_ERROR: Verantyx.xcodeproj not found at \(projectPath). Please open workspace first."
+            }
+
+            let cmd = """
+            export PATH="$PATH:/opt/homebrew/bin"
+            xcodebuild \
+              -project '\(projectPath)' \
+              -scheme Verantyx \
+              -destination 'platform=macOS,arch=arm64' \
+              CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO \
+              build \
+              2>&1 | grep -E '\\.swift:[0-9]+:[0-9]+: (error|warning):|BUILD SUCCEEDED|BUILD FAILED' \
+                   | grep -v 'objc\\|deprecated' \
+                   | head -40
+            """
+
+            let process = Process()
+            process.executableURL = URL(fileURLWithPath: "/bin/zsh")
+            process.arguments = ["-c", cmd]
+
+            let pipe = Pipe()
+            process.standardOutput = pipe
+            process.standardError  = pipe
+
+            do { try process.run() } catch {
+                return "BUILD_ERROR: Could not launch xcodebuild — \(error.localizedDescription)"
+            }
+
+            let rawOutput = String(
+                data: pipe.fileHandleForReading.readDataToEndOfFile(),
+                encoding: .utf8
+            ) ?? ""
+            process.waitUntilExit()
+
+            let exitCode = process.terminationStatus
+            let output   = String(rawOutput.prefix(3000))
+
+            if output.contains("BUILD SUCCEEDED") {
+                return "BUILD SUCCEEDED ✅ — all patches compiled without errors."
+            } else {
+                return """
+                BUILD FAILED ❌ (exit \(exitCode))
+                Errors:
+                \(output.isEmpty ? "(no output captured)" : output)
+                Fix the errors above using [APPLY_PATCH:...] and run [BUILD_IDE] again.
+                """
+            }
+        }.value
+    }
+}
+
+// MARK: - Notification names for agent → UI communication
+
+extension Notification.Name {
+    /// Posted by AgentToolExecutor when AI emits [RESTART_IDE].
+    /// AppState listens and shows a restart confirmation alert.
+    static let agentRequestsRestart = Notification.Name("VerantyxAgentRequestsRestart")
 }

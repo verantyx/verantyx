@@ -68,6 +68,8 @@ final class AppState: ObservableObject {
     // Self-Fix mode — when true, next message(s) target IDE self-modification
     // Must be explicitly toggled by user pressing the "Self Fix" button.
     @Published var selfFixMode: Bool = false
+    /// Set to true when the AI calls [RESTART_IDE] — triggers a restart alert in the UI.
+    @Published var showRestartAlert: Bool = false
 
     // Attachments (images + files for multimodal inference)
     @Published var attachedImages: [AttachedImage] = []
@@ -832,6 +834,34 @@ final class AppState: ObservableObject {
                 await self.sendMessage(with: digest)
             }
         }
+    }
+
+    /// Subscribe to the [RESTART_IDE] agent event.
+    /// Call from VerantyxApp.onAppear once.
+    func registerRestartHook() {
+        NotificationCenter.default.addObserver(
+            forName: .agentRequestsRestart,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            self.showRestartAlert = true
+        }
+    }
+
+    /// Apply pending patches then quit; rebuild.sh relaunches the app.
+    func performRestart() {
+        try? SelfEvolutionEngine.shared.applyAllPatches()
+        let rebuildScript = NSHomeDirectory() + "/verantyx-cli/VerantyxIDE/rebuild.sh"
+        if FileManager.default.fileExists(atPath: rebuildScript) {
+            Task.detached {
+                let process = Process()
+                process.executableURL = URL(fileURLWithPath: "/bin/zsh")
+                process.arguments = ["-c", "sleep 0.5 && bash '\(rebuildScript)'"]
+                try? process.run()
+            }
+        }
+        NSApplication.shared.terminate(nil)
     }
 
     var isReady: Bool {
