@@ -1,20 +1,21 @@
 import SwiftUI
 
 // MARK: - MainSplitView
-// Verantyx layout (matches reference image):
+// Verantyx IDE layout — all panels freely resizable with drag dividers.
 //
-//  ┌────┬──────────────────┬───────────────────────────────────────┐
-//  │    │  Explorer        │  Center (Agent Chat)  │  Right Column  │
-//  │ 🔍 │  > verantyx-cli  │  [Vibe WS][Think Log] │  before│after  │
-//  │ 📁 │    > Sources     │  AntigravityAgent     │  diff lines    │
-//  │ 🧪 │    > ...         │  <think>...</think>   │                │
-//  │    │                  │  [model selector]     │ [Approve][Rej] │
-//  │    │                  │  [input]              │                │
-//  │    │                  ├───────────────────────│────────────────│
-//  │    │                  │  README.md (preview)  │  Terminal      │
-//  └────┴──────────────────┴───────────────────────┴────────────────┘
-//  │ ● Verantyx v0.1    mlx-swift             JCross 0 nodes  │
-//  └────────────────────────────────────────────────────────────────┘
+//  ┌────┬─────────────────┬──────────────────────┬──────────────────────┐
+//  │    │  Left panel     │  Center chat/log      │  Right: Diff+Term    │
+//  │ 🔍 │  (Explorer/MCP) │  AgentChatView        │  SideBySideDiffView  │
+//  │ 📁 │                 │  ThinkingLogView       │  ─────────────────── │
+//  │ ⬡  │                 │                        │  TerminalPanelView   │
+//  └────┴─────────────────┴──────────────────────┴──────────────────────┘
+//  ← 48 →←  160–480  →←    300–700      →←    min 300          →
+//
+// Constraints (prevent panels from disappearing):
+//   Left     min 160  max 480
+//   Center   min 300  max 700
+//   Right    min 300  (fills rest)
+//   Diff/Term split: top min 200  bottom min 120
 
 struct MainSplitView: View {
     @EnvironmentObject var app: AppState
@@ -23,54 +24,62 @@ struct MainSplitView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // ── Main content ───────────────────────────────────────
+            // ── Main content area ──────────────────────────────────────
             HStack(spacing: 0) {
-                // ① Activity bar (leftmost icon strip)
+
+                // ① Activity bar (fixed 48pt)
                 ActivityBarView(selectedSection: $activitySection)
+                    .frame(width: 48)
 
-                Divider().opacity(0.3)
+                // ② Left + Center + Right — three-pane resizable layout
+                ResizableHSplit(
+                    minLeft: 160, maxLeft: 480, minRight: 600, initialLeft: 240
+                ) {
+                    // ── Left pane ──────────────────────────────────────
+                    Group {
+                        switch activitySection {
+                        case .mcp:      MCPView()
+                        default:        FileTreeView()
+                        }
+                    }
+                    .frame(maxHeight: .infinity)
+                } right: {
+                    // ── Center + Right (another horizontal split) ──────
+                    ResizableHSplit(
+                        minLeft: 300, maxLeft: 700, minRight: 300, initialLeft: 420
+                    ) {
+                        // ── Center: Chat + Process Log ─────────────────
+                        VStack(spacing: 0) {
+                            AgentChatView()
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                // ② Left panel — switches based on activity section
-                Group {
-                    switch activitySection {
-                    case .mcp:
-                        MCPView()
-                    default:
-                        FileTreeView()
+                            if app.showProcessLog {
+                                ResizableVSplit(
+                                    minTop: 200, maxTop: 99999, minBottom: 80, initialTop: 9999
+                                ) {
+                                    EmptyView()  // spacer — chat fills top
+                                } bottom: {
+                                    ThinkingLogView()
+                                }
+                                .frame(height: 180)
+                            }
+                        }
+                    } right: {
+                        // ── Right: Diff (top) + Terminal (bottom) ──────
+                        ResizableVSplit(
+                            minTop: 200, maxTop: 99999, minBottom: 100, initialTop: 400
+                        ) {
+                            SideBySideDiffView()
+                        } bottom: {
+                            TerminalPanelView(terminal: app.terminal)
+                                .environmentObject(app)
+                        }
                     }
                 }
-                .frame(minWidth: 180, idealWidth: 240, maxWidth: 340)
-
-                Divider().opacity(0.3)
-
-                // ③ Center column: Chat + ProcessLog
-                VStack(spacing: 0) {
-                    AgentChatView()
-                        .frame(minHeight: 300)
-
-                    if app.showProcessLog {
-                        Divider().opacity(0.3)
-                        ThinkingLogView()
-                            .frame(height: 180)
-                    }
-                }
-                .frame(minWidth: 340, idealWidth: 440, maxWidth: 620)
-
-                Divider().opacity(0.3)
-
-                // ④ Right column: Diff (top) + Terminal (bottom)
-                VSplitView {
-                    SideBySideDiffView()
-                        .frame(minHeight: 250)
-
-                    terminalSection
-                        .frame(minHeight: 140, maxHeight: 280)
-                }
-                .frame(minWidth: 360)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            // ── Status bar ─────────────────────────────────────────
+            // ── Status bar ─────────────────────────────────────────────
             Divider().opacity(0.4)
             StatusBarView(terminal: app.terminal)
         }
@@ -80,30 +89,19 @@ struct MainSplitView: View {
         .onAppear { app.connectOllama() }
     }
 
-    // MARK: - Terminal section (right-bottom)
-
-    private var terminalSection: some View {
-        TerminalPanelView(terminal: app.terminal)
-            .environmentObject(app)
-    }
-
     // MARK: - Toolbar
 
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .navigation) {
-            Button {
-                app.openWorkspace()
-            } label: {
-                Image(systemName: "folder.badge.plus")
-                    .help("Open Folder")
+            Button { app.openWorkspace() } label: {
+                Image(systemName: "folder.badge.plus").help("Open Folder")
             }
         }
 
         ToolbarItem(placement: .principal) {
             HStack(spacing: 7) {
-                VXMarkView(size: 14,
-                           color: Color(red: 0.88, green: 0.88, blue: 0.94))
+                VXMarkView(size: 14, color: Color(red: 0.88, green: 0.88, blue: 0.94))
                 Text("Verantyx")
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(Color(red: 0.85, green: 0.85, blue: 0.92))
@@ -111,32 +109,23 @@ struct MainSplitView: View {
         }
 
         ToolbarItem(placement: .automatic) {
-            Button {
-                showModelPicker.toggle()
-            } label: {
+            Button { showModelPicker.toggle() } label: {
                 HStack(spacing: 4) {
-                    Circle()
-                        .fill(app.statusColor)
-                        .frame(width: 7, height: 7)
+                    Circle().fill(app.statusColor).frame(width: 7, height: 7)
                     Text(shortModelLabel)
                         .font(.system(size: 11, design: .monospaced))
                 }
                 .foregroundStyle(Color(red: 0.75, green: 0.75, blue: 0.88))
             }
             .popover(isPresented: $showModelPicker, arrowEdge: .bottom) {
-                ModelPickerView()
-                    .environmentObject(app)
-                    .frame(width: 320)
+                ModelPickerView().environmentObject(app).frame(width: 320)
             }
             .help("Model Picker")
         }
 
         ToolbarItem(placement: .primaryAction) {
-            // Process log toggle
             Button {
-                withAnimation(.easeInOut(duration: 0.15)) {
-                    app.showProcessLog.toggle()
-                }
+                withAnimation(.easeInOut(duration: 0.15)) { app.showProcessLog.toggle() }
             } label: {
                 Image(systemName: "terminal")
                     .symbolVariant(app.showProcessLog ? .fill : .none)
@@ -144,15 +133,12 @@ struct MainSplitView: View {
                                      ? Color(red: 0.3, green: 1.0, blue: 0.5)
                                      : .secondary)
             }
-            .help("Toggle Process Log")
+            .help("Toggle Process Log (⌘⇧L)")
         }
 
         ToolbarItem(placement: .primaryAction) {
-            Button {
-                NSApp.terminate(nil)
-            } label: {
-                Text("Quit")
-                    .font(.system(size: 11))
+            Button { NSApp.terminate(nil) } label: {
+                Text("Quit").font(.system(size: 11))
             }
             .buttonStyle(.bordered)
             .controlSize(.small)
@@ -162,7 +148,7 @@ struct MainSplitView: View {
     private var shortModelLabel: String {
         switch app.modelStatus {
         case .ollamaReady(let m): return m.components(separatedBy: ":").first ?? m
-        case .mlxReady(let m):   return "MLX:".appending(m.components(separatedBy: "/").last ?? m)
+        case .mlxReady(let m):   return "MLX:" + (m.components(separatedBy: "/").last ?? m)
         case .connecting:         return "connecting…"
         case .error:              return "error"
         default:                  return "no model"

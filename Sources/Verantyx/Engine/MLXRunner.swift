@@ -1,357 +1,231 @@
 import Foundation
+import MLX
+import MLXLLM
+import MLXLMCommon
+import Hub
 
-// MARK: - MLXRunner
-// Manages the mlx_lm.server process — an OpenAI-compatible HTTP server
-// that loads a model once into Unified Memory and serves it at localhost:8080.
+// MARK: - MLXRunner (Direct In-Process Inference)
 //
-// Architecture:
-//   Swift IDE → HTTP /v1/chat/completions → mlx_lm.server → Apple Silicon GPU
+// Loads the MLX model directly into the app process via MLXLMCommon.ModelContainer.
+// No subprocess, no HTTP server, no port conflicts.
 //
-// The server exposes an OpenAI-compatible API, so we can reuse the same
-// chat completion format as CloudAPIClient, but pointing to localhost.
-//
-// Usage:
-//   await MLXRunner.shared.startServer(model: "mlx-community/gemma-3-27b-it-4bit")
-//   let text = await MLXRunner.shared.generate(prompt: "...")
+// generate() callback API:
+//   ([Int]) -> GenerateDisposition  (.more | .stop)
+//   Tokenizer.decode(tokens: [Int]) -> String  for piece decoding
 
 // MARK: - MLX Popular Models
 
 struct MLXModel: Identifiable, Hashable {
-    let id: String          // HuggingFace repo ID
+    let id: String
     let displayName: String
     let sizeGB: Double
     let tags: [String]
 
     var isDownloaded: Bool {
-        let cachePath = MLXRunner.cacheDir.appendingPathComponent(
-            id.replacingOccurrences(of: "/", with: "--")
-        )
-        return FileManager.default.fileExists(atPath: cachePath.path)
+        let home  = FileManager.default.homeDirectoryForCurrentUser
+        let cache = home.appendingPathComponent(".cache/huggingface/hub")
+        let name  = "models--" + id.replacingOccurrences(of: "/", with: "--")
+        return FileManager.default.fileExists(atPath: cache.appendingPathComponent(name).path)
     }
 }
 
-// MARK: - MLXRunner
+// MARK: - MLXRunner Actor
 
 actor MLXRunner {
 
     static let shared = MLXRunner()
 
-    // ── Python path ──────────────────────────────────────────────────
-    static let pythonPath: String = {
-        for p in ["/usr/local/bin/python3", "/opt/homebrew/bin/python3",
-                  "/usr/bin/python3", "python3"] {
-            if FileManager.default.fileExists(atPath: p) { return p }
-        }
-        return "python3"
-    }()
-
     static let cacheDir: URL = {
-        let home = FileManager.default.homeDirectoryForCurrentUser
-        return home.appendingPathComponent(".cache/huggingface/hub")
+        FileManager.default.homeDirectoryForCurrentUser
+            .appendingPathComponent(".cache/huggingface/hub")
     }()
 
-    static let port = 8080
-    static let baseURL = "http://127.0.0.1:\(port)"
-
-    // MLX-recommended models for code editing
     static let popularModels: [MLXModel] = [
         MLXModel(id: "mlx-community/gemma-4-26b-a4b-it-4bit",
                  displayName: "Gemma 4 26B (4bit) ⭐ 最新・最高性能",
-                 sizeGB: 17.0,
-                 tags: ["thinking", "latest", "recommended"]),
+                 sizeGB: 17.0, tags: ["thinking", "latest", "recommended"]),
         MLXModel(id: "mlx-community/gemma-3-27b-it-4bit",
                  displayName: "Gemma 3 27B (4bit) — 安定版",
-                 sizeGB: 18.0,
-                 tags: ["thinking", "stable"]),
+                 sizeGB: 18.0, tags: ["thinking", "stable"]),
         MLXModel(id: "mlx-community/gemma-3-12b-it-4bit",
                  displayName: "Gemma 3 12B (4bit) — 軽量版",
-                 sizeGB: 8.0,
-                 tags: ["fast"]),
+                 sizeGB: 8.0, tags: ["fast"]),
         MLXModel(id: "mlx-community/Qwen2.5-Coder-7B-Instruct-4bit",
                  displayName: "Qwen 2.5 Coder 7B — コード特化",
-                 sizeGB: 4.5,
-                 tags: ["code", "fast"]),
+                 sizeGB: 4.5, tags: ["code", "fast"]),
         MLXModel(id: "mlx-community/Qwen2.5-Coder-32B-Instruct-4bit",
                  displayName: "Qwen 2.5 Coder 32B — 最高精度",
-                 sizeGB: 20.0,
-                 tags: ["code", "large"]),
+                 sizeGB: 20.0, tags: ["code", "large"]),
         MLXModel(id: "mlx-community/Mistral-7B-Instruct-v0.3-4bit",
                  displayName: "Mistral 7B Instruct",
-                 sizeGB: 4.0,
-                 tags: ["fast"]),
-        MLXModel(id: "mlx-community/Phi-4-mini-instruct-4bit",
-                 displayName: "Phi-4 Mini — 超高速",
-                 sizeGB: 2.5,
-                 tags: ["fast", "small"]),
+                 sizeGB: 4.0, tags: ["fast", "general"]),
+        MLXModel(id: "mlx-community/phi-4-4bit",
+                 displayName: "Phi-4 (4bit) — Microsoft",
+                 sizeGB: 8.5, tags: ["reasoning"]),
     ]
 
-    // ── State ────────────────────────────────────────────────────────
-    private var serverProcess: Process?
-    private(set) var loadedModel: String?
-    private(set) var serverState: MLXServerState = .stopped
+    // MARK: - Private state
 
-    enum MLXServerState: Equatable {
-        case stopped
-        case loading(model: String)
-        case ready(model: String)
-        case error(String)
-    }
+    private var container: ModelContainer? = nil
+    private(set) var currentModelId: String? = nil
+    private(set) var isLoaded: Bool = false
 
-    // ── Start server ─────────────────────────────────────────────────
+    // MARK: - Load model
 
-    func startServer(
-        model: String,
-        onProgress: @escaping @Sendable (String) -> Void
+    func loadModel(
+        id modelId: String,
+        hfToken: String? = nil,
+        progressHandler: @escaping @Sendable (String) -> Void
     ) async throws {
-
-        // If same model already running, skip
-        if case .ready(let m) = serverState, m == model {
-            await MainActor.run { onProgress("✅ MLX server already running: \(model)") }
+        if currentModelId == modelId, isLoaded {
+            await MainActor.run { progressHandler("✓ \(modelId) already loaded") }
             return
         }
+        container = nil; isLoaded = false; currentModelId = nil
+        await MainActor.run { progressHandler("⟳ Loading \(modelId) into Unified Memory…") }
 
-        // Kill previous server if different model
-        stopServer()
-        serverState = .loading(model: model)
-        await MainActor.run { onProgress("⚙️ Loading \(model) into Unified Memory…") }
+        var hub = defaultHubApi
+        if let token = hfToken { hub = HubApi(hfToken: token) }
 
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: Self.pythonPath)
-        process.arguments = [
-            "-m", "mlx_lm", "server",
-            "--model", model,
-            "--port", String(Self.port),
-            "--host", "127.0.0.1",
-            "--max-tokens", "4096",
-        ]
+        let config = ModelConfiguration(id: modelId)
+        let loaded = try await LLMModelFactory.shared.loadContainer(
+            hub: hub, configuration: config
+        ) { progress in
+            let pct = Int(progress.fractionCompleted * 100)
+            Task { @MainActor in progressHandler("↓ Downloading… \(pct)%") }
+        }
 
-        let errPipe = Pipe()
-        process.standardError = errPipe
-        process.standardOutput = Pipe()  // discard stdout noise
+        container = loaded; currentModelId = modelId; isLoaded = true
+        await MainActor.run { progressHandler("✅ \(modelId) loaded — ready") }
+    }
 
-        // Read startup logs to detect readiness
-        errPipe.fileHandleForReading.readabilityHandler = { [weak self] handle in
-            let data = handle.availableData
-            guard !data.isEmpty, let line = String(data: data, encoding: .utf8) else { return }
-            let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
-            if !trimmed.isEmpty {
-                onProgress("MLX: \(trimmed)")
+    // MARK: - Token-by-token streaming
+
+    func streamGenerateTokens(
+        prompt: String,
+        maxTokens: Int = 4096,
+        temperature: Double = 0.1,
+        onToken: @escaping @Sendable (String) -> Void,
+        onFinish: @escaping @Sendable (String) -> Void
+    ) async throws {
+        guard let box = container else { throw MLXError.notLoaded }
+
+        let params    = GenerateParameters(temperature: Float(temperature))
+        let userInput = UserInput(prompt: prompt)
+
+        try await box.perform { (context: ModelContext) in
+            // Prepare token IDs from the chat template / raw prompt
+            let lmInput: LMInput
+            do {
+                lmInput = try await context.processor.prepare(input: userInput)
+            } catch {
+                // If no chat template, fall back to raw token encoding
+                let ids = context.tokenizer.encode(text: prompt)
+                lmInput = LMInput(tokens: .init(ids.map { Int32($0) }))
             }
-        }
 
-        try process.run()
-        self.serverProcess = process
-        self.loadedModel = model
+            var allTokens: [Int] = []
+            var partialBuffer: [Int] = []
 
-        // Poll until server is ready (max 120s — large model loading)
-        let deadline = Date().addingTimeInterval(120)
-        var ready = false
-        while Date() < deadline {
-            if await probeServer() {
-                ready = true
-                break
+            let result = try MLXLMCommon.generate(
+                input: lmInput, parameters: params, context: context
+            ) { newTokens -> GenerateDisposition in
+                allTokens += newTokens
+                partialBuffer += newTokens
+
+                // Decode incrementally — flush when we have clean UTF-8
+                let piece = context.tokenizer.decode(tokens: partialBuffer)
+                if !piece.isEmpty && piece.isValidUTF8 {
+                    partialBuffer = []
+                    Task { @MainActor in onToken(piece) }
+                }
+
+                return allTokens.count >= maxTokens ? .stop : .more
             }
-            try await Task.sleep(nanoseconds: 1_000_000_000)
-            await MainActor.run { onProgress("⏳ Waiting for MLX server…") }
-        }
 
-        if ready {
-            serverState = .ready(model: model)
-            await MainActor.run { onProgress("✅ MLX ready: \(model)") }
-        } else {
-            serverState = .error("Timeout loading \(model)")
-            process.terminate()
-            throw MLXError.serverTimeout
+            // Flush any remaining buffer
+            if !partialBuffer.isEmpty {
+                let last = context.tokenizer.decode(tokens: partialBuffer)
+                if !last.isEmpty { Task { @MainActor in onToken(last) } }
+            }
+
+            let fullText = result.output
+            Task { @MainActor in onFinish(fullText) }
         }
     }
 
-    func stopServer() {
-        serverProcess?.terminate()
-        serverProcess = nil
-        loadedModel = nil
-        serverState = .stopped
-    }
-
-    // ── Probe server readiness ────────────────────────────────────────
-
-    func probeServer() async -> Bool {
-        guard let url = URL(string: "\(Self.baseURL)/v1/models") else { return false }
-        var req = URLRequest(url: url)
-        req.timeoutInterval = 1.5
-        do {
-            let (_, resp) = try await URLSession.shared.data(for: req)
-            return (resp as? HTTPURLResponse)?.statusCode == 200
-        } catch { return false }
-    }
-
-    // ── Generate (non-streaming) ─────────────────────────────────────
+    // MARK: - Single-shot (blocking)
 
     func generate(
         prompt: String,
-        systemPrompt: String = "You are Verantyx, an expert AI coding assistant running on Apple Silicon via MLX.",
-        maxTokens: Int = 4096,
+        maxTokens: Int = 2048,
         temperature: Double = 0.1
-    ) async -> String? {
-        guard let model = loadedModel,
-              case .ready = serverState else { return nil }
+    ) async throws -> String {
+        guard let box = container else { throw MLXError.notLoaded }
+        let params    = GenerateParameters(temperature: Float(temperature))
+        let userInput = UserInput(prompt: prompt)
 
-        let url = URL(string: "\(Self.baseURL)/v1/chat/completions")!
-        var req = URLRequest(url: url)
-        req.httpMethod = "POST"
-        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        req.timeoutInterval = 180
-
-        let body: [String: Any] = [
-            "model": model,
-            "messages": [
-                ["role": "system", "content": systemPrompt],
-                ["role": "user",   "content": prompt]
-            ],
-            "max_tokens": maxTokens,
-            "temperature": temperature,
-            "stream": false
-        ]
-
-        guard let bodyData = try? JSONSerialization.data(withJSONObject: body) else { return nil }
-        req.httpBody = bodyData
-
-        do {
-            let (data, resp) = try await URLSession.shared.data(for: req)
-            guard (resp as? HTTPURLResponse)?.statusCode == 200,
-                  let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                  let choices = json["choices"] as? [[String: Any]],
-                  let first = choices.first,
-                  let message = first["message"] as? [String: Any],
-                  let content = message["content"] as? String
-            else { return nil }
-            return content.trimmingCharacters(in: .whitespacesAndNewlines)
-        } catch {
-            return nil
-        }
-    }
-
-    // ── Streaming generate ───────────────────────────────────────────
-
-    func streamGenerate(
-        prompt: String,
-        systemPrompt: String = "You are Verantyx, an expert AI coding assistant running on Apple Silicon via MLX.",
-        maxTokens: Int = 4096,
-        temperature: Double = 0.1
-    ) -> AsyncThrowingStream<String, Error> {
-        AsyncThrowingStream { continuation in
-            Task {
-                guard let model = self.loadedModel,
-                      case .ready = self.serverState else {
-                    continuation.finish(); return
-                }
-
-                let url = URL(string: "\(Self.baseURL)/v1/chat/completions")!
-                var req = URLRequest(url: url)
-                req.httpMethod = "POST"
-                req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                req.timeoutInterval = 180
-
-                let body: [String: Any] = [
-                    "model": model,
-                    "messages": [
-                        ["role": "system", "content": systemPrompt],
-                        ["role": "user",   "content": prompt]
-                    ],
-                    "max_tokens": maxTokens,
-                    "temperature": temperature,
-                    "stream": true
-                ]
-
-                guard let bodyData = try? JSONSerialization.data(withJSONObject: body) else {
-                    continuation.finish(); return
-                }
-                req.httpBody = bodyData
-
-                do {
-                    let (stream, _) = try await URLSession.shared.bytes(for: req)
-                    for try await line in stream.lines {
-                        guard line.hasPrefix("data: ") else { continue }
-                        let jsonStr = String(line.dropFirst(6))
-                        if jsonStr == "[DONE]" { break }
-                        guard let data = jsonStr.data(using: .utf8),
-                              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                              let choices = json["choices"] as? [[String: Any]],
-                              let delta = choices.first?["delta"] as? [String: Any],
-                              let token = delta["content"] as? String,
-                              !token.isEmpty
-                        else { continue }
-                        continuation.yield(token)
-                    }
-                    continuation.finish()
-                } catch {
-                    continuation.finish(throwing: error)
-                }
+        return try await box.perform { (context: ModelContext) in
+            let lmInput: LMInput
+            do {
+                lmInput = try await context.processor.prepare(input: userInput)
+            } catch {
+                let ids = context.tokenizer.encode(text: prompt)
+                lmInput = LMInput(tokens: .init(ids.map { Int32($0) }))
             }
+            var all: [Int] = []
+            let result = try MLXLMCommon.generate(
+                input: lmInput, parameters: params, context: context
+            ) { tokens -> GenerateDisposition in
+                all += tokens; return all.count >= maxTokens ? .stop : .more
+            }
+            return result.output
         }
     }
 
-    // ── Download model via mlx_lm download ──────────────────────────
+    // MARK: - Download only (no load)
 
     func downloadModel(
         repoId: String,
+        hfToken: String? = nil,
         onProgress: @escaping @Sendable (String) -> Void
     ) async throws {
-        await MainActor.run { onProgress("⬇️ Downloading \(repoId)…") }
-
-        return try await withCheckedThrowingContinuation { continuation in
-            DispatchQueue.global(qos: .userInitiated).async {
-                let process = Process()
-                process.executableURL = URL(fileURLWithPath: Self.pythonPath)
-                process.arguments = ["-m", "mlx_lm", "download", "--model", repoId]
-
-                let outPipe = Pipe()
-                let errPipe = Pipe()
-                process.standardOutput = outPipe
-                process.standardError  = errPipe
-
-                // Stream download progress
-                outPipe.fileHandleForReading.readabilityHandler = { handle in
-                    let data = handle.availableData
-                    if let line = String(data: data, encoding: .utf8), !line.isEmpty {
-                        onProgress(line.trimmingCharacters(in: .whitespacesAndNewlines))
-                    }
-                }
-                errPipe.fileHandleForReading.readabilityHandler = { handle in
-                    let data = handle.availableData
-                    if let line = String(data: data, encoding: .utf8), !line.isEmpty {
-                        onProgress(line.trimmingCharacters(in: .whitespacesAndNewlines))
-                    }
-                }
-
-                do {
-                    try process.run()
-                    process.waitUntilExit()
-                    if process.terminationStatus == 0 {
-                        onProgress("✅ Download complete: \(repoId)")
-                        continuation.resume()
-                    } else {
-                        continuation.resume(throwing: MLXError.downloadFailed(repoId))
-                    }
-                } catch {
-                    continuation.resume(throwing: error)
-                }
-            }
+        var hub = defaultHubApi
+        if let token = hfToken { hub = HubApi(hfToken: token) }
+        let config = ModelConfiguration(id: repoId)
+        await MainActor.run { onProgress("↓ Fetching \(repoId)…") }
+        _ = try await LLMModelFactory.shared.loadContainer(hub: hub, configuration: config) { p in
+            let pct = Int(p.fractionCompleted * 100)
+            Task { @MainActor in onProgress("↓ \(repoId)  \(pct)%") }
         }
+        await MainActor.run { onProgress("✅ Download complete: \(repoId)") }
     }
 }
 
-// MARK: - MLXError
+// MARK: - String UTF-8 validity helper
+
+private extension String {
+    var isValidUTF8: Bool { utf8.withContiguousStorageIfAvailable { _ in true } != nil }
+}
+
+// MARK: - LMInput convenience (tokens from MLXArray)
+
+private extension LMInput {
+    init(tokens array: MLXArray) {
+        self.init(tokens: array)
+    }
+}
+
+// MARK: - Errors
 
 enum MLXError: Error, LocalizedError {
-    case serverTimeout
+    case notLoaded
     case downloadFailed(String)
-    case notReady
 
     var errorDescription: String? {
         switch self {
-        case .serverTimeout:         return "MLX server timed out loading model."
+        case .notLoaded:             return "MLX model not loaded."
         case .downloadFailed(let m): return "Download failed: \(m)"
-        case .notReady:              return "MLX server not ready."
         }
     }
 }

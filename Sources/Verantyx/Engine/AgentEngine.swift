@@ -42,10 +42,9 @@ actor AgentEngine {
                 temperature: 0.1
             )
         case .mlxReady:
-            // MLX server at localhost:8080 — OpenAI-compatible, fastest on Apple Silicon
-            rawOutput = await MLXRunner.shared.generate(
+            // Direct in-process MLX inference (no HTTP server)
+            rawOutput = try? await MLXRunner.shared.generate(
                 prompt: prompt,
-                systemPrompt: "You are Verantyx, an expert AI coding assistant running on Apple Silicon via MLX (high-speed unified memory inference).",
                 maxTokens: 4096,
                 temperature: 0.1
             )

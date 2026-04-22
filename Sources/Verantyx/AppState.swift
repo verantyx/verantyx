@@ -415,100 +415,125 @@ final class AppState: ObservableObject {
         logProcess("prompt \(prompt.count) chars", kind: .system)
 
         // Build the stream based on active model — use live settings
-        let stream: AsyncThrowingStream<String, Error>
         switch snap_status {
+
+        // ── Ollama path (unchanged) ─────────────────────────────────────────
         case .ollamaReady(let model):
             logProcess("Ollama/\(model)  temp=\(temperature)  maxTok=\(maxTokensOllama)", kind: .system)
-            stream = OllamaClient.shared.streamGenerate(
+            let stream = OllamaClient.shared.streamGenerate(
                 model: model, prompt: prompt,
                 maxTokens: maxTokensOllama,
                 temperature: temperature
             )
-        case .mlxReady:
-            let m = activeMlxModel.components(separatedBy: "/").last ?? activeMlxModel
-            logProcess("MLX/\(m) @ localhost:8080  temp=\(temperature)  maxTok=\(maxTokensMLX)", kind: .system)
-            stream = await MLXRunner.shared.streamGenerate(
-                prompt: prompt,
-                maxTokens: maxTokensMLX,
-                temperature: temperature
-            )
-        default:
-            messages.append(ChatMessage(role: .assistant,
-                content: "⚠️ No model. Connect Ollama or start MLX server."))
-            isGenerating = false
-            return
-        }
-
-        // Reserve a slot in messages for the streaming assistant reply
-        let msgId = UUID()
-        await MainActor.run {
+            let msgId = UUID()
             messages.append(ChatMessage(id: msgId, role: .assistant, content: ""))
-        }
-
-        // Stream tokens
-        do {
-            for try await token in stream {
-                tokenCount += 1
-                totalTokensGenerated += 1
-
-                await MainActor.run {
-                    // Update in-place streaming message
+            do {
+                for try await token in stream {
+                    tokenCount += 1; totalTokensGenerated += 1
                     if let idx = self.messages.firstIndex(where: { $0.id == msgId }) {
                         self.messages[idx].content += token
                     }
-                    self.streamingText += token
-
-                    // Update tok/s every 0.25s
+                    streamingText += token
                     let elapsed = Date().timeIntervalSince(startTime)
-                    if elapsed > 0.1 {
-                        self.tokensPerSecond = Double(tokenCount) / elapsed
+                    if elapsed > 0.1 { tokensPerSecond = Double(tokenCount) / elapsed }
+                    if Date().timeIntervalSince(lastPerfLog) > 2 {
+                        logProcess(String(format: "%.1f tok/s  │  %d tokens",
+                                         Double(tokenCount)/max(elapsed,0.001), tokenCount), kind: .perf)
+                        lastPerfLog = Date()
                     }
                 }
+            } catch { logProcess("stream error: \(error.localizedDescription)", kind: .system) }
 
-                // Perf log every 2s
-                if Date().timeIntervalSince(lastPerfLog) > 2 {
-                    let elapsed = Date().timeIntervalSince(startTime)
-                    let tps = Double(tokenCount) / max(elapsed, 0.001)
-                    logProcess(String(format: "%.1f tok/s  │  %d tokens", tps, tokenCount), kind: .perf)
-                    lastPerfLog = Date()
+            let elapsed1 = Date().timeIntervalSince(startTime)
+            inferenceMs = Int(elapsed1 * 1000); tokensPerSecond = Double(tokenCount)/max(elapsed1,0.001)
+            logProcess(String(format: "done  %.1f tok/s  │  %d tok  │  %.1fs",
+                              tokensPerSecond, tokenCount, elapsed1), kind: .perf)
+            let finalContent1 = messages.first(where: { $0.id == msgId })?.content ?? ""
+            if agentLoopEnabled {
+                let (toolCalls, _) = AgentToolParser.parse(from: finalContent1)
+                let executor = AgentToolExecutor()
+                for tool in toolCalls {
+                    logProcess("\(tool)", kind: .tool)
+                    let result = await executor.execute(tool, workspaceURL: workspaceURL)
+                    if case .setWorkspace(let path) = tool {
+                        let url = URL(fileURLWithPath: path)
+                        workspaceURL = url; terminal.workingDirectory = url; refreshFiles()
+                    }
+                    addSystemMessage(result)
                 }
             }
-        } catch {
-            logProcess("stream error: \(error.localizedDescription)", kind: .system)
-        }
 
-        // Final state
-        let elapsed = Date().timeIntervalSince(startTime)
-        let finalTps = Double(tokenCount) / max(elapsed, 0.001)
-        inferenceMs = Int(elapsed * 1000)
-        tokensPerSecond = finalTps
+        // ── MLX direct in-process (new) ─────────────────────────────────────
+        case .mlxReady:
+            let m = activeMlxModel.components(separatedBy: "/").last ?? activeMlxModel
+            logProcess("MLX/\(m) (direct)  temp=\(temperature)  maxTok=\(maxTokensMLX)", kind: .system)
+            let msgId = UUID()
+            messages.append(ChatMessage(id: msgId, role: .assistant, content: ""))
+            // Nonisolated counter captured by ref via class box
+            let counter = Counter()
 
-        logProcess(String(format: "done  %.1f tok/s  │  %d tok  │  %.1fs",
-                          finalTps, tokenCount, elapsed), kind: .perf)
-
-        // Parse agent tools from the final streamed content
-        let finalContent: String
-        if let idx = messages.firstIndex(where: { $0.id == msgId }) {
-            finalContent = messages[idx].content
-        } else { finalContent = "" }
-
-        let (toolCalls, _) = AgentToolParser.parse(from: finalContent)
-        let executor = AgentToolExecutor()
-
-        for tool in toolCalls {
-            logProcess("\(tool)", kind: .tool)
-            let result = await executor.execute(tool, workspaceURL: workspaceURL)
-
-            // Workspace switch side-effect
-            if case .setWorkspace(let path) = tool {
-                let url = URL(fileURLWithPath: path)
-                workspaceURL = url
-                terminal.workingDirectory = url
-                refreshFiles()
+            do {
+                try await MLXRunner.shared.streamGenerateTokens(
+                    prompt: prompt,
+                    maxTokens: maxTokensMLX,
+                    temperature: temperature,
+                    onToken: { @Sendable [weak self] piece in
+                        guard let self else { return }
+                        counter.increment()
+                        Task { @MainActor in
+                            if let idx = self.messages.firstIndex(where: { $0.id == msgId }) {
+                                self.messages[idx].content += piece
+                            }
+                            self.streamingText += piece
+                            self.totalTokensGenerated += 1
+                            let elapsed = Date().timeIntervalSince(startTime)
+                            if elapsed > 0.1 {
+                                self.tokensPerSecond = Double(counter.value) / elapsed
+                            }
+                        }
+                    },
+                    onFinish: { @Sendable [weak self] fullText in
+                        guard let self else { return }
+                        Task { @MainActor in
+                            let elapsed = Date().timeIntervalSince(startTime)
+                            self.inferenceMs = Int(elapsed * 1000)
+                            self.tokensPerSecond = Double(counter.value) / max(elapsed, 0.001)
+                            self.logProcess(String(format: "done  %.1f tok/s  │  %d tok  │  %.1fs",
+                                                   self.tokensPerSecond, counter.value, elapsed), kind: .perf)
+                            // Agent tool parsing (same as Ollama path)
+                            if self.agentLoopEnabled {
+                                let (toolCalls, _) = AgentToolParser.parse(from: fullText)
+                                let executor = AgentToolExecutor()
+                                for tool in toolCalls {
+                                    self.logProcess("\(tool)", kind: .tool)
+                                    let result = await executor.execute(tool, workspaceURL: self.workspaceURL)
+                                    if case .setWorkspace(let path) = tool {
+                                        let url = URL(fileURLWithPath: path)
+                                        self.workspaceURL = url
+                                        self.terminal.workingDirectory = url
+                                        self.refreshFiles()
+                                    }
+                                    self.addSystemMessage(result)
+                                }
+                            }
+                            self.isGenerating = false
+                        }
+                    }
+                )
+            } catch {
+                logProcess("MLX error: \(error.localizedDescription)", kind: .system)
+                messages.append(ChatMessage(role: .assistant,
+                    content: "⚠️ MLX error: \(error.localizedDescription)"))
             }
-            addSystemMessage(result)
-        }
+            isGenerating = false
+            return
 
+        default:
+            messages.append(ChatMessage(role: .assistant,
+                content: "⚠️ No model loaded. Load an MLX model or connect Ollama first."))
+            isGenerating = false
+            return
+        }
         isGenerating = false
     }
 
@@ -610,19 +635,20 @@ final class AppState: ObservableObject {
         }
     }
 
-    // MARK: - MLX Actions
 
-    func startMLXServer(model: String? = nil) {
+    // MARK: - MLX Actions (Direct in-process — no HTTP server)
+
+    func loadMLXModel(model: String? = nil) {
         let modelId = model ?? activeMlxModel
         modelStatus = .connecting
         mlxServerLogs.removeAll()
 
         Task {
             do {
-                try await MLXRunner.shared.startServer(model: modelId) { @Sendable log in
+                try await MLXRunner.shared.loadModel(id: modelId) { @Sendable log in
                     Task { @MainActor in
                         self.mlxServerLogs.append(log)
-                        // Suppress verbose model loading from chat
+                        self.logProcess(log, kind: .system)
                     }
                 }
                 await MainActor.run {
@@ -640,13 +666,16 @@ final class AppState: ObservableObject {
                     ToastManager.shared.show(
                         "MLX error: \(error.localizedDescription)",
                         icon: "exclamationmark.triangle.fill",
-                        color: .orange,
-                        duration: 5
+                        color: .orange, duration: 5
                     )
                 }
             }
         }
     }
+
+    /// Legacy alias so old call sites keep compiling.
+    @available(*, deprecated, renamed: "loadMLXModel")
+    func startMLXServer(model: String? = nil) { loadMLXModel(model: model) }
 
     func downloadMLXModel(repoId: String) {
         modelStatus = .mlxDownloading(model: repoId)
@@ -663,10 +692,9 @@ final class AppState: ObservableObject {
                     ToastManager.shared.show(
                         "Downloaded: \(repoId.components(separatedBy: "/").last ?? repoId)",
                         icon: "checkmark.circle.fill",
-                        color: .green,
-                        duration: 4
+                        color: .green, duration: 4
                     )
-                    self.startMLXServer(model: repoId)
+                    self.loadMLXModel(model: repoId)
                 }
             } catch {
                 await MainActor.run {
