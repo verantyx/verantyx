@@ -63,6 +63,16 @@ final class AppState: ObservableObject {
     @Published var pendingDiff: FileDiff?
     @Published var showDiff = false
 
+    // Privacy Shield / Hybrid mode
+    @Published var inferenceMode: InferenceMode = .localOnly {
+        didSet { UserDefaults.standard.set(inferenceMode.rawValue, forKey: "inference_mode") }
+    }
+    @Published var cloudProvider: CloudProvider = .claude {
+        didSet { UserDefaults.standard.set(cloudProvider.rawValue, forKey: "cloud_provider") }
+    }
+    @Published var lastMaskingStats: MaskingStats?
+    @Published var privacySteps: [String] = []
+
     enum ModelStatus: Equatable {
         case none
         case connecting
@@ -122,10 +132,59 @@ final class AppState: ObservableObject {
                 await MainActor.run { self.messages = trimmed }
             }
 
-            if agentLoopEnabled {
+            // Route: Privacy Shield / Cloud modes bypass agent loop
+            if inferenceMode == .cloudDirect || inferenceMode == .privacyShield {
+                await runHybrid(instruction: text)
+            } else if agentLoopEnabled {
                 await runAgentLoop(instruction: text)
             } else {
                 await runSinglePass(instruction: text)
+            }
+        }
+    }
+
+    // MARK: - Hybrid Engine (Privacy Shield / Cloud Direct)
+
+    private func runHybrid(instruction: String) async {
+        let context = selectedFileContent.isEmpty ? nil : selectedFileContent
+        let contextFile = selectedFile
+        await MainActor.run { self.privacySteps = [] }
+
+        let snap_mode = inferenceMode
+        let snap_provider = cloudProvider
+        let snap_model = activeOllamaModel
+        let snap_status = modelStatus
+
+        let result = await HybridEngine.shared.process(
+            instruction: instruction,
+            fileContent: context,
+            fileName: contextFile?.lastPathComponent,
+            fileURL: contextFile,
+            mode: snap_mode,
+            modelStatus: snap_status,
+            activeOllamaModel: snap_model,
+            cloudProvider: snap_provider,
+            cortex: cortex
+        ) { [weak self] step in
+            guard let self else { return }
+            await MainActor.run {
+                self.privacySteps.append(step)
+                self.messages.append(ChatMessage(role: .system, content: step))
+            }
+        }
+
+        await MainActor.run {
+            isGenerating = false
+            lastMaskingStats = result.maskingStats
+            messages.append(ChatMessage(role: .assistant, content: result.explanation))
+            if let code = result.modifiedCode, !code.isEmpty, let fileURL = contextFile {
+                pendingDiff = FileDiff(
+                    fileURL: fileURL,
+                    originalContent: selectedFileContent,
+                    modifiedContent: code,
+                    hunks: DiffEngine.compute(original: selectedFileContent, modified: code)
+                )
+                showDiff = true
             }
         }
     }

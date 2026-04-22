@@ -180,69 +180,6 @@ struct MessageBubble: View {
     }
 }
 
-// MARK: - AssistantText (renders code blocks)
-
-struct AssistantText: View {
-    let content: String
-
-    var body: some View {
-        let parts = parseContent(content)
-        VStack(alignment: .leading, spacing: 8) {
-            ForEach(Array(parts.enumerated()), id: \.offset) { _, part in
-                switch part {
-                case .text(let t):
-                    Text(t)
-                        .font(.body)
-                case .code(let lang, let code):
-                    VStack(alignment: .leading, spacing: 0) {
-                        if !lang.isEmpty {
-                            Text(lang)
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
-                                .padding(.horizontal, 10)
-                                .padding(.top, 6)
-                        }
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            Text(code)
-                                .font(.system(.callout, design: .monospaced))
-                                .padding(10)
-                        }
-                    }
-                    .background(Color(nsColor: .textBackgroundColor))
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(.separator, lineWidth: 0.5))
-                }
-            }
-        }
-    }
-
-    enum Part { case text(String); case code(String, String) }
-
-    private func parseContent(_ raw: String) -> [Part] {
-        var parts: [Part] = []
-        let pattern = #"```(\w*)\n?([\s\S]*?)```"#
-        guard let regex = try? NSRegularExpression(pattern: pattern) else {
-            return [.text(raw)]
-        }
-        var cursor = raw.startIndex
-        let matches = regex.matches(in: raw, range: NSRange(raw.startIndex..., in: raw))
-        for match in matches {
-            if let r = Range(match.range, in: raw), r.lowerBound > cursor {
-                let text = String(raw[cursor..<r.lowerBound]).trimmingCharacters(in: .newlines)
-                if !text.isEmpty { parts.append(.text(text)) }
-            }
-            let lang = Range(match.range(at: 1), in: raw).map { String(raw[$0]) } ?? ""
-            let code = Range(match.range(at: 2), in: raw).map { String(raw[$0]) } ?? ""
-            parts.append(.code(lang, code))
-            if let r = Range(match.range, in: raw) { cursor = r.upperBound }
-        }
-        if cursor < raw.endIndex {
-            let text = String(raw[cursor...]).trimmingCharacters(in: .newlines)
-            if !text.isEmpty { parts.append(.text(text)) }
-        }
-        return parts.isEmpty ? [.text(raw)] : parts
-    }
-}
 
 // MARK: - ThinkingBubble
 
