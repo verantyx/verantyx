@@ -1,0 +1,263 @@
+import Foundation
+import SwiftUI
+
+// MARK: - ChatSession
+// A persisted chat session linking messages ↔ JCross memory nodes.
+
+struct ChatSession: Identifiable, Codable {
+    let id: UUID
+    var title: String
+    var createdAt: Date
+    var updatedAt: Date
+    var messages: [ChatMessage]
+    var workspacePath: String?
+    var memoryNodeIds: [String]    // filenames in JCross memory (e.g. "TURN_1234.jcross")
+    var activeLayer: JCrossLayer
+
+    init(
+        id: UUID = UUID(),
+        title: String = "New Session",
+        messages: [ChatMessage] = [],
+        workspacePath: String? = nil
+    ) {
+        self.id           = id
+        self.title        = title
+        self.createdAt    = Date()
+        self.updatedAt    = Date()
+        self.messages     = messages
+        self.workspacePath = workspacePath
+        self.memoryNodeIds = []
+        self.activeLayer  = .l2
+    }
+
+    // Auto-title from first user message
+    mutating func autoTitle() {
+        if let first = messages.first(where: { $0.role == .user }) {
+            title = String(first.content.prefix(40))
+                        .trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+    }
+}
+
+// MARK: - JCrossLayer
+
+enum JCrossLayer: String, Codable, CaseIterable, Identifiable {
+    case l1   = "L1"
+    case l1_5 = "L1.5"
+    case l2   = "L2"
+    case l3   = "L3"
+
+    var id: String { rawValue }
+
+    var displayName: String { rawValue }
+
+    var description: String {
+        switch self {
+        case .l1:   return "Kanji topology (ultrafast)"
+        case .l1_5: return "Summary index (balanced)"
+        case .l2:   return "Structured facts (accurate)"
+        case .l3:   return "Verbatim text (max context)"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .l1:   return "character.ja"
+        case .l1_5: return "tablecells"
+        case .l2:   return "list.bullet.rectangle"
+        case .l3:   return "doc.text.fill"
+        }
+    }
+
+    // Maps to the layer argument in mcp_verantyx-compiler_read
+    var mcpLayerArg: String {
+        switch self {
+        case .l1:   return "l1"
+        case .l1_5: return "l2"   // L1.5 ≈ L2 summary in the MCP schema
+        case .l2:   return "l2l3"
+        case .l3:   return "l3"
+        }
+    }
+}
+
+// MARK: - SessionStore
+
+@MainActor
+final class SessionStore: ObservableObject {
+
+    @Published var sessions: [ChatSession] = []
+    @Published var activeSessionId: UUID? = nil
+
+    var activeSession: ChatSession? {
+        guard let id = activeSessionId else { return nil }
+        return sessions.first(where: { $0.id == id })
+    }
+
+    // MARK: - Persistence
+
+    private let storageDir: URL = {
+        let dir = FileManager.default.urls(for: .applicationSupportDirectory,
+                                            in: .userDomainMask)[0]
+            .appendingPathComponent("Verantyx/sessions")
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        return dir
+    }()
+
+    init() { loadAll() }
+
+    // MARK: - CRUD
+
+    func newSession(messages: [ChatMessage] = [], workspacePath: String? = nil) -> ChatSession {
+        var session = ChatSession(messages: messages, workspacePath: workspacePath)
+        if !messages.isEmpty { session.autoTitle() }
+        sessions.insert(session, at: 0)
+        activeSessionId = session.id
+        save(session)
+        return session
+    }
+
+    func updateActiveSession(messages: [ChatMessage], workspacePath: String? = nil) {
+        guard let id = activeSessionId,
+              let idx = sessions.firstIndex(where: { $0.id == id }) else { return }
+        sessions[idx].messages     = messages
+        sessions[idx].updatedAt    = Date()
+        if let wp = workspacePath { sessions[idx].workspacePath = wp }
+        sessions[idx].autoTitle()
+        save(sessions[idx])
+    }
+
+    func setLayer(_ layer: JCrossLayer, for sessionId: UUID) {
+        guard let idx = sessions.firstIndex(where: { $0.id == sessionId }) else { return }
+        sessions[idx].activeLayer = layer
+        save(sessions[idx])
+    }
+
+    func linkMemoryNode(_ fileName: String, to sessionId: UUID) {
+        guard let idx = sessions.firstIndex(where: { $0.id == sessionId }) else { return }
+        if !sessions[idx].memoryNodeIds.contains(fileName) {
+            sessions[idx].memoryNodeIds.append(fileName)
+            save(sessions[idx])
+        }
+    }
+
+    func rename(_ sessionId: UUID, to newTitle: String) {
+        guard let idx = sessions.firstIndex(where: { $0.id == sessionId }) else { return }
+        sessions[idx].title = newTitle
+        save(sessions[idx])
+    }
+
+    func delete(_ sessionId: UUID) {
+        sessions.removeAll { $0.id == sessionId }
+        let url = sessionURL(sessionId)
+        try? FileManager.default.removeItem(at: url)
+        if activeSessionId == sessionId { activeSessionId = sessions.first?.id }
+    }
+
+    func selectSession(_ sessionId: UUID) {
+        activeSessionId = sessionId
+    }
+
+    // MARK: - JCross Memory retrieval
+    // Returns a context injection string built from the session's linked nodes
+    // at the current active layer. This is called before inference to inject
+    // session-specific long-term memory into the prompt.
+
+    func buildMemoryInjection(for sessionId: UUID) async -> String {
+        guard let session = sessions.first(where: { $0.id == sessionId }),
+              !session.memoryNodeIds.isEmpty else { return "" }
+
+        var parts: [String] = []
+        let layer = session.activeLayer
+
+        for fileName in session.memoryNodeIds.prefix(8) {
+            if let content = await fetchJCrossNode(fileName: fileName, layer: layer) {
+                parts.append(content)
+            }
+        }
+
+        guard !parts.isEmpty else { return "" }
+
+        return """
+
+        [JCROSS MEMORY — Layer: \(layer.rawValue) — \(layer.description)]
+        \(parts.joined(separator: "\n---\n"))
+        [/JCROSS MEMORY]
+        """
+    }
+
+    // Fetch a single JCross node via the MCP server file system
+    // (reads from ~/.openclaw/memory/ where JCross nodes live)
+    private func fetchJCrossNode(fileName: String, layer: JCrossLayer) async -> String? {
+        // Resolve from known JCross storage paths
+        let searchPaths: [String] = [
+            NSHomeDirectory() + "/.openclaw/memory/front/" + fileName,
+            NSHomeDirectory() + "/.openclaw/memory/near/" + fileName,
+            NSHomeDirectory() + "/.openclaw/memory/mid/" + fileName,
+            NSHomeDirectory() + "/.openclaw/memory/deep/" + fileName,
+        ]
+
+        for path in searchPaths {
+            guard FileManager.default.fileExists(atPath: path),
+                  let raw = try? String(contentsOfFile: path, encoding: .utf8)
+            else { continue }
+
+            return extractLayer(from: raw, layer: layer)
+        }
+        return nil
+    }
+
+    // Extract the requested layer from a .jcross file's raw content
+    private func extractLayer(from raw: String, layer: JCrossLayer) -> String {
+        switch layer {
+        case .l1:
+            // L1: first non-empty line (kanji tags / summary)
+            return raw.components(separatedBy: "\n")
+                .first(where: { !$0.trimmingCharacters(in: .whitespaces).isEmpty })
+                ?? String(raw.prefix(100))
+
+        case .l1_5:
+            // L1.5: first 3 lines (index + brief summary)
+            let lines = raw.components(separatedBy: "\n")
+                .filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+            return lines.prefix(3).joined(separator: "\n")
+
+        case .l2:
+            // L2: Extract OP.FACT / OP.ENTITY / OP.STATE lines
+            let opLines = raw.components(separatedBy: "\n")
+                .filter { $0.contains("OP.FACT") || $0.contains("OP.ENTITY") || $0.contains("OP.STATE") }
+            return opLines.isEmpty
+                ? String(raw.prefix(400))
+                : opLines.joined(separator: "\n")
+
+        case .l3:
+            // L3: full raw text (capped at 2000 chars)
+            return String(raw.prefix(2000))
+        }
+    }
+
+    // MARK: - Disk I/O
+
+    private func sessionURL(_ id: UUID) -> URL {
+        storageDir.appendingPathComponent("\(id.uuidString).json")
+    }
+
+    private func save(_ session: ChatSession) {
+        guard let data = try? JSONEncoder().encode(session) else { return }
+        try? data.write(to: sessionURL(session.id))
+    }
+
+    private func loadAll() {
+        guard let files = try? FileManager.default.contentsOfDirectory(at: storageDir,
+                                                       includingPropertiesForKeys: [.creationDateKey]) else { return }
+        let decoded: [ChatSession] = files
+            .filter { $0.pathExtension == "json" }
+            .compactMap { url -> ChatSession? in
+                guard let data = try? Data(contentsOf: url) else { return nil }
+                return try? JSONDecoder().decode(ChatSession.self, from: data)
+            }
+            .sorted { $0.updatedAt > $1.updatedAt }
+
+        sessions = decoded
+        activeSessionId = sessions.first?.id
+    }
+}

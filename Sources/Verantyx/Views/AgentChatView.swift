@@ -10,7 +10,11 @@ struct AgentChatView: View {
     @State private var inputText: String = ""
     @FocusState private var inputFocused: Bool
 
-    enum Tab: String { case workspace = "Vibe Coding Workspace"; case thinking = "Thinking Log" }
+    enum Tab: String, CaseIterable {
+        case workspace = "Workspace"
+        case history   = "History"
+        case thinking  = "Thinking"
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -22,6 +26,7 @@ struct AgentChatView: View {
             // ── Content ─────────────────────────────────────────────
             switch activeTab {
             case .workspace: workspaceView
+            case .history:   SessionHistoryView().environmentObject(app)
             case .thinking:  thinkingLogView
             }
 
@@ -42,12 +47,12 @@ struct AgentChatView: View {
 
     private var tabBar: some View {
         HStack(spacing: 0) {
-            ForEach([Tab.workspace, .thinking], id: \.rawValue) { tab in
+            ForEach(Tab.allCases, id: \.rawValue) { tab in
                 Button {
                     activeTab = tab
                 } label: {
                     HStack(spacing: 6) {
-                        Image(systemName: tab == .workspace ? "bolt.fill" : "brain")
+                        Image(systemName: tabIcon(tab))
                             .font(.system(size: 10))
                         Text(tab.rawValue)
                             .font(.system(size: 12, weight: activeTab == tab ? .semibold : .regular))
@@ -55,7 +60,7 @@ struct AgentChatView: View {
                     .foregroundStyle(activeTab == tab
                         ? Color.white
                         : Color(red: 0.55, green: 0.55, blue: 0.65))
-                    .padding(.horizontal, 14)
+                    .padding(.horizontal, 12)
                     .padding(.vertical, 8)
                     .background(
                         activeTab == tab
@@ -64,24 +69,38 @@ struct AgentChatView: View {
                     )
                     .overlay(
                         Rectangle()
-                            .fill(Color(red: 0.4, green: 0.7, blue: 1.0))
+                            .fill(tabAccentColor(tab))
                             .frame(height: 1.5),
                         alignment: .bottom
                     )
                     .opacity(activeTab == tab ? 1 : 0.7)
                 }
                 .buttonStyle(.plain)
+
+                // Session badge on History tab
+                if tab == .history && app.sessions.sessions.count > 0 {
+                    Text("\(app.sessions.sessions.count)")
+                        .font(.system(size: 8, weight: .bold))
+                        .foregroundStyle(.black)
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 1.5)
+                        .background(Color(red: 0.4, green: 0.7, blue: 1.0), in: Capsule())
+                        .offset(x: -4, y: -4)
+                }
             }
             Spacer()
 
-            // Expand + options
-            Button { } label: {
-                Image(systemName: "arrow.up.left.and.arrow.down.right")
-                    .font(.system(size: 11))
+            // New session quick button
+            Button {
+                app.newChatSession()
+            } label: {
+                Image(systemName: "plus")
+                    .font(.system(size: 10))
                     .foregroundStyle(Color(red: 0.5, green: 0.5, blue: 0.6))
             }
             .buttonStyle(.plain)
-            .padding(.horizontal, 8)
+            .padding(.horizontal, 6)
+            .help("新しいセッション")
 
             Button { } label: {
                 Image(systemName: "ellipsis")
@@ -92,6 +111,22 @@ struct AgentChatView: View {
             .padding(.horizontal, 8)
         }
         .background(Color(red: 0.15, green: 0.15, blue: 0.19))
+    }
+
+    private func tabIcon(_ tab: Tab) -> String {
+        switch tab {
+        case .workspace: return "bolt.fill"
+        case .history:   return "clock.arrow.circlepath"
+        case .thinking:  return "brain"
+        }
+    }
+
+    private func tabAccentColor(_ tab: Tab) -> Color {
+        switch tab {
+        case .workspace: return Color(red: 0.4, green: 0.7, blue: 1.0)
+        case .history:   return Color(red: 0.5, green: 0.9, blue: 0.6)
+        case .thinking:  return Color(red: 0.7, green: 0.5, blue: 1.0)
+        }
     }
 
     // MARK: - Workspace (main chat)

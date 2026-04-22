@@ -4,7 +4,7 @@ import AppKit
 
 // MARK: - Core data models
 
-struct ChatMessage: Identifiable, Equatable {
+struct ChatMessage: Identifiable, Equatable, Codable {
     var id: UUID
     var role: Role
     var content: String
@@ -16,7 +16,7 @@ struct ChatMessage: Identifiable, Equatable {
         self.content = content
     }
 
-    enum Role { case user, assistant, system }
+    enum Role: String, Codable { case user, assistant, system }
 }
 
 struct FileDiff: Identifiable {
@@ -173,6 +173,15 @@ final class AppState: ObservableObject {
     let agent = AgentEngine()
     let terminal = TerminalRunner()
     let cortex = CortexEngine()
+    let sessions = SessionStore()
+
+    // MARK: - Dirty state (close/quit guard)
+
+    /// True when there is active work that should be saved before quitting.
+    var isDirty: Bool {
+        (workspaceURL != nil && (pendingDiff != nil || messages.count > 2))
+        || isGenerating
+    }
 
     // MLX state
     @Published var activeMlxModel: String = "mlx-community/gemma-4-26b-a4b-it-4bit"
@@ -225,6 +234,54 @@ final class AppState: ObservableObject {
         }
     }
 
+    // MARK: - Session management
+
+    /// Save the current chat to the session store.
+    func saveCurrentSession() {
+        if sessions.activeSessionId == nil, messages.count > 1 {
+            _ = sessions.newSession(messages: messages, workspacePath: workspaceURL?.path)
+        } else {
+            sessions.updateActiveSession(messages: messages, workspacePath: workspaceURL?.path)
+        }
+    }
+
+    /// Start a fresh chat  (old session saved automatically).
+    func newChatSession() {
+        saveCurrentSession()
+        messages.removeAll()
+        pendingDiff = nil
+        showDiff    = false
+        _ = sessions.newSession(messages: [], workspacePath: workspaceURL?.path)
+    }
+
+    /// Restore a past session by its ID (loads messages + memory injection).
+    func restoreSession(_ sessionId: UUID) {
+        guard let session = sessions.sessions.first(where: { $0.id == sessionId }) else { return }
+        saveCurrentSession()
+        sessions.selectSession(sessionId)
+        messages    = session.messages
+        pendingDiff = nil
+        showDiff    = false
+        if let path = session.workspacePath {
+            let url = URL(fileURLWithPath: path)
+            if workspaceURL != url {
+                workspaceURL = url
+                terminal.workingDirectory = url
+                refreshFiles()
+            }
+        }
+        // Inject JCross memory for this session in background
+        Task {
+            let injection = await sessions.buildMemoryInjection(for: sessionId)
+            if !injection.isEmpty {
+                await MainActor.run {
+                    self.messages.insert(ChatMessage(role: .system, content: injection), at: 0)
+                }
+            }
+        }
+        addSystemMessage("📂 セッション「\(session.title)」を復元しました")
+    }
+
     // MARK: - Agent actions
 
     func sendMessage(with overrideText: String? = nil) {
@@ -234,6 +291,11 @@ final class AppState: ObservableObject {
 
         messages.append(ChatMessage(role: .user, content: text))
         isGenerating = true
+
+        // Auto-create session if there isn't one yet
+        if sessions.activeSessionId == nil {
+            _ = sessions.newSession(messages: messages, workspacePath: workspaceURL?.path)
+        }
 
         Task {
             // Compress context if needed (Cortex anti-Alzheimer's)
@@ -250,6 +312,9 @@ final class AppState: ObservableObject {
             } else {
                 await runSinglePass(instruction: text)
             }
+
+            // Persist session after each exchange
+            sessions.updateActiveSession(messages: messages, workspacePath: workspaceURL?.path)
         }
     }
 
