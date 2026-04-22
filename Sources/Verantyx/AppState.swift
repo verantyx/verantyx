@@ -241,6 +241,8 @@ final class AppState: ObservableObject {
         selectedFileContent = ""
         terminal.workingDirectory = url
         addSystemMessage("📂 Workspace: \(url.lastPathComponent)")
+        // Hint the Self-Evolution engine so it can find xcodeproj from here
+        SelfEvolutionEngine.shared.setWorkspaceHint(url)
         refreshFiles()               // async scan in background
     }
 

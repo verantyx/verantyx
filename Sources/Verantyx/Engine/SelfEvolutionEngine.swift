@@ -33,13 +33,7 @@ final class SelfEvolutionEngine: ObservableObject {
 
     // MARK: - Paths
 
-    /// Root of the IDE source repo. Defaults to the directory containing the running .app,
-    /// then walks up to find Package.swift or *.xcodeproj.
-    var repoRoot: URL? {
-        if let cached = _repoRoot { return cached }
-        _repoRoot = detectRepoRoot()
-        return _repoRoot
-    }
+    /// Root of the IDE source repo — detected lazily with workspace hint + UserDefaults fallback.
     private var _repoRoot: URL? = nil
 
     private var safeDir: URL {
@@ -105,16 +99,26 @@ final class SelfEvolutionEngine: ObservableObject {
 
     // MARK: - Source Indexing
 
+    /// Call to hint the engine with a known workspace URL (e.g. from open folder).
+    /// This improves repoRoot detection when bundle path is in DerivedData.
+    func setWorkspaceHint(_ url: URL) {
+        // Walk up from workspace to find xcodeproj / Package.swift
+        if let root = walkUpToRepoRoot(from: url) {
+            _repoRoot = root
+            UserDefaults.standard.set(root.path, forKey: "evo_last_repo_root")
+        }
+    }
+
     /// Index all Swift source files into in-memory SourceNodes.
-    /// Call this once at startup or when the user taps "Index Source".
     func indexSourceTree() async {
+        // Ensure repoRoot is resolved (triggers detection + UserDefaults fallback)
         guard let root = repoRoot else {
-            buildLog = "❌ Could not detect repo root (no Package.swift/.xcodeproj found)"
+            buildLog = "❌ リポジトリが見つかりません。ワークスペースフォルダを開いてください (Cmd+Shift+O)"
             return
         }
 
         isIndexing = true
-        buildLog = "🔍 Indexing \(root.lastPathComponent)…"
+        buildLog = "🔍 インデックス中: \(root.lastPathComponent)…"
 
         let fm = FileManager.default
         guard let enumerator = fm.enumerator(
@@ -128,7 +132,12 @@ final class SelfEvolutionEngine: ObservableObject {
 
         var nodes: [SourceNode] = []
         let swiftFiles = enumerator.compactMap { $0 as? URL }
-            .filter { $0.pathExtension == "swift" && !$0.path.contains("/.build/") && !$0.path.contains("/DerivedData/") }
+            .filter {
+                $0.pathExtension == "swift"
+                && !$0.path.contains("/.build/")
+                && !$0.path.contains("/DerivedData/")
+                && !$0.path.contains("/ci-validate-")
+            }
 
         for url in swiftFiles {
             guard let content = try? String(contentsOf: url, encoding: .utf8) else { continue }
@@ -459,15 +468,35 @@ final class SelfEvolutionEngine: ObservableObject {
 
     // MARK: - Repo detection
 
+    var repoRoot: URL? {
+        if let cached = _repoRoot { return cached }
+        _repoRoot = detectRepoRoot()
+        return _repoRoot
+    }
+
     private func detectRepoRoot() -> URL? {
-        // Walk up from bundle until Package.swift or *.xcodeproj found
-        var url = Bundle.main.bundleURL.deletingLastPathComponent()
-        for _ in 0..<8 {
-            let fm = FileManager.default
+        // 1. Walk up from bundle (works when running from source)
+        if let found = walkUpToRepoRoot(from: Bundle.main.bundleURL) { return found }
+
+        // 2. Last known repo root (set by setWorkspaceHint or openWorkspace)
+        if let saved = UserDefaults.standard.string(forKey: "evo_last_repo_root") {
+            let url = URL(fileURLWithPath: saved)
+            if FileManager.default.fileExists(atPath: url.path) { return url }
+        }
+
+        return nil
+    }
+
+    func walkUpToRepoRoot(from startURL: URL) -> URL? {
+        var url = startURL
+        let fm = FileManager.default
+        for _ in 0..<12 {
             if fm.fileExists(atPath: url.appendingPathComponent("Package.swift").path) { return url }
             let contents = (try? fm.contentsOfDirectory(at: url, includingPropertiesForKeys: nil)) ?? []
             if contents.contains(where: { $0.pathExtension == "xcodeproj" }) { return url }
-            url = url.deletingLastPathComponent()
+            let parent = url.deletingLastPathComponent()
+            if parent == url { break }  // filesystem root
+            url = parent
         }
         return nil
     }
