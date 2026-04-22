@@ -39,9 +39,38 @@ actor AgentLoop {
         let isWorkspaceless = workspaceURL == nil
 
         // ── Self-evolution context (IDE source awareness) ─────────────
+        // Auto-index if: user is asking about the IDE AND nodes not yet loaded
+        let looksLikeSelfMod = instruction.localizedCaseInsensitiveContains("fix")
+                            || instruction.localizedCaseInsensitiveContains("change")
+                            || instruction.localizedCaseInsensitiveContains("add feature")
+                            || instruction.localizedCaseInsensitiveContains("modify")
+                            || instruction.localizedCaseInsensitiveContains("update")
+                            || instruction.localizedCaseInsensitiveContains("improve")
+                            || instruction.localizedCaseInsensitiveContains("resize")
+                            || instruction.localizedCaseInsensitiveContains("width")
+                            || instruction.localizedCaseInsensitiveContains("window")
+                            || instruction.localizedCaseInsensitiveContains("UI")
+                            || instruction.localizedCaseInsensitiveContains("pane")
+
+        let nodesEmpty = await MainActor.run { SelfEvolutionEngine.shared.sourceNodes.isEmpty }
+        if looksLikeSelfMod && nodesEmpty {
+            await onProgress(.aiMessage("🔍 IDE ソースをインデックス中…（初回のみ）"))
+            await SelfEvolutionEngine.shared.indexSourceTree()
+        }
+
         let selfEvoContext = await MainActor.run {
             let nodes = SelfEvolutionEngine.shared.sourceNodes
-            guard !nodes.isEmpty else { return "" }
+            if nodes.isEmpty {
+                // Soft fallback: tell AI not to explore filesystem
+                return """
+
+## IDE Self-Modification Note
+If the user is asking you to fix or change the IDE itself:
+- Do NOT run `ls` or shell commands to explore the source.
+- Instead, ask the user to click [Index Source] in the Self-Evolution panel (⟳ icon in Activity Bar).
+- Once indexed, you will receive the full file list and can output [PATCH_FILE:] blocks.
+"""
+            }
             let indexSummary = nodes.prefix(60).map { n in
                 "  • \(n.relativePath) — \(n.summary)"
             }.joined(separator: "\n")
@@ -64,6 +93,9 @@ When the user asks you to modify the IDE itself (add feature, change UI, etc.):
 
 The IDE will detect these PATCH_FILE blocks, register them as FilePatch objects,
 and show them in the Self-Evolution panel for Apply & Rebuild.
+
+IMPORTANT: Do NOT run shell commands like ls or find to explore the source.
+All relevant files are already listed above.
 
 For artifact output use <artifact type="html"> tags.
 """
