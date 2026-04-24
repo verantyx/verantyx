@@ -1,81 +1,137 @@
-# ⚡ Verantyx
+# ⚡ Verantyx IDE
 
-> **Apple Silicon ネイティブ AI コードアシスタント。完全オフライン。APIコストゼロ。**
+> **Apple Silicon-native AI coding assistant. Fully offline. Zero API cost.**
 
 <!-- TODO: Add 30-second demo GIF here -->
 <!-- ![demo.gif](demo.gif) -->
 
-Verantyx は macOS 専用の AI コードエディタです。  
-HuggingFace の MLX モデルまたは Ollama を使い、ローカルで推論を実行。  
-ファイルを選んで自然言語で指示するだけで、コード差分を提案・適用します。
+Verantyx is a macOS AI code editor that runs inference locally using MLX models (Apple Silicon) or Ollama — no cloud, no subscription.  
+Select a file, give a natural-language instruction, and Verantyx proposes a diff you can review and apply in one click.
+
+---
+
+## 📦 Download
+
+**[→ Download Latest Release](https://github.com/Ag3497120/verantyx/releases/latest)**
+
+1. Download **`VerantyxIDE-x.x.x.dmg`**
+2. Open the DMG and drag **Verantyx.app** to your **Applications** folder
+3. **First launch — bypass Gatekeeper (macOS security prompt):**
+   - Right-click `Verantyx.app` in Finder → **"Open"**
+   - Click **"Open"** in the unidentified developer dialog
+   - _Or run in Terminal:_ `xattr -d com.apple.quarantine /Applications/Verantyx.app`
+
+---
 
 ## ✨ Features
 
 | Feature | Status |
 |---|---|
-| 🤖 Ollama 統合（gemma4:26b 等） | ✅ v0.1 |
-| 💬 ファイルを選択してAIへ指示 | ✅ v0.1 |
-| 🔍 変更箇所を Diff で確認 → ワンクリック適用 | ✅ v0.1 |
-| 📂 任意フォルダをワークスペースとして開く | ✅ v0.1 |
-| 🔒 完全オフライン（Wi-Fi 不要） | ✅ v0.1 |
-| ⚡ Apple Silicon GPU フル活用 | ✅ v0.1 |
-| ⬇️ HuggingFace MLX モデル自動ダウンロード | 🔜 v0.2 |
-| 🧠 JCross プロジェクト記憶 | 🔜 v0.2 |
+| 🤖 Ollama integration (gemma4:26b, etc.) | ✅ v1.0 |
+| ⚡ MLX Apple Silicon inference (offline) | ✅ v1.0 |
+| 🔑 Anthropic Claude integration | ✅ v1.0 |
+| 💬 Natural language → file edits | ✅ v1.0 |
+| 🔍 Diff review → one-click Apply | ✅ v1.0 |
+| 📂 Open any folder as workspace | ✅ v1.0 |
+| 🔒 Fully offline (no Wi-Fi required) | ✅ v1.0 |
+| 🧠 JCross long-term memory (Cortex) | ✅ v1.0 |
+| 🔒 Privacy Gateway: 3-phase PII masking | ✅ v1.0 |
+| 🧬 Self-Evolution: live IDE self-patching | ✅ v1.0 |
+| 📜 Session history with restore | ✅ v1.0 |
+| 🛠️ MCP (Model Context Protocol) client | ✅ v1.0 |
 
-## 📦 Download
+---
 
-**[→ Releases](https://github.com/Ag3497120/verantyx/releases/latest)** から `.app.zip` をダウンロード。
+## 🧠 Verantyx Cortex (Recommended)
 
-初回起動時は Gatekeeper をバイパスする必要があります：
+Cortex gives the AI persistent long-term memory across sessions using the JCross spatial memory system.
 
 ```bash
-xattr -cr /Applications/Verantyx.app
+npx -y @verantyx/cortex setup
 ```
 
-## 🚀 Requirements
+More info: [github.com/Ag3497120/verantyx-cortex](https://github.com/Ag3497120/verantyx-cortex)
 
-- macOS 13.0+
-- Apple Silicon (M1/M2/M3/M4)
-- [Ollama](https://ollama.com) （推奨: `ollama pull gemma4:26b`）
+---
+
+## 🚀 System Requirements
+
+- macOS 14 Sonoma or later
+- Apple Silicon (M1 / M2 / M3 / M4)
+- [Ollama](https://ollama.com) _(recommended: `ollama pull gemma4:26b`)_
+- **OR** an MLX model downloaded from HuggingFace
+
+---
 
 ## 🛠 Build from Source
 
 ```bash
 git clone https://github.com/Ag3497120/verantyx.git
-cd verantyx
-brew install xcodegen
-xcodegen generate
+cd verantyx/VerantyxIDE
 open Verantyx.xcodeproj
 ```
 
-Xcode でビルド（⌘B）後、実行（⌘R）。
+Build (`⌘B`) and run (`⌘R`) in Xcode 16+.
+
+To create a distributable DMG locally:
+
+```bash
+cd VerantyxIDE
+bash package_dmg.sh 1.0.0
+# → dist/VerantyxIDE-1.0.0.dmg
+```
+
+---
 
 ## 🔧 Usage
 
-1. **Ollama を起動**: `ollama serve`
-2. **Verantyx を起動**
-3. ツールバーの●ボタンで「Connect Ollama」
-4. 「Open Workspace」でプロジェクトフォルダを選択
-5. ファイルツリーから編集したいファイルをクリック
-6. チャットに指示を入力して送信
-7. Diff が右パネルに表示 → **Apply** で適用
+1. **Start Ollama** (if using Ollama): `ollama serve`
+2. **Launch Verantyx**
+3. Click **"Connect"** in the toolbar to link your model
+4. Click **"Open Workspace"** to select your project folder
+5. Click any file in the file tree to load it as context
+6. Type your instruction in the chat and press Enter
+7. Review the diff in the right panel → click **Apply** to write changes
+
+---
 
 ## 📐 Architecture
 
 ```
-Verantyx/
-├── Engine/
-│   ├── AgentEngine.swift      # 指示 → 推論 → Diff抽出
-│   ├── DiffEngine.swift       # Pure Swift LCS diff
-│   ├── OllamaClient.swift     # Ollama /api/chat
-│   └── WorkspaceManager.swift # ファイルI/O
-└── Views/
-    ├── MainSplitView.swift    # 3ペインレイアウト
-    ├── FileTreeView.swift     # ファイルツリー
-    ├── ChatPanelView.swift    # チャットUI
-    ├── DiffPanelView.swift    # Diff表示 + Apply
-    └── ModelPickerView.swift  # モデル選択
+VerantyxIDE/
+├── Sources/Verantyx/
+│   ├── AppState.swift              # Central state + inference routing
+│   ├── Engine/
+│   │   ├── AgentLoop.swift         # Agentic loop with tool execution
+│   │   ├── MLXRunner.swift         # Apple Silicon MLX inference
+│   │   ├── OllamaClient.swift      # Ollama + Anthropic API client
+│   │   ├── CortexEngine.swift      # JCross memory compression
+│   │   ├── SessionStore.swift      # Session persistence + restore
+│   │   ├── PrivacyGateway.swift    # 3-phase PII masking
+│   │   ├── MCPEngine.swift         # MCP tool injection
+│   │   └── SelfEvolutionEngine.swift # Live IDE self-patching
+│   └── Views/
+│       ├── AgentChatView.swift     # Main chat UI
+│       ├── FileTreeView.swift      # Workspace file tree
+│       ├── ArtifactPanelView.swift # HTML/SVG/Mermaid render
+│       ├── ModelPickerView.swift   # Model selection
+│       └── SessionHistoryView.swift# Session history browser
+└── .github/workflows/release.yml  # Auto-build DMG on tag push
 ```
+
+---
+
+## 🔄 Release Automation
+
+Push a version tag to trigger an automatic DMG build via GitHub Actions:
+
+```bash
+git tag v1.1.0
+git push origin v1.1.0
+# → GitHub Actions builds & publishes VerantyxIDE-1.1.0.dmg automatically
+```
+
+---
 
 ## 📄 License
 
