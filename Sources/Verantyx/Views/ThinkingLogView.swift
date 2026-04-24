@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 // MARK: - ThinkingLogView
 // Raw process log — shows exactly what the AI is doing right now.
@@ -67,28 +68,8 @@ struct ThinkingLogView: View {
 
             Divider().opacity(0.3)
 
-            // ── Log scroll ─────────────────────────────────────────
-            ScrollViewReader { proxy in
-                ScrollView(.vertical, showsIndicators: true) {
-                    LazyVStack(alignment: .leading, spacing: 1) {
-                        ForEach(app.processLog) { entry in
-                            LogRow(entry: entry)
-                                .id(entry.id)
-                        }
-                        // Anchor for auto-scroll
-                        Color.clear.frame(height: 1).id("bottom")
-                    }
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 4)
-                }
-                .onChange(of: app.processLog.count) { _ in
-                    if autoScroll {
-                        withAnimation(.easeOut(duration: 0.1)) {
-                            proxy.scrollTo("bottom")
-                        }
-                    }
-                }
-            }
+            // ── Log body (NSTextView — 行をまたいだドラッグ選択が可能) ──
+            ProcessLogTranscriptView(entries: app.processLog, autoScroll: autoScroll)
         }
         .background(Color(red: 0.06, green: 0.08, blue: 0.10))
     }
@@ -102,46 +83,156 @@ struct ThinkingLogView: View {
     }
 }
 
-// MARK: - LogRow
+// MARK: - ProcessLogTranscriptView
+// NSTextView ベースの統合ログビュー。
+// LazyVStack+ForEach だと各行が独立して行をまたぐドラッグ選択不可だったため置き換え。
 
-private struct LogRow: View {
-    let entry: AppState.ProcessLogEntry
+private struct ProcessLogTranscriptView: NSViewRepresentable {
+    let entries: [AppState.ProcessLogEntry]
+    let autoScroll: Bool
 
-    private var timeStr: String {
-        let f = DateFormatter()
-        f.dateFormat = "HH:mm:ss.SSS"
-        return f.string(from: entry.timestamp)
+    func makeCoordinator() -> Coordinator { Coordinator() }
+
+    func makeNSView(context: Context) -> NSScrollView {
+        let tv = LogTextView()
+        tv.isEditable           = false
+        tv.isSelectable         = true
+        tv.isRichText           = true
+        tv.drawsBackground      = true
+        tv.backgroundColor      = NSColor(calibratedRed: 0.06, green: 0.08, blue: 0.10, alpha: 1)
+        tv.textContainerInset   = NSSize(width: 6, height: 4)
+        tv.textContainer?.lineFragmentPadding   = 0
+        tv.textContainer?.widthTracksTextView   = true
+        tv.isVerticallyResizable                = true
+        tv.isHorizontallyResizable              = false
+        tv.autoresizingMask                     = [.width]
+
+        let sv = NSScrollView()
+        sv.documentView        = tv
+        sv.hasVerticalScroller  = true
+        sv.autohidesScrollers   = true
+        sv.scrollerStyle        = .overlay
+        sv.backgroundColor      = NSColor(calibratedRed: 0.06, green: 0.08, blue: 0.10, alpha: 1)
+
+        context.coordinator.textView   = tv
+        context.coordinator.scrollView = sv
+        return sv
     }
 
-    var body: some View {
-        HStack(alignment: .top, spacing: 6) {
-            // Timestamp
-            Text(timeStr)
-                .font(.system(size: 9, design: .monospaced))
-                .foregroundStyle(Color(red: 0.4, green: 0.4, blue: 0.5))
-                .frame(width: 86, alignment: .leading)
+    func updateNSView(_ sv: NSScrollView, context: Context) {
+        let co = context.coordinator
+        guard let tv = sv.documentView as? NSTextView else { return }
 
-            // Kind prefix
-            Text(entry.prefix)
-                .font(.system(size: 9, weight: .semibold, design: .monospaced))
-                .foregroundStyle(entry.color)
-                .frame(width: 52, alignment: .leading)
+        // エントリ数が変わっていなければスキップ
+        guard co.lastCount != entries.count else { return }
+        co.lastCount = entries.count
 
-            // Content
-            Text(entry.text)
-                .font(.system(size: 9, design: .monospaced))
-                .foregroundStyle(entry.kind == .perf
-                    ? Color(red: 0.3, green: 1.0, blue: 0.5)
-                    : Color(red: 0.85, green: 0.85, blue: 0.9))
-                .textSelection(.enabled)
-                .lineLimit(3)
-                .frame(maxWidth: .infinity, alignment: .leading)
+        let wasAtBottom = co.isAtBottom(sv)
+        let savedSel    = tv.selectedRange()
+
+        let attrStr = LogBuilder.build(entries: entries)
+        tv.textStorage?.beginEditing()
+        tv.textStorage?.setAttributedString(attrStr)
+        tv.textStorage?.endEditing()
+
+        // 選択範囲を復元
+        if savedSel.location != NSNotFound {
+            let len      = tv.textStorage?.length ?? 0
+            let clampLoc = min(savedSel.location, len)
+            let clampLen = min(savedSel.length, len - clampLoc)
+            tv.setSelectedRange(NSRange(location: clampLoc, length: clampLen))
         }
-        .padding(.vertical, 1)
+
+        // autoScroll が ON かつ末尾にいた場合のみスクロール
+        if autoScroll && wasAtBottom {
+            DispatchQueue.main.async { tv.scrollToEndOfDocument(nil) }
+        }
+    }
+
+    // MARK: Coordinator
+    final class Coordinator {
+        weak var textView:   NSTextView?
+        weak var scrollView: NSScrollView?
+        var lastCount: Int = -1
+
+        func isAtBottom(_ sv: NSScrollView) -> Bool {
+            guard let clip = sv.contentView as? NSClipView,
+                  let doc  = sv.documentView else { return true }
+            return doc.frame.maxY - clip.bounds.maxY < 40
+        }
     }
 }
 
-// MARK: - ThinkingLogView preview helper
+// MARK: - LogTextView (コンテキストメニュー限定)
+private final class LogTextView: NSTextView {
+    override func menu(for event: NSEvent) -> NSMenu? {
+        let m = NSMenu()
+        m.addItem(NSMenuItem(title: "コピー",       action: #selector(copy(_:)),      keyEquivalent: "c"))
+        m.addItem(NSMenuItem(title: "すべて選択",   action: #selector(selectAll(_:)), keyEquivalent: "a"))
+        m.items.forEach { $0.keyEquivalentModifierMask = .command }
+        return m
+    }
+}
+
+// MARK: - LogBuilder (NSAttributedString ビルダー)
+private enum LogBuilder {
+    private static let timeFmt: DateFormatter = {
+        let f = DateFormatter(); f.dateFormat = "HH:mm:ss.SSS"; return f
+    }()
+
+    // フォント
+    private static let monoFont    = NSFont.monospacedSystemFont(ofSize: 9, weight: .regular)
+    private static let monoSemi    = NSFont.monospacedSystemFont(ofSize: 9, weight: .semibold)
+
+    // 色
+    private static let tsColor     = NSColor(calibratedRed: 0.40, green: 0.40, blue: 0.50, alpha: 1)
+    private static let bodyColor   = NSColor(calibratedRed: 0.85, green: 0.85, blue: 0.90, alpha: 1)
+    private static let perfColor   = NSColor(calibratedRed: 0.30, green: 1.00, blue: 0.50, alpha: 1)
+
+    // kind → NSColor マップ
+    private static func kindColor(_ kind: AppState.ProcessLogEntry.Kind) -> NSColor {
+        switch kind {
+        case .memory:   return NSColor(calibratedRed: 0.40, green: 0.90, blue: 0.60, alpha: 1)
+        case .tool:     return NSColor(calibratedRed: 0.40, green: 0.80, blue: 1.00, alpha: 1)
+        case .browser:  return NSColor(calibratedRed: 0.90, green: 0.70, blue: 0.30, alpha: 1)
+        case .thinking: return NSColor(calibratedRed: 0.80, green: 0.80, blue: 1.00, alpha: 1)
+        case .system:   return NSColor(calibratedRed: 0.60, green: 0.60, blue: 0.60, alpha: 1)
+        case .perf:     return NSColor(calibratedRed: 0.30, green: 1.00, blue: 0.50, alpha: 1)
+        }
+    }
+
+    static func build(entries: [AppState.ProcessLogEntry]) -> NSAttributedString {
+        let result = NSMutableAttributedString()
+        let linePara = NSMutableParagraphStyle()
+        linePara.lineSpacing = 1
+
+        for (i, e) in entries.enumerated() {
+            if i > 0 { result.append(NSAttributedString(string: "\n")) }
+
+            // Timestamp
+            result.append(NSAttributedString(
+                string: timeFmt.string(from: e.timestamp) + "  ",
+                attributes: [.font: monoFont, .foregroundColor: tsColor, .paragraphStyle: linePara]
+            ))
+
+            // Prefix (kind badge)
+            result.append(NSAttributedString(
+                string: e.prefix + "  ",
+                attributes: [.font: monoSemi, .foregroundColor: kindColor(e.kind), .paragraphStyle: linePara]
+            ))
+
+            // Content
+            let textColor: NSColor = e.kind == .perf ? perfColor : bodyColor
+            result.append(NSAttributedString(
+                string: e.text,
+                attributes: [.font: monoFont, .foregroundColor: textColor, .paragraphStyle: linePara]
+            ))
+        }
+        return result
+    }
+}
+
+// MARK: - ThinkingLogView extension helpers
 
 extension AppState {
     /// Emit a log entry from browser operations, JCross hits, etc.

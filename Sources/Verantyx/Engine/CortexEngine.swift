@@ -183,12 +183,18 @@ final class CortexEngine: ObservableObject {
     }
 
     /// Compress messages when context gets too long.
+    /// NOTE: We deliberately keep a large window (keepCount=20) so the user
+    /// always sees a full natural scroll of history in the chat panel.
+    /// Only the LLM conversation array (inside AgentLoop) gets aggressively
+    /// compressed — chat bubbles shown to the user are NOT trimmed by this path.
     func compressIfNeeded(messages: [ChatMessage]) -> [ChatMessage] {
         guard isEnabled else { return messages }
         let totalChars = messages.reduce(0) { $0 + $1.content.count }
-        guard totalChars > contextThreshold * 4 else { return messages }
+        // Fire only when the conversation is very long (threshold * 8)
+        guard totalChars > contextThreshold * 8 else { return messages }
 
-        let keepCount = 6
+        // Keep the last 20 visible messages so the user can scroll recent history
+        let keepCount = 20
         guard messages.count > keepCount + 2 else { return messages }
 
         let toCompress = Array(messages.dropLast(keepCount))
@@ -201,7 +207,7 @@ final class CortexEngine: ObservableObject {
 
         let compressionNote = ChatMessage(
             role: .system,
-            content: "🧠 [Cortex] Compressed \(toCompress.count) earlier messages into memory. Key context preserved."
+            content: "🧠 [Cortex] \(toCompress.count) 件のメッセージをメモリに圧縮しました。直近の \(keepCount) 件は全て表示されています。"
         )
         return [compressionNote] + toKeep
     }
@@ -264,7 +270,7 @@ final class CortexEngine: ObservableObject {
 
     // MARK: - Zone classification (classifyNode — MCP parity)
 
-    private func classifyNode(importance: Float) -> MemoryNode.Zone {
+    func classifyNode(importance: Float) -> MemoryNode.Zone {
         switch importance {
         case 0.9...: return .front
         case 0.7..<0.9: return .near
@@ -275,7 +281,7 @@ final class CortexEngine: ObservableObject {
 
     // MARK: - LRU GC with Tombstone migration (MCP parity)
 
-    private func runLRUGC() {
+    func runLRUGC() {
         for zone in [MemoryNode.Zone.front, .near, .mid] {
             guard let cap = Optional(zone.cap), cap > 0 else { continue }
             let zoneNodes = nodes.filter { $0.zone == zone }
@@ -301,7 +307,7 @@ final class CortexEngine: ObservableObject {
 
     // MARK: - Node migration
 
-    private func migrateNode(_ node: inout MemoryNode, to newZone: MemoryNode.Zone) {
+    func migrateNode(_ node: inout MemoryNode, to newZone: MemoryNode.Zone) {
         if let idx = nodes.firstIndex(where: { $0.id == node.id }) {
             nodes[idx].zone = newZone
         }
@@ -315,7 +321,7 @@ final class CortexEngine: ObservableObject {
         return "\(shortId).jcross"
     }
 
-    private func writeNode(_ node: MemoryNode) {
+    func writeNode(_ node: MemoryNode) {
         let dir      = mcpMemoryRoot.appendingPathComponent(node.zone.rawValue)
         let fileName = nodeFileName(node)
         let content  = JCrossFormatter.buildNode(

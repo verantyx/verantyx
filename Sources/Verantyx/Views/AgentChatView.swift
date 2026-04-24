@@ -41,6 +41,24 @@ struct AgentChatView: View {
             inputBar
         }
         .background(Color(red: 0.13, green: 0.13, blue: 0.16))
+        // ─ Sync tab state with AppState (for session restore programmatic switch) ─
+        .onChange(of: app.activeChatTab) { _, newVal in
+            switch newVal {
+            case 0: activeTab = .workspace
+            case 1: activeTab = .history
+            case 2: activeTab = .thinking
+            default: break
+            }
+        }
+        .onChange(of: activeTab) { _, tab in
+            let idx: Int
+            switch tab {
+            case .workspace: idx = 0
+            case .history:   idx = 1
+            case .thinking:  idx = 2
+            }
+            if app.activeChatTab != idx { app.activeChatTab = idx }
+        }
     }
 
     // MARK: - Tab bar
@@ -100,7 +118,7 @@ struct AgentChatView: View {
             }
             .buttonStyle(.plain)
             .padding(.horizontal, 6)
-            .help("新しいセッション")
+            .help(app.t("New session", "新しいセッション"))
 
             Button { } label: {
                 Image(systemName: "ellipsis")
@@ -132,31 +150,11 @@ struct AgentChatView: View {
     // MARK: - Workspace (main chat)
 
     private var workspaceView: some View {
-        ScrollViewReader { proxy in
-            ScrollView {
-                LazyVStack(alignment: .leading, spacing: 10) {
-                    ForEach(app.messages) { msg in
-                        AgentMessageView(message: msg)
-                            .id(msg.id)
-                    }
-                    if app.isGenerating {
-                        AgentThinkingView()
-                            .id("generating")
-                    }
-                }
-                .padding(14)
-            }
-            .onChange(of: app.messages.count) { _ in
-                withAnimation {
-                    if app.isGenerating {
-                        proxy.scrollTo("generating")
-                    } else if let last = app.messages.last {
-                        proxy.scrollTo(last.id)
-                    }
-                }
-            }
-        }
+        // NSTextView ベースのトランスクリプト。
+        // 単一テキストストレージのためメッセージをまたいでドラッグ選択・コピーができる。
+        ChatTranscriptView(messages: app.messages, isGenerating: app.isGenerating)
     }
+
 
     // MARK: - Thinking Log (shows <think> sections)
 
@@ -200,15 +198,24 @@ struct AgentChatView: View {
         HStack(spacing: 8) {
             // ── Model chip ────────────────────────────────────────────
             Button {
-                app.connectOllama()
+                // Tapping re-opens model selection (no-op action; just shows the intent)
             } label: {
                 HStack(spacing: 8) {
-                    Text("MLX")
+                    // Backend badge — dynamic based on active backend
+                    let isOllama: Bool = {
+                        if case .ollamaReady = app.modelStatus { return true }
+                        return false
+                    }()
+                    Text(isOllama ? "OLLAMA" : "MLX")
                         .font(.system(size: 10, weight: .bold, design: .monospaced))
-                        .foregroundStyle(Color(red: 0.3, green: 0.3, blue: 0.35))
+                        .foregroundStyle(Color(red: 0.15, green: 0.15, blue: 0.18))
                         .padding(.horizontal, 6).padding(.vertical, 2)
-                        .background(Color(red: 0.6, green: 0.9, blue: 0.6),
-                                    in: RoundedRectangle(cornerRadius: 3))
+                        .background(
+                            isOllama
+                                ? Color(red: 0.45, green: 0.9, blue: 0.6)   // green for Ollama
+                                : Color(red: 0.65, green: 0.5, blue: 1.0),  // purple for MLX
+                            in: RoundedRectangle(cornerRadius: 3)
+                        )
 
                     Text(modelDisplayName)
                         .font(.system(size: 12, design: .monospaced))
@@ -241,7 +248,7 @@ struct AgentChatView: View {
                 } label: {
                     HStack(spacing: 5) {
                         Image(systemName: "stop.fill").font(.system(size: 11))
-                        Text("停止").font(.system(size: 11, weight: .semibold))
+                        Text(app.t("Stop", "停止")).font(.system(size: 11, weight: .semibold))
                     }
                     .foregroundStyle(.white)
                     .padding(.horizontal, 10).padding(.vertical, 5)
@@ -260,14 +267,14 @@ struct AgentChatView: View {
                     Image(systemName: "paperplane.fill")
                         .font(.system(size: 13))
                         .foregroundStyle(
-                            (app.inputText.isEmpty && app.attachedImages.isEmpty && app.attachedFiles.isEmpty)
+                            (inputText.isEmpty && app.attachedImages.isEmpty && app.attachedFiles.isEmpty)
                             ? Color(red: 0.4, green: 0.4, blue: 0.5)
                             : Color(red: 0.4, green: 0.7, blue: 1.0)
                         )
                         .padding(8)
                 }
                 .buttonStyle(.plain)
-                .disabled(app.inputText.trimmingCharacters(in: .whitespaces).isEmpty
+                .disabled(inputText.trimmingCharacters(in: .whitespaces).isEmpty
                           && app.attachedImages.isEmpty
                           && app.attachedFiles.isEmpty)
             }
@@ -287,8 +294,71 @@ struct AgentChatView: View {
                 Divider().opacity(0.3)
             }
 
-            // ── Selected code-file badge ──────────────────────────────
-            if let file = app.selectedFile {
+            // ── IDE Fix mode banner / normal file badge ───────────────
+            if app.selfFixMode {
+                // Persistent IDE Fix banner — always visible while mode is active
+                HStack(spacing: 8) {
+                    Image(systemName: "lock.fill")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundStyle(Color(red: 1.0, green: 0.65, blue: 0.15))
+
+                    Text("🔧 IDE Fix Mode")
+                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        .foregroundStyle(Color(red: 1.0, green: 0.75, blue: 0.30))
+
+                    if let file = app.selectedFile {
+                        Text("▸ \(file.lastPathComponent)")
+                            .font(.system(size: 10, design: .monospaced))
+                            .foregroundStyle(Color(red: 0.9, green: 0.6, blue: 0.2).opacity(0.8))
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                    } else {
+                        Text("▸ IDE Source Index")
+                            .font(.system(size: 10, design: .monospaced))
+                            .foregroundStyle(Color(red: 0.9, green: 0.6, blue: 0.2).opacity(0.8))
+                    }
+
+                    Spacer()
+
+                    // Exit button — explicitly exits IDE Fix mode
+                    Button {
+                        app.selfFixMode = false
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "xmark")
+                                .font(.system(size: 9, weight: .bold))
+                            Text(app.t("Exit Mode", "モード終了"))
+                                .font(.system(size: 10, weight: .semibold))
+                        }
+                        .foregroundStyle(Color(red: 1.0, green: 0.65, blue: 0.15))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(
+                            RoundedRectangle(cornerRadius: 4)
+                                .stroke(Color(red: 1.0, green: 0.65, blue: 0.15).opacity(0.5), lineWidth: 1)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(
+                    LinearGradient(
+                        colors: [
+                            Color(red: 0.28, green: 0.18, blue: 0.04),
+                            Color(red: 0.22, green: 0.14, blue: 0.02)
+                        ],
+                        startPoint: .leading, endPoint: .trailing
+                    )
+                )
+                .overlay(
+                    Rectangle()
+                        .fill(Color(red: 1.0, green: 0.60, blue: 0.10).opacity(0.6))
+                        .frame(height: 1),
+                    alignment: .bottom
+                )
+            } else if let file = app.selectedFile {
+                // Normal mode: selected code-file badge
                 HStack(spacing: 6) {
                     Image(systemName: FileIcons.icon(for: file)).font(.system(size: 10))
                     Text(file.lastPathComponent).font(.system(size: 11, design: .monospaced))
@@ -327,7 +397,7 @@ struct AgentChatView: View {
                     }
                     .buttonStyle(.plain)
                     .disabled(!app.isMultimodalModel)
-                    .help(app.isMultimodalModel ? "画像を添付" : "このモデルはマルチモーダル非対応です")
+                    .help(app.isMultimodalModel ? app.t("Attach image", "画像を添付") : app.t("Multimodal not supported by this model", "このモデルはマルチモーダル非対応です"))
 
                     // Attach file
                     Button {
@@ -340,7 +410,7 @@ struct AgentChatView: View {
                             .frame(width: 26, height: 26)
                     }
                     .buttonStyle(.plain)
-                    .help("ファイルを添付")
+                    .help(app.t("Attach file", "ファイルを添付"))
 
                     // ── Self Fix — icon-only, fixed frame ────────────────
                     // Using just the icon + background color (no expanding text)
@@ -365,8 +435,8 @@ struct AgentChatView: View {
                     }
                     .buttonStyle(.plain)
                     .help(app.selfFixMode
-                          ? "Self Fix モード ON — タップで解除"
-                          : "Self Fix: IDEソースを自己修正")
+                          ? app.t("Self Fix Mode ON — tap to disable", "Self Fix モード ON — タップで解除")
+                          : app.t("Self Fix: auto-fix IDE source", "Self Fix: IDEソースを自己修正"))
                 }
                 // FIXED width — never changes regardless of selfFixMode
                 .frame(width: 86, alignment: .leading)
@@ -376,12 +446,12 @@ struct AgentChatView: View {
                 //   lineFragmentPadding ≈ 5pt (leading)
                 //   textContainerInset.y ≈ 5-7pt (top)
                 ZStack(alignment: .topLeading) {
-                    if app.inputText.isEmpty {
+                    if inputText.isEmpty {
                         Text(app.selfFixMode
-                             ? "このIDEを修正… (Self Fix モード)"
+                             ? app.t("Fix this IDE… (Self Fix Mode)", "このIDEを修正… (Self Fix モード)")
                              : (app.selectedFile == nil
-                                ? "Ask VerantyxAgent anything…"
-                                : "Describe the changes you want…"))
+                                ? app.t("Ask VerantyxAgent anything…", "Ask VerantyxAgent anything…")
+                                : app.t("Describe the changes you want…", "Describe the changes you want…")))
                             .font(.system(size: 13))
                             .foregroundStyle(
                                 app.selfFixMode
@@ -394,17 +464,12 @@ struct AgentChatView: View {
                             // No pointer interaction so clicks pass through to TextEditor
                             .allowsHitTesting(false)
                     }
-                    TextEditor(text: $app.inputText)
-                        .font(.system(size: 13))
-                        .foregroundStyle(Color(red: 0.88, green: 0.88, blue: 0.92))
-                        .scrollContentBackground(.hidden)
-                        .frame(minHeight: 44, maxHeight: 110)
-                        .focused($inputFocused)
-                        .onKeyPress(.return) {
-                            guard NSEvent.modifierFlags.contains(.command) else { return .ignored }
-                            sendMessage()
-                            return .handled
-                        }
+                    ChatInputTextView(
+                        text: $inputText,
+                        onSend: { sendMessage() },
+                        isFocused: $inputFocused
+                    )
+                    .frame(minHeight: 44, maxHeight: 110)
                 }
             }
 
@@ -524,19 +589,21 @@ struct AgentChatView: View {
     // MARK: - Helpers
 
     private func sendMessage() {
-        let text = app.inputText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let text = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty, !app.isGenerating else { return }
-        // Pass text BEFORE clearing — AppState.sendMessage reads inputText
-        // so we pass it explicitly to avoid the empty-string race
-        app.inputText = ""
+        inputText = ""          // ローカル state を即時クリア（@Published を触る前）
         app.sendMessage(with: text)
     }
 
     private var modelDisplayName: String {
         switch app.modelStatus {
-        case .ollamaReady(let m): return m
-        case .ready(let n):        return n
-        default:                   return "Select model ↓"
+        case .ollamaReady(let m):              return m
+        case .mlxReady(let m):                 return m.components(separatedBy: "/").last ?? m
+        case .anthropicReady(let m, _):        return m
+        case .ready(let n):                    return n
+        case .mlxDownloading(let m):           return "↓ \(m.components(separatedBy: "/").last ?? m)…"
+        case .connecting:                      return "Connecting…"
+        default:                               return "Select model ↓"
         }
     }
 
@@ -552,8 +619,16 @@ struct AgentChatView: View {
 
 // MARK: - AgentMessageView
 
-struct AgentMessageView: View {
+struct AgentMessageView: View, Equatable {
     let message: ChatMessage
+
+    // Equatable: SwiftUI の .equatable() モディファイアがこれを使って
+    // content/role が同一なら再描画をスキップする
+    static func == (lhs: AgentMessageView, rhs: AgentMessageView) -> Bool {
+        lhs.message.id == rhs.message.id &&
+        lhs.message.content == rhs.message.content &&
+        lhs.message.role == rhs.message.role
+    }
 
     // Parse <think>...</think> from content
     private var parts: [(isThinking: Bool, text: String)] {
@@ -592,12 +667,10 @@ struct AgentMessageView: View {
         switch message.role {
         case .user:
             HStack(alignment: .top, spacing: 6) {
-                // Copy button — appears on hover to the left of the bubble
-                if isHovered {
-                    copyButton
-                        .transition(.opacity.combined(with: .scale(scale: 0.8)))
-                }
-                Spacer(minLength: isHovered ? 0 : 50)
+                // Copy button — always visible (dimmed when not hovered)
+                copyButton
+                    .opacity(isHovered ? 1.0 : 0.35)
+                Spacer(minLength: 20)
                 Text(message.content)
                     .font(.system(size: 13))
                     .foregroundStyle(Color.white)
@@ -627,11 +700,9 @@ struct AgentMessageView: View {
                             .font(.system(size: 11, weight: .semibold))
                             .foregroundStyle(Color(red: 0.4, green: 0.7, blue: 1.0))
                         Spacer()
-                        // Copy button — appears on hover
-                        if isHovered {
-                            copyButton
-                                .transition(.opacity.combined(with: .scale(scale: 0.8)))
-                        }
+                        // Copy button — always visible (dimmed when not hovered)
+                        copyButton
+                            .opacity(isHovered ? 1.0 : 0.35)
                     }
 
                     VStack(alignment: .leading, spacing: 6) {
@@ -652,7 +723,9 @@ struct AgentMessageView: View {
         case .system:
             HStack(spacing: 6) {
                 Image(systemName: "info.circle").font(.caption2)
-                Text(message.content).font(.system(size: 11))
+                Text(message.content)
+                    .font(.system(size: 11))
+                    .textSelection(.enabled)
             }
             .foregroundStyle(Color(red: 0.45, green: 0.45, blue: 0.6))
             .frame(maxWidth: .infinity, alignment: .center)
@@ -679,7 +752,7 @@ struct AgentMessageView: View {
                 .background(Color.white.opacity(0.06), in: RoundedRectangle(cornerRadius: 5))
         }
         .buttonStyle(.plain)
-        .help(copied ? "コピーしました！" : "メッセージをコピー")
+        .help(copied ? L("Copied!", "コピーしました！") : L("Copy message", "メッセージをコピー"))
     }
 
     private func thinkingTag(_ text: String) -> some View {
@@ -693,6 +766,7 @@ struct AgentMessageView: View {
                 .font(.system(size: 11, design: .monospaced))
                 .foregroundStyle(Color(red: 0.35, green: 0.85, blue: 0.80))
                 .lineSpacing(3)
+                .textSelection(.enabled)
             Text("</think>")
                 .font(.system(size: 10, design: .monospaced))
                 .foregroundStyle(Color(red: 0.35, green: 0.75, blue: 0.70))
@@ -784,5 +858,159 @@ struct AgentThinkingView: View {
                 }
             }
         }
+    }
+}
+
+// MARK: - ChatInputTextView (IME-aware Enter-to-send)
+// NSViewRepresentable wrapping NSTextView for reliable Japanese IME handling.
+//
+// Behavior:
+//   • Enter (no modifier):
+//       - If IME has markedText (未確定文字) → confirms composition (default NSTextView behavior)
+//       - If no markedText → sends the message
+//   • Shift+Enter: inserts newline (multi-line input)
+//   • ⌘+Enter: also sends the message (legacy shortcut)
+
+struct ChatInputTextView: NSViewRepresentable {
+    @Binding var text: String
+    var onSend: () -> Void
+    var isFocused: FocusState<Bool>.Binding
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(parent: self)
+    }
+
+    func makeNSView(context: Context) -> NSScrollView {
+        let scrollView = NSScrollView()
+        scrollView.hasVerticalScroller = true
+        scrollView.hasHorizontalScroller = false
+        scrollView.autohidesScrollers = true
+        scrollView.borderType = .noBorder
+        scrollView.drawsBackground = false
+
+        let textView = IMEAwareTextView()
+        textView.delegate = context.coordinator
+        textView.onSend = onSend
+        textView.isRichText = false
+        textView.allowsUndo = true
+        textView.font = NSFont.systemFont(ofSize: 13)
+        textView.textColor = NSColor(red: 0.88, green: 0.88, blue: 0.92, alpha: 1.0)
+        textView.backgroundColor = .clear
+        textView.drawsBackground = false
+        textView.isVerticallyResizable = true
+        textView.isHorizontallyResizable = false
+        textView.autoresizingMask = [.width]
+        textView.textContainerInset = NSSize(width: 0, height: 5)
+        textView.textContainer?.lineFragmentPadding = 5
+        textView.textContainer?.widthTracksTextView = true
+
+        // Caret color
+        textView.insertionPointColor = NSColor(red: 0.4, green: 0.7, blue: 1.0, alpha: 1.0)
+
+        scrollView.documentView = textView
+        context.coordinator.textView = textView
+
+        return scrollView
+    }
+
+    func updateNSView(_ scrollView: NSScrollView, context: Context) {
+        guard let textView = scrollView.documentView as? IMEAwareTextView else { return }
+
+        // ── GUARD 1: Never interrupt active IME composition ──────────
+        // Setting textView.string during composition destroys the markedText.
+        if textView.hasMarkedText() {
+            textView.onSend = onSend
+            return
+        }
+
+        // ── GUARD 2: Prevent feedback loop ──────────────────────────
+        // textDidChange sets parent.text → triggers updateNSView → must not set string again
+        let coordinator = context.coordinator
+        guard !coordinator.isSyncingToBinding else {
+            textView.onSend = onSend
+            return
+        }
+
+        // ── Only apply external changes (e.g., clearing after send) ─
+        if textView.string != text {
+            coordinator.isSyncingFromBinding = true
+            textView.string = text
+            textView.setSelectedRange(NSRange(location: textView.string.count, length: 0))
+            coordinator.isSyncingFromBinding = false
+        }
+
+        textView.onSend = onSend
+    }
+
+    // MARK: - Coordinator
+
+    class Coordinator: NSObject, NSTextViewDelegate {
+        var parent: ChatInputTextView
+        weak var textView: IMEAwareTextView?
+
+        /// True while textDidChange is propagating to the binding.
+        /// Prevents updateNSView from re-entering.
+        var isSyncingToBinding = false
+
+        /// True while updateNSView is writing to textView.string.
+        /// Prevents textDidChange from re-entering.
+        var isSyncingFromBinding = false
+
+        init(parent: ChatInputTextView) {
+            self.parent = parent
+        }
+
+        func textDidChange(_ notification: Notification) {
+            guard let textView = notification.object as? NSTextView else { return }
+            // Don't propagate if WE set the string programmatically
+            guard !isSyncingFromBinding else { return }
+
+            isSyncingToBinding = true
+            parent.text = textView.string
+            isSyncingToBinding = false
+        }
+
+        func textDidBeginEditing(_ notification: Notification) {
+            parent.isFocused.wrappedValue = true
+        }
+
+        func textDidEndEditing(_ notification: Notification) {
+            parent.isFocused.wrappedValue = false
+        }
+    }
+}
+
+// MARK: - IMEAwareTextView
+// Custom NSTextView subclass that intercepts Enter key events
+// and checks IME composition state before deciding to send.
+
+final class IMEAwareTextView: NSTextView {
+    var onSend: (() -> Void)?
+
+    override func insertNewline(_ sender: Any?) {
+        // ── IME composition active → let default behavior confirm it ──
+        if hasMarkedText() {
+            super.insertNewline(sender)
+            return
+        }
+
+        // ── Shift+Enter → insert actual newline (multi-line input) ──
+        if NSEvent.modifierFlags.contains(.shift) {
+            super.insertNewline(sender)
+            return
+        }
+
+        // ── Plain Enter (no IME, no Shift) → send message ──
+        onSend?()
+    }
+
+    // Also support ⌘+Enter as a legacy send shortcut
+    override func keyDown(with event: NSEvent) {
+        if event.keyCode == 36,  // Return key
+           event.modifierFlags.contains(.command) {
+            onSend?()
+            return
+        }
+        super.keyDown(with: event)
     }
 }

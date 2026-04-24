@@ -28,7 +28,7 @@ struct TerminalPanelView: View {
         }
         .frame(maxWidth: .infinity)
         .background(Color(red: 0.08, green: 0.08, blue: 0.10))
-        .onChange(of: app.workspaceURL) { url in
+        .onChange(of: app.workspaceURL) { _, url in
             if let url = url {
                 terminal.workingDirectory = url
                 suggestedCmds = TerminalRunner.suggestedCommands(for: url)
@@ -110,7 +110,7 @@ struct TerminalPanelView: View {
                 .padding(.horizontal, 12)
                 .padding(.vertical, 4)
             }
-            .onChange(of: terminal.history.count) { _ in
+            .onChange(of: terminal.history.count) { _, _ in
                 proxy.scrollTo("bottom", anchor: .bottom)
             }
         }

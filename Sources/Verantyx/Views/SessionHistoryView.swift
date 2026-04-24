@@ -18,7 +18,7 @@ struct SessionHistoryView: View {
                 Image(systemName: "clock.arrow.circlepath")
                     .font(.system(size: 11))
                     .foregroundStyle(Color(red: 0.55, green: 0.55, blue: 0.75))
-                Text("セッション履歴")
+                Text(app.t("Session History", "セッション履歴"))
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(Color(red: 0.85, green: 0.85, blue: 0.95))
                 Spacer()
@@ -30,7 +30,7 @@ struct SessionHistoryView: View {
                         .foregroundStyle(Color(red: 0.4, green: 0.7, blue: 1.0))
                 }
                 .buttonStyle(.plain)
-                .help("新しいセッション")
+                .help(app.t("New session", "新しいセッション"))
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
@@ -61,18 +61,18 @@ struct SessionHistoryView: View {
         }
         .background(Color(red: 0.11, green: 0.11, blue: 0.14))
         .confirmationDialog(
-            "セッションを削除しますか？",
+            app.t("Delete this session?", "セッションを削除しますか？"),
             isPresented: Binding(
                 get: { confirmDeleteId != nil },
                 set: { if !$0 { confirmDeleteId = nil } }
             ),
             titleVisibility: .visible
         ) {
-            Button("削除", role: .destructive) {
+            Button(app.t("Delete", "削除"), role: .destructive) {
                 if let id = confirmDeleteId { app.sessions.delete(id) }
                 confirmDeleteId = nil
             }
-            Button("キャンセル", role: .cancel) { confirmDeleteId = nil }
+            Button(app.t("Cancel", "キャンセル"), role: .cancel) { confirmDeleteId = nil }
         }
     }
 
@@ -82,10 +82,11 @@ struct SessionHistoryView: View {
             Image(systemName: "bubble.left.and.bubble.right")
                 .font(.system(size: 32))
                 .foregroundStyle(Color(red: 0.3, green: 0.3, blue: 0.4))
-            Text("まだセッションがありません")
+            Text(app.t("No sessions yet", "まだセッションがありません"))
                 .font(.system(size: 12))
                 .foregroundStyle(Color(red: 0.45, green: 0.45, blue: 0.55))
-            Text("チャットを開始すると自動的に保存されます")
+            Text(app.t("Sessions are saved automatically when you start a chat.",
+                       "チャットを開始すると自動的に保存されます"))
                 .font(.system(size: 11))
                 .foregroundStyle(Color(red: 0.35, green: 0.35, blue: 0.45))
                 .multilineTextAlignment(.center)
@@ -123,7 +124,7 @@ struct SessionRowView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     // Title (editable)
                     if isEditing {
-                        TextField("セッション名", text: $editTitle)
+                        TextField(app.t("Session name", "セッション名"), text: $editTitle)
                             .textFieldStyle(.plain)
                             .font(.system(size: 12, weight: .medium))
                             .foregroundStyle(Color.white)
@@ -187,7 +188,7 @@ struct SessionRowView: View {
                     }
                     .buttonStyle(.plain)
                     .foregroundStyle(Color(red: 0.5, green: 0.5, blue: 0.65))
-                    .help("名前を変更")
+                    .help(app.t("Rename", "名前を変更"))
 
                     // Delete
                     Button {
@@ -198,7 +199,7 @@ struct SessionRowView: View {
                     }
                     .buttonStyle(.plain)
                     .foregroundStyle(Color(red: 0.7, green: 0.35, blue: 0.35))
-                    .help("削除")
+                    .help(app.t("Delete", "削除"))
                 }
                 .opacity(isActive ? 1 : 0.5)
             }
@@ -249,14 +250,15 @@ struct SessionRowView: View {
                 )
         }
         .buttonStyle(.plain)
-        .help("記憶レイヤー: \(session.activeLayer.description)")
+        .help(app.t("Memory layer: \(session.activeLayer.description)",
+                    "記憶レイヤー: \(session.activeLayer.description)"))
     }
 
     // MARK: - Inline Layer Picker
 
     private var layerPicker: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text("記憶レイヤーを切り替え")
+            Text(app.t("Switch memory layer", "記憶レイヤーを切り替え"))
                 .font(.system(size: 10))
                 .foregroundStyle(Color(red: 0.5, green: 0.5, blue: 0.65))
 

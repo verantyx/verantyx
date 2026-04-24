@@ -76,15 +76,35 @@ struct VerantyxApp: App {
     @StateObject private var appState = AppState()
     @NSApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
+    // ── Cortex Onboarding ────────────────────────────────────────────────
+    // Shows once on first launch. User can suppress via "次回から表示しない".
+    @AppStorage("cortex_onboarding_dismissed") private var cortexDismissed = false
+    @State private var showCortexOnboarding = false
+
     var body: some Scene {
         WindowGroup {
             MainSplitView()
                 .environmentObject(appState)
                 .frame(minWidth: 900, minHeight: 580)
                 .onAppear {
+                    AppState.shared = appState
                     delegate.appState = appState
                     appState.registerCIErrorHook()
                     appState.registerRestartHook()
+                    MCPSkillSync.shared.startPolling()
+
+                    // Show Cortex onboarding on first launch (or if not dismissed)
+                    if !cortexDismissed {
+                        // Slight delay so the main window renders first
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                            showCortexOnboarding = true
+                        }
+                    }
+                }
+                // ── Cortex Onboarding Sheet ──────────────────────────────
+                .sheet(isPresented: $showCortexOnboarding) {
+                    CortexOnboardingSheet(isPresented: $showCortexOnboarding)
+                        .preferredColorScheme(.dark)
                 }
                 // ── AI-triggered restart dialog ──────────────────────
                 .alert("🔨 ビルド完了 — 再起動しますか？",
@@ -148,7 +168,7 @@ struct VerantyxApp: App {
                 .keyboardShortcut(".", modifiers: [.command, .shift])
 
                 Button("Start MLX Server") {
-                    appState.startMLXServer(model: appState.activeMlxModel)
+                    appState.loadMLXModel(model: appState.activeMlxModel)
                 }
 
                 Divider()

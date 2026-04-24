@@ -14,7 +14,7 @@ struct PrivacyShieldBadge: View {
             Text(mode.rawValue)
                 .font(.system(size: 11, weight: .semibold))
 
-            if let stats = stats, mode == .privacyShield {
+            if let stats = stats, (mode == .privacyShield || mode == .paranoiaMode) {
                 Text("·")
                 Text("\(stats.total) masked")
                     .font(.system(size: 10, design: .monospaced))
@@ -177,18 +177,19 @@ struct ModeSelectorView: View {
 
 struct PrivacyShieldStepsView: View {
     let steps: [String]
+    @EnvironmentObject var app: AppState
     @State private var appear = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            // Header
+            // Header — adapts to Privacy Shield vs Paranoia Mode
             HStack(spacing: 6) {
-                Image(systemName: "lock.shield.fill")
+                Image(systemName: app.inferenceMode == .paranoiaMode ? "eye.slash.circle.fill" : "lock.shield.fill")
                     .font(.system(size: 12))
-                    .foregroundStyle(Color(red: 0.8, green: 0.5, blue: 1.0))
-                Text("Privacy Shield Active")
+                    .foregroundStyle(headerColor)
+                Text(app.inferenceMode == .paranoiaMode ? "Paranoia Mode Active" : "Privacy Shield Active")
                     .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(Color(red: 0.8, green: 0.5, blue: 1.0))
+                    .foregroundStyle(headerColor)
                 Spacer()
             }
 
@@ -203,39 +204,79 @@ struct PrivacyShieldStepsView: View {
                 .opacity(appear ? 1 : 0)
                 .animation(.easeIn(duration: 0.3).delay(Double(i) * 0.15), value: appear)
             }
+
+            // Paranoia Mode — inject live terminal log below steps
+            if app.inferenceMode == .paranoiaMode {
+                Divider().opacity(0.3).padding(.vertical, 4)
+                ParanoiaModeView()
+                    .environmentObject(app)
+            }
         }
         .padding(10)
         .background(
             RoundedRectangle(cornerRadius: 8)
-                .fill(Color(red: 0.18, green: 0.12, blue: 0.25).opacity(0.8))
+                .fill(backgroundFill)
                 .overlay(RoundedRectangle(cornerRadius: 8)
-                    .strokeBorder(Color(red: 0.6, green: 0.3, blue: 0.9).opacity(0.3), lineWidth: 0.5))
+                    .strokeBorder(borderColor, lineWidth: 0.5))
         )
         .onAppear { appear = true }
+    }
+
+    private var headerColor: Color {
+        app.inferenceMode == .paranoiaMode
+            ? Color(red: 1.0, green: 0.35, blue: 0.35)
+            : Color(red: 0.8, green: 0.5, blue: 1.0)
+    }
+
+    private var backgroundFill: Color {
+        app.inferenceMode == .paranoiaMode
+            ? Color(red: 0.2, green: 0.06, blue: 0.06).opacity(0.8)
+            : Color(red: 0.18, green: 0.12, blue: 0.25).opacity(0.8)
+    }
+
+    private var borderColor: Color {
+        app.inferenceMode == .paranoiaMode
+            ? Color(red: 0.9, green: 0.2, blue: 0.2).opacity(0.3)
+            : Color(red: 0.6, green: 0.3, blue: 0.9).opacity(0.3)
     }
 }
 
 // MARK: - AssistantText (reusable Markdown-style renderer)
+// キャッシュ: 同一コンテンツの再パースを防いでレンダリングコストを削減
+private let assistantTextCache = NSCache<NSString, NSArray>()
 
 struct AssistantText: View {
     let content: String
 
     var body: some View {
-        let parts = parseMarkdownBold(content)
+        let parts = cachedParse(content)
         return parts.reduce(Text("")) { acc, part in
             acc + (part.isBold
                 ? Text(part.text).bold().foregroundColor(Color.white)
                 : Text(part.text).foregroundColor(Color(red: 0.88, green: 0.88, blue: 0.92))
             )
         }
+        .textSelection(.enabled)
     }
 
     private struct TextPart { let text: String; let isBold: Bool }
 
+    // Regex はファイル起動時に1回だけコンパイル
+    private static let boldRegex = try? NSRegularExpression(pattern: #"\*\*(.+?)\*\*"#)
+
+    private func cachedParse(_ text: String) -> [TextPart] {
+        let key = text as NSString
+        if let cached = assistantTextCache.object(forKey: key) as? [TextPart] {
+            return cached
+        }
+        let result = parseMarkdownBold(text)
+        assistantTextCache.setObject(result as NSArray, forKey: key)
+        return result
+    }
+
     private func parseMarkdownBold(_ text: String) -> [TextPart] {
         var parts: [TextPart] = []
-        let pattern = #"\*\*(.+?)\*\*"#
-        guard let regex = try? NSRegularExpression(pattern: pattern) else {
+        guard let regex = Self.boldRegex else {
             return [TextPart(text: text, isBold: false)]
         }
         var cursor = text.startIndex

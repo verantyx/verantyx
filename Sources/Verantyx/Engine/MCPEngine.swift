@@ -4,14 +4,18 @@ import SwiftUI
 // MARK: - MCPEngine
 //
 // Model Context Protocol client for Verantyx IDE.
-// Supports:
-//   • stdio transport (subprocess with JSON-RPC 2.0 over stdin/stdout)
-//   • HTTP/SSE transport (POST to /messages endpoint)
 //
-// Two execution modes:
-//   • .ai    — No timeout. AI agent can call tools indefinitely.
-//              Kill switch available in MCPView for deadlock recovery.
-//   • .human — 60-second timeout per tool call. Returns error on timeout.
+// Persistent stdio design (fixes Puppeteer / slow-npx):
+//   Each enabled server owns ONE long-running Process, started lazily on first
+//   use and reused forever. The browser stays open between calls. No cold-start.
+//
+// HTTP design:
+//   Uses a dedicated URLSession with no timeout so long-running HTTP tool calls
+//   (e.g. Playwright, Puppeteer-HTTP) never time out at the network layer.
+//
+// Kill Switch:
+//   killActiveCall() → Task.cancel(). Works for both transports.
+//   subprocess is terminated only when disconnect() / removeServer() is called.
 
 // MARK: - Data models
 
@@ -19,8 +23,8 @@ struct MCPServerConfig: Codable, Identifiable, Equatable {
     var id: UUID
     var name: String
     var transport: Transport
-    var command: String          // stdio: full command e.g. "npx -y @modelcontextprotocol/server-filesystem /"
-    var url: String              // http: e.g. "http://localhost:3000"
+    var command: String          // stdio: e.g. "npx -y @modelcontextprotocol/server-puppeteer"
+    var url: String              // http:  e.g. "http://localhost:3000"
     var envVars: [String: String]
     var isEnabled: Bool
     var mode: ExecutionMode
@@ -31,8 +35,8 @@ struct MCPServerConfig: Codable, Identifiable, Equatable {
     }
 
     enum ExecutionMode: String, Codable, CaseIterable {
-        case ai    = "AI Priority"     // no timeout
-        case human = "Human Mode"      // 60s timeout
+        case ai    = "AI Priority"   // no auto-timeout — runs until done or user kills
+        case human = "Human Mode"    // 60 s outer deadline
     }
 
     init(id: UUID = UUID(), name: String, transport: Transport = .stdio,
@@ -50,6 +54,9 @@ struct MCPServerConfig: Codable, Identifiable, Equatable {
         MCPServerConfig(name: "GitHub", transport: .stdio,
                         command: "npx -y @modelcontextprotocol/server-github",
                         envVars: ["GITHUB_PERSONAL_ACCESS_TOKEN": ""],
+                        mode: .ai),
+        MCPServerConfig(name: "Puppeteer", transport: .stdio,
+                        command: "npx -y @modelcontextprotocol/server-puppeteer",
                         mode: .ai),
         MCPServerConfig(name: "Brave Search", transport: .stdio,
                         command: "npx -y @modelcontextprotocol/server-brave-search",
@@ -74,38 +81,34 @@ struct MCPTool: Identifiable, Codable {
     }
 }
 
-// Utility wrapper for heterogeneous JSON values
 struct AnyCodable: Codable {
     let value: Any
-
     init(_ value: Any) { self.value = value }
-
     init(from decoder: Decoder) throws {
         let c = try decoder.singleValueContainer()
-        if let v = try? c.decode(Bool.self) { value = v; return }
-        if let v = try? c.decode(Int.self)  { value = v; return }
-        if let v = try? c.decode(Double.self) { value = v; return }
-        if let v = try? c.decode(String.self) { value = v; return }
+        if let v = try? c.decode(Bool.self)               { value = v; return }
+        if let v = try? c.decode(Int.self)                { value = v; return }
+        if let v = try? c.decode(Double.self)             { value = v; return }
+        if let v = try? c.decode(String.self)             { value = v; return }
         if let v = try? c.decode([String: AnyCodable].self) { value = v; return }
-        if let v = try? c.decode([AnyCodable].self) { value = v; return }
+        if let v = try? c.decode([AnyCodable].self)       { value = v; return }
         value = NSNull()
     }
-
     func encode(to encoder: Encoder) throws {
         var c = encoder.singleValueContainer()
         switch value {
-        case let v as Bool:   try c.encode(v)
-        case let v as Int:    try c.encode(v)
-        case let v as Double: try c.encode(v)
-        case let v as String: try c.encode(v)
+        case let v as Bool:               try c.encode(v)
+        case let v as Int:                try c.encode(v)
+        case let v as Double:             try c.encode(v)
+        case let v as String:             try c.encode(v)
         case let v as [String: AnyCodable]: try c.encode(v)
-        case let v as [AnyCodable]: try c.encode(v)
-        default: try c.encodeNil()
+        case let v as [AnyCodable]:       try c.encode(v)
+        default:                          try c.encodeNil()
         }
     }
 }
 
-// MARK: - MCPCallRecord (for process log / kill switch)
+// MARK: - MCPCallRecord
 
 struct MCPCallRecord: Identifiable {
     let id = UUID()
@@ -130,16 +133,310 @@ struct MCPCallRecord: Identifiable {
 
     var statusColor: Color {
         switch status {
-        case .running:     return Color(red: 0.9, green: 0.7, blue: 0.2)
-        case .completed:   return Color(red: 0.3, green: 0.9, blue: 0.5)
-        case .timedOut:    return .orange
-        case .cancelled:   return .red
-        case .failed:      return Color(red: 0.9, green: 0.4, blue: 0.4)
+        case .running:   return Color(red: 0.9, green: 0.7, blue: 0.2)
+        case .completed: return Color(red: 0.3, green: 0.9, blue: 0.5)
+        case .timedOut:  return .orange
+        case .cancelled: return .red
+        case .failed:    return Color(red: 0.9, green: 0.4, blue: 0.4)
         }
     }
 }
 
-// MARK: - MCPEngine (Actor)
+// MARK: - nonisolated helper (callable from any Task or actor)
+
+/// Extracts text content from an MCP JSON-RPC response.
+/// nonisolated free function so it compiles inside Task.detached / actor methods alike.
+func mcpExtractText(from json: [String: Any]) -> String {
+    if let result = json["result"] as? [String: Any] {
+        if let content = result["content"] as? [[String: Any]] {
+            let text = content.compactMap { block -> String? in
+                guard block["type"] as? String == "text" else { return nil }
+                return block["text"] as? String
+            }.joined(separator: "\n")
+            if !text.isEmpty { return text }
+        }
+        if let text = result["text"] as? String { return text }
+    }
+    if let err = json["error"] as? [String: Any] {
+        return "[MCP Error] \(err["message"] as? String ?? "Unknown")"
+    }
+    return json.description
+}
+
+// MARK: - URLSession without timeout (shared across MCP HTTP calls)
+
+private let mcpNoTimeoutSession: URLSession = {
+    let cfg = URLSessionConfiguration.default
+    cfg.timeoutIntervalForRequest  = .infinity
+    cfg.timeoutIntervalForResource = .infinity
+    return URLSession(configuration: cfg)
+}()
+
+// MARK: - StdioSession
+//
+// Persistent actor — owns one Process per MCP server.
+// Serialises all tool calls via Swift's actor model (no mutex needed).
+
+actor StdioSession {
+
+    private let server: MCPServerConfig
+
+    private var process: Process?
+    private var stdinHandle: FileHandle?
+    private var stdoutHandle: FileHandle?
+    private var nextId: Int = 10        // RPC IDs; 1-2 reserved for handshake
+    private var isReady = false
+
+    // AsyncStream continuation — readabilityHandler pushes chunks here.
+    // NOT weak (Continuation is a struct, not a class).
+    private var continuation: AsyncStream<Data>.Continuation?
+
+    init(server: MCPServerConfig) {
+        self.server = server
+    }
+
+    // ── Public API ──────────────────────────────────────────────────────────
+
+    func ensureRunning() async throws {
+        if isReady, let p = process, p.isRunning { return }
+        try await startProcess()
+    }
+
+    /// Send one JSON-RPC request and return the matching response.
+    /// If the process has crashed it is restarted transparently (once).
+    func callTool(method: String, params: [String: Any], deadline: Date) async throws -> [String: Any] {
+        try await ensureRunning()
+
+        let rpcId = nextId
+        nextId += 1
+
+        let req: [String: Any] = [
+            "jsonrpc": "2.0", "id": rpcId,
+            "method": method, "params": params
+        ]
+
+        if !safeWrite(req) {
+            // Likely crashed — restart once and retry
+            try await startProcess()
+            guard safeWrite(req) else {
+                throw MCPError.processLaunchFailed("Write failed after auto-restart")
+            }
+        }
+
+        return try await readResponse(rpcId: rpcId, deadline: deadline)
+    }
+
+    func terminate() {
+        stdoutHandle?.readabilityHandler = nil
+        continuation?.finish()
+        continuation = nil
+        process?.terminate()
+        process = nil
+        isReady = false
+    }
+
+    // ── Private: process lifecycle ──────────────────────────────────────────
+
+    private func startProcess() async throws {
+        // Tear down stale state
+        process?.terminate()
+        process = nil
+        stdinHandle = nil
+        stdoutHandle = nil
+        isReady = false
+        continuation?.finish()
+        continuation = nil
+
+        _ = StdioSession.sigpipeInstalled
+
+        let p = Process()
+        let stdinPipe  = Pipe()
+        let stdoutPipe = Pipe()
+        let stderrPipe = Pipe()
+
+        p.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+        p.arguments     = tokenise(server.command)
+
+        var env = ProcessInfo.processInfo.environment
+        env["PATH"] = "/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin:" + (env["PATH"] ?? "")
+        server.envVars.forEach { env[$0.key] = $0.value }
+        p.environment = env
+
+        p.standardInput  = stdinPipe
+        p.standardOutput = stdoutPipe
+        p.standardError  = stderrPipe
+        p.terminationHandler = { [weak self] _ in
+            Task { await self?.handleTermination() }
+        }
+
+        do { try p.run() } catch {
+            throw MCPError.processLaunchFailed(error.localizedDescription)
+        }
+
+        process      = p
+        stdinHandle  = stdinPipe.fileHandleForWriting
+        stdoutHandle = stdoutPipe.fileHandleForReading
+
+        // Wire readabilityHandler → AsyncStream
+        // Note: cont is a VALUE (struct) so we capture it directly, not with [weak].
+        let (stream, cont) = AsyncStream<Data>.makeStream()
+        self.continuation = cont
+
+        stdoutPipe.fileHandleForReading.readabilityHandler = { fh in
+            let chunk = fh.availableData
+            if chunk.isEmpty {
+                cont.finish()
+                fh.readabilityHandler = nil
+            } else {
+                cont.yield(chunk)
+            }
+        }
+
+        // Perform MCP initialize handshake (up to 20 s for npx cold-start / Puppeteer)
+        try await performHandshake(stream: stream, maxWait: 20.0)
+        isReady = true
+    }
+
+    private func performHandshake(stream: AsyncStream<Data>, maxWait: Double) async throws {
+        let initReq: [String: Any] = [
+            "jsonrpc": "2.0", "id": 1, "method": "initialize",
+            "params": [
+                "protocolVersion": "2024-11-05",
+                "capabilities":    ["tools": [:], "resources": [:]],
+                "clientInfo":      ["name": "Verantyx", "version": "0.1"]
+            ]
+        ]
+        guard safeWrite(initReq) else {
+            throw MCPError.processLaunchFailed("Process exited before initialize")
+        }
+
+        var buf = Data()
+        let deadline = Date().addingTimeInterval(maxWait)
+
+        outer: for await chunk in stream {
+            buf.append(chunk)
+            let (lines, remainder) = splitLines(buf)
+            buf = remainder
+            for line in lines {
+                if let json = parseJSON(line), let id = json["id"] as? Int, id == 1 {
+                    break outer
+                }
+            }
+            if Date() > deadline {
+                throw MCPError.processLaunchFailed(
+                    "Initialize timed out (>\(Int(maxWait))s). Server may not be installed.")
+            }
+            try Task.checkCancellation()
+        }
+
+        let notif: [String: Any] = ["jsonrpc": "2.0", "method": "notifications/initialized"]
+        safeWrite(notif)
+    }
+
+    // ── Private: response reading ───────────────────────────────────────────
+
+    /// Drain the stream after each call by reassigning the readabilityHandler to a
+    /// fresh AsyncStream so each callTool() gets its own isolated iterator.
+    private func readResponse(rpcId: Int, deadline: Date) async throws -> [String: Any] {
+        guard let fh = stdoutHandle else { throw MCPError.noResponse }
+
+        // Create a fresh stream for this specific call's response
+        let (stream, freshCont) = AsyncStream<Data>.makeStream()
+        self.continuation = freshCont
+
+        fh.readabilityHandler = { handle in
+            let chunk = handle.availableData
+            if chunk.isEmpty {
+                freshCont.finish()
+                handle.readabilityHandler = nil
+            } else {
+                freshCont.yield(chunk)
+            }
+        }
+
+        var buf = Data()
+        for await chunk in stream {
+            buf.append(chunk)
+            let (lines, remainder) = splitLines(buf)
+            buf = remainder
+            for line in lines {
+                if let json = parseJSON(line),
+                   let idValue = json["id"] {
+                    // Compare both Int and String forms of the id
+                    if "\(idValue)" == "\(rpcId)" {
+                        return json
+                    }
+                }
+            }
+            if Date() > deadline { throw MCPError.timeout }
+            try Task.checkCancellation()
+        }
+
+        throw MCPError.noResponse
+    }
+
+    // ── Private: termination handler ────────────────────────────────────────
+
+    private func handleTermination() {
+        isReady = false
+        continuation?.finish()
+        continuation = nil
+        stdoutHandle?.readabilityHandler = nil
+    }
+
+    // ── Private: helpers ────────────────────────────────────────────────────
+
+    @discardableResult
+    private func safeWrite(_ obj: [String: Any]) -> Bool {
+        guard let p = process, p.isRunning, let fh = stdinHandle else { return false }
+        guard let data = try? JSONSerialization.data(withJSONObject: obj),
+              let line = String(data: data, encoding: .utf8),
+              let bytes = (line + "\n").data(using: .utf8) else { return false }
+        do {
+            try fh.write(contentsOf: bytes)
+            return true
+        } catch { return false }
+    }
+
+    private func parseJSON(_ s: String) -> [String: Any]? {
+        guard let d = s.data(using: .utf8) else { return nil }
+        return try? JSONSerialization.jsonObject(with: d) as? [String: Any]
+    }
+
+    private func splitLines(_ data: Data) -> ([String], Data) {
+        guard let str = String(data: data, encoding: .utf8) else { return ([], data) }
+        var parts = str.components(separatedBy: "\n")
+        let remainder = parts.removeLast()         // last element may be partial
+        let complete = parts.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+        return (complete, remainder.data(using: .utf8) ?? Data())
+    }
+
+    private func tokenise(_ command: String) -> [String] {
+        var tokens: [String] = []
+        var current = ""
+        var inQ: Character? = nil
+        for ch in command {
+            if let q = inQ {
+                if ch == q { inQ = nil } else { current.append(ch) }
+            } else if ch == "\"" || ch == "'" {
+                inQ = ch
+            } else if ch == " " {
+                if !current.isEmpty { tokens.append(current); current = "" }
+            } else {
+                current.append(ch)
+            }
+        }
+        if !current.isEmpty { tokens.append(current) }
+        return tokens
+    }
+
+    private static let sigpipeInstalled: Bool = {
+        signal(SIGPIPE, SIG_IGN)
+        return true
+    }()
+}
+
+// MARK: - MCPEngine
 
 @MainActor
 final class MCPEngine: ObservableObject {
@@ -154,24 +451,19 @@ final class MCPEngine: ObservableObject {
     @Published var connectedTools: [MCPTool] = []
     @Published var activeCall: MCPCallRecord?
     @Published var callHistory: [MCPCallRecord] = []
-    @Published var connectionStatus: [UUID: ConnectionStatus] = [:] // server id → status
+    @Published var connectionStatus: [UUID: ConnectionStatus] = [:]
 
     enum ConnectionStatus { case disconnected, connecting, connected, error(String) }
 
-    // MARK: - Private state
+    @Published var currentExecutionMode: MCPServerConfig.ExecutionMode = .human
 
-    private var stdioProcesses: [UUID: Process] = [:]
+    // One persistent session per server UUID
+    private var stdioSessions: [UUID: StdioSession] = [:]
 
     private static let storageKey = "mcp_servers_v1"
 
-    /// Current execution mode — updated when OperationMode changes.
-    @Published var currentExecutionMode: MCPServerConfig.ExecutionMode = .human
-
-    /// Called by AppState when OperationMode switches.
     func setMode(_ mode: MCPServerConfig.ExecutionMode) {
-        DispatchQueue.main.async {
-            self.currentExecutionMode = mode
-        }
+        currentExecutionMode = mode
     }
 
     init() { loadServers() }
@@ -181,9 +473,14 @@ final class MCPEngine: ObservableObject {
     func addServer(_ config: MCPServerConfig) { servers.append(config) }
 
     func removeServer(id: UUID) {
-        terminateProcess(for: id)
+        if let session = stdioSessions.removeValue(forKey: id) {
+            Task { await session.terminate() }
+        }
+        // Remove tools before removing the server entry
+        if let name = servers.first(where: { $0.id == id })?.name {
+            connectedTools.removeAll { $0.serverName == name }
+        }
         servers.removeAll { $0.id == id }
-        connectedTools.removeAll { $0.serverName == servers.first { $0.id == id }?.name ?? "" }
         connectionStatus.removeValue(forKey: id)
     }
 
@@ -214,7 +511,9 @@ final class MCPEngine: ObservableObject {
     }
 
     func disconnect(serverId: UUID) {
-        terminateProcess(for: serverId)
+        if let session = stdioSessions.removeValue(forKey: serverId) {
+            Task { await session.terminate() }
+        }
         if let server = servers.first(where: { $0.id == serverId }) {
             connectedTools.removeAll { $0.serverName == server.name }
         }
@@ -223,7 +522,6 @@ final class MCPEngine: ObservableObject {
 
     // MARK: - Tool execution
 
-    /// Call a tool. Mode defaults to currentExecutionMode (set by OperationMode).
     func callTool(serverName: String, toolName: String,
                   arguments: [String: Any],
                   mode: MCPServerConfig.ExecutionMode? = nil) async -> String {
@@ -236,56 +534,80 @@ final class MCPEngine: ObservableObject {
                                    startTime: Date(), status: .running)
         activeCall = record
 
-        // Log to process log
         NotificationCenter.default.post(
-            name: .mcpToolCalled,
-            object: nil,
+            name: .mcpToolCalled, object: nil,
             userInfo: ["server": serverName, "tool": toolName]
         )
 
-        // Build async task
-        let execTask = Task<String, Error> {
-            try await self.executeToolRequest(server: server, toolName: toolName, arguments: arguments)
+        // Obtain (or create) the persistent session before entering the detached task
+        let session: StdioSession? = server.transport == .stdio
+            ? getOrCreateSession(for: server)
+            : nil
+
+        // Run on background thread — never inherits @MainActor, no re-entrant deadlock
+        let execTask = Task<String, Error>.detached(priority: .userInitiated) {
+            let deadline: Date = resolvedMode == .human
+                ? Date().addingTimeInterval(60)
+                : Date.distantFuture
+
+            let params: [String: Any] = ["name": toolName, "arguments": arguments]
+
+            switch server.transport {
+            case .stdio:
+                guard let s = session else {
+                    throw MCPError.processLaunchFailed("No session")
+                }
+                let resp = try await s.callTool(
+                    method: "tools/call", params: params, deadline: deadline)
+                return mcpExtractText(from: resp)
+
+            case .http:
+                guard let url = URL(string: server.url + "/tools/call") else {
+                    throw MCPError.invalidURL
+                }
+                var req = URLRequest(url: url)
+                req.httpMethod = "POST"
+                req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                req.httpBody = try? JSONSerialization.data(withJSONObject: [
+                    "jsonrpc": "2.0", "id": UUID().uuidString,
+                    "method": "tools/call", "params": params
+                ])
+                // mcpNoTimeoutSession: no URLSession-level timeout.
+                // Human-mode deadline is enforced by Task.cancel() below.
+                let (data, _) = try await mcpNoTimeoutSession.data(for: req)
+                let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] ?? [:]
+                return mcpExtractText(from: json)
+            }
         }
+
         record.task = execTask
 
-        do {
-            let result: String
-            if resolvedMode == .human {
-                // 60-second timeout for human mode
-                result = try await withTimeout(seconds: 60, task: execTask)
-            } else {
-                // AI mode — no system timeout, but task is cancellable via kill switch
-                result = try await execTask.value
+        // Human mode: fire a cancellation timer
+        if resolvedMode == .human {
+            Task {
+                try? await Task.sleep(nanoseconds: 60_000_000_000)
+                execTask.cancel()
             }
-            var completed = record
-            completed.status = .completed
-            callHistory.insert(completed, at: 0)
-            if callHistory.count > 100 { callHistory.removeLast(50) }
-            activeCall = nil
+        }
+
+        do {
+            let result = try await execTask.value
+            finishRecord(record, status: .completed)
             return result
         } catch is CancellationError {
-            var cancelled = record
-            cancelled.status = .cancelled
-            callHistory.insert(cancelled, at: 0)
-            activeCall = nil
-            return "[MCP] Tool call cancelled by user"
+            finishRecord(record, status: .cancelled)
+            return "[MCP] Tool call cancelled"
         } catch MCPError.timeout {
-            var to = record
-            to.status = .timedOut
-            callHistory.insert(to, at: 0)
-            activeCall = nil
-            return "[MCP] Tool '\(toolName)' timed out after 60s"
+            execTask.cancel()
+            finishRecord(record, status: .timedOut)
+            return "[MCP] Tool '\(toolName)' timed out"
         } catch {
-            var failed = record
-            failed.status = .failed(error.localizedDescription)
-            callHistory.insert(failed, at: 0)
-            activeCall = nil
+            finishRecord(record, status: .failed(error.localizedDescription))
             return "[MCP] Error: \(error.localizedDescription)"
         }
     }
 
-    /// KILL SWITCH — cancel the currently running tool call immediately.
+    /// Kill Switch — immediately cancels the in-flight tool call
     func killActiveCall() {
         activeCall?.task?.cancel()
         if var a = activeCall {
@@ -295,157 +617,49 @@ final class MCPEngine: ObservableObject {
         activeCall = nil
     }
 
-    // MARK: - Private: tool discovery
+    // MARK: - Private helpers
+
+    private func getOrCreateSession(for server: MCPServerConfig) -> StdioSession {
+        if let s = stdioSessions[server.id] { return s }
+        let s = StdioSession(server: server)
+        stdioSessions[server.id] = s
+        return s
+    }
+
+    private func finishRecord(_ record: MCPCallRecord, status: MCPCallRecord.Status) {
+        var r = record
+        r.status = status
+        callHistory.insert(r, at: 0)
+        if callHistory.count > 100 { callHistory.removeLast(50) }
+        activeCall = nil
+    }
 
     private func discoverTools(server: MCPServerConfig) async throws -> [MCPTool] {
         switch server.transport {
         case .stdio:
-            return try await discoverToolsStdio(server: server)
+            let session = getOrCreateSession(for: server)
+            // 30 s for first cold-start (npx may need to download the package)
+            let deadline = Date().addingTimeInterval(30)
+            let resp = try await session.callTool(
+                method: "tools/list", params: [:], deadline: deadline)
+            return parseTools(from: resp, serverName: server.name)
+
         case .http:
-            return try await discoverToolsHTTP(server: server)
-        }
-    }
-
-    private func discoverToolsStdio(server: MCPServerConfig) async throws -> [MCPTool] {
-        // Send initialize + tools/list over stdio
-        let response = try await sendStdioRequest(server: server,
-            method: "tools/list", params: [:])
-        return parseTools(from: response, serverName: server.name)
-    }
-
-    private func discoverToolsHTTP(server: MCPServerConfig) async throws -> [MCPTool] {
-        guard let url = URL(string: server.url + "/tools/list") else {
-            throw MCPError.invalidURL
-        }
-        var req = URLRequest(url: url)
-        req.httpMethod = "POST"
-        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        req.httpBody = try? JSONSerialization.data(withJSONObject: [
-            "jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": [:]
-        ])
-        req.timeoutInterval = 10
-        let (data, _) = try await URLSession.shared.data(for: req)
-        let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] ?? [:]
-        return parseTools(from: json, serverName: server.name)
-    }
-
-    // MARK: - Private: tool execution
-
-    private func executeToolRequest(server: MCPServerConfig,
-                                    toolName: String,
-                                    arguments: [String: Any]) async throws -> String {
-        let params: [String: Any] = ["name": toolName, "arguments": arguments]
-
-        switch server.transport {
-        case .stdio:
-            let resp = try await sendStdioRequest(server: server,
-                                                  method: "tools/call", params: params)
-            return extractTextContent(from: resp)
-        case .http:
-            guard let url = URL(string: server.url + "/tools/call") else {
+            guard let url = URL(string: server.url + "/tools/list") else {
                 throw MCPError.invalidURL
             }
             var req = URLRequest(url: url)
             req.httpMethod = "POST"
             req.setValue("application/json", forHTTPHeaderField: "Content-Type")
             req.httpBody = try? JSONSerialization.data(withJSONObject: [
-                "jsonrpc": "2.0", "id": UUID().uuidString,
-                "method": "tools/call", "params": params
+                "jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": [:]
             ])
-            // No URLSession timeout for AI mode — Task.cancel() handles it
+            req.timeoutInterval = 15
             let (data, _) = try await URLSession.shared.data(for: req)
-            let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] ?? [:]
-            return extractTextContent(from: json)
+            let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] ?? [:]
+            return parseTools(from: json, serverName: server.name)
         }
     }
-
-    // MARK: - Private: stdio subprocess
-
-    private func sendStdioRequest(server: MCPServerConfig,
-                                  method: String,
-                                  params: [String: Any]) async throws -> [String: Any] {
-        return try await withCheckedThrowingContinuation { continuation in
-            DispatchQueue.global(qos: .userInitiated).async {
-                do {
-                    let process = Process()
-                    let components = server.command.components(separatedBy: " ")
-                    process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-                    process.arguments = components
-
-                    var env = ProcessInfo.processInfo.environment
-                    server.envVars.forEach { env[$0.key] = $0.value }
-                    process.environment = env
-
-                    let stdin  = Pipe()
-                    let stdout = Pipe()
-                    let stderr = Pipe()
-                    process.standardInput  = stdin
-                    process.standardOutput = stdout
-                    process.standardError  = stderr
-
-                    try process.run()
-
-                    // MCP handshake — initialize first
-                    let initReq: [String: Any] = [
-                        "jsonrpc": "2.0", "id": 1, "method": "initialize",
-                        "params": [
-                            "protocolVersion": "2024-11-05",
-                            "capabilities": ["tools": [:], "resources": [:]],
-                            "clientInfo": ["name": "Verantyx", "version": "0.1"]
-                        ]
-                    ]
-                    let toolReq: [String: Any] = [
-                        "jsonrpc": "2.0", "id": 2, "method": method, "params": params
-                    ]
-                    let notif: [String: Any] = [
-                        "jsonrpc": "2.0", "method": "notifications/initialized"
-                    ]
-
-                    func sendJSON(_ obj: [String: Any]) {
-                        if let data = try? JSONSerialization.data(withJSONObject: obj),
-                           let line = String(data: data, encoding: .utf8) {
-                            if let d = (line + "\n").data(using: .utf8) {
-                                stdin.fileHandleForWriting.write(d)
-                            }
-                        }
-                    }
-
-                    sendJSON(initReq)
-                    Thread.sleep(forTimeInterval: 0.3)
-                    sendJSON(notif)
-                    sendJSON(toolReq)
-                    Thread.sleep(forTimeInterval: 0.5)
-
-                    stdin.fileHandleForWriting.closeFile()
-
-                    let outputData = stdout.fileHandleForReading.readDataToEndOfFile()
-                    process.terminate()
-                    process.waitUntilExit()
-
-                    // Parse last JSON-RPC response from stdout
-                    let lines = String(data: outputData, encoding: .utf8)?
-                        .components(separatedBy: "\n")
-                        .filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
-                        ?? []
-
-                    var lastResult: [String: Any] = [:]
-                    for line in lines.reversed() {
-                        if let d = line.data(using: .utf8),
-                           let json = try? JSONSerialization.jsonObject(with: d) as? [String: Any],
-                           json["id"] != nil {
-                            lastResult = json
-                            break
-                        }
-                    }
-                    continuation.resume(returning: lastResult)
-                } catch {
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
-    }
-
-    // MARK: - Private: helpers
 
     private func parseTools(from json: [String: Any], serverName: String) -> [MCPTool] {
         guard let result = json["result"] as? [String: Any],
@@ -454,42 +668,6 @@ final class MCPEngine: ObservableObject {
             guard let name = t["name"] as? String else { return nil }
             let desc = t["description"] as? String ?? ""
             return MCPTool(name: name, description: desc, serverName: serverName)
-        }
-    }
-
-    private func extractTextContent(from json: [String: Any]) -> String {
-        if let result = json["result"] as? [String: Any] {
-            if let content = result["content"] as? [[String: Any]] {
-                return content.compactMap { block in
-                    block["type"] as? String == "text" ? block["text"] as? String : nil
-                }.joined(separator: "\n")
-            }
-            if let text = result["text"] as? String { return text }
-        }
-        if let error = json["error"] as? [String: Any] {
-            return "[MCP Error] \(error["message"] as? String ?? "Unknown")"
-        }
-        return json.description
-    }
-
-    private func terminateProcess(for id: UUID) {
-        stdioProcesses[id]?.terminate()
-        stdioProcesses.removeValue(forKey: id)
-    }
-
-    // MARK: - Timeout helper
-
-    private func withTimeout<T>(seconds: Double, task: Task<T, Error>) async throws -> T {
-        return try await withThrowingTaskGroup(of: T.self) { group in
-            group.addTask { try await task.value }
-            group.addTask {
-                try await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
-                task.cancel()
-                throw MCPError.timeout
-            }
-            let result = try await group.next()!
-            group.cancelAll()
-            return result
         }
     }
 
@@ -516,13 +694,15 @@ enum MCPError: LocalizedError {
     case invalidURL
     case noResponse
     case decodingFailed
+    case processLaunchFailed(String)
 
     var errorDescription: String? {
         switch self {
-        case .timeout:         return "MCP tool call timed out"
-        case .invalidURL:      return "Invalid MCP server URL"
-        case .noResponse:      return "No response from MCP server"
-        case .decodingFailed:  return "Failed to decode MCP response"
+        case .timeout:                    return "MCP tool call timed out"
+        case .invalidURL:                 return "Invalid MCP server URL"
+        case .noResponse:                 return "No response from MCP server"
+        case .decodingFailed:             return "Failed to decode MCP response"
+        case .processLaunchFailed(let r): return "MCP process failed to launch: \(r)"
         }
     }
 }

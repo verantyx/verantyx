@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 // MARK: - AgentTool
 // Tool definitions that the AI can emit in its response.
@@ -35,6 +36,17 @@ enum AgentTool {
     case applyPatch(relativePath: String, content: String)
     case buildIDE
     case restartIDE
+    // ── Self-Admin (JARVIS) ──────────────────────────────────────────────────
+    case setSetting(key: String, value: String)       // SET_SETTING: key=value
+    case addMCPServer(name: String, command: String, mode: String)  // ADD_MCP_SERVER
+    case removeMCPServer(name: String)                // REMOVE_MCP_SERVER: name
+    case setModel(String)                             // SET_MODEL: model-id
+    case pullModel(String)                            // PULL_MODEL: model-id (ollama pull)
+    // ── Dynamic MCP tool call ────────────────────────────────────────────────
+    case mcpCall(server: String, tool: String, arguments: [String: Any])  // MCP_CALL
+    // ── Skill Library (Voyager) ──────────────────────────────────────────────
+    case forgeSkill(name: String, description: String, tags: [String], payload: [String])  // FORGE_SKILL
+    case useSkill(name: String, args: [String: String])                                     // USE_SKILL
 }
 
 // MARK: - AgentToolCall (result wrapper)
@@ -69,6 +81,15 @@ struct AgentToolCall: Identifiable {
         case .applyPatch(let p, _):        return "📦 patch → \(p)"
         case .buildIDE:                    return "🔨 xcodebuild"
         case .restartIDE:                  return "🔄 restart IDE"
+        // Self-Admin
+        case .setSetting(let k, let v):    return "⚙️ set \(k) = \(v.prefix(30))"
+        case .addMCPServer(let n, _, _):   return "➕ MCP: \(n)"
+        case .removeMCPServer(let n):      return "➖ MCP: \(n)"
+        case .setModel(let m):             return "🤖 model → \(m)"
+        case .pullModel(let m):            return "⬇️ pull \(m)"
+        case .mcpCall(let s, let t, _):    return "📡 MCP: \(s).\(t)"
+        case .forgeSkill(let n, _, _, _): return "🔧 forge_skill: \(n)"
+        case .useSkill(let n, _):         return "🚀 use_skill: \(n)"
         }
     }
 }
@@ -78,131 +99,227 @@ struct AgentToolCall: Identifiable {
 struct AgentToolParser {
 
     // MARK: System prompt injected before every agent turn
-    static let toolInstructions = """
-    You are VerantyxAgent, an autonomous AI coding assistant with persistent spatial memory.
-    You have access to these tools — use them to complete tasks:
+    // ── 漢字トポロジー圧縮プロンプト ─────────────────────────────────────────
+    // 構造: §凡例（読み方）→ §ツール定義（漢字注入）→ §規則 → §実例
+    // トークン削減: ~150行 → ~55行  ／  コンテキスト切れ防止
+    // Dynamic — reads connected MCP tools from MCPEngine on the MainActor.
+    // Use toolInstructions for direct MainActor access, or buildPrompt(mcpTools:) for
+    // cross-actor contexts where a snapshot has already been captured.
+    @MainActor
+    static var toolInstructions: String {
+        buildPrompt(mcpTools: MCPEngine.shared.connectedTools)
+    }
 
-    ── FILE SYSTEM ──────────────────────────────────────────────────────
-    [LIST_DIR: path]              — list directory contents (tree style)
-    [READ: path/to/file]          — read file contents
-    [MKDIR: path/to/directory]    — create a directory
-    [WRITE: path/to/file.ext]     — write entire file
-    ```
-    ... file content ...
-    ```
-    [/WRITE]
-    [EDIT_LINES: path/to/file]    — replace specific line range
-    ```
-    START_LINE: 42
-    END_LINE: 48
-    ---
-    new code replacing lines 42-48
-    ```
-    [/EDIT_LINES]
-    [RUN: command]                — run a shell command
-    [WORKSPACE: /absolute/path]   — set/open workspace folder
-    [DONE: summary message]       — signal task completion
+    /// Builds the full system prompt with a pre-captured MCP tools snapshot.
+    /// This overload is safe to call from any isolation context.
+    static func buildPrompt(mcpTools: [MCPTool] = []) -> String {
+        let mcpSection = buildMCPSection(from: mcpTools)
+        return """
+    You are VerantyxAgent — autonomous coding agent with spatial memory and live web access.
+    This prompt uses Kanji Topology (漢字圧縮). Read the legend once, then follow the rules.
 
-    ── WEB GROUNDING ─────────────────────────────────────────────────────
-    [SEARCH_MULTI: query terms]   — fetch top 3 URLs in parallel, synthesize
-    [SEARCH: query terms]         — single DuckDuckGo search
-    [BROWSE: https://url]         — fetch URL (WebKit, returns Markdown)
-    [EVAL_JS: javascript code]    — run JS in current browser page
-    [SAFARI: https://url]         — open in Safari (uses your cookies)
-    [CHROME: https://url]         — open in Chrome (uses your cookies)
+    ── §凡例 LEGEND (read once — kanji=meaning) ─────────────────────────────
+    読=READ  書=WRITE  木=LIST_DIR  実=RUN  域=WORKSPACE  完=DONE
+    網=WEB_SEARCH  覧=BROWSE  脳=JCROSS_MEMORY  版=GIT  人=HUMAN
+    貼=APPLY_PATCH  建=BUILD_IDE  再=RESTART_IDE  管=SELF_ADMIN  接=MCP_CALL
+    並=parallel  統=synthesize  禁=FORBIDDEN  必=MANDATORY  →=yields
 
-    ── MEMORY (JCross Spatial) ────────────────────────────────────────────
-    [JCROSS_QUERY: search terms]  — recall relevant past memories
-    [JCROSS_STORE: key=value]     — save important fact to long-term memory
+    ── §ツール TOOLS ─────────────────────────────────────────────────────────
+    [READ: path]              読: ファイル内容取得 (.html/.svg → Artifactパネル自動表示)
+    [LIST_DIR: path]          木: ディレクトリツリー表示
+    [WRITE: path]```content```[/WRITE]    書: ファイル全体を書く
+    [EDIT_LINES: path]```START_LINE:N\nEND_LINE:M\n---\nnew```[/EDIT_LINES]    行編
+    [RUN: cmd]                実: シェル実行
+    [WORKSPACE: /path]        域: ワークスペースを開く
+    [DONE: msg]               完: タスク完了を宣言
+    [SEARCH_MULTI: q]         網並×3→統: 上位3URL並列取得→統合回答 ★推奨
+    [SEARCH: q]               網×1: 単一検索
+    [BROWSE: url]             覧: URLをMarkdownで取得
+    [EVAL_JS: script]         JS実: ブラウザでJS実行
+    [SAFARI: url] [CHROME: url]    ブラウザで開く（Cookie利用可）
+    [JCROSS_QUERY: terms]     脳召: 過去記憶を検索
+    [JCROSS_STORE: key=val]   脳記: 重要事実を長期記憶に保存
+    [GIT_COMMIT: msg]         版保: git add -A && commit
+    [GIT_RESTORE: path]       版戻: git restore（変更取消）
+    [ASK_HUMAN: q]            人問: ユーザーに確認（Human Modeで停止）
+    [APPLY_PATCH: path]```content```[/APPLY_PATCH]    貼: IDEソース書き換え(Self-Fix専用)
+    [BUILD_IDE]               建: xcodebuild実行
+    [RESTART_IDE]             再: 再起動ダイアログ表示
+    [USE_SKILL: 名前]          技呼: 登録済スキルを実行（1トークンで複数ステップを完了）
+    [USE_SKILL: 名前|引数=値]  技呼展: プレースホルダー{{key}}を展開して実行
+    [FORGE_SKILL: 名前|説明|タグ]```
+    ツール呼び出しシーケンス…
+    ```[/FORGE_SKILL]         技鍛: 成功ワークフローをスキルに緝展咲存
 
-    ── VERSION CONTROL ─────────────────────────────────────────────────────
-    [GIT_COMMIT: commit message]  — git add -A && git commit
-    [GIT_RESTORE: path/or/.]      — git restore (undo uncommitted changes)
+    \(mcpSection)
 
-    ── HUMAN IN THE LOOP ────────────────────────────────────────────────────
-    [ASK_HUMAN: your question]    — pause and ask the user for input/approval
+    ── §自己管理 SELF-ADMIN (管) ─────────────────────────────────────────────
+    ユーザーがURLやパスを手入力する代わりに、AIがIDEの設定を直接書き換える。
+    GUI操作不要。SwiftUIが変更を検知して即座にUIを更新する。
+    [SET_SETTING: key=value]             管設: IDEの任意設定を変更
+      Valid keys: system_prompt, operation_mode, temperature, max_tokens_ollama,
+                  max_tokens_mlx, ollama_endpoint, inference_mode,
+                  agent_loop_enabled, streaming_enabled, active_ollama_model
+    [ADD_MCP_SERVER: name|command|mode]  管追: MCPサーバーを追加して即接続 (mode: ai or human)
+    [REMOVE_MCP_SERVER: name]            管削: MCPサーバーを名前で削除
+    [SET_MODEL: model-id]                管型: Ollamaモデルを即時切り替え（ダウンロード済み前提）
+    [PULL_MODEL: model-id]               管取: ollama pullでダウンロード→自動切り替え（数分かかる）
 
-    ── SELF-FIX (only in Self-Fix mode) ─────────────────────────────────────
-    [APPLY_PATCH: Sources/Path/File.swift]
-    ```swift
-    // complete new file content
-    ```
-    [/APPLY_PATCH]
-    [BUILD_IDE]                   — run xcodebuild; returns errors or BUILD SUCCEEDED
-    [RESTART_IDE]                 — show restart dialog to user
+    ── §規則 RULES (漢字注入) ────────────────────────────────────────────────
+    必①  知=不確∨最新∨年号→ 禁ハルシ → 必[網並]検索   (cutoff超=必ずSEARCH)
+    必②  書∨貼 前 → [版保]  (編集前にgit backup)
+    必③  [HTML読]→ 自動Artifact表示 禁「表示できません」発言
+    必④  ループ: 脳召→木→読→<think>計画→実行→建→脳記→完
+    必⑤  Human Mode: 削除∨不可逆∨詰まり → [人問]で一時停止
+    必⑥  管: UIクリック禁止 → 必[管ツール]でState直接更新
+    必⑦  接MCP優先: §MCPツール に記載のサーバーが接続済みの場合、
+          組み込みブラウザ/検索より接MCP ツールを必ず優先して使用する。
+          例: puppeteer接続済み → [BROWSE]/[SEARCH]より先に接MCP呼び出し。
 
-    ══════════════════════════════════════════════════════════════════════
-    ⚡ REACT LOOP PROTOCOL — follow this 4-phase pattern for every task:
+    ── §GIT COMMIT CRITICAL RULES ──────────────────────────────────────────
+    禁⑧  [GIT_COMMIT] メッセージに「Co-authored-by:」タグを絶対に含めるな。
+          実在・架空を問わず外部の人物名をコミットに挿入することは禁止。
+          コミットメッセージはタイトルと説明のみで構成すること。
+          違反例（禁止）: Co-authored-by: John Doe <john@example.com>
+          GitHubはこのタグを実在アカウントに自動リンクしてしまうため、
+          無関係の第三者をコントリビューターに巻き込む事故を引き起こす。
 
-    Phase 1 OBSERVE (never skip):
-      1. [JCROSS_QUERY] — check if related work exists in memory
-      2. [LIST_DIR]     — understand structure before touching files
-      3. [READ]         — read the specific file(s) you'll modify
-      4. <think>plan: what to change, why, which lines</think>
+    ── §スキル SKILL RULES ──────────────────────────────────────────────────
+    必⑨  技呼優先: §スキルライブラリで該当スキルが見つかった場合、パイプラインを手動再現する前に
+          [USE_SKILL] を必ず試みる。実行時間エコノミー・トークン節約を実現する。
+    必⑩  技鍛判断: タスク完了後、「次回も同じ手順を踏む可能性」が高い場合は
+          [FORGE_SKILL] でスキル登録する。営業固有タスク・Scaffold・設定パターンが対象。
+          単発性の高い一回性タスクは登録不要。
+    必⑪  技鍛形式: FORGE_SKILL の payload には [TOOL:] 文字列をそのまま記載する。
+          プレースホルダー板: {{workspace}}、{{file}}、{{target}} などで汎用化する。
 
-    Phase 2 ACT + VERIFY (loop until clean):
-      1. [EDIT_LINES] for small changes / [APPLY_PATCH] for full rewrites
-      2. [RUN: swift build] or [BUILD_IDE] to verify compilation
-      3. If errors → read error, fix, repeat from step 1
+    ── §実例 FEW-SHOT ────────────────────────────────────────────────────────
+    例A「Swift 6の並行処理は？」→ 網並必須:
+    <think>最新情報→禁ハルシ→網並</think>
+    [SEARCH_MULTI: Swift 6 concurrency changes 2025]
+    [JCROSS_STORE: swift6=strict concurrency by default]
+    Swift 6では厳密な同時実行チェックがデフォルトです。[DONE: web検索済]
 
-    Phase 3 EVOLVE (Self-Fix only, after BUILD SUCCEEDED):
-      1. [GIT_COMMIT: "describe change"]
-      2. [BUILD_IDE]
-      3. [RESTART_IDE]
-
-    Phase 4 CONSOLIDATE (always after task complete):
-      1. [JCROSS_STORE: key=value] — save key findings to memory
-      2. [DONE: summary]
-
-    ══════════════════════════════════════════════════════════════════════
-    ⚡ GROUNDING RULE — MANDATORY:
-    Your training data has a cutoff. For these topics, ALWAYS search first:
-      • Anything with "latest", "current", "2024", "2025" in the question
-      • Version numbers, API names, framework releases
-      • Error messages you don't immediately recognize
-      • External service status, pricing, documentation URLs
-    → Use [SEARCH_MULTI:] for best results. Never guess — search instead.
-
-    ⚡ EDIT SAFETY RULE:
-    Before any [APPLY_PATCH] or [EDIT_LINES], run [GIT_COMMIT] to save current state.
-    If your edit breaks the build → use [GIT_RESTORE: .] to undo instantly.
-
-    ⚡ HUMAN MODE RULE:
-    In Human Mode, before deleting files, making irreversible changes, or when stuck:
-    → Use [ASK_HUMAN: your question] to pause and get user guidance.
-
-    ══════════════════════════════════════════════════════════════════════
-    EXAMPLE — user says "什么是 Swift 6 の Concurrency の変更点?":
-    <think>This is about latest Swift version — I need to search, not guess.</think>
-    [SEARCH_MULTI: Swift 6 concurrency changes 2024]
-    [JCROSS_STORE: swift6_concurrency=Swift 6 adds strict concurrency checking by default]
-    Swift 6 では厳密な同時実行チェックがデフォルトになりました。
-    [DONE: Answered from live web search]
-
-    EXAMPLE — user says "UIの幅を固定して":
-    [JCROSS_QUERY: ResizableSplit width UI]
-    [LIST_DIR: Sources/Verantyx/Views]
+    例B「UIの幅を固定して」→ 観→動→検証:
+    [JCROSS_QUERY: ResizableSplit width][LIST_DIR: Sources/Verantyx/Views]
     [READ: Sources/Verantyx/Views/ResizableSplit.swift]
-    <think>Line 45-52 contains the drag handler. I'll fix it there.</think>
-    [GIT_COMMIT: backup before ResizableSplit fix]
-    [EDIT_LINES: Sources/Verantyx/Views/ResizableSplit.swift]
+    <think>L45-52にdragハンドラ→EDIT_LINESで修正</think>
+    [GIT_COMMIT: backup][EDIT_LINES: Sources/.../ResizableSplit.swift]
+    ```START_LINE:45\nEND_LINE:52\n---\n    .frame(width: 280)```[/EDIT_LINES]
+    [BUILD_IDE][JCROSS_STORE: split_fix=width固定L45][DONE: 完了]
+
+    例C「index.htmlを表示して」→ 読→自動Artifact:
+    [READ: path/to/index.html]  ← これだけ。IDEが自動でArtifactパネルに表示する。
+    [DONE: Artifact表示完了]
+
+    例D「Brave SearchのMCPを追加して」→ 管追:
+    [ADD_MCP_SERVER: brave-search|npx -y @modelcontextprotocol/server-brave-search|human]
+    MCP「brave-search」を追加しました。サイドバーに接続状況が表示されます。[DONE: MCP追加完了]
+
+    例E「モデルをqwen2.5:7bに切り替えて」→ 管型:
+    [SET_MODEL: qwen2.5:7b]
+    モデルをqwen2.5:7bに切り替えました。次のメッセージから新モデルで動作します。[DONE: モデル切替完了]
+
+    例F「Rustワークスペースを初期化して」→ 技登録:
+    <think>次回以降も同じ手順を踏む可能性: FORGE_SKILL</think>
+    [GIT_COMMIT: backup: pre-scaffold]
+    [MKDIR: src]
+    [WRITE: Cargo.toml]```toml
+    [package]
+    name = "{{project}}"
+    version = "0.1.0"
+    edition = "2021"
+    ```[/WRITE]
+    [WRITE: src/main.rs]```rust
+    fn main() { println!("Hello, world!"); }
+    ```[/WRITE]
+    [FORGE_SKILL: init_rust_workspace|Rustプロジェクトを Cargo.toml + src/main.rs でスキャフォールド|rust,scaffold,workspace]
     ```
-    START_LINE: 45
-    END_LINE: 52
-    ---
-        .frame(width: 280)  // fixed width
+    [GIT_COMMIT: backup: pre-scaffold]
+    [MKDIR: src]
+    [WRITE: Cargo.toml]```toml
+    [package]
+    name = "{{project}}"
+    version = "0.1.0"
+    edition = "2021"
+    ```[/WRITE]
+    [WRITE: src/main.rs]```rust
+    fn main() { println!("Hello, world!"); }
+    ```[/WRITE]
     ```
-    [/EDIT_LINES]
-    [BUILD_IDE]
-    [JCROSS_STORE: resizablesplit_fix=Fixed width to 280 at line 45]
-    [DONE: Width fixed]
+    [/FORGE_SKILL]
+    [DONE: Rustワークスペース作成 & スキル登録完了]
+    -- 次回は [USE_SKILL: init_rust_workspace|project=my_app] の1行で同等の処理が完了する --
+
     """
+    }
+
+    /// Generates the §MCP TOOLS section from a pre-captured tools snapshot.
+    /// Nonisolated — safe to call from any context.
+    static func buildMCPSection(from tools: [MCPTool]) -> String {
+        guard !tools.isEmpty else { return "" }
+
+        // Group by server for readability
+        var byServer: [String: [MCPTool]] = [:]
+        for tool in tools {
+            byServer[tool.serverName, default: []].append(tool)
+        }
+
+        var lines: [String] = [
+            "── §MCPツール MCP TOOLS (接: 接続済みサーバー) ──────────────────────────────",
+            "以下のMCPサーバーが接続済みです。ブラウザ操作・Web自動化・外部APIアクセスなど",
+            "該当タスクでは必ずこれらのMCPツールを組み込みツールより優先して使ってください。",
+            "",
+            "呼び出し構文: [MCP_CALL: serverName.toolName]{\"arg\": \"value\"}[/MCP_CALL]",
+            ""
+        ]
+
+        for (serverName, serverTools) in byServer.sorted(by: { $0.key < $1.key }) {
+            lines.append("  📡 \(serverName):")
+            for tool in serverTools {
+                let desc = tool.description.isEmpty ? "(説明なし)" : tool.description
+                lines.append("    • \(serverName).\(tool.name) — \(desc)")
+            }
+        }
+
+        lines.append("")
+        lines.append("⚠️ PRIORITY RULE: When a task involves browser interaction, web scraping,")
+        lines.append("   page navigation, or screenshot — use MCP tools above BEFORE [BROWSE]/[SEARCH].")
+        return lines.joined(separator: "\n")
+    }
 
     // MARK: - Main parse method
 
     static func parse(from text: String) -> (toolCalls: [AgentTool], cleanText: String) {
         var tools: [AgentTool] = []
         var cleaned = text
+
+        // ── 0. MCP_CALL block ──────────────────────────────────────────────
+        // Syntax: [MCP_CALL: serverName.toolName]{"key":"value"}[/MCP_CALL]
+        // JSON body is optional — omit braces if no arguments needed.
+        let mcpPattern = #"\[MCP_CALL:\s*([^.\]]+)\.([^\]]+)\]\s*(\{[\s\S]*?\})?\s*\[/MCP_CALL\]"#
+        if let regex = try? NSRegularExpression(pattern: mcpPattern) {
+            let matches = regex.matches(in: text, range: NSRange(text.startIndex..., in: text))
+            for match in matches.reversed() {
+                if let serverRange = Range(match.range(at: 1), in: text),
+                   let toolRange   = Range(match.range(at: 2), in: text),
+                   let fullRange   = Range(match.range, in: text) {
+                    let server = String(text[serverRange]).trimmingCharacters(in: .whitespaces)
+                    let tool   = String(text[toolRange]).trimmingCharacters(in: .whitespaces)
+                    var args: [String: Any] = [:]
+                    if match.numberOfRanges > 3,
+                       let jsonRange = Range(match.range(at: 3), in: text) {
+                        let jsonStr = String(text[jsonRange])
+                        if let data = jsonStr.data(using: .utf8),
+                           let parsed = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                            args = parsed
+                        }
+                    }
+                    tools.insert(.mcpCall(server: server, tool: tool, arguments: args), at: 0)
+                    cleaned = cleaned.replacingCharacters(in: fullRange, with: "")
+                }
+            }
+        }
 
         // ── 1. WRITE block ─────────────────────────────────────────────────
         let writePattern = #"\[WRITE:\s*([^\]]+)\]\s*```(?:\w+)?\n?([\s\S]*?)```\s*\[/WRITE\]"#
@@ -305,6 +422,20 @@ struct AgentToolParser {
                 tools.append(.buildIDE)
             } else if trimmed == "[RESTART_IDE]" {
                 tools.append(.restartIDE)
+            // ── Self-Admin (JARVIS) ───────────────────────────────────────────
+            } else if let m = match(trimmed, pattern: #"^\[SET_MODEL:\s*([^\]]+)\]$"#) {
+                tools.append(.setModel(m))
+            } else if let m = match(trimmed, pattern: #"^\[PULL_MODEL:\s*([^\]]+)\]$"#) {
+                tools.append(.pullModel(m))
+            } else if let m = match(trimmed, pattern: #"^\[REMOVE_MCP_SERVER:\s*([^\]]+)\]$"#) {
+                tools.append(.removeMCPServer(name: m))
+            } else if trimmed.hasPrefix("[ADD_MCP_SERVER:") {
+                if let tool = parseAddMCPServer(trimmed) { tools.append(tool) }
+            } else if trimmed.hasPrefix("[SET_SETTING:") {
+                if let tool = parseSetSetting(trimmed) { tools.append(tool) }
+            // ── Skill Library ─────────────────────────────────────────────
+            } else if trimmed.hasPrefix("[USE_SKILL:") {
+                if let tool = parseUseSkill(trimmed) { tools.append(tool) }
             } else {
                 resultLines.append(line)
             }
@@ -363,6 +494,87 @@ struct AgentToolParser {
         return path
     }
 
+    // ── Self-Admin parsers ─────────────────────────────────────────────────
+
+    /// [ADD_MCP_SERVER: name|command|mode?]
+    /// mode defaults to "human" if omitted
+    private static func parseAddMCPServer(_ text: String) -> AgentTool? {
+        // Strip outer brackets and prefix
+        let inner = text
+            .trimmingCharacters(in: CharacterSet(charactersIn: "[]"))
+            .replacingOccurrences(of: "ADD_MCP_SERVER:", with: "")
+            .trimmingCharacters(in: .whitespaces)
+        let parts = inner.components(separatedBy: "|").map { $0.trimmingCharacters(in: .whitespaces) }
+        guard parts.count >= 2 else { return nil }
+        let name    = parts[0]
+        let command = parts[1]
+        let mode    = parts.count >= 3 ? parts[2] : "human"
+        guard !name.isEmpty, !command.isEmpty else { return nil }
+        return .addMCPServer(name: name, command: command, mode: mode)
+    }
+
+    /// [SET_SETTING: key=value]
+    private static func parseSetSetting(_ text: String) -> AgentTool? {
+        let inner = text
+            .trimmingCharacters(in: CharacterSet(charactersIn: "[]"))
+            .replacingOccurrences(of: "SET_SETTING:", with: "")
+            .trimmingCharacters(in: .whitespaces)
+        guard let eq = inner.firstIndex(of: "=") else { return nil }
+        let key   = String(inner[inner.startIndex..<eq]).trimmingCharacters(in: .whitespaces)
+        let value = String(inner[inner.index(after: eq)...]).trimmingCharacters(in: .whitespaces)
+        guard !key.isEmpty else { return nil }
+        return .setSetting(key: key, value: value)
+    }
+
+    // ── FORGE_SKILL block ─────────────────────────────────────────────────
+    // Syntax: [FORGE_SKILL: name|description|tag1,tag2]\n```\npayload lines\n```\n[/FORGE_SKILL]
+    // Extracted in parse() as a block regex before the line loop.
+    static func parseForgeSkillBlocks(from text: String, into tools: inout [AgentTool], cleaned: inout String) {
+        let pattern = #"\[FORGE_SKILL:\s*([^|\]]+)\|([^|\]]+)\|?([^\]]*)\]\s*```(?:\w+)?\n?([\s\S]*?)```\s*\[/FORGE_SKILL\]"#
+        guard let regex = try? NSRegularExpression(pattern: pattern) else { return }
+        let matches = regex.matches(in: text, range: NSRange(text.startIndex..., in: text))
+        for match in matches.reversed() {
+            guard
+                let nameRange    = Range(match.range(at: 1), in: text),
+                let descRange    = Range(match.range(at: 2), in: text),
+                let tagsRange    = Range(match.range(at: 3), in: text),
+                let payloadRange = Range(match.range(at: 4), in: text),
+                let fullRange    = Range(match.range, in: text)
+            else { continue }
+
+            let name    = String(text[nameRange]).trimmingCharacters(in: .whitespaces)
+            let desc    = String(text[descRange]).trimmingCharacters(in: .whitespaces)
+            let tagStr  = String(text[tagsRange]).trimmingCharacters(in: .whitespaces)
+            let tags    = tagStr.isEmpty ? [] : tagStr.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+            let payload = String(text[payloadRange])
+                .components(separatedBy: "\n")
+                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .filter { !$0.isEmpty }
+
+            tools.insert(.forgeSkill(name: name, description: desc, tags: tags, payload: payload), at: 0)
+            cleaned = cleaned.replacingCharacters(in: fullRange, with: "")
+        }
+    }
+
+    // ── USE_SKILL: name|key=val|key=val ───────────────────────────────────
+    private static func parseUseSkill(_ text: String) -> AgentTool? {
+        let inner = text
+            .trimmingCharacters(in: CharacterSet(charactersIn: "[]"))
+            .replacingOccurrences(of: "USE_SKILL:", with: "")
+            .trimmingCharacters(in: .whitespaces)
+        let parts = inner.components(separatedBy: "|").map { $0.trimmingCharacters(in: .whitespaces) }
+        guard let name = parts.first, !name.isEmpty else { return nil }
+        var args: [String: String] = [:]
+        for part in parts.dropFirst() {
+            if let eq = part.firstIndex(of: "=") {
+                let k = String(part[part.startIndex..<eq]).trimmingCharacters(in: .whitespaces)
+                let v = String(part[part.index(after: eq)...]).trimmingCharacters(in: .whitespaces)
+                args[k] = v
+            }
+        }
+        return .useSkill(name: name, args: args)
+    }
+
     static func stripArtifactTags(from text: String) -> String { text }
 }
 
@@ -387,10 +599,64 @@ actor AgentToolExecutor {
         case .writeFile(let path, let content):
             let url = resolve(path, workspace: workspaceURL)
             try? fileManager.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
-            do {
-                try content.write(to: url, atomically: true, encoding: .utf8)
-                return "✓ Wrote \(url.lastPathComponent) (\(content.components(separatedBy: "\n").count) lines)"
-            } catch { return "✗ write failed for \(path): \(error.localizedDescription)" }
+            let original = (try? String(contentsOf: url, encoding: .utf8)) ?? ""
+            let lineCount = content.components(separatedBy: "\n").count
+
+            let isAIMode = await MainActor.run { AppState.shared?.operationMode == .aiPriority }
+
+            if isAIMode {
+                // ══ AI MODE: write immediately → right panel artifact ══════════
+                do { try content.write(to: url, atomically: true, encoding: .utf8) }
+                catch { return "✗ write failed for \(path): \(error.localizedDescription)" }
+                await MainActor.run {
+                    let ext = url.pathExtension.lowercased()
+                    let artType: Artifact.ArtifactType
+                    switch ext {
+                    case "html", "htm": artType = .html
+                    case "svg":         artType = .svg
+                    case "md":          artType = .markdown
+                    default:            artType = .code
+                    }
+                    let art = Artifact(type: artType, content: content, title: url.lastPathComponent)
+                    AppState.shared?.ingestArtifact(art)  // forces showArtifactPanel = true
+                }
+                return "✓ [AI Mode] Wrote \(url.lastPathComponent) (\(lineCount) lines)"
+
+            } else {
+                // ══ HUMAN MODE: show diff → suspend → write only after approval ═
+                await MainActor.run {
+                    guard let state = AppState.shared, original != content else { return }
+                    let hunks = DiffEngine.compute(original: original, modified: content)
+                    let diff = FileDiff(fileURL: url, originalContent: original,
+                                       modifiedContent: content, hunks: hunks)
+                    state.pendingDiff = diff
+                    state.showDiff = true
+                }
+                let req = FileApprovalRequest(
+                    fileURL: url,
+                    newContent: content,
+                    originalContent: original,
+                    kind: original.isEmpty ? .createNew : .overwrite
+                )
+                await MainActor.run { AppState.shared?.pendingFileApproval = req }
+                let approved = await req.waitForDecision()
+                if approved {
+                    do {
+                        try content.write(to: url, atomically: true, encoding: .utf8)
+                        await MainActor.run {
+                            AppState.shared?.pendingDiff = nil
+                            AppState.shared?.showDiff = false
+                        }
+                        return "✓ [Human Approved] Wrote \(url.lastPathComponent) (\(lineCount) lines)"
+                    } catch { return "✗ write failed after approval: \(error.localizedDescription)" }
+                } else {
+                    await MainActor.run {
+                        AppState.shared?.pendingDiff = nil
+                        AppState.shared?.showDiff = false
+                    }
+                    return "⚠️ [Human Rejected] Write to \(url.lastPathComponent) was cancelled"
+                }
+            }
 
         case .runCommand(let cmd):
             return await runShell(cmd, workingDir: workspaceURL)
@@ -404,9 +670,26 @@ actor AgentToolExecutor {
         case .readFile(let path):
             let url = resolve(path, workspace: workspaceURL)
             if let content = try? String(contentsOf: url, encoding: .utf8) {
+                // ── Auto-publish as Artifact for renderable file types ────────────
+                let ext = url.pathExtension.lowercased()
+                let artType: Artifact.ArtifactType?
+                switch ext {
+                case "html", "htm": artType = .html
+                case "svg":         artType = .svg
+                case "md":          artType = nil  // show inline, not as preview
+                default:            artType = nil
+                }
+                if let artType {
+                    let artifact = Artifact(type: artType, content: content,
+                                           title: url.lastPathComponent)
+                    await MainActor.run {
+                        AppState.shared?.ingestArtifact(artifact)
+                    }
+                }
                 return "FILE CONTENT (\(url.lastPathComponent)):\n\(content.prefix(6000))"
             }
-            return "✗ Could not read: \(path)"
+            // ── Friendly error with resolved path ────────────────────────
+            return "✗ ファイルが見つかりません: \(url.path)\nヒント: ワークスペースのフォルダを先に [LIST_DIR:.] で確認してから、正確なパスで [READ:] を呼び出してください。"
 
         case .listDir(let path):
             let url = resolve(path, workspace: workspaceURL)
@@ -424,10 +707,65 @@ actor AgentToolExecutor {
             let replacement = newContent.components(separatedBy: "\n")
             lines.replaceSubrange((startLine-1)...(endLine-1), with: replacement)
             let patched = lines.joined(separator: "\n")
-            do {
-                try patched.write(to: url, atomically: true, encoding: .utf8)
-                return "✓ Edited \(url.lastPathComponent) lines \(startLine)-\(endLine) (\(replacement.count) replacement lines)"
-            } catch { return "✗ Edit failed: \(error.localizedDescription)" }
+
+            let isAIMode2 = await MainActor.run { AppState.shared?.operationMode == .aiPriority }
+
+            if isAIMode2 {
+                // ══ AI MODE: write immediately ═══════════════════════════════
+                do {
+                    try patched.write(to: url, atomically: true, encoding: .utf8)
+                } catch { return "✗ Edit failed: \(error.localizedDescription)" }
+                await MainActor.run {
+                    let ext = url.pathExtension.lowercased()
+                    let artType: Artifact.ArtifactType
+                    switch ext {
+                    case "html", "htm": artType = .html
+                    case "svg":         artType = .svg
+                    case "md":          artType = .markdown
+                    default:            artType = .code
+                    }
+                    let art = Artifact(type: artType, content: patched, title: url.lastPathComponent)
+                    AppState.shared?.ingestArtifact(art)
+                }
+                return "✓ [AI Mode] Edited \(url.lastPathComponent) lines \(startLine)-\(endLine) → 右パネルに表示中"
+
+            } else {
+                // ══ HUMAN MODE: show diff → suspend → write only after approval ═
+                await MainActor.run {
+                    guard let state = AppState.shared else { return }
+                    let hunks = DiffEngine.compute(original: original, modified: patched)
+                    if !hunks.isEmpty {
+                        let diff = FileDiff(fileURL: url, originalContent: original,
+                                           modifiedContent: patched, hunks: hunks)
+                        state.pendingDiff = diff
+                        state.showDiff = true
+                    }
+                }
+                let req = FileApprovalRequest(
+                    fileURL: url,
+                    newContent: patched,
+                    originalContent: original,
+                    kind: .editLines(start: startLine, end: endLine)
+                )
+                await MainActor.run { AppState.shared?.pendingFileApproval = req }
+                let decision = await req.waitForDecision()
+                if decision {
+                    do {
+                        try patched.write(to: url, atomically: true, encoding: .utf8)
+                        await MainActor.run {
+                            AppState.shared?.pendingDiff = nil
+                            AppState.shared?.showDiff = false
+                        }
+                        return "✓ [Human Approved] Edited \(url.lastPathComponent) lines \(startLine)-\(endLine)"
+                    } catch { return "✗ Edit failed after approval: \(error.localizedDescription)" }
+                } else {
+                    await MainActor.run {
+                        AppState.shared?.pendingDiff = nil
+                        AppState.shared?.showDiff = false
+                    }
+                    return "⚠️ [Human Rejected] Edit to \(url.lastPathComponent) was cancelled"
+                }
+            }
 
         // ── Web / Grounding ───────────────────────────────────────────────
 
@@ -516,7 +854,209 @@ actor AgentToolExecutor {
                 NotificationCenter.default.post(name: .agentRequestsRestart, object: nil)
             }
             return "RESTART_REQUESTED: User will be asked to restart the app."
+
+        // ── Self-Admin (JARVIS) ───────────────────────────────────────────────
+
+        case .setSetting(let key, let value):
+            return await MainActor.run {
+                guard let state = AppState.shared else {
+                    return "✗ AppState not available"
+                }
+                let result = state.applySetting(key: key, value: value)
+                ToastManager.shared.show(
+                    "⚙️ AI が設定を変更: \(key) = \(value.prefix(30))",
+                    icon: "gearshape.fill",
+                    color: .orange,
+                    duration: 3.5
+                )
+                return result
+            }
+
+        case .addMCPServer(let name, let command, let mode):
+            let execMode: MCPServerConfig.ExecutionMode = (mode == "ai") ? .ai : .human
+            let config = MCPServerConfig(name: name, transport: .stdio,
+                                         command: command, mode: execMode)
+            await MainActor.run { MCPEngine.shared.addServer(config) }
+            await MCPEngine.shared.connect(server: config)
+            let toolCount = await MainActor.run { MCPEngine.shared.connectedTools.filter { $0.serverName == name }.count }
+            await MainActor.run {
+                ToastManager.shared.show(
+                    "📡 AI が MCP を追加: \(name) (\(toolCount) tools)",
+                    icon: "puzzlepiece.extension.fill",
+                    color: Color(red: 0.3, green: 0.85, blue: 0.5),
+                    duration: 4.0
+                )
+            }
+            return "✓ MCP Server '\(name)' added and connected (\(toolCount) tools discovered)"
+
+        case .removeMCPServer(let name):
+            let found = await MainActor.run { () -> Bool in
+                guard let id = MCPEngine.shared.servers.first(where: { $0.name == name })?.id else {
+                    return false
+                }
+                MCPEngine.shared.removeServer(id: id)
+                ToastManager.shared.show(
+                    "🗑️ AI が MCP を削除: \(name)",
+                    icon: "minus.circle.fill",
+                    color: Color(red: 0.9, green: 0.4, blue: 0.4),
+                    duration: 3.0
+                )
+                return true
+            }
+            return found
+                ? "✓ MCP Server '\(name)' removed"
+                : "⚠️ MCP Server '\(name)' not found"
+
+        case .setModel(let modelId):
+            return await MainActor.run {
+                guard let state = AppState.shared else { return "✗ AppState not available" }
+                state.activeOllamaModel = modelId
+                state.modelStatus = .ollamaReady(model: modelId)
+                UserDefaults.standard.set(modelId, forKey: "active_ollama_model")
+                ToastManager.shared.show(
+                    "🤖 AI がモデルを切り替え: \(modelId)",
+                    icon: "cpu",
+                    color: Color(red: 0.5, green: 0.75, blue: 1.0),
+                    duration: 3.5
+                )
+                return "✓ Model switched to '\(modelId)'. Next response will use this model."
+            }
+
+        case .pullModel(let modelId):
+            return await pullModelWithProgress(modelId)
+
+        case .mcpCall(let serverName, let toolName, let arguments):
+            // Route to MCPEngine — handles both stdio and HTTP transports.
+            let result = await MCPEngine.shared.callTool(
+                serverName: serverName,
+                toolName: toolName,
+                arguments: arguments
+            )
+            return "[MCP RESULT: \(serverName).\(toolName)]\n\(result)\n[END MCP RESULT]"
+
+        // ── Skill Library ─────────────────────────────────────────────────
+
+        case .forgeSkill(let name, let description, let tags, let payload):
+            // Persist the new skill and update the in-memory index.
+            let node = SkillNode(
+                name: name,
+                description: description,
+                version: 1,
+                createdAt: Date(),
+                updatedAt: Date(),
+                tags: tags,
+                executionType: .macro,
+                payload: payload
+            )
+            let saved = await SkillLibrary.shared.save(node)
+            await MainActor.run {
+                ToastManager.shared.show(
+                    "🔧 スキル登録: \(name) (v\(saved.version))",
+                    icon: "sparkles",
+                    color: .orange,
+                    duration: 3.0
+                )
+            }
+            return "✓ [Skill Forged] '\(name)' v\(saved.version) — \(payload.count) step(s) saved to ~/.verantyx/skills/"
+
+        case .useSkill(let name, let args):
+            guard let skill = await SkillLibrary.shared.skill(named: name) else {
+                let available = await SkillLibrary.shared.allNames.joined(separator: ", ")
+                return "✗ [Skill Not Found] '\(name)'. Available: \(available.isEmpty ? "(none)" : available)"
+            }
+            let executor = SkillExecutor()
+            // NOTE: onProgress is not available in executor context; use a no-op.
+            // Full progress streaming is available when AgentLoop calls SkillExecutor directly.
+            let result = await executor.execute(
+                skill: skill,
+                args: args,
+                workspaceURL: workspaceURL,
+                onProgress: { _ in }
+            )
+            return result
         }
+    }
+
+    // MARK: - PULL_MODEL: ollama pull with streaming progress
+
+    private func pullModelWithProgress(_ modelId: String) async -> String {
+        // Verify ollama is installed
+        let which = await runShell("which ollama", workingDir: nil)
+        guard which.contains("/ollama") else {
+            return "✗ ollama not found. Install from https://ollama.ai and try again."
+        }
+
+        // Notify UI that download is starting
+        await MainActor.run {
+            AppState.shared?.modelStatus = .mlxDownloading(model: modelId)
+            AppState.shared?.addSystemMessage("⬇️ Pulling model '\(modelId)'… (this may take several minutes)")
+        }
+
+        // Run ollama pull — stream output line by line
+        let result = await Task.detached(priority: .userInitiated) { () -> String in
+            let process = Process()
+            process.executableURL = URL(fileURLWithPath: "/bin/zsh")
+            process.arguments = ["-c", "ollama pull \(modelId) 2>&1"]
+
+            var env = ProcessInfo.processInfo.environment
+            env["PATH"] = (env["PATH"] ?? "/usr/bin:/bin") + ":/usr/local/bin:/opt/homebrew/bin"
+            process.environment = env
+
+            let pipe = Pipe()
+            process.standardOutput = pipe
+            process.standardError  = pipe
+
+            // Use a class to safely capture mutable state across closures
+            final class Counter: @unchecked Sendable { var n = 0; var lastLine = "" }
+            let counter = Counter()
+
+            pipe.fileHandleForReading.readabilityHandler = { fh in
+                let chunk = String(data: fh.availableData, encoding: .utf8) ?? ""
+                let lines = chunk.components(separatedBy: "\n").filter { !$0.isEmpty }
+                for line in lines {
+                    counter.n += 1
+                    counter.lastLine = line
+                    // Show progress to UI every 10 lines
+                    if counter.n % 10 == 0 {
+                        let preview = String(line.prefix(80))
+                        Task { await MainActor.run {
+                            AppState.shared?.addSystemMessage("⬇️ \(preview)")
+                        }}
+                    }
+                }
+            }
+
+            do {
+                try process.run()
+                process.waitUntilExit()
+                pipe.fileHandleForReading.readabilityHandler = nil
+            } catch {
+                return "✗ ollama pull failed: \(error.localizedDescription)"
+            }
+
+            if process.terminationStatus == 0 {
+                return "✓ Model '\(modelId)' downloaded successfully"
+            } else {
+                return "✗ ollama pull exited with code \(process.terminationStatus). Last output: \(counter.lastLine)"
+            }
+        }.value
+
+        // If successful, switch to the new model
+        if result.hasPrefix("✓") {
+            await MainActor.run {
+                guard let state = AppState.shared else { return }
+                state.activeOllamaModel = modelId
+                state.modelStatus = .ollamaReady(model: modelId)
+                UserDefaults.standard.set(modelId, forKey: "active_ollama_model")
+                state.addSystemMessage("✅ Model '\(modelId)' is ready. Next response will use this model.")
+            }
+        } else {
+            await MainActor.run {
+                AppState.shared?.modelStatus = .error("Pull failed: \(modelId)")
+            }
+        }
+
+        return result
     }
 
     // MARK: - SEARCH_MULTI: parallel top-3 URLs
@@ -607,9 +1147,27 @@ actor AgentToolExecutor {
     // MARK: - Shell execution
 
     private func resolve(_ path: String, workspace: URL?) -> URL {
+        // Absolute paths go as-is
         if path.hasPrefix("/") { return URL(fileURLWithPath: path) }
+        // Home-relative
+        if path.hasPrefix("~/") {
+            return URL(fileURLWithPath: NSHomeDirectory() + path.dropFirst(1))
+        }
+        // Workspace-relative (most common in agent context)
         if let ws = workspace  { return ws.appendingPathComponent(path) }
-        return URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent(path)
+        // Fallback: try well-known locations so agents without a workspace
+        // can still read files the user means by bare names.
+        let home = URL(fileURLWithPath: NSHomeDirectory())
+        let candidates: [URL] = [
+            home.appendingPathComponent(path),
+            home.appendingPathComponent("Desktop/\(path)"),
+            home.appendingPathComponent("Documents/\(path)"),
+        ]
+        for c in candidates {
+            if FileManager.default.fileExists(atPath: c.path) { return c }
+        }
+        // Last resort: home-relative
+        return home.appendingPathComponent(path)
     }
 
     private func runShell(_ command: String, workingDir: URL?) async -> String {

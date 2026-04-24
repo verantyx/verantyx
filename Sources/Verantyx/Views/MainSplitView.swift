@@ -8,8 +8,9 @@ import SwiftUI
 struct MainSplitView: View {
     @EnvironmentObject var app: AppState
     @State private var activitySection: ActivityBarView.ActivitySection = .explorer
-    @State private var showModelPicker = false
-    @State private var showSettings    = false
+    @State private var showModelPicker  = false
+    @State private var showSettings     = false
+    @State private var showMCPQuick     = false
 
     /// True once any non-system message exists — locks the mode toggle
     private var chatStarted: Bool {
@@ -35,6 +36,14 @@ struct MainSplitView: View {
                             removal:   .move(edge: .leading).combined(with: .opacity)
                         ))
                 }
+
+                // ── MCP Quick Panel global overlay (⌘⇧M) ────────────────────────
+                if showMCPQuick {
+                    MCPQuickPanel(isPresented: $showMCPQuick)
+                        .environmentObject(app)
+                        .zIndex(99)
+                        .transition(.scale(scale: 0.96).combined(with: .opacity))
+                }
             }
             .animation(.easeInOut(duration: 0.25), value: app.operationMode)
 
@@ -58,7 +67,7 @@ struct MainSplitView: View {
         .toolbar { toolbarContent }
         .onAppear { app.connectOllama() }
         // ── Open Settings when gear is tapped ──────────────────────────────
-        .onChange(of: activitySection) { section in
+        .onChange(of: activitySection) { _, section in
             if section == .settings {
                 withAnimation(.easeOut(duration: 0.18)) { showSettings = true }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
@@ -66,7 +75,226 @@ struct MainSplitView: View {
                 }
             }
         }
+        // ── "フル MCP パネルを開く" ボタンから送られる通知を受け取る ──────────
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("OpenMCPPanel"))) { _ in
+            withAnimation(.easeOut(duration: 0.18)) {
+                showSettings = false
+                activitySection = .mcp
+            }
+        }
+        // ── Human Mode: file write approval sheet ────────────────────────────
+        .sheet(item: $app.pendingFileApproval) { req in
+            fileApprovalSheet(req: req)
+                .environmentObject(app)
+        }
     } // end body
+
+
+    // MARK: - Human Mode (4-pane IDE)
+
+    // MARK: - File Approval Sheet
+    //
+    // A polished modal that shows what the AI wants to write.
+    // Suspends AgentLoop via CheckedContinuation until user decides.
+
+    @ViewBuilder
+    private func fileApprovalSheet(req: FileApprovalRequest) -> some View {
+        VStack(spacing: 0) {
+
+            // ─ Header ───────────────────────────────────────────────────
+            HStack(spacing: 12) {
+                // Operation icon
+                ZStack {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(req.isNewFile
+                              ? Color(red: 0.2, green: 0.5, blue: 0.9).opacity(0.18)
+                              : Color(red: 0.9, green: 0.55, blue: 0.1).opacity(0.18))
+                        .frame(width: 40, height: 40)
+                    Image(systemName: req.isNewFile ? "doc.badge.plus" : "pencil.line")
+                        .font(.system(size: 18))
+                        .foregroundStyle(req.isNewFile
+                                         ? Color(red: 0.4, green: 0.7, blue: 1.0)
+                                         : Color(red: 1.0, green: 0.65, blue: 0.2))
+                }
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(req.displayTitle)
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(Color(red: 0.92, green: 0.92, blue: 0.98))
+                    Text(req.shortPath)
+                        .font(.system(size: 11, design: .monospaced))
+                        .foregroundStyle(Color(red: 0.55, green: 0.65, blue: 0.85))
+                        .lineLimit(1)
+                }
+
+                Spacer()
+
+                // 小さいベッジ
+                Text(req.isNewFile ? "NEW" : "EDIT")
+                    .font(.system(size: 9, weight: .bold, design: .monospaced))
+                    .foregroundStyle(req.isNewFile
+                                     ? Color(red: 0.3, green: 0.85, blue: 0.55)
+                                     : Color(red: 1.0, green: 0.65, blue: 0.2))
+                    .padding(.horizontal, 7).padding(.vertical, 3)
+                    .background(
+                        Capsule()
+                            .fill(req.isNewFile
+                                  ? Color(red: 0.3, green: 0.85, blue: 0.55).opacity(0.15)
+                                  : Color(red: 1.0, green: 0.65, blue: 0.2).opacity(0.15))
+                            .overlay(Capsule()
+                                .stroke(req.isNewFile
+                                        ? Color(red: 0.3, green: 0.85, blue: 0.55).opacity(0.4)
+                                        : Color(red: 1.0, green: 0.65, blue: 0.2).opacity(0.4),
+                                        lineWidth: 0.8))
+                    )
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 20)
+            .padding(.bottom, 14)
+
+            Divider().opacity(0.25)
+
+            // ─ Content diff ──────────────────────────────────────────────
+            ScrollView([.vertical, .horizontal]) {
+                VStack(alignment: .leading, spacing: 0) {
+                    if req.isNewFile {
+                        // New file — show full content with green "+" markers
+                        ForEach(Array(req.newContent.components(separatedBy: "\n").enumerated()), id: \.offset) { i, line in
+                            approvalDiffLine("+", text: "  " + line,
+                                            bg: Color(red: 0.1, green: 0.3, blue: 0.15).opacity(0.6),
+                                            fg: Color(red: 0.5, green: 0.95, blue: 0.65))
+                        }
+                    } else {
+                        // Existing file — minimal unified diff (context ±3 lines)
+                        let diffLines = buildUnifiedDiff(original: req.originalContent,
+                                                         modified: req.newContent)
+                        ForEach(Array(diffLines.enumerated()), id: \.offset) { _, entry in
+                            approvalDiffLine(entry.marker, text: entry.text,
+                                            bg: entry.bg, fg: entry.fg)
+                        }
+                    }
+                }
+                .padding(.vertical, 8)
+                .padding(.horizontal, 4)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .background(Color(red: 0.06, green: 0.06, blue: 0.09))
+            .frame(maxHeight: .infinity)
+
+            Divider().opacity(0.25)
+
+            // ─ Action buttons ───────────────────────────────────────────
+            HStack(spacing: 12) {
+                Spacer()
+
+                // Reject
+                Button {
+                    app.rejectFileWrite()
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 11, weight: .semibold))
+                        Text(app.t("Cancel", "キャンセル"))
+                            .font(.system(size: 13, weight: .semibold))
+                    }
+                    .foregroundStyle(Color(red: 0.9, green: 0.4, blue: 0.4))
+                    .padding(.horizontal, 20).padding(.vertical, 9)
+                    .background(Color(red: 0.32, green: 0.10, blue: 0.10).opacity(0.7),
+                                in: RoundedRectangle(cornerRadius: 8))
+                    .overlay(RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color(red: 0.9, green: 0.4, blue: 0.4).opacity(0.5), lineWidth: 1))
+                }
+                .buttonStyle(.plain)
+                .keyboardShortcut(.escape)
+
+                // Approve
+                Button {
+                    app.approveFileWrite()
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 11, weight: .semibold))
+                        Text(app.t("Approve & Apply", "承認して適用"))
+                            .font(.system(size: 13, weight: .semibold))
+                    }
+                    .foregroundStyle(Color(red: 0.3, green: 0.92, blue: 0.5))
+                    .padding(.horizontal, 20).padding(.vertical, 9)
+                    .background(Color(red: 0.10, green: 0.28, blue: 0.15).opacity(0.8),
+                                in: RoundedRectangle(cornerRadius: 8))
+                    .overlay(RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color(red: 0.3, green: 0.92, blue: 0.5).opacity(0.5), lineWidth: 1))
+                }
+                .buttonStyle(.plain)
+                .keyboardShortcut(.return, modifiers: .command)
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 14)
+            .background(Color(red: 0.11, green: 0.11, blue: 0.15))
+        }
+        .background(Color(red: 0.09, green: 0.09, blue: 0.12))
+        .frame(minWidth: 640, idealWidth: 760, maxWidth: 960,
+               minHeight: 420, idealHeight: 560, maxHeight: 720)
+    }
+
+    // MARK: - Diff line helper
+
+    private struct DiffEntry {
+        let marker: String
+        let text: String
+        let bg: Color
+        let fg: Color
+    }
+
+    @ViewBuilder
+    private func approvalDiffLine(_ marker: String, text: String, bg: Color, fg: Color) -> some View {
+        HStack(spacing: 0) {
+            Text(marker)
+                .font(.system(size: 11, design: .monospaced))
+                .foregroundStyle(fg)
+                .frame(width: 18, alignment: .center)
+            Text(text)
+                .font(.system(size: 11, design: .monospaced))
+                .foregroundStyle(marker == " " ? Color(red: 0.55, green: 0.55, blue: 0.68) : fg)
+                .lineLimit(1)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(.vertical, 1)
+        .background(bg)
+    }
+
+    /// Build a lightweight unified diff (context ±3 lines) without Foundation Diff.
+    private func buildUnifiedDiff(original: String, modified: String) -> [DiffEntry] {
+        let oLines = original.components(separatedBy: "\n")
+        let mLines = modified.components(separatedBy: "\n")
+        var entries: [DiffEntry] = []
+
+        // 簡易LCS：行単位で差分を計算
+        var oIdx = 0, mIdx = 0
+        while oIdx < oLines.count || mIdx < mLines.count {
+            let ol = oIdx < oLines.count ? oLines[oIdx] : nil
+            let ml = mIdx < mLines.count ? mLines[mIdx] : nil
+
+            if ol == ml {
+                entries.append(DiffEntry(marker: " ", text: "  " + (ol ?? ""),
+                                         bg: .clear, fg: .secondary))
+                oIdx += 1; mIdx += 1
+            } else {
+                if let ol { // removed
+                    entries.append(DiffEntry(marker: "-", text: "  " + ol,
+                                             bg: Color(red: 0.35, green: 0.08, blue: 0.08).opacity(0.5),
+                                             fg: Color(red: 1.0, green: 0.45, blue: 0.45)))
+                    oIdx += 1
+                }
+                if let ml { // added
+                    entries.append(DiffEntry(marker: "+", text: "  " + ml,
+                                             bg: Color(red: 0.08, green: 0.28, blue: 0.12).opacity(0.5),
+                                             fg: Color(red: 0.45, green: 0.95, blue: 0.60)))
+                    mIdx += 1
+                }
+            }
+        }
+        return entries
+    }
 
     // MARK: - Human Mode (4-pane IDE)
 
@@ -149,10 +377,10 @@ struct MainSplitView: View {
                 .font(.system(size: 13))
 
             VStack(alignment: .leading, spacing: 2) {
-                Text("承認待ち: \(diff.fileURL.lastPathComponent)")
+                Text(app.t("Pending approval: ", "承認待ち: ") + diff.fileURL.lastPathComponent)
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(Color(red: 0.95, green: 0.88, blue: 0.60))
-                Text("AIが変更を提案しています。Diffタブで内容を確認してください。")
+                Text(app.t("AI has proposed changes. Review in the Diff tab.", "AIが変更を提案しています。Diffタブで内容を確認してください。"))
                     .font(.system(size: 11))
                     .foregroundStyle(Color(red: 0.65, green: 0.65, blue: 0.75))
             }
@@ -163,9 +391,9 @@ struct MainSplitView: View {
             Button {
                 app.pendingDiff = nil
                 app.showDiff    = false
-                app.addSystemMessage("↩️ 変更を却下しました")
+                app.addSystemMessage("↩️ " + app.t("Change rejected", "変更を却下しました"))
             } label: {
-                Text("却下")
+                Text(app.t("Reject", "却下"))
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(Color(red: 0.9, green: 0.4, blue: 0.4))
                     .padding(.horizontal, 16).padding(.vertical, 5)
@@ -183,12 +411,12 @@ struct MainSplitView: View {
                     app.selectedFileContent = diff.modifiedContent
                     app.pendingDiff = nil
                     app.showDiff    = false
-                    app.addSystemMessage("✅ 変更を承認・適用しました: \(diff.fileURL.lastPathComponent)")
+                    app.addSystemMessage("✅ " + app.t("Change approved & applied: ", "変更を承認・適用しました: ") + diff.fileURL.lastPathComponent)
                 } catch {
-                    app.addSystemMessage("❌ 書き込み失敗: \(error.localizedDescription)")
+                    app.addSystemMessage("❌ " + app.t("Write failed: ", "書き込み失敗: ") + error.localizedDescription)
                 }
             } label: {
-                Text("承認")
+                Text(app.t("Approve", "承認"))
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(Color(red: 0.3, green: 0.9, blue: 0.45))
                     .padding(.horizontal, 16).padding(.vertical, 5)
@@ -227,7 +455,7 @@ struct MainSplitView: View {
             }
         }
 
-        // ── Operation Mode switcher ─────────────────────────────────
+        // ── Operation Mode chip (compact — no text, just icon + tooltip) ────
         ToolbarItem(placement: .automatic) {
             Button {
                 guard !chatStarted else { return }
@@ -235,40 +463,21 @@ struct MainSplitView: View {
                     app.operationMode = app.operationMode == .aiPriority ? .human : .aiPriority
                 }
             } label: {
-                HStack(spacing: 5) {
-                    Image(systemName: app.operationMode.icon)
-                        .font(.system(size: 11))
-                    Text(app.operationMode.rawValue)
-                        .font(.system(size: 11, weight: .semibold))
-                    // Show lock once chat has started
-                    if chatStarted {
-                        Image(systemName: "lock.fill")
-                            .font(.system(size: 9))
-                            .opacity(0.5)
-                    }
-                }
-                .foregroundStyle(chatStarted
-                                 ? app.operationMode.accentColor.opacity(0.45)
-                                 : app.operationMode.accentColor)
-                .padding(.horizontal, 9)
-                .padding(.vertical, 4)
-                .background(
-                    RoundedRectangle(cornerRadius: 6)
-                        .fill(app.operationMode.accentColor.opacity(chatStarted ? 0.05 : 0.12))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 6)
-                                .stroke(app.operationMode.accentColor.opacity(chatStarted ? 0.15 : 0.35),
-                                        lineWidth: 0.8)
-                        )
-                )
+                Image(systemName: app.operationMode.icon)
+                    .font(.system(size: 12))
+                    .foregroundStyle(chatStarted
+                                     ? app.operationMode.accentColor.opacity(0.35)
+                                     : app.operationMode.accentColor)
             }
             .buttonStyle(.plain)
             .disabled(chatStarted)
             .help(chatStarted
-                  ? "モードはチャット開始後に変更できません（新しいセッションで切り替えてください）"
-                  : "モード切替: \(app.operationMode == .aiPriority ? "Human Modeへ" : "AI Priorityへ")")
+                  ? app.t("Mode cannot be changed after chat has started", "モードはチャット開始後に変更できません")
+                  : app.t("Switch mode: " + (app.operationMode == .aiPriority ? "to Human Mode" : "to AI Priority"),
+                          "モード切替: " + (app.operationMode == .aiPriority ? "Human Modeへ" : "AI Priorityへ")))
         }
 
+        // ── Model picker ────────────────────────────────────────────────────
         ToolbarItem(placement: .automatic) {
             Button { showModelPicker.toggle() } label: {
                 HStack(spacing: 4) {
@@ -279,11 +488,37 @@ struct MainSplitView: View {
                 .foregroundStyle(Color(red: 0.75, green: 0.75, blue: 0.88))
             }
             .popover(isPresented: $showModelPicker, arrowEdge: .bottom) {
-                ModelPickerView().environmentObject(app).frame(width: 320)
+                ModelPickerView().environmentObject(app).frame(width: 340)
             }
             .help("Model Picker")
         }
 
+        // ── MCP Quick Panel toggle (⌘⇧M) ───────────────────────────────────
+        ToolbarItem(placement: .primaryAction) {
+            Button {
+                withAnimation(.easeOut(duration: 0.18)) { showMCPQuick.toggle() }
+            } label: {
+                ZStack(alignment: .topTrailing) {
+                    Image(systemName: "puzzlepiece.extension")
+                        .foregroundStyle(showMCPQuick
+                                         ? Color(red: 0.4, green: 0.85, blue: 1.0)
+                                         : MCPEngine.shared.activeCall != nil
+                                             ? Color(red: 1.0, green: 0.4, blue: 0.4)
+                                             : .secondary)
+                    // Dot badge if MCP tool is running
+                    if MCPEngine.shared.activeCall != nil {
+                        Circle()
+                            .fill(Color.red)
+                            .frame(width: 6, height: 6)
+                            .offset(x: 2, y: -2)
+                    }
+                }
+            }
+            .keyboardShortcut("m", modifiers: [.command, .shift])
+            .help("MCP Quick Panel (⌘⇧M)")
+        }
+
+        // ── Terminal toggle ─────────────────────────────────────────────────
         ToolbarItem(placement: .primaryAction) {
             Button {
                 withAnimation(.easeInOut(duration: 0.15)) { app.showProcessLog.toggle() }
@@ -297,12 +532,15 @@ struct MainSplitView: View {
             .help("Toggle Terminal (⌘⇧L)")
         }
 
+        // ── Settings ────────────────────────────────────────────────────────
         ToolbarItem(placement: .primaryAction) {
-            Button { NSApp.terminate(nil) } label: {
-                Text("Quit").font(.system(size: 11))
+            Button {
+                withAnimation(.easeOut(duration: 0.18)) { showSettings = true }
+            } label: {
+                Image(systemName: "gearshape")
+                    .foregroundStyle(.secondary)
             }
-            .buttonStyle(.bordered)
-            .controlSize(.small)
+            .help("Settings")
         }
     }
 

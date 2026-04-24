@@ -83,7 +83,7 @@ struct SelfEvolutionView: View {
                                      : Color(red: 0.3, green: 0.85, blue: 0.5))
             }
             .buttonStyle(.plain)
-            .help("GitHub 設定")
+            .help(app.t("GitHub Settings", "GitHub 設定"))
             .popover(isPresented: $showGitHubSetup, arrowEdge: .trailing) {
                 GitHubConfigView(config: $pr.config, onSave: { pr.saveConfig() })
                     .frame(width: 360, height: 320)
@@ -136,7 +136,7 @@ struct SelfEvolutionView: View {
                         .foregroundStyle(Color(red: 0.45, green: 0.75, blue: 1.0))
                         .lineLimit(1).truncationMode(.middle)
                 } else {
-                    Label("リポジトリが見つかりません", systemImage: "exclamationmark.triangle")
+                    Label(app.t("Repository not found", "リポジトリが見つかりません"), systemImage: "exclamationmark.triangle")
                         .font(.system(size: 10)).foregroundStyle(.orange)
                 }
             }
@@ -152,7 +152,7 @@ struct SelfEvolutionView: View {
                     } else {
                         Image(systemName: "brain").font(.system(size: 11))
                     }
-                    Text(evo.isIndexing ? "インデックス中…" : "ソースをインデックス")
+                    Text(evo.isIndexing ? app.t("Indexing…", "インデックス中…") : app.t("Index Source", "ソースをインデックス"))
                         .font(.system(size: 11, weight: .semibold))
                 }
                 .foregroundStyle(.white)
@@ -168,7 +168,7 @@ struct SelfEvolutionView: View {
             .padding(.horizontal, 12)
 
             if !evo.sourceNodes.isEmpty {
-                Text("\(evo.sourceNodes.count) ファイルをインデックス済み")
+                Text("\(evo.sourceNodes.count) " + app.t("files indexed", "ファイルをインデックス済み"))
                     .font(.system(size: 10, design: .monospaced))
                     .foregroundStyle(.secondary)
                     .padding(.horizontal, 12)
@@ -197,8 +197,12 @@ struct SelfEvolutionView: View {
 
                 // How-to hint
                 infoBanner(
-                    "AIに \"AgentChatView.swiftを修正してチャット背景を深紫にして\" と指示してください。" +
-                    " AIが差分を生成し、Patchesタブに表示されます。"
+                    app.t(
+                        "Tell the AI \"Modify AgentChatView.swift to make the chat background deep purple.\". " +
+                        "The AI will generate a diff and show it in the Patches tab.",
+                        "AIに \"AgentChatView.swiftを修正してチャット背景を深紫にして\" と指示してください。" +
+                        " AIが差分を生成し、Patchesタブに表示されます。"
+                    )
                 )
             }
 
@@ -223,9 +227,10 @@ struct SelfEvolutionView: View {
                     Spacer().frame(height: 20)
                     Image(systemName: "doc.text.below.ecg")
                         .font(.system(size: 32)).foregroundStyle(.tertiary)
-                    Text("差分なし")
+                    Text(app.t("No diffs", "差分なし"))
                         .font(.system(size: 12)).foregroundStyle(.secondary)
-                    Text("AIに「〇〇機能を追加して」と指示するか、\n直接ソースを編集してください。")
+                    Text(app.t("Tell the AI \"Add ○○ feature\", or edit the source directly.",
+                               "AIに「〇〇機能を追加して」と指示するか、\n直接ソースを編集してください。"))
                         .font(.system(size: 10)).foregroundStyle(.tertiary)
                         .multilineTextAlignment(.center)
                 }
@@ -250,7 +255,7 @@ struct SelfEvolutionView: View {
                             HStack(spacing: 5) {
                                 Image(systemName: "checkmark.shield")
                                     .font(.system(size: 10))
-                                Text("仮想 CI/CD (推奨)")
+                                Text(app.t("Virtual CI/CD (Recommended)", "仮想 CI/CD (推奨)"))
                                     .font(.system(size: 10))
                             }
                         }
@@ -259,15 +264,15 @@ struct SelfEvolutionView: View {
                         .foregroundStyle(Color(red: 0.70, green: 0.70, blue: 0.82))
                         Spacer()
                     }
-                    Text("機能名")
+                    Text(app.t("Feature name", "機能名"))
                         .font(.system(size: 10)).foregroundStyle(.secondary)
-                    TextField("例: チャット背景を深紫に変更", text: $featureName)
+                    TextField(app.t("e.g. Change chat background to deep purple", "例: チャット背景を深紫に変更"), text: $featureName)
                         .textFieldStyle(.plain)
                         .font(.system(size: 11))
                         .padding(8)
                         .background(Color.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 6))
 
-                    Text("コミットメッセージ (省略可)")
+                    Text(app.t("Commit message (optional)", "コミットメッセージ (省略可)"))
                         .font(.system(size: 10)).foregroundStyle(.secondary)
                     TextField("feat: ...", text: $commitMessage)
                         .textFieldStyle(.plain)
@@ -345,7 +350,7 @@ struct SelfEvolutionView: View {
                         .font(.system(size: 10, weight: .semibold))
                     Spacer()
                     if ci.retryCount > 0 {
-                        Text("試行 \(ci.retryCount)/\(ci.MAX_RETRIES)")
+                        Text(app.t("Attempt \(ci.retryCount)/\(ci.MAX_RETRIES)", "試行 \(ci.retryCount)/\(ci.MAX_RETRIES)"))
                             .font(.system(size: 9, design: .monospaced))
                             .foregroundStyle(.secondary)
                     }
@@ -362,7 +367,7 @@ struct SelfEvolutionView: View {
                                 .lineLimit(1)
                         }
                         if ci.lastErrors.count > 5 {
-                            Text("… 他 \(ci.lastErrors.count - 5) 件")
+                            Text(app.t("… \(ci.lastErrors.count - 5) more", "… 他 \(ci.lastErrors.count - 5) 件"))
                                 .font(.system(size: 8)).foregroundStyle(.secondary)
                         }
                     }
@@ -391,7 +396,7 @@ struct SelfEvolutionView: View {
         } label: {
             HStack(spacing: 8) {
                 Image(systemName: "hammer.fill").font(.system(size: 12))
-                Text("Apply & Rebuild")
+                Text(app.t("Apply & Rebuild", "適用してリビルド"))
                     .font(.system(size: 12, weight: .bold))
             }
             .foregroundStyle(.white)
@@ -427,7 +432,7 @@ struct SelfEvolutionView: View {
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: "sparkles").font(.system(size: 12))
-                        Text("新バージョンを起動")
+                        Text(app.t("Launch new version", "新バージョンを起動"))
                             .font(.system(size: 12, weight: .bold))
                     }
                     .foregroundStyle(.white)
@@ -459,7 +464,7 @@ struct SelfEvolutionView: View {
                     prBody  = draft.body
                     activeSection = .prSubmit
                 } label: {
-                    Label("PR を作成する", systemImage: "arrow.up.doc.on.clipboard")
+                    Label(app.t("Create PR", "PR を作成する"), systemImage: "arrow.up.doc.on.clipboard")
                         .font(.system(size: 11))
                         .foregroundStyle(Color(red: 0.4, green: 0.7, blue: 1.0))
                 }
@@ -477,24 +482,24 @@ struct SelfEvolutionView: View {
             switch evo.buildState {
             case .idle:
                 Image(systemName: "circle").foregroundStyle(.secondary)
-                Text("待機中").foregroundStyle(.secondary)
+                Text(app.t("Idle", "待機中")).foregroundStyle(.secondary)
             case .building(let p):
                 ProgressView(value: p)
                     .progressViewStyle(.linear)
                     .tint(Color(red: 0.4, green: 0.7, blue: 1.0))
                     .frame(width: 80)
-                Text(String(format: "ビルド中… %.0f%%", p * 100))
+                Text(String(format: app.t("Building… %.0f%%", "ビルド中… %.0f%%"), p * 100))
                     .foregroundStyle(Color(red: 0.4, green: 0.7, blue: 1.0))
             case .succeeded:
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundStyle(Color(red: 0.3, green: 0.9, blue: 0.5))
-                Text("ビルド成功！").foregroundStyle(Color(red: 0.3, green: 0.9, blue: 0.5))
+                Text(app.t("Build succeeded!", "ビルド成功！")).foregroundStyle(Color(red: 0.3, green: 0.9, blue: 0.5))
             case .failed:
                 Image(systemName: "xmark.circle.fill").foregroundStyle(.red)
-                Text("ビルド失敗").foregroundStyle(.red)
+                Text(app.t("Build failed", "ビルド失敗")).foregroundStyle(.red)
             case .safeMode:
                 Image(systemName: "shield.fill").foregroundStyle(.orange)
-                Text("セーフモードで起動中").foregroundStyle(.orange)
+                Text(app.t("Running in Safe Mode", "セーフモードで起動中")).foregroundStyle(.orange)
             }
         }
         .font(.system(size: 12, weight: .semibold))
@@ -503,7 +508,7 @@ struct SelfEvolutionView: View {
     private var buildLogView: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                Text(evo.buildLog.isEmpty ? "ビルドログがここに表示されます…" : evo.buildLog)
+                Text(buildLogContent)
                     .font(.system(size: 9, design: .monospaced))
                     .foregroundStyle(Color(red: 0.5, green: 0.88, blue: 0.5))
                     .textSelection(.enabled)
@@ -513,10 +518,15 @@ struct SelfEvolutionView: View {
             }
             .background(Color(red: 0.05, green: 0.07, blue: 0.05))
             .frame(maxHeight: .infinity)
-            .onChange(of: evo.buildLog) { _ in
+            .onChange(of: evo.buildLog) { _, _ in
                 withAnimation { proxy.scrollTo("logBottom", anchor: .bottom) }
             }
         }
+    }
+
+    // Wrap so build log shows the placeholder in the correct language
+    private var buildLogContent: String {
+        evo.buildLog.isEmpty ? app.t("Build log will appear here…", "ビルドログがここに表示されます…") : evo.buildLog
     }
 
     // MARK: - History Section
@@ -528,8 +538,8 @@ struct SelfEvolutionView: View {
                     Spacer().frame(height: 20)
                     Image(systemName: "clock.badge.questionmark")
                         .font(.system(size: 30)).foregroundStyle(.tertiary)
-                    Text("適用済み機能なし")
-                        .foregroundStyle(.secondary).font(.system(size: 12))
+                Text(app.t("No applied features", "適用済み機能なし"))
+                    .foregroundStyle(.secondary).font(.system(size: 12))
                 }
                 .frame(maxWidth: .infinity).padding(.top, 20)
             } else {
@@ -560,7 +570,7 @@ struct SelfEvolutionView: View {
 
             if let prURL = feat.prURL {
                 Link(destination: URL(string: prURL)!) {
-                    Label("PR を見る", systemImage: "arrow.up.right.square")
+                    Label(app.t("View PR", "PR を見る"), systemImage: "arrow.up.right.square")
                         .font(.system(size: 10))
                         .foregroundStyle(Color(red: 0.4, green: 0.7, blue: 1.0))
                 }
@@ -577,12 +587,15 @@ struct SelfEvolutionView: View {
         VStack(alignment: .leading, spacing: 12) {
             // Config check
             if pr.config.githubToken.isEmpty || pr.config.upstreamOwner.isEmpty {
-                infoBanner("GitHub Token と リポジトリ設定が必要です。右上の 🔑 ボタンから設定してください。")
+                infoBanner(app.t(
+                    "GitHub Token and repository settings are required. Configure via the 🔑 button.",
+                    "GitHub Token と リポジトリ設定が必要です。右上の 🔑 ボタンから設定してください。"
+                ))
                     .padding(.top, 10)
             } else {
                 VStack(alignment: .leading, spacing: 10) {
-                    labeledField("PR タイトル", text: $prTitle)
-                    labeledTextEditor("PR 説明 (Markdown)", text: $prBody)
+                    labeledField(app.t("PR Title", "PR タイトル"), text: $prTitle)
+                    labeledTextEditor(app.t("PR Description (Markdown)", "PR 説明 (Markdown)"), text: $prBody)
 
                     // Branch info
                     if !evo.customBranch.isEmpty {
@@ -616,7 +629,7 @@ struct SelfEvolutionView: View {
                             } else {
                                 Image(systemName: "arrow.up.doc.on.clipboard").font(.system(size: 12))
                             }
-                            Text(pr.isSubmitting ? "送信中…" : "Pull Request を送信")
+                            Text(pr.isSubmitting ? app.t("Sending…", "送信中…") : app.t("Send Pull Request", "Pull Request を送信"))
                                 .font(.system(size: 12, weight: .bold))
                         }
                         .foregroundStyle(.white)
@@ -639,7 +652,7 @@ struct SelfEvolutionView: View {
                         HStack(spacing: 6) {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundStyle(Color(red: 0.3, green: 0.9, blue: 0.5))
-                            Link("PR を GitHub で見る →", destination: URL(string: rec.url)!)
+                            Link(app.t("View PR on GitHub →", "PR を GitHub で見る →"), destination: URL(string: rec.url)!)
                                 .font(.system(size: 11))
                                 .foregroundStyle(Color(red: 0.4, green: 0.7, blue: 1.0))
                         }
@@ -648,7 +661,7 @@ struct SelfEvolutionView: View {
                     // Past PRs
                     if !pr.submittedPRs.isEmpty {
                         Divider().padding(.vertical, 4)
-                        Text("送信済み PR")
+                        Text(app.t("Submitted PRs", "送信済み PR"))
                             .font(.system(size: 10, weight: .semibold)).foregroundStyle(.secondary)
                         ForEach(pr.submittedPRs) { prec in
                             HStack {
@@ -722,24 +735,25 @@ struct GitHubConfigView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("GitHub 設定")
+            Text(L("GitHub Settings", "GitHub 設定"))
                 .font(.system(size: 13, weight: .semibold))
                 .padding(.bottom, 4)
 
             Group {
-                configField("GitHub Token (repo + PR scope)", text: $config.githubToken, secure: true)
-                configField("Upstream Owner (例: motonishikoudai)", text: $config.upstreamOwner)
-                configField("Upstream Repo (例: verantyx-ide)", text: $config.upstreamRepo)
-                configField("Your Fork Owner (あなたのGitHubユーザー名)", text: $config.yourForkOwner)
+                configField(L("GitHub Token (repo + PR scope)", "GitHub Token (repo + PR scope)"), text: $config.githubToken, secure: true)
+                configField(L("Upstream Owner (e.g. motonishikoudai)", "Upstream Owner (例: motonishikoudai)"), text: $config.upstreamOwner)
+                configField(L("Upstream Repo (e.g. verantyx-ide)", "Upstream Repo (例: verantyx-ide)"), text: $config.upstreamRepo)
+                configField(L("Your Fork Owner (your GitHub username)", "Your Fork Owner (あなたのGitHubユーザー名)"), text: $config.yourForkOwner)
             }
 
-            Button("保存") {
+            Button(L("Save", "保存")) {
                 onSave()
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.regular)
 
-            Text("❗ Token は GITHUB_TOKEN 環境変数でも設定できます")
+            Text(L("❗ Token can also be set via the GITHUB_TOKEN environment variable",
+                   "❗ Token は GITHUB_TOKEN 環境変数でも設定できます"))
                 .font(.system(size: 9)).foregroundStyle(.secondary)
         }
         .padding(16)

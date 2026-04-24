@@ -70,7 +70,7 @@ struct SettingsView: View {
                 }
                 .buttonStyle(.plain)
                 .keyboardShortcut(.escape, modifiers: [])
-                .help("設定を閉じる (Esc)")
+                .help(app.t("Close Settings (Esc)", "設定を閉じる (Esc)"))
 
                 Spacer()
 
@@ -154,33 +154,25 @@ struct SettingsView: View {
                 Divider().opacity(0.3)
 
                 // ── Content area — FIXED width, scrolls internally ──────────
-                Group {
-                    if selectedTab == .mcp {
-                        // MCP: wrap inside ScrollView so height stays fixed
-                        ScrollView {
-                            MCPView()
-                                .environmentObject(app)
-                                .frame(width: 521)   // 525 - 4 for scrollbar
-                        }
-                    } else {
-                        ScrollView {
-                            VStack(alignment: .leading, spacing: 20) {
-                                switch selectedTab {
-                                case .general: generalSettings
-                                case .model:   modelSettings
-                                case .apiKeys: apiKeysSettings
-                                case .tools:   toolsSettings
-                                case .agent:   agentSettings
-                                case .memory:  memorySettings
-                                case .privacy: privacySettings
-                                case .mcp:     EmptyView()
-                                }
-                            }
-                            .padding(22)
-                            // Match exact content width so inner cards don't stretch
-                            .frame(width: 521, alignment: .topLeading)
+                // All tabs use the same ScrollView+VStack structure so the
+                // container size never changes between tab switches.
+                // (MCPView was replaced by mcpSettings to avoid HSplitView
+                //  layout conflicts inside the fixed 525pt panel width.)
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 20) {
+                        switch selectedTab {
+                        case .general: generalSettings
+                        case .model:   modelSettings
+                        case .apiKeys: apiKeysSettings
+                        case .tools:   toolsSettings
+                        case .agent:   agentSettings
+                        case .memory:  memorySettings
+                        case .privacy: privacySettings
+                        case .mcp:     mcpSettings
                         }
                     }
+                    .padding(22)
+                    .frame(width: 521, alignment: .topLeading)
                 }
                 // FIXED width — prevents any expansion when scrolling content
                 .frame(width: 525, alignment: .topLeading)
@@ -192,14 +184,14 @@ struct SettingsView: View {
             // ── Footer bar ─────────────────────────────────────────────────
             HStack(spacing: 10) {
                 Spacer()
-                Button("キャンセル") {
+                Button(app.t("Cancel", "キャンセル")) {
                     onDismiss?()
                 }
                 .keyboardShortcut(.escape, modifiers: [])
                 .buttonStyle(.bordered)
                 .controlSize(.regular)
 
-                Button("完了") {
+                Button(app.t("Done", "完了")) {
                     onDismiss?()
                 }
                 .keyboardShortcut(.return, modifiers: [.command])
@@ -371,7 +363,7 @@ struct SettingsView: View {
                                     }
                                 }
                                 .frame(width: 200)
-                                .onChange(of: app.activeOllamaModel) { _ in app.connectOllama() }
+                                .onChange(of: app.activeOllamaModel) { _, _ in app.connectOllama() }
                             }
                             Button("↺") { testConnection() }
                                 .buttonStyle(.borderedProminent)
@@ -510,7 +502,7 @@ struct SettingsView: View {
                                         Text("Loading…")
                                     } else {
                                         Image(systemName: "bolt.fill")
-                                        Text("MLXを起動")
+                                        Text(app.t("Launch MLX", "MLXを起動"))
                                     }
                                 }
                                 .font(.system(size: 12, weight: .semibold))
@@ -524,7 +516,7 @@ struct SettingsView: View {
                             }())
 
                             // Custom path field
-                            TextField("または HF ID を直接入力…", text: $app.activeMlxModel)
+                            TextField(app.t("or enter HF ID directly…", "または HF ID を直接入力…"), text: $app.activeMlxModel)
                                 .textFieldStyle(.roundedBorder)
                                 .font(.system(size: 10, design: .monospaced))
                         }
@@ -965,6 +957,8 @@ struct SettingsView: View {
                         infoBlock("🛡 Code is anonymized before being sent to cloud. Real identifiers stay on your Mac. Cloud only sees abstract logic.")
                     case .cloudDirect:
                         infoBlock("☁️ Direct cloud inference. Fastest responses, but code is sent as-is to the provider.")
+                    case .paranoiaMode:
+                        infoBlock("🔴 Paranoia Mode: AST-level symbol extraction + Gemma 4 classification + Rust byte-offset masking. Maximum privacy.")
                     }
 
                     if app.inferenceMode != .localOnly {
@@ -1098,6 +1092,162 @@ struct SettingsView: View {
             }
         }
     }
+
+    // MARK: - MCP Settings (inline — avoids HSplitView layout conflict)
+
+    @ObservedObject private var mcp = MCPEngine.shared
+
+    private var mcpSettings: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            sectionHeader("MCP Servers", icon: "network")
+
+            infoBlock(app.t(
+                "Manage Model Context Protocol servers. Full configuration is available in the Activity Bar \"🔗\" panel.",
+                "Model Context Protocol サーバーを管理します。詳細な設定は左のアクティビティバー「🔗」から開けます。"
+            ))
+
+            // ── Server list ──────────────────────────────────────────────
+            settingsCard {
+                VStack(alignment: .leading, spacing: 0) {
+                    if mcp.servers.isEmpty {
+                        mcpEmptyState
+                    } else {
+                        mcpServerRows
+                    }
+                }
+            }
+
+            // ── Open full MCP panel ──────────────────────────────────────
+            settingsCard {
+                HStack(spacing: 12) {
+                    Image(systemName: "arrow.up.right.square")
+                        .font(.system(size: 16))
+                        .foregroundStyle(Color(red: 0.3, green: 0.8, blue: 1.0))
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(app.t("Open Full MCP Panel", "フル MCP パネルを開く"))
+                            .font(.system(size: 12, weight: .semibold)).foregroundStyle(.white)
+                        Text(app.t(
+                            "Add/edit servers and browse tools in the Activity Bar MCP section.",
+                            "サーバーの追加・編集・ツール一覧はアクティビティバーの MCP セクションから操作できます"
+                        ))
+                            .font(.system(size: 10)).foregroundStyle(.secondary).lineSpacing(2)
+                    }
+                    Spacer()
+                    Button(app.t("Close & Open", "設定を閉じて開く")) {
+                        onDismiss?()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            NotificationCenter.default.post(name: Notification.Name("OpenMCPPanel"), object: nil)
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.small)
+                    .tint(Color(red: 0.2, green: 0.5, blue: 0.85))
+                }
+            }
+
+            // ── Global kill switch (visible only when a call is active) ──
+            if mcp.activeCall != nil {
+                settingsCard {
+                    HStack(spacing: 12) {
+                        Circle().fill(Color.red).frame(width: 8, height: 8)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("MCP RUNNING")
+                                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                                .foregroundStyle(Color(red: 1.0, green: 0.4, blue: 0.4))
+                            if let call = mcp.activeCall {
+                                Text("\(call.serverName) → \(call.toolName)  [\(call.elapsedSeconds)s]")
+                                    .font(.system(size: 10, design: .monospaced))
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        Spacer()
+                        Button {
+                            mcp.killActiveCall()
+                        } label: {
+                            Label("KILL", systemImage: "exclamationmark.octagon.fill")
+                                .font(.system(size: 11, weight: .bold))
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(.red)
+                        .controlSize(.regular)
+                    }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder private var mcpEmptyState: some View {
+        HStack {
+            Spacer()
+            VStack(spacing: 8) {
+                Image(systemName: "network.slash")
+                    .font(.system(size: 28))
+                    .foregroundStyle(.tertiary)
+                Text(app.t("No MCP servers registered", "MCPサーバーが未登録です"))
+                    .font(.system(size: 12)).foregroundStyle(.secondary)
+                Text(app.t("Add servers from the MCP panel in the Activity Bar.", "アクティビティバーの MCP パネルから追加できます"))
+                    .font(.system(size: 10)).foregroundStyle(.tertiary)
+            }
+            .padding(.vertical, 24)
+            Spacer()
+        }
+    }
+
+    /// One row per server — dedicated @ViewBuilder avoids ForEach Binding overload.
+    @ViewBuilder private var mcpServerRows: some View {
+        ForEach(mcp.servers, id: \.id) { server in
+            mcpServerRow(server)
+        }
+    }
+
+    private func mcpServerRow(_ server: MCPServerConfig) -> some View {
+        let isFirst   = mcp.servers.first?.id == server.id
+        let isRunning = mcp.activeCall?.serverName == server.name
+        let cmdLabel  = server.transport == .stdio
+            ? (server.command.components(separatedBy: " ").first ?? server.command)
+            : (server.url.isEmpty ? "http://…" : server.url)
+        let modeColor = server.mode == .ai
+            ? Color(red: 0.4, green: 0.8, blue: 1.0)
+            : Color(red: 0.9, green: 0.7, blue: 0.3)
+
+        return VStack(alignment: .leading, spacing: 0) {
+            if !isFirst { Divider().opacity(0.15) }
+            HStack(spacing: 10) {
+                Circle()
+                    .fill(isRunning ? Color.green : Color(red: 0.4, green: 0.4, blue: 0.5))
+                    .frame(width: 7, height: 7)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(server.name)
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(.white)
+                    Text(cmdLabel)
+                        .font(.system(size: 9, design: .monospaced))
+                        .foregroundStyle(.tertiary)
+                        .lineLimit(1)
+                }
+                Spacer()
+                Text(server.mode == .ai ? "AI" : "Human")
+                    .font(.system(size: 9, weight: .semibold))
+                    .foregroundStyle(modeColor)
+                    .padding(.horizontal, 6).padding(.vertical, 2)
+                    .background(modeColor.opacity(0.12), in: Capsule())
+                if isRunning {
+                    Button { mcp.killActiveCall() } label: {
+                        Label("停止", systemImage: "stop.fill")
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundStyle(Color(red: 1.0, green: 0.4, blue: 0.4))
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+                    .tint(Color(red: 1.0, green: 0.4, blue: 0.4))
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+        }
+    }
+
+
 
     // MARK: - Pipeline step helpers
 

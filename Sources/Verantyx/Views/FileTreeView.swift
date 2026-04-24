@@ -3,14 +3,27 @@ import AppKit
 
 // MARK: - FileTreeView
 // Left panel: file hierarchy + selected file content preview.
-// VS Code-style: instant response on click, async content load.
+//
+// Performance architecture:
+//   • nodeMap + rootItems — rebuilt ONLY when workspaceFiles changes (background Task)
+//   • visibleNodes        — rebuilt ONLY when expandedFolders changes (cheap DFS, main thread)
+//   • TreeRowView         — Equatable + EquatableView: rows that didn't change skip body
+//   • previewLineCount    — cached in @State, updated via onChange
 
 struct FileTreeView: View {
     @EnvironmentObject var app: AppState
     @State private var expandedFolders: Set<String> = []
     @State private var isScanning = false
 
-    private var tree: [TreeNode] { buildTree() }
+    // ── Cached tree data ──────────────────────────────────────────────
+    /// Full node map — rebuilt only when workspaceFiles changes. Expensive, done off-main.
+    @State private var nodeMap: [String: TreeNode] = [:]
+    /// Root-level paths (paths with no "/" in them), sorted.
+    @State private var rootItems: [String] = []
+    /// The flat list of visible rows derived from nodeMap + expandedFolders. Cheap to rebuild.
+    @State private var visibleNodes: [TreeNode] = []
+    /// Cached line count for the preview header — avoids splitting on every render.
+    @State private var previewLineCount: Int = 0
 
     var body: some View {
         VStack(spacing: 0) {
@@ -34,15 +47,23 @@ struct FileTreeView: View {
             // ── Bottom: File content preview ──────────────────────────
             filePreviewPanel.frame(maxHeight: .infinity)
         }
-        .onChange(of: app.workspaceFiles.count) { count in
-            isScanning = false
-            if count > 0, let root = app.workspaceURL {
-                expandedFolders.insert(root.lastPathComponent)
-            }
-        }
-        .onChange(of: app.workspaceURL) { _ in
+        // Workspace root changed → wipe everything
+        .onChange(of: app.workspaceURL) { _, _ in
             isScanning = true
             expandedFolders.removeAll()
+            nodeMap = [:]
+            rootItems = []
+            visibleNodes = []
+        }
+        .onChange(of: app.workspaceFiles) { _, files in
+            isScanning = false
+            rebuildNodeMap(files: files, root: app.workspaceURL)
+        }
+        .onChange(of: expandedFolders) { _, _ in
+            visibleNodes = buildVisibleNodes()
+        }
+        .onChange(of: app.selectedFileContent) { _, content in
+            previewLineCount = content.isEmpty ? 0 : content.components(separatedBy: "\n").count
         }
     }
 
@@ -87,14 +108,30 @@ struct FileTreeView: View {
     private var treeList: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 0) {
-                ForEach(tree) { node in
-                    TreeRowView(node: node, selectedFile: app.selectedFile,
-                                expandedFolders: $expandedFolders) { url in
-                        app.selectFile(url)
-                    }
+                ForEach(visibleNodes) { node in
+                    // EquatableView: row body is skipped when node/isExpanded/isSelected unchanged
+                    EquatableView(content: TreeRowView(
+                        node: node,
+                        isExpanded: expandedFolders.contains(node.id),
+                        isSelected: node.url != nil && node.url == app.selectedFile,
+                        onTap: { handleTap(node) }
+                    ))
                 }
             }
             .padding(.vertical, 4)
+        }
+    }
+
+    private func handleTap(_ node: TreeNode) {
+        if node.isDir {
+            // Toggle expand — triggers onChange(of: expandedFolders) → fast rebuild
+            if expandedFolders.contains(node.id) {
+                expandedFolders.remove(node.id)
+            } else {
+                expandedFolders.insert(node.id)
+            }
+        } else if let url = node.url {
+            app.selectFile(url)
         }
     }
 
@@ -134,9 +171,11 @@ struct FileTreeView: View {
                         .font(.system(size: 10, weight: .medium, design: .monospaced))
                         .foregroundStyle(.primary).lineLimit(1)
                     Spacer()
-                    let lines = app.selectedFileContent.components(separatedBy: "\n").count
-                    Text("\(lines)L")
-                        .font(.system(size: 9, design: .monospaced)).foregroundStyle(.tertiary)
+                    if previewLineCount > 0 {
+                        // previewLineCount is cached via onChange — no string split here
+                        Text("\(previewLineCount)L")
+                            .font(.system(size: 9, design: .monospaced)).foregroundStyle(.tertiary)
+                    }
                 } else {
                     Image(systemName: "doc.text").font(.system(size: 9)).foregroundStyle(.tertiary)
                     Text("no file selected")
@@ -173,33 +212,54 @@ struct FileTreeView: View {
         }
     }
 
-    // MARK: - Tree builder
+    // MARK: - Tree Building
 
-    private func buildTree() -> [TreeNode] {
-        guard let root = app.workspaceURL else { return [] }
-        var nodeMap: [String: TreeNode] = [:]
+    /// Expensive: parse all workspace files into nodeMap.
+    /// Runs off the main thread; posts result back via MainActor.
+    private func rebuildNodeMap(files: [URL], root: URL?) {
+        guard let root else { return }
+        Task.detached(priority: .userInitiated) {
+            var map: [String: TreeNode] = [:]
+            map.reserveCapacity(files.count)
 
-        for url in app.workspaceFiles {
-            let rel = relativePath(url, from: root)
-            let parts = rel.split(separator: "/", omittingEmptySubsequences: true).map(String.init)
-            var currentPath = ""
-            for (i, part) in parts.enumerated() {
-                let parentPath = currentPath
-                currentPath = currentPath.isEmpty ? part : "\(currentPath)/\(part)"
-                if nodeMap[currentPath] == nil {
-                    if i == parts.count - 1 {
-                        nodeMap[currentPath] = TreeNode(id: currentPath, name: part,
+            for url in files {
+                let rel = Self.relativePath(url, from: root)
+                let parts = rel.split(separator: "/", omittingEmptySubsequences: true).map(String.init)
+                var currentPath = ""
+                for (i, part) in parts.enumerated() {
+                    let parentPath = currentPath
+                    currentPath = currentPath.isEmpty ? part : "\(currentPath)/\(part)"
+                    if map[currentPath] == nil {
+                        if i == parts.count - 1 {
+                            map[currentPath] = TreeNode(id: currentPath, name: part,
                                                         depth: i, isDir: false, url: url, children: [])
-                    } else {
-                        nodeMap[currentPath] = TreeNode(id: currentPath, name: part,
+                        } else {
+                            map[currentPath] = TreeNode(id: currentPath, name: part,
                                                         depth: i, isDir: true, url: nil, children: [])
+                        }
+                        if !parentPath.isEmpty { map[parentPath]?.children.append(currentPath) }
                     }
-                    if !parentPath.isEmpty { nodeMap[parentPath]?.children.append(currentPath) }
                 }
             }
-        }
 
+            let roots = map.keys.filter { !$0.contains("/") }.sorted()
+
+            await MainActor.run { [roots] in
+                self.nodeMap   = map
+                self.rootItems = roots
+                // Auto-expand single root directory
+                if roots.count == 1 { self.expandedFolders.insert(roots[0]) }
+                self.visibleNodes = self.buildVisibleNodes()
+            }
+        }
+    }
+
+    /// Cheap: DFS over pre-built nodeMap respecting expandedFolders.
+    /// O(visible nodes) — no file I/O, no allocations except result array.
+    private func buildVisibleNodes() -> [TreeNode] {
         var result: [TreeNode] = []
+        result.reserveCapacity(min(nodeMap.count, 512))
+
         func visit(_ id: String) {
             guard let node = nodeMap[id] else { return }
             result.append(node)
@@ -207,12 +267,11 @@ struct FileTreeView: View {
                 for childId in node.children.sorted() { visit(childId) }
             }
         }
-        let rootItems = nodeMap.keys.filter { !$0.contains("/") }.sorted()
         for id in rootItems { visit(id) }
         return result
     }
 
-    private func relativePath(_ url: URL, from root: URL) -> String {
+    private static func relativePath(_ url: URL, from root: URL) -> String {
         let full = url.path, base = root.path
         if full.hasPrefix(base) { return String(full.dropFirst(base.count + 1)) }
         return url.lastPathComponent
@@ -224,47 +283,35 @@ struct FileTreeView: View {
 
 enum FileIcons {
 
-    // SF Symbol name for a file extension
     static func icon(for url: URL) -> String { icon(ext: url.pathExtension) }
     static func icon(for name: String) -> String { icon(ext: (name as NSString).pathExtension) }
 
     static func icon(ext raw: String) -> String {
         switch raw.lowercased() {
-        // Apple
         case "swift":              return "swift"
         case "xcodeproj","xcworkspace": return "hammer.fill"
         case "storyboard","xib":   return "rectangle.3.group"
         case "plist":              return "list.bullet.rectangle"
-        // Python
         case "py","pyw","pyi":     return "chevron.left.forwardslash.chevron.right"
         case "ipynb":              return "brain.head.profile"
-        // JavaScript / TypeScript
         case "ts","tsx":           return "t.square.fill"
         case "js","jsx","mjs":     return "j.square"
         case "vue":                return "v.square.fill"
-        // Web
         case "html","htm":         return "globe"
         case "css","scss","sass","less": return "paintbrush.pointed"
         case "svg":                return "squareshape.controlhandles.on.squareshape.controlhandles"
-        // Rust
         case "rs":                 return "r.square"
-        // Go
         case "go":                 return "g.square"
-        // Kotlin / Java / Scala
         case "kt","kts":           return "k.square"
         case "java":               return "j.circle.fill"
         case "scala":              return "s.square"
-        // C / C++
         case "c":                  return "c.square"
         case "cpp","cc","cxx":     return "c.square.fill"
         case "h","hpp":            return "h.square"
-        // Ruby / PHP
         case "rb","rake","gemspec": return "diamond.fill"
         case "php":                return "p.square"
-        // Shell / scripts
         case "sh","bash","zsh","fish","ps1": return "terminal.fill"
         case "makefile","mk":      return "wrench.adjustable"
-        // Config
         case "json","jsonc":       return "curlybraces"
         case "yaml","yml":         return "list.dash"
         case "toml":               return "gearshape"
@@ -272,69 +319,61 @@ enum FileIcons {
         case "env":                return "lock.shield"
         case "dockerfile":         return "shippingbox"
         case "gitignore","gitattributes": return "arrow.triangle.branch"
-        // Docs
         case "md","mdx","markdown": return "doc.richtext"
         case "txt":                return "doc.text"
         case "pdf":                return "doc.fill"
         case "docx","doc":         return "doc.richtext.fill"
-        // Data
         case "csv","tsv":          return "tablecells"
-        case "xml":                return "angle.left.slash.angle.right"  // fallback
+        case "xml":                return "angle.left.slash.angle.right"
         case "sql":                return "cylinder.split.1x2"
-        // Images
         case "png","jpg","jpeg","gif","webp","heic","tiff","bmp","ico":
                                    return "photo"
-        // Audio / Video
         case "mp3","m4a","wav","aiff","flac": return "music.note"
         case "mp4","mov","avi","mkv":          return "video"
-        // Archives
         case "zip","tar","gz","bz2","xz","rar","7z": return "archivebox"
-        // Config lock
         case "lock":               return "lock.fill"
-        // Package managers
         case "package":            return "shippingbox.fill"
         default:                   return "doc"
         }
     }
 
-    // Colour for a file extension
     static func color(for url: URL) -> Color { color(ext: url.pathExtension) }
     static func color(for name: String) -> Color { color(ext: (name as NSString).pathExtension) }
 
     static func color(ext raw: String) -> Color {
         switch raw.lowercased() {
-        case "swift":              return Color(red: 0.98, green: 0.49, blue: 0.18)  // Swift orange
-        case "py","pyw","pyi","ipynb": return Color(red: 0.97, green: 0.77, blue: 0.25) // Python yellow
-        case "ts","tsx":           return Color(red: 0.27, green: 0.56, blue: 0.93) // TS blue
-        case "js","jsx","mjs":     return Color(red: 0.93, green: 0.80, blue: 0.18) // JS yellow
-        case "vue":                return Color(red: 0.25, green: 0.75, blue: 0.56) // Vue green
-        case "html","htm":         return Color(red: 0.90, green: 0.40, blue: 0.20) // HTML red-orange
-        case "css","scss","sass","less": return Color(red: 0.40, green: 0.65, blue: 0.95) // CSS blue
-        case "svg":                return Color(red: 0.95, green: 0.58, blue: 0.18) // SVG orange
-        case "rs":                 return Color(red: 0.86, green: 0.37, blue: 0.20) // Rust orange
-        case "go":                 return Color(red: 0.37, green: 0.75, blue: 0.85) // Go cyan
-        case "kt","kts":           return Color(red: 0.62, green: 0.45, blue: 0.95) // Kotlin purple
-        case "java":               return Color(red: 0.90, green: 0.31, blue: 0.27) // Java red
-        case "scala":              return Color(red: 0.82, green: 0.19, blue: 0.19) // Scala deep red
-        case "c":                  return Color(red: 0.56, green: 0.73, blue: 0.90) // C blue-grey
-        case "cpp","cc","cxx":     return Color(red: 0.35, green: 0.55, blue: 0.87) // C++ blue
-        case "h","hpp":            return Color(red: 0.60, green: 0.80, blue: 0.96) // Header light blue
-        case "rb","rake","gemspec": return Color(red: 0.90, green: 0.20, blue: 0.28) // Ruby red
-        case "php":                return Color(red: 0.48, green: 0.52, blue: 0.80) // PHP mauve
-        case "sh","bash","zsh","fish","ps1": return Color(red: 0.45, green: 0.90, blue: 0.58) // Shell green
-        case "json","jsonc":       return Color(red: 0.95, green: 0.75, blue: 0.35) // JSON amber
-        case "yaml","yml","toml":  return Color(red: 0.70, green: 0.65, blue: 0.95) // Config lavender
-        case "md","mdx","markdown": return Color(red: 0.60, green: 0.85, blue: 0.75) // MD teal
-        case "dockerfile":         return Color(red: 0.25, green: 0.65, blue: 0.96) // Docker blue
-        case "gitignore","gitattributes": return Color(red: 0.95, green: 0.45, blue: 0.32) // Git orange-red
-        case "pdf":                return Color(red: 0.90, green: 0.25, blue: 0.25) // PDF red
-        case "csv","tsv","sql":    return Color(red: 0.42, green: 0.78, blue: 0.56) // Data green
+        case "swift":              return Color(red: 0.98, green: 0.49, blue: 0.18)
+        case "py","pyw","pyi","ipynb": return Color(red: 0.97, green: 0.77, blue: 0.25)
+        case "ts","tsx":           return Color(red: 0.27, green: 0.56, blue: 0.93)
+        case "js","jsx","mjs":     return Color(red: 0.93, green: 0.80, blue: 0.18)
+        case "vue":                return Color(red: 0.25, green: 0.75, blue: 0.56)
+        case "html","htm":         return Color(red: 0.90, green: 0.40, blue: 0.20)
+        case "css","scss","sass","less": return Color(red: 0.40, green: 0.65, blue: 0.95)
+        case "svg":                return Color(red: 0.95, green: 0.58, blue: 0.18)
+        case "rs":                 return Color(red: 0.86, green: 0.37, blue: 0.20)
+        case "go":                 return Color(red: 0.37, green: 0.75, blue: 0.85)
+        case "kt","kts":           return Color(red: 0.62, green: 0.45, blue: 0.95)
+        case "java":               return Color(red: 0.90, green: 0.31, blue: 0.27)
+        case "scala":              return Color(red: 0.82, green: 0.19, blue: 0.19)
+        case "c":                  return Color(red: 0.56, green: 0.73, blue: 0.90)
+        case "cpp","cc","cxx":     return Color(red: 0.35, green: 0.55, blue: 0.87)
+        case "h","hpp":            return Color(red: 0.60, green: 0.80, blue: 0.96)
+        case "rb","rake","gemspec": return Color(red: 0.90, green: 0.20, blue: 0.28)
+        case "php":                return Color(red: 0.48, green: 0.52, blue: 0.80)
+        case "sh","bash","zsh","fish","ps1": return Color(red: 0.45, green: 0.90, blue: 0.58)
+        case "json","jsonc":       return Color(red: 0.95, green: 0.75, blue: 0.35)
+        case "yaml","yml","toml":  return Color(red: 0.70, green: 0.65, blue: 0.95)
+        case "md","mdx","markdown": return Color(red: 0.60, green: 0.85, blue: 0.75)
+        case "dockerfile":         return Color(red: 0.25, green: 0.65, blue: 0.96)
+        case "gitignore","gitattributes": return Color(red: 0.95, green: 0.45, blue: 0.32)
+        case "pdf":                return Color(red: 0.90, green: 0.25, blue: 0.25)
+        case "csv","tsv","sql":    return Color(red: 0.42, green: 0.78, blue: 0.56)
         case "png","jpg","jpeg","gif","webp","heic","tiff","bmp","ico":
-                                   return Color(red: 0.88, green: 0.55, blue: 0.90) // Image purple-pink
-        case "mp3","m4a","wav","aiff","flac": return Color(red: 0.95, green: 0.65, blue: 0.35) // Audio amber
-        case "mp4","mov","avi","mkv": return Color(red: 0.58, green: 0.38, blue: 0.92) // Video violet
-        case "zip","tar","gz","bz2","xz","rar","7z": return Color(red: 0.75, green: 0.55, blue: 0.32) // Archive tan
-        case "lock":               return Color(red: 0.55, green: 0.55, blue: 0.65) // Lock grey
+                                   return Color(red: 0.88, green: 0.55, blue: 0.90)
+        case "mp3","m4a","wav","aiff","flac": return Color(red: 0.95, green: 0.65, blue: 0.35)
+        case "mp4","mov","avi","mkv": return Color(red: 0.58, green: 0.38, blue: 0.92)
+        case "zip","tar","gz","bz2","xz","rar","7z": return Color(red: 0.75, green: 0.55, blue: 0.32)
+        case "lock":               return Color(red: 0.55, green: 0.55, blue: 0.65)
         case "plist","xcodeproj","xcworkspace": return Color(red: 0.98, green: 0.49, blue: 0.18)
         default:                   return Color(red: 0.55, green: 0.55, blue: 0.65)
         }
@@ -353,25 +392,25 @@ struct TreeNode: Identifiable {
 }
 
 // MARK: - TreeRowView
+// Equatable: SwiftUI will skip body when node/isExpanded/isSelected haven't changed.
+// The `onTap` closure is excluded from equality comparison intentionally — it's
+// always the same logic (set by FileTreeView) and closures can't be compared.
 
-struct TreeRowView: View {
+struct TreeRowView: View, Equatable {
     let node: TreeNode
-    let selectedFile: URL?
-    @Binding var expandedFolders: Set<String>
-    let onSelect: (URL) -> Void
+    let isExpanded: Bool
+    let isSelected: Bool
+    let onTap: () -> Void
 
-    private var isExpanded: Bool { expandedFolders.contains(node.id) }
-    private var isSelected: Bool { node.url != nil && node.url == selectedFile }
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.node.id         == rhs.node.id &&
+        lhs.node.name       == rhs.node.name &&
+        lhs.isExpanded      == rhs.isExpanded &&
+        lhs.isSelected      == rhs.isSelected
+    }
 
     var body: some View {
-        Button {
-            if node.isDir {
-                if isExpanded { expandedFolders.remove(node.id) }
-                else          { expandedFolders.insert(node.id) }
-            } else if let url = node.url {
-                onSelect(url)
-            }
-        } label: {
+        Button(action: onTap) {
             HStack(spacing: 4) {
                 Spacer().frame(width: CGFloat(node.depth) * 12 + 4)
 

@@ -32,7 +32,7 @@ struct ChatPanelView: View {
                     }
                     .padding(16)
                 }
-                .onChange(of: app.messages.count) { _ in
+                .onChange(of: app.messages.count) { _, _ in
                     withAnimation {
                         if app.isGenerating {
                             proxy.scrollTo("generating")
@@ -41,7 +41,7 @@ struct ChatPanelView: View {
                         }
                     }
                 }
-                .onChange(of: app.isGenerating) { generating in
+                .onChange(of: app.isGenerating) { _, generating in
                     if generating {
                         withAnimation { proxy.scrollTo("generating") }
                     }

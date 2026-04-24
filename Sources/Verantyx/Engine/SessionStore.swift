@@ -119,7 +119,13 @@ final class SessionStore: ObservableObject {
     func updateActiveSession(messages: [ChatMessage], workspacePath: String? = nil) {
         guard let id = activeSessionId,
               let idx = sessions.firstIndex(where: { $0.id == id }) else { return }
-        sessions[idx].messages     = messages
+        // Strip any empty-content assistant bubbles that were created mid-stream
+        // (e.g. the placeholder appended before the first token arrives).
+        // These appear as blank bubbles when a session is restored.
+        let clean = messages.filter { msg in
+            !(msg.role == .assistant && msg.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+        }
+        sessions[idx].messages     = clean
         sessions[idx].updatedAt    = Date()
         if let wp = workspacePath { sessions[idx].workspacePath = wp }
         sessions[idx].autoTitle()

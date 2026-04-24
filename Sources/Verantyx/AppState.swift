@@ -19,7 +19,7 @@ struct ChatMessage: Identifiable, Equatable, Codable {
     enum Role: String, Codable { case user, assistant, system }
 }
 
-struct FileDiff: Identifiable {
+struct FileDiff: Identifiable, Equatable {
     let id = UUID()
     let fileURL: URL
     let originalContent: String
@@ -27,6 +27,9 @@ struct FileDiff: Identifiable {
     var hunks: [DiffHunk]
 
     var hasChanges: Bool { originalContent != modifiedContent }
+
+    // Equatable: same identity ↔ same diff (new FileDiff always has new UUID)
+    static func == (lhs: FileDiff, rhs: FileDiff) -> Bool { lhs.id == rhs.id }
 }
 
 struct DiffHunk: Identifiable {
@@ -46,6 +49,10 @@ struct DiffLine: Identifiable {
 
 @MainActor
 final class AppState: ObservableObject {
+
+    // ── Global weak reference — set at launch so AgentToolExecutor can call
+    // ingestArtifact() from actor context without importing the full SwiftUI stack.
+    @MainActor static weak var shared: AppState?
 
     // Workspace
     @Published var workspaceURL: URL?
@@ -87,6 +94,11 @@ final class AppState: ObservableObject {
 
     // Inference task handle (for cancellation)
     private var inferenceTask: Task<Void, Never>? = nil
+
+    // UUID of the assistant message bubble currently receiving streaming tokens.
+    // Elevated to instance-level so restoreSession() can nil it on session switch,
+    // preventing stale UUIDs from corrupting a newly-loaded session's first stream.
+    private var streamingMsgId: UUID? = nil
 
     // ── Performance metrics (the "Apple Silicon violence" numbers) ──
     @Published var tokensPerSecond: Double = 0       // live tok/s display
@@ -133,13 +145,21 @@ final class AppState: ObservableObject {
     @Published var pendingDiff: FileDiff?
     @Published var showDiff = false
 
+    // Human Mode: file write / create / edit approval
+    @Published var pendingFileApproval: FileApprovalRequest? = nil
+
+    // Active tab in the center chat panel — driven by AppState so
+    // SessionHistoryView can programmatically switch to .workspace
+    // after restoring a session (the tab @State lives in AgentChatView).
+    @Published var activeChatTab: Int = 0   // 0=workspace, 1=history, 2=thinking
+
     // Operation Mode (AI Priority vs Human)
     @Published var operationMode: OperationMode = .human {
         didSet {
             UserDefaults.standard.set(operationMode.rawValue, forKey: "operation_mode")
             // Sync MCPEngine execution mode
             let mcpMode: MCPServerConfig.ExecutionMode = operationMode == .aiPriority ? .ai : .human
-            Task { await MCPEngine.shared.setMode(mcpMode) }
+            Task { MCPEngine.shared.setMode(mcpMode) }
         }
     }
 
@@ -157,6 +177,7 @@ final class AppState: ObservableObject {
     }
     @Published var lastMaskingStats: MaskingStats?
     @Published var privacySteps: [String] = []
+    @Published var paranoiaLogLines: [ParanoiaEngine.ParanoiaLogLine] = []  // Paranoia Mode live log
 
     // ── Model configuration (all persisted via UserDefaults) ──
     @Published var temperature: Double = 0.1 {
@@ -229,7 +250,17 @@ final class AppState: ObservableObject {
         let raw = UserDefaults.standard.string(forKey: "app_language") ?? UILanguage.system.rawValue
         return UILanguage(rawValue: raw) ?? .system
     }() {
-        didSet { UserDefaults.standard.set(appLanguage.rawValue, forKey: "app_language") }
+        didSet {
+            UserDefaults.standard.set(appLanguage.rawValue, forKey: "app_language")
+            // Keep global AppLanguage singleton in sync for NSTextView/NSMenuItem code
+            let isJA: Bool
+            switch appLanguage {
+            case .japanese: isJA = true
+            case .english:  isJA = false
+            case .system:   isJA = Locale.current.language.languageCode?.identifier == "ja"
+            }
+            AppLanguage.shared.isJapanese = isJA
+        }
     }
 
     // MARK: - Localized string helper
@@ -306,6 +337,45 @@ final class AppState: ObservableObject {
         || isGenerating
     }
 
+    // MARK: - Self-Admin API
+    // AI agent calls this to modify IDE settings directly from chat instructions.
+    // AllowList design: only known keys are accepted; unknown keys warn but don't crash.
+    @discardableResult
+    func applySetting(key: String, value: String) -> String {
+        switch key {
+        case "system_prompt":
+            systemPrompt = value
+        case "operation_mode":
+            operationMode = (value == "aiPriority" || value == "ai") ? .aiPriority : .human
+        case "temperature":
+            if let d = Double(value) { temperature = max(0.0, min(2.0, d)) }
+            else { return "⚠️ Invalid temperature: \(value) (expected 0.0–2.0)" }
+        case "max_tokens_ollama":
+            if let i = Int(value) { maxTokensOllama = max(64, min(32768, i)) }
+            else { return "⚠️ Invalid max_tokens_ollama: \(value)" }
+        case "max_tokens_mlx":
+            if let i = Int(value) { maxTokensMLX = max(64, min(32768, i)) }
+            else { return "⚠️ Invalid max_tokens_mlx: \(value)" }
+        case "ollama_endpoint":
+            ollamaEndpoint = value
+        case "inference_mode":
+            if let m = InferenceMode(rawValue: value) { inferenceMode = m }
+            else { return "⚠️ Unknown inference_mode: \(value). Valid: localOnly, cloudDirect, privacyShield, paranoiaMode" }
+        case "agent_loop_enabled":
+            agentLoopEnabled = (value == "true" || value == "1" || value == "yes")
+        case "streaming_enabled":
+            streamingEnabled = (value == "true" || value == "1" || value == "yes")
+        case "anthropic_api_key":
+            anthropicApiKey = value
+        case "active_ollama_model":
+            activeOllamaModel = value
+            modelStatus = .ollamaReady(model: value)
+        default:
+            return "⚠️ Unknown setting key: '\(key)'. Valid keys: system_prompt, operation_mode, temperature, max_tokens_ollama, max_tokens_mlx, ollama_endpoint, inference_mode, agent_loop_enabled, streaming_enabled, anthropic_api_key, active_ollama_model"
+        }
+        return "✓ \(key) = \(value.prefix(80))"
+    }
+
     // MLX state
     @Published var activeMlxModel: String = "mlx-community/gemma-4-26b-a4b-it-4bit"
     @Published var mlxServerLogs: [String] = []
@@ -330,17 +400,53 @@ final class AppState: ObservableObject {
         refreshFiles()               // async scan in background
     }
 
-    /// Async directory scan — never blocks the main thread.
+    /// Progressive directory scan — yields partial results as they arrive.
+    /// First batch appears in ~200ms for most workspaces. Tree shows before scan completes.
     func refreshFiles() {
         guard let root = workspaceURL else { return }
-        let exts = ["swift","py","ts","js","go","rs","kt","java","c","cpp","h",
-                    "md","json","yaml","toml","html","css","sh","rb","php"]
-        Task.detached(priority: .userInitiated) { [weak self] in
+
+        // Broader extension set so all relevant source/config files appear
+        let exts: Set<String> = [
+            // Apple
+            "swift", "m", "mm", "xib", "storyboard", "plist",
+            // Python
+            "py", "pyw", "pyi", "ipynb",
+            // JS / TS / Web
+            "ts", "tsx", "js", "jsx", "mjs", "cjs", "vue", "svelte",
+            "html", "htm", "css", "scss", "sass", "less",
+            // Rust
+            "rs", "toml",
+            // Go
+            "go",
+            // JVM
+            "kt", "kts", "java", "scala", "gradle",
+            // C family
+            "c", "cpp", "cc", "cxx", "h", "hpp",
+            // Ruby / PHP
+            "rb", "rake", "gemspec", "php",
+            // Shell
+            "sh", "bash", "zsh", "fish", "ps1",
+            // Docs / Config
+            "md", "mdx", "markdown", "txt", "rst",
+            "json", "jsonc", "yaml", "yml",
+            "xml", "csv", "sql", "graphql",
+            "env", "lock",
+            // Bare filenames (extension-less) — handled by name match in _scanDirectory
+            "makefile", "dockerfile", "gitignore", "gitattributes",
+            "procfile", "rakefile",
+        ]
+
+        // Use non-detached Task so MainActor isolation is inherited and `workspace`
+        // (a @MainActor property) can be accessed safely. The async for-await iterator
+        // yields control between snapshots so UI rendering is not blocked.
+        Task(priority: .userInitiated) { [weak self] in
             guard let self else { return }
-            let files = await self.workspace.listFilesAsync(in: root, extensions: exts)
-            await MainActor.run { self.workspaceFiles = files }
+            for await snapshot in self.workspace.scanStreaming(in: root, extensions: exts) {
+                self.workspaceFiles = snapshot
+            }
         }
     }
+
 
     /// Instant selection — show name immediately, read content async.
     func selectFile(_ url: URL) {
@@ -410,9 +516,27 @@ final class AppState: ObservableObject {
     /// Restore a past session by its ID (loads messages + memory injection).
     func restoreSession(_ sessionId: UUID) {
         guard let session = sessions.sessions.first(where: { $0.id == sessionId }) else { return }
+
+        // ── Cancel any in-flight inference from the previous session ────
+        // This ensures: (a) isGenerating is reset, (b) no stale onToken
+        // callbacks write into the newly-restored messages array.
+        inferenceTask?.cancel()
+        inferenceTask = nil
+        isGenerating  = false
+        // ⚠️ MUST nil streamingMsgId BEFORE replacing messages.
+        // If it remains non-nil, the next .streamToken will search for the
+        // old UUID in the restored session's messages, fail to find it,
+        // and create a NEW orphan bubble instead of tracking correctly.
+        self.streamingMsgId = nil
+
         saveCurrentSession()
         sessions.selectSession(sessionId)
-        messages    = session.messages
+
+        // Restore messages — filter out any empty assistant bubbles that were
+        // saved mid-stream before a previous fix (corrupt streaming artifacts).
+        messages    = session.messages.filter { msg in
+            !(msg.role == .assistant && msg.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+        }
         pendingDiff = nil
         showDiff    = false
         if let path = session.workspacePath {
@@ -433,6 +557,7 @@ final class AppState: ObservableObject {
             }
         }
         addSystemMessage("📂 セッション「\(session.title)」を復元しました")
+        activeChatTab = 0
     }
 
     // MARK: - Agent actions
@@ -475,7 +600,7 @@ final class AppState: ObservableObject {
             }
 
             // Route: Privacy Shield / Cloud modes bypass agent loop
-            if inferenceMode == .cloudDirect || inferenceMode == .privacyShield {
+            if inferenceMode == .cloudDirect || inferenceMode == .privacyShield || inferenceMode == .paranoiaMode {
                 await runHybrid(instruction: text)
             } else if agentLoopEnabled {
                 // Pass images to agent loop so the model can see them
@@ -513,9 +638,11 @@ final class AppState: ObservableObject {
         let snap_model    = activeOllamaModel
         let snap_status   = modelStatus
 
-        // ── Privacy Shield: PrivacyGateway (Phase 1 + Phase 2 + JCross) ──
+        // ── Privacy Shield / Paranoia Mode: PrivacyGateway (Phase 1 + Phase 2 + JCross) ──
         // cloudDirect: HybridEngine (マスキングなし、直接送信)
-        if snap_mode == .privacyShield, let fileContent = context, let fileName = contextFile?.lastPathComponent {
+        // paranoiaMode: PrivacyGateway → ParanoiaEngine (AST-surgical phase 3)
+        if (snap_mode == .privacyShield || snap_mode == .paranoiaMode),
+           let fileContent = context, let fileName = contextFile?.lastPathComponent {
 
             let snap_gemma = gemmaSemanticMaskingEnabled
 
@@ -643,9 +770,9 @@ final class AppState: ObservableObject {
         let snap_model = activeOllamaModel
         let snap_status = modelStatus
 
-        // Capture and reset selfFixMode (one-shot per message)
+        // selfFixMode persists until the user explicitly toggles it off.
+        // We only snapshot the current value to pass into AgentLoop.
         let snap_selfFix = selfFixMode
-        await MainActor.run { self.selfFixMode = false }
 
         let snap_isAIPriority = (operationMode == .aiPriority)
 
@@ -657,11 +784,10 @@ final class AppState: ObservableObject {
         }
         let fullInstruction = instruction + imageContext
 
-        // ── UUID-based streaming message tracker ─────────────────────
-        // Tracking by UUID prevents the duplicate-response bug that
-        // occurred when system/tool messages were inserted AFTER the
-        // streaming assistant message, making the "last role" check fail.
-        var streamingMsgId: UUID? = nil
+        // ── Per-turn streaming message tracker ─────────────────────────
+        // Reset at the start of each agent loop run so previous sessions'
+        // stale UUIDs are never carried forward.
+        streamingMsgId = nil
 
         await AgentLoop.shared.run(
             instruction: fullInstruction,
@@ -680,17 +806,17 @@ final class AppState: ObservableObject {
                 switch event {
                 case .start:
                     // Reset per-turn streaming ID when a new loop turn starts
-                    streamingMsgId = nil
+                    self.streamingMsgId = nil
 
                 case .streamToken(let token):
-                    if let sid = streamingMsgId,
+                    if let sid = self.streamingMsgId,
                        let idx = self.messages.firstIndex(where: { $0.id == sid }) {
                         // Append token to the tracked streaming message
                         self.messages[idx].content += token
                     } else {
                         // First token of this turn — create a new message and track it
                         let msg = ChatMessage(role: .assistant, content: token)
-                        streamingMsgId = msg.id
+                        self.streamingMsgId = msg.id
                         self.messages.append(msg)
                     }
 
@@ -721,18 +847,18 @@ final class AppState: ObservableObject {
                             // Find the exact streaming message by its UUID.
                             // This is safe even when tool/system messages follow
                             // the streaming message ("last role" check would fail).
-                            if let sid = streamingMsgId,
+                            if let sid = self.streamingMsgId,
                                let idx = self.messages.firstIndex(where: { $0.id == sid }) {
                                 // Finalise in-place with the clean stripped version
                                 self.messages[idx].content = stripped
                             } else {
                                 // No streaming message for this turn → new bubble
                                 let msg = ChatMessage(role: .assistant, content: stripped)
-                                streamingMsgId = msg.id
+                                self.streamingMsgId = msg.id
                                 self.messages.append(msg)
                             }
                             // Reset ID after finalising so next turn starts fresh
-                            streamingMsgId = nil
+                            self.streamingMsgId = nil
                         }
                         // Notify if patches detected
                         if !patches.isEmpty {
@@ -767,15 +893,19 @@ final class AppState: ObservableObject {
                         self.terminal.workingDirectory = ws
                         self.refreshFiles()
                     }
-                    // Only emit done message if it differs from the last message
-                    // (prevents duplicate when .aiMessage already handled the final text)
-                    if !msg.isEmpty {
+                    // ── Anti-duplicate guard ────────────────────────────────
+                    // If a streaming message exists (streamingMsgId != nil),
+                    // the content is already displayed — do NOT add another bubble.
+                    // Only show .done text when there was no streaming at all
+                    // (e.g. non-streaming model or tool-only turns with no text).
+                    if !msg.isEmpty && self.streamingMsgId == nil {
                         let lastContent = self.messages.last?.content ?? ""
                         if !lastContent.hasSuffix(msg) {
                             self.messages.append(ChatMessage(role: .assistant,
                                 content: "✅ \(msg)"))
                         }
                     }
+                    self.streamingMsgId = nil  // Always reset at turn end
 
                 case .error(let err):
                     self.isGenerating = false
@@ -800,7 +930,6 @@ final class AppState: ObservableObject {
         let contextFile = selectedFile
 
         let snap_status = modelStatus
-        let snap_model  = activeOllamaModel
 
         // Build prompt (same as AgentEngine)
         let fileSection = context.map { content in
@@ -842,20 +971,34 @@ final class AppState: ObservableObject {
                 temperature: temperature
             )
             do {
+                // トークンをバッファして ~25fps (40ms) で UI を更新—※messagesの @Published 発火回数を 1/5 に削減
+                var tokenBuffer = ""
+                var lastUIFlush = Date.distantPast
                 for try await event in stream {
                     guard case .token(let token) = event else { continue }
                     tokenCount += 1; totalTokensGenerated += 1
-                    if let idx = self.messages.firstIndex(where: { $0.id == msgId }) {
-                        self.messages[idx].content += token
+                    tokenBuffer += token
+                    let now = Date()
+                    let elapsed = now.timeIntervalSince(startTime)
+                    // 40ms ごとにバッチフラッシュ（ポーリング連続で同一スレッドなので Date() で OK）
+                    if now.timeIntervalSince(lastUIFlush) >= 0.04 {
+                        if let idx = self.messages.firstIndex(where: { $0.id == msgId }) {
+                            self.messages[idx].content += tokenBuffer
+                        }
+                        if elapsed > 0.1 { tokensPerSecond = Double(tokenCount) / elapsed }
+                        tokenBuffer = ""
+                        lastUIFlush = now
                     }
-                    streamingText += token
-                    let elapsed = Date().timeIntervalSince(startTime)
-                    if elapsed > 0.1 { tokensPerSecond = Double(tokenCount) / elapsed }
-                    if Date().timeIntervalSince(lastPerfLog) > 2 {
+                    if now.timeIntervalSince(lastPerfLog) > 2 {
                         logProcess(String(format: "%.1f tok/s  │  %d tokens",
                                          Double(tokenCount)/max(elapsed,0.001), tokenCount), kind: .perf)
-                        lastPerfLog = Date()
+                        lastPerfLog = now
                     }
+                }
+                // 末尾バッファをフラッシュ
+                if !tokenBuffer.isEmpty,
+                   let idx = self.messages.firstIndex(where: { $0.id == msgId }) {
+                    self.messages[idx].content += tokenBuffer
                 }
             } catch { logProcess("stream error: \(error.localizedDescription)", kind: .system) }
 
@@ -888,6 +1031,15 @@ final class AppState: ObservableObject {
             let counter = Counter()
 
             do {
+                // MLX: nonisolated バッファ + 40ms ゲートで MainActor dispatch 回数を削減
+                // 毎トークンに Task{@MainActor} を作るのは 40tok/s で 40 Tasks/s が生まれ非効率
+                final class TokenBatch: @unchecked Sendable {
+                    var buffer = ""
+                    var lastFlush = Date.distantPast
+                    let lock = NSLock()
+                }
+                let batch = TokenBatch()
+
                 try await MLXRunner.shared.streamGenerateTokens(
                     prompt: prompt,
                     maxTokens: maxTokensMLX,
@@ -895,12 +1047,20 @@ final class AppState: ObservableObject {
                     onToken: { @Sendable [weak self] piece in
                         guard let self else { return }
                         counter.increment()
+                        batch.lock.lock()
+                        batch.buffer += piece
+                        let shouldFlush = Date().timeIntervalSince(batch.lastFlush) >= 0.04
+                        if shouldFlush { batch.lastFlush = Date() }
+                        let flushed = shouldFlush ? batch.buffer : ""
+                        if shouldFlush { batch.buffer = "" }
+                        batch.lock.unlock()
+
+                        guard shouldFlush, !flushed.isEmpty else { return }
                         Task { @MainActor in
                             if let idx = self.messages.firstIndex(where: { $0.id == msgId }) {
-                                self.messages[idx].content += piece
+                                self.messages[idx].content += flushed
                             }
-                            self.streamingText += piece
-                            self.totalTokensGenerated += 1
+                            self.totalTokensGenerated += flushed.count  // approximate
                             let elapsed = Date().timeIntervalSince(startTime)
                             if elapsed > 0.1 {
                                 self.tokensPerSecond = Double(counter.value) / elapsed
@@ -910,6 +1070,16 @@ final class AppState: ObservableObject {
                     onFinish: { @Sendable [weak self] fullText in
                         guard let self else { return }
                         Task { @MainActor in
+                            // 残バッファをフラッシュ
+                            // NSLock は async コンテキストで使用不可 (Swift 6)。
+                            // onFinish は全 onToken 完了後に呼ばれるため、
+                            // この時点で concurrent アクセスは発生しない → lock 不要。
+                            let remaining = batch.buffer
+                            batch.buffer = ""
+                            if !remaining.isEmpty,
+                               let idx = self.messages.firstIndex(where: { $0.id == msgId }) {
+                                self.messages[idx].content += remaining
+                            }
                             let elapsed = Date().timeIntervalSince(startTime)
                             self.inferenceMs = Int(elapsed * 1000)
                             self.tokensPerSecond = Double(counter.value) / max(elapsed, 0.001)
@@ -940,6 +1110,7 @@ final class AppState: ObservableObject {
                 messages.append(ChatMessage(role: .assistant,
                     content: "⚠️ MLX error: \(error.localizedDescription)"))
             }
+
             isGenerating = false
             return
 
@@ -982,6 +1153,27 @@ final class AppState: ObservableObject {
         showDiff = false
         addSystemMessage("⏭ Changes discarded.")
     }
+
+    // MARK: - Human Mode: File write approval
+
+    /// User tapped "承認" — resume the AgentLoop continuation so the write executes.
+    func approveFileWrite() {
+        guard let req = pendingFileApproval else { return }
+        pendingFileApproval = nil
+        req.approve()
+        addSystemMessage("✅ 承認しました: \(req.displayFileName)")
+    }
+
+    /// User tapped "拒否" — resume the AgentLoop continuation with false, skip write.
+    func rejectFileWrite() {
+        guard let req = pendingFileApproval else { return }
+        let name = req.displayFileName
+        pendingFileApproval = nil
+        req.reject()
+        addSystemMessage("⏸ 拒否しました: \(name)")
+    }
+
+
 
     // MARK: - Model actions
 
@@ -1037,15 +1229,15 @@ final class AppState: ObservableObject {
             guard let self,
                   let digest = notification.userInfo?["digest"] as? String else { return }
 
-            // Show in chat
-            self.messages.append(ChatMessage(
-                role: .system,
-                content: "🔬 CI エラー検出 — AI が自動修正を試みます"
-            ))
-
-            // Auto-send to agent
-            Task { @MainActor in
-                await self.sendMessage(with: digest)
+            // Hop to MainActor for all @MainActor-isolated mutations.
+            // sendMessage is a sync func that internally spawns a Task — no await needed.
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                self.messages.append(ChatMessage(
+                    role: .system,
+                    content: "🔬 CI エラー検出 — AI が自動修正を試みます"
+                ))
+                self.sendMessage(with: digest)
             }
         }
     }
@@ -1058,8 +1250,10 @@ final class AppState: ObservableObject {
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            guard let self else { return }
-            self.showRestartAlert = true
+            // Wrap in Task { @MainActor } so Swift 6 sees the mutation as actor-safe.
+            Task { @MainActor [weak self] in
+                self?.showRestartAlert = true
+            }
         }
     }
 

@@ -54,7 +54,7 @@ struct ModelPickerView: View {
 
             Divider()
 
-            Text("モデル選択").font(.caption2).foregroundStyle(.tertiary)
+            Text(app.t("Model Selection", "モデル選択")).font(.caption2).foregroundStyle(.tertiary)
 
             // Model list
             ScrollView {
@@ -79,7 +79,7 @@ struct ModelPickerView: View {
                                 }
                                 Spacer()
                                 if model.id == "mlx-community/gemma-4-26b-a4b-it-4bit" {
-                                    Text("推奨")
+                                    Text(app.t("Recommended", "推奨"))
                                         .font(.caption2)
                                         .padding(.horizontal, 5).padding(.vertical, 2)
                                         .background(Color.accentColor.opacity(0.2), in: Capsule())
@@ -127,11 +127,14 @@ struct ModelPickerView: View {
             if !app.mlxServerLogs.isEmpty {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Server log").font(.caption2).foregroundStyle(.tertiary)
-                    ForEach(app.mlxServerLogs.suffix(5), id: \.self) { log in
+                    let recent = Array(app.mlxServerLogs.suffix(5))
+                    let startIdx = app.mlxServerLogs.count - recent.count
+                    ForEach(Array(recent.enumerated()), id: \.offset) { i, log in
                         Text(log)
                             .font(.system(size: 9, design: .monospaced))
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
+                            .tag(startIdx + i)
                     }
                 }
                 .padding(6)
@@ -139,7 +142,8 @@ struct ModelPickerView: View {
             }
 
             // Download tip
-            Text("初回はターミナルで:\n/usr/local/bin/python3 -m mlx_lm download \\\n  --model mlx-community/gemma-4-26b-a4b-it-4bit")
+            Text(app.t("First-time use — run in Terminal:\n/usr/local/bin/python3 -m mlx_lm download \\\n  --model mlx-community/gemma-4-26b-a4b-it-4bit",
+                       "初回はターミナルで:\n/usr/local/bin/python3 -m mlx_lm download \\\n  --model mlx-community/gemma-4-26b-a4b-it-4bit"))
                 .font(.system(size: 9, design: .monospaced))
                 .foregroundStyle(.tertiary)
                 .padding(6)
@@ -150,73 +154,176 @@ struct ModelPickerView: View {
 
     // MARK: - Ollama tab
 
+    @State private var loadedModels: [OllamaClient.RunningModel] = []
+    @State private var ejectingModel: String? = nil
+    @State private var hasLoadedOnce = false
+
     private var ollamaTab: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // Status
+            // Status row
             HStack {
-                Circle()
-                    .fill(app.statusColor)
-                    .frame(width: 8, height: 8)
-                Text(app.statusLabel)
-                    .font(.callout)
-                    .lineLimit(1)
+                Circle().fill(app.statusColor).frame(width: 8, height: 8)
+                Text(app.statusLabel).font(.callout).lineLimit(1)
                 Spacer()
                 Button("Refresh") {
-                    // Clear error state before re-probing
                     app.modelStatus = .none
-                    Task { await OllamaClient.shared.resetAvailability() }
+                    Task {
+                        await OllamaClient.shared.resetAvailability()
+                        await refreshLoadedModels()
+                    }
                     app.connectOllama()
                 }
-                .buttonStyle(.borderless)
-                .font(.callout)
+                .buttonStyle(.borderless).font(.callout)
             }
 
-            if app.ollamaModels.isEmpty {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("No models found. Install Ollama and run:")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Text("ollama pull gemma4:26b")
-                        .font(.system(.caption, design: .monospaced))
-                        .padding(6)
-                        .background(Color(nsColor: .textBackgroundColor), in: RoundedRectangle(cornerRadius: 6))
-                }
-            } else {
-                Text("Installed models:")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                ForEach(app.ollamaModels, id: \.self) { model in
-                    Button {
-                        app.activeOllamaModel = model
-                        app.modelStatus = .ollamaReady(model: model)
-                        app.addSystemMessage("🟢 Switched to \(model)")
-                    } label: {
-                        HStack {
-                            Image(systemName: app.activeOllamaModel == model
-                                  ? "checkmark.circle.fill" : "circle")
-                                .foregroundStyle(app.activeOllamaModel == model ? Color.accentColor : Color.secondary)
-                            Text(model)
-                                .font(.system(.callout, design: .monospaced))
-                            Spacer()
-                        }
-                        .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
+            vramSection
+
+            installedModelsSection
 
             Button {
-                app.modelStatus = .none  // clear prior errors
+                app.modelStatus = .none
                 app.connectOllama()
+                Task { await refreshLoadedModels() }
             } label: {
-                Label("Connect Ollama", systemImage: "link")
-                    .frame(maxWidth: .infinity)
+                Label("Connect Ollama", systemImage: "link").frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.regular)
         }
         .padding(12)
+        .task {
+            if !hasLoadedOnce { hasLoadedOnce = true; await refreshLoadedModels() }
+        }
     }
+
+    // ── VRAM 読み込み中モデル ─────────────────────────────────────────────
+
+    @ViewBuilder
+    private var vramSection: some View {
+        if !loadedModels.isEmpty {
+            VStack(alignment: .leading, spacing: 6) {
+                HStack {
+                    Label(app.t("Loading into VRAM", "VRAM に読み込み中"), systemImage: "memorychip")
+                        .font(.caption2).foregroundStyle(.orange)
+                    Spacer()
+                    Text("\(loadedModels.count) " + app.t("model(s)", "モデル")).font(.caption2).foregroundStyle(.tertiary)
+                }
+                ForEach(loadedModels, id: \.name) { running in
+                    vramRow(running)
+                }
+            }
+            Divider()
+        }
+    }
+
+    private func vramRow(_ running: OllamaClient.RunningModel) -> some View {
+        let isActive    = app.activeOllamaModel == running.name
+        let isEjecting  = ejectingModel == running.name
+        return HStack(spacing: 8) {
+            Circle().fill(isActive ? Color.green : Color.orange).frame(width: 6, height: 6)
+            VStack(alignment: .leading, spacing: 1) {
+                Text(running.name).font(.system(.caption, design: .monospaced)).lineLimit(1)
+                Text(String(format: "%.2f GB", running.sizeGB))
+                    .font(.caption2).foregroundStyle(.tertiary)
+            }
+            Spacer()
+            Button { Task { await eject(running.name) } } label: {
+                if isEjecting {
+                    ProgressView().scaleEffect(0.6).frame(width: 22, height: 22)
+                } else {
+                    Image(systemName: "eject.fill")
+                        .font(.caption)
+                        .foregroundStyle(isActive ? AnyShapeStyle(.tertiary) : AnyShapeStyle(Color.orange))
+                }
+            }
+            .buttonStyle(.borderless)
+            .disabled(isEjecting || isActive)
+            .help(isActive
+                  ? app.t("Cannot unload active model", "アクティブなモデルはアンロードできません")
+                  : app.t("Unload model from VRAM", "モデルを VRAM からアンロード"))
+        }
+        .padding(.horizontal, 8).padding(.vertical, 5)
+        .background(RoundedRectangle(cornerRadius: 6).fill(Color.orange.opacity(0.07)))
+    }
+
+    // ── インストール済みモデル ────────────────────────────────────────────
+
+    @ViewBuilder
+    private var installedModelsSection: some View {
+        if app.ollamaModels.isEmpty {
+            VStack(alignment: .leading, spacing: 6) {
+                Text("No models found. Install Ollama and run:")
+                    .font(.caption).foregroundStyle(.secondary)
+                Text("ollama pull gemma4:26b")
+                    .font(.system(.caption, design: .monospaced))
+                    .padding(6)
+                    .background(Color(nsColor: .textBackgroundColor), in: RoundedRectangle(cornerRadius: 6))
+            }
+        } else {
+            Text(app.t("Installed models:", "インストール済みモデル:")).font(.caption).foregroundStyle(.secondary)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(app.ollamaModels, id: \.self) { model in
+                        installedModelRow(model)
+                    }
+                }
+            }
+            .frame(maxHeight: 160)
+        }
+    }
+
+    private func installedModelRow(_ model: String) -> some View {
+        let isActive  = app.activeOllamaModel == model
+        let isInVRAM  = loadedModels.contains(where: { $0.name == model })
+        return Button {
+            app.activeOllamaModel = model
+            app.modelStatus = .ollamaReady(model: model)
+            app.addSystemMessage("🟢 Switched to \(model)")
+        } label: {
+            HStack {
+                Image(systemName: isActive ? "checkmark.circle.fill" : "circle")
+                    .foregroundStyle(isActive ? Color.accentColor : Color.secondary)
+                Text(model).font(.system(.callout, design: .monospaced)).lineLimit(1)
+                Spacer()
+                if isInVRAM {
+                    Text("VRAM")
+                        .font(.system(size: 9, weight: .semibold))
+                        .padding(.horizontal, 5).padding(.vertical, 2)
+                        .background(Color.orange.opacity(0.2), in: Capsule())
+                        .foregroundStyle(.orange)
+                }
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+
+
+
+    // MARK: - Helpers
+
+    @MainActor
+    private func refreshLoadedModels() async {
+        loadedModels = await OllamaClient.shared.loadedModels()
+    }
+
+    @MainActor
+    private func eject(_ model: String) async {
+        ejectingModel = model
+        let ok = await OllamaClient.shared.unloadModel(model)
+        ejectingModel = nil
+        if ok {
+            app.addSystemMessage("⏏️ Unloaded \(model) from VRAM")
+            // If we unloaded the active model, clear status
+            if app.activeOllamaModel == model {
+                app.modelStatus = .none
+            }
+        } else {
+            app.addSystemMessage("⚠️ Failed to unload \(model)")
+        }
+        await refreshLoadedModels()
+    }
+
 
     // MARK: - HuggingFace tab
 
@@ -256,10 +363,10 @@ struct ModelPickerView: View {
                 }
             }
 
-            if case .downloading(let p) = app.modelStatus {
-                ProgressView(value: p)
-                    .tint(Color.accentColor)
-                Text("Downloading… \(Int(p * 100))%")
+            if case .mlxDownloading(let m) = app.modelStatus {
+                ProgressView()
+                    .scaleEffect(0.8)
+                Text("Downloading \(m.components(separatedBy: "/").last ?? m)…")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -276,7 +383,8 @@ struct ModelPickerView: View {
             }
             .buttonStyle(.borderedProminent)
             .disabled(app.customHFRepoId.isEmpty || {
-                if case .downloading = app.modelStatus { return true }
+                if case .mlxDownloading = app.modelStatus { return true }
+                if case .connecting    = app.modelStatus { return true }
                 return false
             }())
         }
@@ -284,25 +392,15 @@ struct ModelPickerView: View {
     }
 
     private var downloadLabel: String {
-        if case .downloading(let p) = app.modelStatus { return "Downloading \(Int(p * 100))%" }
+        if case .mlxDownloading = app.modelStatus { return "Downloading…" }
         return "Download & Use"
     }
 
     private func downloadModel() {
         let repoId = app.customHFRepoId.trimmingCharacters(in: .whitespaces)
         guard !repoId.isEmpty else { return }
-        app.addSystemMessage("⬇️ Downloading \(repoId)…")
-        app.modelStatus = .downloading(progress: 0)
-
-        // TODO: wire MLXModelDownloader in Phase 2
-        // For now, show a placeholder
-        Task {
-            try? await Task.sleep(nanoseconds: 1_000_000_000)
-            await MainActor.run {
-                app.modelStatus = .error("MLX download: connect ModelDownloader in Phase 2")
-                app.addSystemMessage("ℹ️ Use Ollama for now — MLX download coming in v0.2")
-            }
-        }
+        // Wire to AppState.downloadMLXModel() — downloads via MLXRunner then auto-loads
+        app.downloadMLXModel(repoId: repoId)
     }
 
     private let popularModels = [

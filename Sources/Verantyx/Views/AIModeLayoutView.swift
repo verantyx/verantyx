@@ -26,14 +26,14 @@ struct AIModeLayoutView: View {
             Divider()
                 .overlay(Color(red: 1.0, green: 0.35, blue: 0.20).opacity(0.7))
 
-            // ── 2-pane: Chat | Artifact ───────────────────────────────
+            // ── 2-pane: Chat | Artifact (always visible) ──────────────
             ResizableHSplit(
                 minLeft: 340, maxLeft: 900, minRight: 300, initialLeft: 520
             ) {
                 // Left: Full-screen chat
                 fullChatPanel
             } right: {
-                // Right: Artifact + Terminal stack
+                // Right: Artifact panel (always on in AI Mode) + optional Terminal
                 VStack(spacing: 0) {
                     ArtifactPanelView()
                         .environmentObject(app)
@@ -57,31 +57,21 @@ struct AIModeLayoutView: View {
         .toastOverlay()
     }
 
-    // MARK: - AI Priority Banner
+    // MARK: - AI Priority Banner (always-red, pulsing)
 
     private var aiPriorityBanner: some View {
         HStack(spacing: 10) {
-            // Mode indicator
-            HStack(spacing: 6) {
-                Circle()
-                    .fill(Color(red: 1.0, green: 0.3, blue: 0.2))
-                    .frame(width: 7, height: 7)
-                    .overlay(
-                        Circle()
-                            .stroke(Color(red: 1.0, green: 0.3, blue: 0.2).opacity(0.5), lineWidth: 3)
-                            .blur(radius: 2)
-                    )
+            // Pulsing red dot
+            PulsingDot(color: Color(red: 1.0, green: 0.25, blue: 0.15))
+
+            VStack(alignment: .leading, spacing: 1) {
                 Text("AI PRIORITY MODE")
-                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                    .font(.system(size: 11, weight: .black, design: .monospaced))
                     .foregroundStyle(Color(red: 1.0, green: 0.45, blue: 0.30))
+                Text("承認なし · 自律書き込み · Artifact自動表示")
+                    .font(.system(size: 9, weight: .medium))
+                    .foregroundStyle(Color(red: 0.75, green: 0.42, blue: 0.32))
             }
-
-            Text("—")
-                .foregroundStyle(Color(red: 0.5, green: 0.3, blue: 0.25))
-
-            Text("承認なし · MCP無制限 · 自動Diff適用")
-                .font(.system(size: 10))
-                .foregroundStyle(Color(red: 0.75, green: 0.45, blue: 0.35))
 
             Spacer()
 
@@ -154,20 +144,7 @@ struct AIModeLayoutView: View {
                     .foregroundStyle(Color(red: 0.85, green: 0.85, blue: 0.92))
                 Spacer()
 
-                // Artifact panel toggle
-                Button {
-                    withAnimation { app.showArtifactPanel.toggle() }
-                } label: {
-                    Image(systemName: "rectangle.portrait.righthalf.inset.filled")
-                        .font(.system(size: 11))
-                        .foregroundStyle(app.showArtifactPanel
-                                         ? Color(red: 0.4, green: 0.8, blue: 0.5)
-                                         : Color(red: 0.4, green: 0.4, blue: 0.55))
-                }
-                .buttonStyle(.plain)
-                .help("Artifact パネル切替")
-
-                // Terminal toggle
+                // Terminal toggle only (artifact panel is always visible in AI Mode)
                 Button {
                     withAnimation { app.showProcessLog.toggle() }
                 } label: {
@@ -198,6 +175,32 @@ struct AIModeLayoutView: View {
         case .ollamaReady(let m): return m.components(separatedBy: ":").first ?? m
         case .mlxReady(let m):   return "MLX/" + (m.components(separatedBy: "/").last ?? m)
         default:                  return "no model"
+        }
+    }
+}
+
+// MARK: - PulsingDot
+// Animated red dot used in the AI Priority banner to signal live autonomous execution.
+
+struct PulsingDot: View {
+    let color: Color
+    @State private var pulse = false
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(color.opacity(pulse ? 0.20 : 0.0))
+                .frame(width: 18, height: 18)
+                .scaleEffect(pulse ? 1.6 : 0.9)
+
+            Circle()
+                .fill(color)
+                .frame(width: 8, height: 8)
+        }
+        .onAppear {
+            withAnimation(
+                .easeInOut(duration: 1.1).repeatForever(autoreverses: true)
+            ) { pulse = true }
         }
     }
 }

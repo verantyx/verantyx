@@ -35,6 +35,17 @@ public actor OllamaClient {
     private var _available: Bool? = nil
     private var _availableTime: Date? = nil
 
+    /// URLSession with no timeout — used for all streaming inference calls.
+    /// Ollama /api/chat is a long-lived NDJSON stream that can run for hours
+    /// on large context windows. URLSession's default 60s resource timeout
+    /// would kill mid-generation. This session has both intervals set to ∞.
+    private static let noTimeoutSession: URLSession = {
+        let cfg = URLSessionConfiguration.default
+        cfg.timeoutIntervalForRequest  = .infinity
+        cfg.timeoutIntervalForResource = .infinity
+        return URLSession(configuration: cfg)
+    }()
+
     // MARK: - Availability (5s TTL cache)
 
     public func isAvailable() async -> Bool {
@@ -52,6 +63,88 @@ public actor OllamaClient {
             let (_, resp) = try await URLSession.shared.data(for: req)
             return (resp as? HTTPURLResponse)?.statusCode == 200
         } catch { return false }
+    }
+
+    // MARK: - Keep model warm (GPU アイドル防止)
+    //
+    // Ollamaはデフォルトで5分間アクセスがないとモデルをVRAMから解放する。
+    // AgentLoopの長いツール実行ターンの合間に呼ぶことでモデルをVRAM上に保持する。
+    // keep_alive: "-1" は「永続」を意味する (Ollama v0.1.24+)。
+
+    public func keepModelWarm(model: String) async {
+        guard let url = URL(string: "\(baseURL)/api/chat") else { return }
+        var req = URLRequest(url: url)
+        req.httpMethod  = "POST"
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.timeoutInterval = 5
+
+        // Empty generate with keep_alive=-1 to pin the model in VRAM
+        let body: [String: Any] = [
+            "model":      model,
+            "messages":   [],
+            "stream":     false,
+            "keep_alive": "-1"     // 永久に解放しない
+        ]
+        guard let bodyData = try? JSONSerialization.data(withJSONObject: body) else { return }
+        req.httpBody = bodyData
+        _ = try? await URLSession.shared.data(for: req)  // fire-and-forget
+    }
+
+    // MARK: - Unload model (LM Studio "Eject" equivalent)
+    //
+    // Sending keep_alive: 0 to /api/chat with an empty messages array tells
+    // Ollama to immediately evict the model from GPU/Metal memory.
+    // Works on Ollama v0.1.24+.
+
+    public func unloadModel(_ model: String) async -> Bool {
+        guard let url = URL(string: "\(baseURL)/api/chat") else { return false }
+        var req = URLRequest(url: url)
+        req.httpMethod = "POST"
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.timeoutInterval = 10
+
+        let body: [String: Any] = [
+            "model":      model,
+            "messages":   [],
+            "stream":     false,
+            "keep_alive": 0   // 0 = unload immediately
+        ]
+        guard let bodyData = try? JSONSerialization.data(withJSONObject: body) else { return false }
+        req.httpBody = bodyData
+
+        do {
+            let (_, resp) = try await URLSession.shared.data(for: req)
+            let ok = (resp as? HTTPURLResponse)?.statusCode == 200
+            if ok { print("[OllamaClient] ✅ Unloaded model: \(model)") }
+            return ok
+        } catch {
+            print("[OllamaClient] ❌ Failed to unload \(model): \(error)")
+            return false
+        }
+    }
+
+    // MARK: - Running models (/api/ps)
+    //
+    // Returns models currently loaded in VRAM with their memory usage.
+
+    public struct RunningModel: Sendable {
+        public let name: String
+        public let sizeBytes: Int64   // VRAM usage in bytes
+        public var sizeGB: Double { Double(sizeBytes) / 1_073_741_824 }
+    }
+
+    public func loadedModels() async -> [RunningModel] {
+        guard let url = URL(string: "\(baseURL)/api/ps") else { return [] }
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let models = json["models"] as? [[String: Any]] else { return [] }
+            return models.compactMap { m -> RunningModel? in
+                guard let name = m["name"] as? String else { return nil }
+                let size = (m["size"] as? Int64) ?? Int64((m["size"] as? Int) ?? 0)
+                return RunningModel(name: name, sizeBytes: size)
+            }
+        } catch { return [] }
     }
 
     // MARK: - Model list
@@ -112,42 +205,102 @@ public actor OllamaClient {
     // MARK: - Core: streamChat()
     // openclaw の NDJSON ストリーム解析ロジックをそのまま Swift で再現。
     // done:true チャンクを受け取るまでトークンを結合。
+    //
+    // 既知の nil-response 原因と対策:
+    //   1. keep_alive が String "−1" → Ollama Go parser が拒否 → HTTP 400 → nil
+    //      Fix: Int -1 を送る（負数 = 永続ロード）
+    //   2. num_ctx が大きすぎる → HTTP 400/500 → nil
+    //      Fix: 失敗したら 8192 に下げてリトライ
+    //   3. HTTP 非200 を黙って捨てる → エラーが UI に届かない
+    //      Fix: エラーボディを読んで progressHandler に流す
 
     private func streamChat(
         model: String,
         messages: [[String: Any]],
         maxTokens: Int,
         temperature: Double,
-        onToken: (@Sendable (String) -> Void)? = nil
+        onToken: (@Sendable (String) -> Void)? = nil,
+        onError: (@Sendable (String) -> Void)? = nil
+    ) async -> String? {
+        // まず大きいコンテキストで試み、失敗したら小さくリトライ
+        let ctxSizes = [65536, 16384, 8192]
+        for (attempt, numCtx) in ctxSizes.enumerated() {
+            if let result = await streamChatAttempt(
+                model: model,
+                messages: messages,
+                maxTokens: maxTokens,
+                temperature: temperature,
+                numCtx: numCtx,
+                onToken: onToken,
+                onError: attempt < ctxSizes.count - 1 ? nil : onError  // エラーは最終試行時のみ上流へ
+            ) {
+                if attempt > 0 {
+                    print("[OllamaClient] Succeeded with reduced num_ctx=\(numCtx)")
+                }
+                return result
+            }
+            // 最後の試行が失敗したら nil を返す
+            if attempt == ctxSizes.count - 1 { return nil }
+            print("[OllamaClient] Retrying with smaller num_ctx=\(ctxSizes[attempt + 1])…")
+        }
+        return nil
+    }
+
+    private func streamChatAttempt(
+        model: String,
+        messages: [[String: Any]],
+        maxTokens: Int,
+        temperature: Double,
+        numCtx: Int,
+        onToken: (@Sendable (String) -> Void)? = nil,
+        onError: (@Sendable (String) -> Void)?
     ) async -> String? {
         guard let url = URL(string: "\(baseURL)/api/chat") else { return nil }
         var req = URLRequest(url: url)
         req.httpMethod = "POST"
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        req.timeoutInterval = 600   // 大きいファイルの生成に対応
+        // No timeout — large models / long contexts can generate for many minutes.
+        // noTimeoutSession already sets both intervals to ∞; this belt-and-suspenders
+        // value covers any URLRequest-level override.
+        req.timeoutInterval = .infinity
 
-        // openclaw: num_ctx=65536 (ollama のデフォルト 4096 は小さすぎる)
+        // keep_alive: -1 (Int) = 永続ロード。
+        // !! 文字列 "-1" は Go の duration parser が reject → HTTP 400 になる !!
         let body: [String: Any] = [
-            "model": model,
-            "messages": messages,
-            "stream": true,
+            "model":      model,
+            "messages":   messages,
+            "stream":     true,
+            "keep_alive": -1,          // Int -1 = stay loaded indefinitely (Ollama v0.1.24+)
             "options": [
-                "num_ctx": 65536,
-                "num_predict": max(maxTokens, 512),
-                "temperature": temperature,
-                "top_p": 0.9,
+                "num_ctx":       numCtx,
+                "num_predict":   max(maxTokens, 512),
+                "temperature":   temperature,
+                "top_p":         0.9,
                 "repeat_penalty": 1.05
             ]
         ]
-        guard let bodyData = try? JSONSerialization.data(withJSONObject: body) else { return nil }
+        guard let bodyData = try? JSONSerialization.data(withJSONObject: body) else {
+            print("[OllamaClient] ❌ Failed to serialize request body")
+            return nil
+        }
         req.httpBody = bodyData
 
         var accumulated      = ""
         var accumulatedThink = ""
 
         do {
-            let (stream, resp) = try await URLSession.shared.bytes(for: req)
-            guard (resp as? HTTPURLResponse)?.statusCode == 200 else { return nil }
+            let (stream, resp) = try await OllamaClient.noTimeoutSession.bytes(for: req)
+            let statusCode = (resp as? HTTPURLResponse)?.statusCode ?? -1
+
+            guard statusCode == 200 else {
+                // エラーボディを読んで上流へ渡す（UI に表示するため）
+                var errBody = ""
+                for try await line in stream.lines { errBody += line; if errBody.count > 500 { break } }
+                let errMsg = "[OllamaClient] HTTP \(statusCode) from /api/chat — model='\(model)' num_ctx=\(numCtx)\n  body: \(errBody.isEmpty ? "(empty)" : errBody)"
+                print(errMsg)
+                onError?(errMsg)
+                return nil
+            }
 
             // openclaw: parseNdjsonStream(reader) — 1行 = 1 JSONオブジェクト
             for try await line in stream.lines {
@@ -157,30 +310,40 @@ public actor OllamaClient {
                 else { continue }
 
                 if let message = json["message"] as? [String: Any] {
-                    // 通常コンテンツ
                     if let token = message["content"] as? String, !token.isEmpty {
                         accumulated += token
-                        onToken?(token)  // ← UI へリアルタイム配信
+                        onToken?(token)
                     }
-                    // 思考コンテンツ（Gemma-4 thinking）
                     if let think = message["thinking"] as? String, !think.isEmpty {
                         accumulatedThink += think
                     }
                 }
 
-                // openclaw: chunk.done → finalResponse
+                // Ollamaのエラーフィールド（ストリーム中に来ることがある）
+                if let ollamaErr = json["error"] as? String {
+                    let msg = "[OllamaClient] Stream error from Ollama: \(ollamaErr)"
+                    print(msg); onError?(msg)
+                    return nil
+                }
+
                 if json["done"] as? Bool == true { break }
             }
 
             let result = accumulated.trimmingCharacters(in: .whitespacesAndNewlines)
-            // 空なら thinking フォールバック（Gemma-4 thinking-only モード）
             if result.isEmpty && !accumulatedThink.isEmpty {
+                // Gemma-4 thinking-only mode フォールバック
                 return accumulatedThink.trimmingCharacters(in: .whitespacesAndNewlines)
             }
-            return result.isEmpty ? nil : result
+            if result.isEmpty {
+                let msg = "[OllamaClient] ⚠️ Empty response from model '\(model)' (num_ctx=\(numCtx), stream completed with no tokens)"
+                print(msg); onError?(msg)
+                return nil
+            }
+            return result
 
         } catch {
-            print("[OllamaClient] streamChat error: \(error)")
+            let msg = "[OllamaClient] ❌ Stream error: \(error.localizedDescription)"
+            print(msg); onError?(msg)
             return nil
         }
     }
@@ -202,15 +365,16 @@ public actor OllamaClient {
                 var req = URLRequest(url: url)
                 req.httpMethod = "POST"
                 req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                req.timeoutInterval = 600
+                req.timeoutInterval = .infinity
 
                 let ollamaMessages = messages.map { ["role": $0.role, "content": $0.content] }
                 let body: [String: Any] = [
-                    "model": model,
-                    "messages": ollamaMessages,
-                    "stream": true,
+                    "model":      model,
+                    "messages":   ollamaMessages,
+                    "stream":     true,
+                    "keep_alive": -1,      // Int -1 = stay loaded indefinitely
                     "options": [
-                        "num_ctx": 65536,
+                        "num_ctx":     32768,
                         "num_predict": max(maxTokens, 512),
                         "temperature": temperature
                     ]
@@ -221,7 +385,7 @@ public actor OllamaClient {
                 req.httpBody = bodyData
 
                 do {
-                    let (stream, _) = try await URLSession.shared.bytes(for: req)
+                    let (stream, _) = try await OllamaClient.noTimeoutSession.bytes(for: req)
                     for try await line in stream.lines {
                         guard !line.isEmpty,
                               let data = line.data(using: .utf8),

@@ -69,6 +69,8 @@ actor AgentLoop {
         var recentResponseHashes: [Int] = []
         /// Yield counter: consecutive turns where AI only called tools (Human Mode)
         var consecutiveToolOnlyTurns = 0
+        /// IDE Fix sandbox: consecutive blocked tool calls (loop circuit breaker)
+        var consecutiveBlockedCalls = 0
         /// Total chars in conversation (for OOM guard)
         var totalConversationChars = 0
 
@@ -171,17 +173,50 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
         } else {
             contextSection = ""
         }
+        // ── Capture live MCP tool snapshot + build profile system prompt ─────
+        // MCPEngine is @MainActor — hop over to grab the snapshot safely.
+        let profileSystemPrompt = await MainActor.run {
+            let liveMCPTools = MCPEngine.shared.connectedTools
+            return profile.systemPromptWith(mcpTools: liveMCPTools)
+        }
+
+        // ── Skill Library: boot index + retrieve relevant skills ─────────────
+        // Load disk index once (no-op if already loaded), then retrieve top-3
+        // skills that are semantically closest to the current instruction.
+        // Only large/giant models get the skill section; nano/small ignore it.
+        let skillSection: String
+        if profile.tier == .large || profile.tier == .giant {
+            await SkillLibrary.shared.loadIndex()
+            let skillCount = await SkillLibrary.shared.count
+            if skillCount > 0 {
+                let relevantSkills = await SkillLibrary.shared.search(query: instruction, topK: 3)
+                skillSection = SkillInjector.buildSection(skills: relevantSkills)
+                if !relevantSkills.isEmpty {
+                    await onProgress(.aiMessage(
+                        "🔧 [SkillLib] \(relevantSkills.count) relevant skill(s) injected: " +
+                        relevantSkills.map { $0.name }.joined(separator: ", ")
+                    ))
+                }
+            } else {
+                skillSection = SkillInjector.buildSection(skills: [])
+            }
+        } else {
+            skillSection = ""
+        }
+
         let systemPrompt = """
-        \(profile.systemPrompt)
+        \(profileSystemPrompt)
         \(loopRules)
         \(memorySection)
         \(archiveSection)
+        \(skillSection)
         \(selfEvoContext)
         \(isWorkspaceless ? "\nNOTE: No workspace is open. If the task requires a project, create one with [WORKSPACE:] and [MKDIR:]." : "")
         \(contextSection)
         """
 
         conversation.append((role: "system", content: systemPrompt))
+
 
         // ── Self-awareness task (first session only) ──────────────────────
         // モデルが自分の能力を把握するための初回タスク
@@ -256,13 +291,44 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
             // ── Parse tool calls ──────────────────────────────────────────
             let (tools, cleanText) = AgentToolParser.parse(from: rawResponse)
 
-            if !cleanText.isEmpty {
+            // ── aiMessage emission strategy ──────────────────────────────
+            // Ollama and MLX both use streaming (streamToken callbacks).
+            // The UI bubble is already fully populated by the time callModel
+            // returns. Emitting aiMessage(cleanText) AGAIN would cause the
+            // AppState handler to overwrite the streaming bubble with the
+            // parsed text — which appears as a duplicate on the first message.
+            //
+            // Rule: only emit aiMessage when the model does NOT stream tokens.
+            //       Streaming models (Ollama, MLX) skip this step — the
+            //       streaming bubble is already correct and complete.
+            //       Non-streaming models (fallback .ready) must emit it.
+            let isStreamingModel: Bool
+            switch modelStatus {
+            case .ollamaReady, .mlxReady: isStreamingModel = true
+            default:                      isStreamingModel = false
+            }
+
+            if !cleanText.isEmpty && !isStreamingModel {
+                // Non-streaming path: emit the full response as a chat bubble
                 await onProgress(.aiMessage(cleanText))
+            }
+            // For streaming models: aiMessage is intentionally skipped here.
+            // The streaming bubble (populated by streamToken) remains as-is.
+            // Tool-call annotations (if any) are shown via toolCall/toolResult.
+
+            // ── Auto-register Artifact from AI response ────────────────────
+            // Detects <artifact> tags or large code blocks and publishes them
+            // to the ArtifactPanelView immediately after the response completes.
+            if let artifact = ArtifactParser.extract(from: rawResponse) {
+                await MainActor.run {
+                    AppState.shared?.ingestArtifact(artifact)
+                }
             }
 
             // If no tools → conversational answer → done
             if tools.isEmpty {
                 consecutiveToolOnlyTurns = 0
+                // Pass cleanText for the .done handler's duplicate-guard check
                 await onProgress(.done(message: cleanText, workspace: currentWorkspace))
                 return
             }
@@ -276,6 +342,59 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
                 await onProgress(.toolCall(call))
 
                 var result: String
+
+                // ── IDE Fix sandbox ────────────────────────────────────
+                // Allowed: readFile, gitCommit, applyPatch, buildIDE, restartIDE,
+                //          jcross*, askHuman, done.
+                // Blocked: listDir, runCommand, browse, search, setWorkspace…
+                // Strategy: on FIRST block in a turn → break loop, inject
+                //   correction DIRECTLY into conversation so the model sees it.
+                //   consecutiveBlockedCalls counts turns (not tools within a turn).
+                //   After 3 blocked turns → hard-stop.
+                if selfFixMode && isForbiddenInSelfFixMode(tool) {
+                    consecutiveBlockedCalls += 1
+
+                    let blockedUI = AgentToolCall(tool: tool, result: "🚫 BLOCKED (IDE Fix Sandbox)", succeeded: false)
+                    await onProgress(.toolResult(blockedUI))
+
+                    if consecutiveBlockedCalls >= 3 {
+                        // Hard-stop: model is definitively stuck
+                        await onProgress(.aiMessage("""
+                        ⚠️ **IDE Fix モード: ループを検知して停止しました**
+
+                        禁止ツールを\(consecutiveBlockedCalls)回連続で呼び出したため安全に停止しました。
+                        [READ: Sources/…/File.swift] でファイルを読み、[APPLY_PATCH] でパッチを当ててください。
+                        """))
+                        await onProgress(.done(message: "IDE Fix sandbox ループ防止", workspace: currentWorkspace))
+                        return
+                    }
+                    // Inject correction DIRECTLY into conversation so the model
+                    // sees it as context in the very next turn — not just a tool result.
+                    let correction = """
+                    [IDE Fix Sandbox] 禁止ツールを呼び出しました (通算 \(consecutiveBlockedCalls)回): \(call.displayLabel)
+
+                    IDE Fix モードで許可されているツール:
+                      [READ: Sources/.../File.swift]       ← ファイル内容を読む
+                      [GIT_COMMIT: msg]                    ← 変更前にバックアップ
+                      [APPLY_PATCH: Sources/.../File.swift] ← 修正を適用
+                      [BUILD_IDE]                          ← ビルド検証
+                      [DONE: msg]                          ← 完了
+
+                    [LIST_DIR], [RUN], [SEARCH], [BROWSE], [WORKSPACE] は使用不可です。
+                    今すぐ [READ: 対象ファイルパス] で始めてください。
+                    """
+
+                    conversation.append((role: "assistant", content: rawResponse))
+                    conversation.append((role: "user", content: correction))
+                    toolResults.append("\(call.displayLabel) → BLOCKED #\(consecutiveBlockedCalls)")
+
+                    // Break the for-tool loop: skip remaining tools in this batch.
+                    // The while loop continues, calling the model with the correction injected.
+                    isDone = false
+                    break
+                } else {
+                    consecutiveBlockedCalls = 0  // Any allowed tool resets the counter
+                }
 
                 if case .setWorkspace(let path) = tool {
                     let wsURL = URL(fileURLWithPath: path)
@@ -319,6 +438,30 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
             conversation.append((role: "assistant", content: rawResponse))
             conversation.append((role: "user",      content: toolResultSummary + "\n\nContinue if there's more to do, or [DONE] if complete."))
             totalConversationChars += rawResponse.count + toolResultSummary.count
+        }
+    }
+
+    // MARK: - IDE Fix sandbox helpers
+
+    /// Returns true for tools that are BLOCKED when selfFixMode is active.
+    /// Allow-list design: only the tools needed for a patch workflow are permitted.
+    /// - READ is required to understand current file state before patching.
+    /// - GIT_COMMIT creates a safety checkpoint before applying changes.
+    /// - Everything else (listDir, runCommand, browse, search…) is blocked.
+    private func isForbiddenInSelfFixMode(_ tool: AgentTool) -> Bool {
+        switch tool {
+        // Self-Fix pipeline — always allowed
+        case .applyPatch, .buildIDE, .restartIDE:           return false
+        // File reading: agent must read before it can write a correct patch
+        case .readFile:                                      return false
+        // Git commit: safety backup before destructive patch
+        case .gitCommit:                                     return false
+        // Memory / human-loop / completion
+        case .jcrossQuery, .jcrossStore, .askHuman, .done:  return false
+        // Skill library: safe — only writes to ~/.verantyx/skills/
+        case .forgeSkill, .useSkill:                        return false
+        // Everything else: blocked
+        default: return true
         }
     }
 
@@ -405,8 +548,38 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
                 onThinking: { _ in }  // thinking は今は捨てる（将来 .thinkToken 追加）
             )
 
+        case .mlxReady:
+            // ── MLX direct in-process inference ────────────────────────────
+            // Convert conversation array → a single prompt string, then stream
+            // tokens via MLXRunner. Streaming deltas go to UI via onProgress,
+            // but the RETURN value uses the authoritative onFinish payload
+            // (= result.output from MLXLMCommon.generate) to guarantee the
+            // rawResponse is never garbled by delta accumulation issues.
+            let prompt = buildConversationPrompt(conversation)
+            final class StringBox: @unchecked Sendable { var value = "" }
+            let authoritativeOutput = StringBox()
+            do {
+                try await MLXRunner.shared.streamGenerateTokens(
+                    prompt: prompt,
+                    maxTokens: profile.tier.maxTokens,
+                    temperature: profile.tier.temperature,
+                    onToken: { @Sendable piece in
+                        // Streaming deltas → UI display only
+                        Task { await onProgress(.streamToken(piece)) }
+                    },
+                    onFinish: { @Sendable fullText in
+                        // Authoritative output from MLXLMCommon.generate
+                        authoritativeOutput.value = fullText
+                    }
+                )
+            } catch {
+                await onProgress(.error("MLX error: \(error.localizedDescription)"))
+                return nil
+            }
+            return authoritativeOutput.value.isEmpty ? nil : authoritativeOutput.value
+
         case .ready:
-            return "MLX (local) is active — switch to Ollama or Anthropic for agent mode."
+            return "MLX (local) is active — use the MLX tab in the model picker."
 
         default:
             return nil
@@ -483,11 +656,11 @@ enum ModelTier: String, Sendable {
 
     var maxTokens: Int {
         switch self {
-        case .nano:   return 512
-        case .small:  return 1024
-        case .mid:    return 2048
-        case .large:  return 3072
-        case .giant:  return 4096
+        case .nano:   return 1024
+        case .small:  return 2048
+        case .mid:    return 4096
+        case .large:  return 8192   // gemma4 27B — raised from 3072 to avoid mid-sentence cutoff
+        case .giant:  return 12288
         }
     }
 
@@ -670,8 +843,22 @@ struct ModelProfile: Sendable {
         """ }
 
     private var largePrompt: String {
-        // Full ReAct prompt — same as AgentToolParser.toolInstructions
-        AgentToolParser.toolInstructions
+        // Returns the base prompt without MCP section.
+        // For runtime injection use systemPromptWith(mcpTools:) from AgentLoop.
+        AgentToolParser.buildPrompt(mcpTools: [])
+    }
+
+    /// Returns the system prompt with live MCP tools injected.
+    /// Call this from @MainActor context (e.g., AgentLoop.run).
+    @MainActor
+    func systemPromptWith(mcpTools: [MCPTool]) -> String {
+        switch tier {
+        case .nano:  return nanoPrompt
+        case .small: return smallPrompt
+        case .mid:   return midPrompt
+        case .large, .giant:
+            return AgentToolParser.buildPrompt(mcpTools: mcpTools)
+        }
     }
 }
 
