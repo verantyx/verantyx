@@ -25,43 +25,42 @@ final class VXTimeline {
     static let compressionAt   = 50  // このターン数で 1 ノードに圧縮
 
     // ── セッション別ターンカウンター（AgentLoop が複数回呼ばれても連番維持）──
-    // キー: sessionId, 値: そのセッションで最後に記録したターン番号
+    // NSLock の代わりにシリアルキューを使用（Singleton 初期化クラッシュ回避）
     private var sessionTurnCounters: [String: Int] = [:]
-    private let countersLock = NSLock()
+    private let counterQueue = DispatchQueue(label: "vx.timeline.counter")
 
     /// 次のターン番号を採番する（スレッドセーフ）
     /// near/ / mid/ / deep/ を走査して既存最大値を初期化ベースにする
     func nextTurnNumber(for sessionId: String) -> Int {
-        countersLock.lock()
-        defer { countersLock.unlock() }
+        counterQueue.sync {
+            if let current = sessionTurnCounters[sessionId] {
+                let next = current + 1
+                sessionTurnCounters[sessionId] = next
+                return next
+            }
 
-        if let current = sessionTurnCounters[sessionId] {
-            let next = current + 1
+            // 初回: ディスク上の既存 TURN ファイルから最大ターン番号を探す
+            let memRoot = URL(fileURLWithPath: NSHomeDirectory())
+                .appendingPathComponent(".openclaw/memory", isDirectory: true)
+            let zones = ["near", "mid", "deep"]
+            var maxTurn = 0
+            for zone in zones {
+                let dir = memRoot.appendingPathComponent(zone)
+                let files = (try? FileManager.default.contentsOfDirectory(
+                    at: dir, includingPropertiesForKeys: nil)) ?? []
+                for file in files where file.lastPathComponent.hasPrefix("TURN_\(sessionId)_") {
+                    // TURN_{sessionId}_{turnNum:04d}_{ts}.jcross
+                    let parts = file.deletingPathExtension().lastPathComponent.components(separatedBy: "_")
+                    // parts[0]=TURN, parts[1]=sessionId(8chars), parts[2]=turnNum, parts[3]=ts
+                    if parts.count >= 4, let n = Int(parts[2]) {
+                        maxTurn = max(maxTurn, n)
+                    }
+                }
+            }
+            let next = maxTurn + 1
             sessionTurnCounters[sessionId] = next
             return next
         }
-
-        // 初回: ディスク上の既存 TURN ファイルから最大ターン番号を探す
-        let memRoot = URL(fileURLWithPath: NSHomeDirectory())
-            .appendingPathComponent(".openclaw/memory", isDirectory: true)
-        let zones = ["near", "mid", "deep"]
-        var maxTurn = 0
-        for zone in zones {
-            let dir = memRoot.appendingPathComponent(zone)
-            let files = (try? FileManager.default.contentsOfDirectory(
-                at: dir, includingPropertiesForKeys: nil)) ?? []
-            for file in files where file.lastPathComponent.hasPrefix("TURN_\(sessionId)_") {
-                // TURN_{sessionId}_{turnNum:04d}_{ts}.jcross
-                let parts = file.deletingPathExtension().lastPathComponent.components(separatedBy: "_")
-                // parts[0]=TURN, parts[1]=sessionId, parts[2]=turnNum, parts[3]=ts
-                if parts.count >= 4, let n = Int(parts[2]) {
-                    maxTurn = max(maxTurn, n)
-                }
-            }
-        }
-        let next = maxTurn + 1
-        sessionTurnCounters[sessionId] = next
-        return next
     }
 
     // ── ゾーンディレクトリ ─────────────────────────────────────────────────
