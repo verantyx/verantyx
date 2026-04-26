@@ -10,7 +10,7 @@ export PATH="$PATH:/opt/homebrew/bin:$HOME/.cargo/bin"
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-BROWSER_DIR="$REPO_ROOT/verantyx-browser"
+BROWSER_DIR="$SCRIPT_DIR/verantyx-browser"
 RESOURCES_DIR="$SCRIPT_DIR/Resources"
 
 CONFIGURATION="Debug"
