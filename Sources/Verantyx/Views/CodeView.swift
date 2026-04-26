@@ -63,6 +63,7 @@ struct CodeView: View {
 
 struct FilePaneView: View {
     @EnvironmentObject var app: AppState
+    @ObservedObject var gatekeeper = GatekeeperModeState.shared
     @State private var viewMode: ViewMode = .code
 
     enum ViewMode: String, CaseIterable {
@@ -82,6 +83,20 @@ struct FilePaneView: View {
                         .font(.system(.caption, design: .monospaced))
                         .fontWeight(.medium)
                     Spacer()
+
+                    if gatekeeper.isEnabled {
+                        Picker("Gatekeeper View", selection: $app.showGatekeeperRawCode) {
+                            Text("JCross IR").tag(false)
+                            Text("Source File").tag(true)
+                        }
+                        .pickerStyle(.segmented)
+                        .labelsHidden()
+                        .frame(width: 150)
+                        
+                        Divider()
+                            .frame(height: 16)
+                            .padding(.horizontal, 4)
+                    }
 
                     Picker("", selection: $viewMode) {
                         ForEach(ViewMode.allCases, id: \.self) { m in
@@ -110,9 +125,12 @@ struct FilePaneView: View {
                 // Content
                 switch viewMode {
                 case .code:
+                    let lang: SyntaxHighlighter.Language = (gatekeeper.isEnabled && !app.showGatekeeperRawCode)
+                        ? .jcross
+                        : SyntaxHighlighter.language(for: file)
                     CodeView(
                         content: app.selectedFileContent,
-                        language: SyntaxHighlighter.language(for: file)
+                        language: lang
                     )
                 case .raw:
                     ScrollView {

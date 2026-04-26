@@ -49,6 +49,7 @@ actor AgentLoop {
         isAIPriority: Bool = false,   // ←← drives turn policy
         memoryLayer: JCrossLayer = .l2,   // ➤ cross-session injection depth
         isFirstSession: Bool = false,         // ➤ inject self-awareness task on first turn
+        chatSessionId: String? = nil,         // ➤ セッション間で維持するVXTimeline ID
         onProgress: @escaping @Sendable (LoopEvent) async -> Void
     ) async {
 
@@ -73,6 +74,19 @@ actor AgentLoop {
         var consecutiveBlockedCalls = 0
         /// Total chars in conversation (for OOM guard)
         var totalConversationChars = 0
+
+        // ── VX-Loop (Nano Cortex Protocol) state ──────────────────────────
+        /// セッションID: 外部から渡されたものを優先。なければ新規生成
+        /// （外部=AppState.vxChatSessionId で会話全体を通じて同一IDを維持）
+        let vxSessionId = chatSessionId ?? String(UUID().uuidString.prefix(8))
+        /// VX-Loop が有効か (nano/small ティアで自動有効化)
+        let vxLoopEnabled = profile.tier == .nano || profile.tier == .small
+        /// SearchGate の最新実行結果（次ターンの注入用）
+        var vxLastSearchResult = ""
+        /// 混乱検知リトライ済みフラグ（1ターンにつき最大1回のみリトライ）
+        var didConfusionRetry = false
+        /// ReAct リトライコンテキスト（検索失敗の自律回復制御）
+        var reactContext = ReActRetryContext()
 
         // ── Build initial system prompt ───────────────────────────────────
         let memorySection = await cortex?.buildMemoryPrompt(for: instruction) ?? ""
@@ -134,11 +148,11 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
             selfEvoContext = ""
         }
 
-        // ── Archived session memory (JCross) ─────────────────────────────
-        let archiveSection = SessionMemoryArchiver.shared.buildCrossSessionInjection(
-            topK: 5,
-            layer: memoryLayer
-        )
+        // ── Archived session memory (JCross) — built per-turn inside loop ──
+        // NOTE: This is intentionally NOT built here at session start.
+        // It is rebuilt every turn INSIDE the loop so that CONV_*.jcross files
+        // written by compressConversation() are immediately visible on the next turn.
+        // See archiveSection rebuild inside the while loop below.
 
         // ── Mode-specific loop rules (injected into system prompt) ────────
         let loopRules: String
@@ -180,10 +194,10 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
             return profile.systemPromptWith(mcpTools: liveMCPTools)
         }
 
-        // ── Skill Library: boot index + retrieve relevant skills ─────────────
-        // Load disk index once (no-op if already loaded), then retrieve top-3
-        // skills that are semantically closest to the current instruction.
-        // Only large/giant models get the skill section; nano/small ignore it.
+        // ── Skill Library: 注入方式別 ─────────────────────────────────────────
+        // large/giant : 毎回システムプロンプトに静的注入（全スキル情報を多いトークンで歪えない）
+        // nano/small  : オンデマンド—詳細はループ内でユーザー質問をトリガーに検索しconversationに注入
+        //              (節約したトークンを会話記憶に充当)
         let skillSection: String
         if profile.tier == .large || profile.tier == .giant {
             await SkillLibrary.shared.loadIndex()
@@ -201,16 +215,25 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
                 skillSection = SkillInjector.buildSection(skills: [])
             }
         } else {
-            skillSection = ""
+            // nano/small: システムプロンプトには注入しない。
+            // ループ内でユーザーの質問に当たるスキルが見つかった場合のみ conversation に挿入する。
+            // 起動時に index をロードだけしておく（検索はループ内）。
+            await SkillLibrary.shared.loadIndex()
+            skillSection = ""  // システムプロンプトには入れない
         }
+
+        // ── SearchGate prompt (nano/small のみ追加) ───────────────────────
+        let searchGatePrompt = vxLoopEnabled
+            ? SearchGate.buildSearchGatePrompt(tier: profile.tier)
+            : ""
 
         let systemPrompt = """
         \(profileSystemPrompt)
         \(loopRules)
         \(memorySection)
-        \(archiveSection)
         \(skillSection)
         \(selfEvoContext)
+        \(searchGatePrompt)
         \(isWorkspaceless ? "\nNOTE: No workspace is open. If the task requires a project, create one with [WORKSPACE:] and [MKDIR:]." : "")
         \(contextSection)
         """
@@ -236,6 +259,131 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
 
         await onProgress(.start(instruction: instruction))
 
+        // ── Pre-flight: 意図分類 → 事前マルチクエリ検索 → グラウンディング注入 ────
+        //
+        // 【設計原則】
+        //   事後型 SearchGate: モデルが応答してから検索 → ハルシネーション混入リスク
+        //   事前型 Pre-flight: モデルが答える前に事実を注入 → グラウンディング強制
+        //
+        // 処理フロー:
+        //   1. SearchIntentClassifier で意図分類（LLM不要、<5ms）
+        //   2. PreflightSearchEngine で最大3クエリ並列実行（DuckDuckGo Lite）
+        //   3. PreflightResult.systemBlock を system prompt に注入
+        //   4. freshnessCritical + large/giant は Hard Grounding user msg も追加
+        //   5. モデルは注入された事実のみを使って回答
+        //
+        // 有効条件: 全tierで実行（freshnessCritical は large/giant でも必須）
+        // ※ 旧設計: vxLoopEnabled (nano/small) のみ → 大モデルがハルシネーション
+        do {
+            let intent = await SearchIntentClassifier.shared.classify(userPrompt: instruction)
+            if intent.needsExternalSearch {
+                await onProgress(.aiMessage("🔎 [Pre-flight] \(intent.displayLabel) — \(intent.queries.count)クエリを事前実行中..."))
+
+                let preflight = await PreflightSearchEngine.shared.fetch(intent: intent, tier: profile.tier)
+
+                if preflight.successCount > 0 {
+                    await onProgress(.aiMessage("✅ [Pre-flight] \(preflight.progressLabel)"))
+                } else {
+                    await onProgress(.aiMessage("⚠️ [Pre-flight] 検索失敗 — フェイルセーフ指示を注入します"))
+                }
+
+                // ── system prompt にグラウンディングブロックを追加 ──────────────
+                // （SearchGate の [VX SEARCH RESULT] と区別するために専用タグを使用）
+                if var sysMsg = conversation.first, sysMsg.role == "system" {
+
+                    // Nano/Small: tier-adaptive フォーマット（平文 → 混乱しにくい）
+                    // Large/Giant: JCross フル構造 + system prompt 先頭にも HARD LOCK を追加
+                    let blockToInject: String
+                    if profile.tier == .large || profile.tier == .giant {
+                        // 大モデル向け: ハードロック指示をシステムプロンプトの最初に追記
+                        let hardLockHeader = """
+                        ⛔ STRICT GROUNDING MODE ACTIVE ⛔
+                        The [PRE-FETCH RESULTS] block below contains REAL-TIME information fetched \
+                        just now. You MUST base your answer EXCLUSIVELY on this data.
+                        FORBIDDEN: Using your training/parametric knowledge to supplement, extend, \
+                        or contradict the fetched results. If the fetched data is insufficient, \
+                        say so explicitly — do NOT fill gaps from memory.
+                        """
+                        blockToInject = hardLockHeader + "\n\n" + preflight.systemBlock
+                    } else {
+                        blockToInject = preflight.systemBlock
+                    }
+
+                    sysMsg.content += "\n\n" + blockToInject
+                    conversation[0] = sysMsg
+                    totalConversationChars += blockToInject.count
+                }
+
+                // ── Large/Giant: 会話レベルの Hard Grounding user message ────────
+                // system prompt だけでは知識ブリードが止まらないため、
+                // user→assistant のペアとして会話履歴に埋め込む（より強い拘束力）。
+                // これはモデルにとって「すでに同意した前提」として機能する。
+                if (profile.tier == .large || profile.tier == .giant) && intent.freshnessCritical {
+                    let resultSummary: String
+                    if preflight.successCount > 0 {
+                        let snippets = preflight.results
+                            .filter { $0.succeeded && !$0.snippet.isEmpty }
+                            .prefix(3)
+                            .map { "• [\($0.query.prefix(30))]: \(String($0.snippet.prefix(200)))" }
+                            .joined(separator: "\n")
+                        resultSummary = snippets.isEmpty ? "（検索結果あり：詳細は [L3 原文] を参照）" : snippets
+                    } else {
+                        resultSummary = "（検索に失敗しました）"
+                    }
+
+                    let hardGroundingMsg = """
+                    [SYSTEM_GROUNDING_CHECKPOINT]
+                    I have just executed a real-time search. The results are:
+
+                    \(resultSummary)
+
+                    INSTRUCTION: Answer the user's question using ONLY the above real-time data \
+                    and the [L3 原文] block in your system prompt. \
+                    Do NOT use your parametric memory for factual claims about current events.
+                    [/SYSTEM_GROUNDING_CHECKPOINT]
+                    """
+                    // user→assistant ペアで挿入（conversation 末尾の user msg の直前）
+                    let insertIdx = max(1, conversation.count - 1)
+                    conversation.insert((role: "user",      content: hardGroundingMsg), at: insertIdx)
+                    conversation.insert((role: "assistant", content: "了解です。私は今取得した検索結果のみを根拠として回答します。学習データによる補完は行いません。"), at: insertIdx + 1)
+                    totalConversationChars += hardGroundingMsg.count
+
+                    await onProgress(.aiMessage("🔒 [Hard Grounding] 大規模モデル向け強制グラウンディングを注入しました"))
+                }
+
+                // ── near/ に保存して次セッションで活用 ──────────────────────────
+                let nearDir = URL(fileURLWithPath: NSHomeDirectory())
+                    .appendingPathComponent(".openclaw/memory/near", isDirectory: true)
+                try? FileManager.default.createDirectory(at: nearDir, withIntermediateDirectories: true)
+                let ts       = Int(Date().timeIntervalSince1970)
+                let fileName = "PREFLIGHT_\(vxSessionId)_\(ts).jcross"
+                let tsISO    = ISO8601DateFormatter().string(from: Date())
+                let nodeBody = """
+                ;;; JCross Memory Node — PREFLIGHT
+                ;;; Session: Pre-flight search result / \(vxSessionId)
+                ;;; Created: \(tsISO)
+
+                [L1_SUMMARY]
+                [Pre-flight] \(intent.displayLabel) — \(preflight.successCount)/\(preflight.results.count) 成功
+                [/L1_SUMMARY]
+
+                [L2_FACTS]
+                OP.FACT("intent_type", "\(String(describing: intent.intentType))")
+                OP.FACT("queries", "\(intent.queries.joined(separator: " | "))")
+                OP.FACT("success_count", "\(preflight.successCount)")
+                OP.STATE("node_type", "PREFLIGHT_RESULT")
+                [/L2_FACTS]
+
+                [L3_VERBATIM]
+                \(preflight.systemBlock)
+                [/L3_VERBATIM]
+                """
+                let nodeURL = nearDir.appendingPathComponent(fileName)
+                try? nodeBody.write(to: nodeURL, atomically: true, encoding: .utf8)
+            }
+        }
+
+
         // ── Agent loop — no hard turn cap ─────────────────────────────────
         while true {
             turn += 1
@@ -250,10 +398,168 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
                 )
                 totalConversationChars = conversation.reduce(0) { $0 + $1.content.count }
                 await onProgress(.aiMessage("🧠 [Memory] 会話履歴を圧縮してコンテキストをオフロードしました"))
+
+                // ── 圧縮直後: CONV_*.jcross が front/ に書かれた →即座に再注入 ──
+                // 双子ストア切り替え: nano tier は nano/、それ以外は full/ を参照
+                let isNanoTier = (profile.tier == .nano)
+                let freshZoneSection = SessionMemoryArchiver.shared
+                    .buildZonePriorityInjection(layer: memoryLayer, useNanoStore: isNanoTier)
+                if !freshZoneSection.isEmpty,
+                   var sysMsg = conversation.first, sysMsg.role == "system" {
+                    let marker = isNanoTier ? "[記憶:" : "[ZONE MEMORY"
+                    if let range = sysMsg.content.range(of: marker) {
+                        sysMsg.content = String(sysMsg.content[..<range.lowerBound]) + freshZoneSection
+                    } else {
+                        sysMsg.content += "\n" + freshZoneSection
+                    }
+                    conversation[0] = sysMsg
+                }
+            }
+
+            // ── 毎ターン: Zone Priority Injection (front > near > mid) ─────
+            // 双子ストア切り替え:
+            //   nano tier  → nano/ （漢字トポロジーL1のみ、~280文字）
+            //   それ以外   → full/（L1-L3フルスペック）
+            let useNanoStore = (profile.tier == .nano)
+            let zoneSection = SessionMemoryArchiver.shared
+                .buildZonePriorityInjection(layer: memoryLayer, useNanoStore: useNanoStore)
+
+            // 初回ターンのみ system prompt に追記（以降は圧縮パスで更新）
+            let zoneMarker = useNanoStore ? "[記憶:" : "[ZONE MEMORY"
+            if turn == 1, !zoneSection.isEmpty,
+               var sysMsg = conversation.first, sysMsg.role == "system",
+               !sysMsg.content.contains(zoneMarker) {
+                sysMsg.content += "\n" + zoneSection
+                conversation[0] = sysMsg
+            }
+
+
+            // ── VX-Loop: VXTimeline 注入 (nano/small、クロスセッション時のみ) ─────
+            //
+            // 【設計原則】
+            //   同セッション内: conversation 配列が全履歴を保持 → 注入不要・むしろ有害
+            //   (毎ターン recap を挿入すると nano の 2048 トークン制限で元の会話が押し出される)
+            //
+            //   注入すべき2ケース:
+            //   1. turn==1 かつ near/ に既存 TURN ファイルあり = クロスセッション開始
+            //      → 前のセッションの記憶を conversation の先頭近くに注入
+            //   2. compressConversation() 実行後
+            //      → 圧縮で失われたコンテキストを補完（上の OOM guard 内で処理済み）
+            if vxLoopEnabled && turn == 1 {
+                // クロスセッション: 前セッションの記憶がある場合のみ注入
+                let priorTurns = VXTimeline.shared.buildTimelineAsMessages(
+                    sessionId: vxSessionId,
+                    topK: VXTimeline.verbatimWindow
+                )
+                if !priorTurns.isEmpty {
+                    // system prompt の直後（index=1）に挿入して優先度を確保
+                    let recapText = "[前セッションの記録]\n" + priorTurns.joined(separator: "\n---\n") + "\n[/前セッションの記録]"
+                    conversation.insert((role: "user",      content: recapText),                      at: 1)
+                    conversation.insert((role: "assistant", content: "前セッションの記録を確認しました。"), at: 2)
+                    await onProgress(.aiMessage("🕐 [VX-Loop] 前セッション記憶を復元 (session: \(vxSessionId), \(priorTurns.count)ターン)"))
+                }
+                // SearchGate 前回結果を system prompt に注入（毎ターン、既存タグを置換）
+                // これにより SearchGate web 結果がツールループ中の turn 2+ にも届く
+                if !vxLastSearchResult.isEmpty,
+                   var sysMsg = conversation.first, sysMsg.role == "system" {
+                    let marker    = "[VX SEARCH RESULT]"
+                    let endMarker = "[/VX SEARCH RESULT]"
+                    let block = "\(marker)\n\(vxLastSearchResult)\n\(endMarker)"
+                    if let start = sysMsg.content.range(of: marker),
+                       let end   = sysMsg.content.range(of: endMarker) {
+                        // 既存ブロックを置換（同じ検索結果の重複追加を防止）
+                        sysMsg.content = String(sysMsg.content[..<start.lowerBound])
+                            + block
+                            + String(sysMsg.content[end.upperBound...])
+                    } else {
+                        sysMsg.content += "\n" + block
+                    }
+                    conversation[0] = sysMsg
+                }
+            }
+
+            // ── Semantic Memory Search (RAG) — 毎ターン最新クエリで再検索 ──
+            // Zone Injection = 「最近の記憶」の静的注入
+            // Semantic Search = 「このターンの質問」に関連する記憶を動的補完
+            //
+            // クエリ: turn 1 は instruction、以降は最新ユーザーメッセージ
+            // [MEMORY SEARCH] ブロックは毎ターン置換（スキルの質問が変わっても追従）
+            let searchQuery: String
+            if let lastUser = conversation.last(where: { $0.role == "user" }) {
+                searchQuery = String(lastUser.content.prefix(200))
+            } else {
+                searchQuery = instruction
+            }
+            let searchBudget: Int
+            switch profile.tier {
+            case .nano:          searchBudget = 200
+            case .small:         searchBudget = 400
+            case .mid:           searchBudget = 600
+            case .large, .giant: searchBudget = 800
+            }
+            let searchLayer: JCrossLayer = profile.tier == .nano ? .l1 : memoryLayer
+            let searchResult = SessionMemoryArchiver.shared.semanticSearch(
+                query: searchQuery,
+                topK: profile.tier == .nano ? 2 : 3,
+                layer: searchLayer,
+                budget: searchBudget
+            )
+            if var sysMsg = conversation.first, sysMsg.role == "system" {
+                let marker = "[MEMORY SEARCH"
+                let endMarker = "[/MEMORY SEARCH]"
+                if let start = sysMsg.content.range(of: marker),
+                   let end   = sysMsg.content.range(of: endMarker) {
+                    // 既存ブロックを置換
+                    let after = sysMsg.content[end.upperBound...]
+                    sysMsg.content = String(sysMsg.content[..<start.lowerBound])
+                        + (searchResult.isEmpty ? "" : searchResult)
+                        + after
+                } else if !searchResult.isEmpty {
+                    sysMsg.content += "\n" + searchResult
+                }
+                conversation[0] = sysMsg
+                if !searchResult.isEmpty {
+                    let hitLine = searchResult.components(separatedBy: "\n")
+                        .first(where: { $0.contains("hit") }) ?? ""
+                    await onProgress(.aiMessage("🔍 [MemSearch] \(hitLine)"))
+                }
+            }
+
+            // ── nano/small: オンデマンドスキル注入 ───────────────────────────────
+            // スキル情報はシステムプロンプトには入れず、ユーザーの質問と意味的に近い
+            // スキルが見つかった場合のみ conversation に直接挿入する。
+            // 大モデルの静的注入と同等の情報をトークン節約しながら提供する。
+            if vxLoopEnabled {
+                let skillCount = await SkillLibrary.shared.count
+                if skillCount > 0 {
+                    let relevantSkills = await SkillLibrary.shared.search(query: searchQuery, topK: 2)
+                    // score > 0.6 のスキルのみ注入（弱い関連は無視してノイズ減）
+                    let strongSkills = relevantSkills  // SkillLibrary が既にスコアでソート済み
+                    if !strongSkills.isEmpty {
+                        let skillText = SkillInjector.buildSection(skills: strongSkills)
+                        if !skillText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                            let lastIdx = conversation.count - 1
+                            if lastIdx > 0 {
+                                conversation.insert(
+                                    (role: "user", content: "[スキル情報]\n\(skillText)\n[/スキル情報]"),
+                                    at: lastIdx
+                                )
+                                conversation.insert(
+                                    (role: "assistant", content: "スキル情報を確認しました。"),
+                                    at: lastIdx + 1
+                                )
+                                await onProgress(.aiMessage(
+                                    "🔧 [SkillLib] \(strongSkills.count) skill(s) on-demand: " +
+                                    strongSkills.map { $0.name }.joined(separator: ", ")
+                                ))
+                            }
+                        }
+                    }
+                }
             }
 
             // ── Call LLM (streaming) ──────────────────────────────────────
-            guard let rawResponse = await callModel(
+            guard var rawResponse = await callModel(
                 conversation: conversation,
                 modelStatus: modelStatus,
                 activeModel: activeModel,
@@ -262,6 +568,133 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
             ) else {
                 await onProgress(.error("Model returned nil response"))
                 return
+            }
+
+            // ── JCross IR 検証パイプライン (nano/small のみ) ────────────────
+            // 「生成と検証の分離」アーキテクチャ:
+            //   1. モデルが [想:]→[確:]→[出:] の IR 形式で応答した場合
+            //   2. [確:X] の主張を conversation 履歴で決定論的に照合
+            //   3. verified   → [出:X] を最終回答として採用 (ユーザーには IR を隠す)
+            //   4. unverified → メモリ補完 → 再生成 (ConfusionDetector と同フロー)
+            //   5. 通常の自然言語応答 → このブロックはスキップ
+            var irWasVerified = false
+            if vxLoopEnabled && JCrossIRParser.containsIR(rawResponse) {
+                let irNodes = JCrossIRParser.parse(rawResponse)
+                let verifyClaims = JCrossIRParser.extractVerifyClaims(from: irNodes)
+
+                await onProgress(.aiMessage(
+                    "🔬 [IR] ノード: \(irNodes.map(\.description).joined(separator: "→"))"
+                ))
+
+                if !verifyClaims.isEmpty {
+                    // 決定論的照合
+                    let verifyResults = await IRVerificationEngine.shared.verify(
+                        claims: verifyClaims,
+                        against: conversation,
+                        semanticSearcher: { query in
+                            SessionMemoryArchiver.shared.semanticSearch(
+                                query: query,
+                                topK: 3,
+                                layer: memoryLayer,
+                                budget: 300
+                            )
+                        }
+                    )
+
+                    let summary = await IRVerificationEngine.shared.debugSummary(verifyResults)
+                    await onProgress(.aiMessage("🔬 [IR検証] \(summary)"))
+
+                    if await IRVerificationEngine.shared.allVerified(verifyResults) {
+                        // ✅ 全照合成功 → [出:X] を最終回答として採用、IR ブロックを除去
+                        if let finalAnswer = JCrossIRParser.extractFinalOutput(from: irNodes) {
+                            rawResponse = finalAnswer
+                        } else {
+                            rawResponse = JCrossIRParser.stripIR(from: rawResponse)
+                        }
+                        irWasVerified = true
+                    } else {
+                        // ❌ 照合失敗 → 記憶補完して再生成
+                        let failedClaims = await IRVerificationEngine.shared.failedClaims(verifyResults)
+                        let recoveryQuery = failedClaims.joined(separator: " ")
+                        await onProgress(.aiMessage(
+                            "🔄 [IR復元] 照合失敗: \(failedClaims.joined(separator: ", ")) → 記憶補完"
+                        ))
+
+                        let recoveryMemory = SessionMemoryArchiver.shared.semanticSearch(
+                            query: recoveryQuery,
+                            topK: 3,
+                            layer: memoryLayer,
+                            budget: 400
+                        )
+                        if !recoveryMemory.isEmpty {
+                            let lastIdx = conversation.count - 1
+                            if lastIdx > 0 {
+                                conversation.insert(
+                                    (role: "user",      content: "[記憶補完]\n\(recoveryMemory)\n[/記憶補完]"),
+                                    at: lastIdx
+                                )
+                                conversation.insert(
+                                    (role: "assistant", content: "記憶補完を確認しました。"),
+                                    at: lastIdx + 1
+                                )
+                            }
+                        }
+                        if let retryResponse = await callModel(
+                            conversation: conversation,
+                            modelStatus: modelStatus,
+                            activeModel: activeModel,
+                            profile: profile,
+                            onProgress: onProgress
+                        ) {
+                            rawResponse = JCrossIRParser.stripIR(from: retryResponse)
+                        }
+                        irWasVerified = true  // ConfusionDetector の二重発火を防ぐ
+                    }
+                } else {
+                    // [確:] なし → [出:] だけ抽出してIRを除去
+                    if let finalAnswer = JCrossIRParser.extractFinalOutput(from: irNodes) {
+                        rawResponse = finalAnswer
+                    } else {
+                        rawResponse = JCrossIRParser.stripIR(from: rawResponse)
+                    }
+                    irWasVerified = true
+                }
+            }
+
+            // ── Confusion Detection + Auto Memory Injection ───────────────
+            // nano/small モデルが「わかりません」等を出力した場合、記憶を補完して再実行する。
+            // ユーザーには最終回答のみ表示されるブラックボックス仕様。
+            // didConfusionRetry フラグで無限ループを防止（1ターン最大1回のみ）。
+            // irWasVerified = true の場合は IR レイヤーが処理済みなのでスキップ。
+            if vxLoopEnabled && !didConfusionRetry && !irWasVerified && ConfusionDetector.isConfused(rawResponse) {
+                didConfusionRetry = true
+                let matched = ConfusionDetector.matchedPatterns(in: rawResponse)
+                // 混乱した応答バブルを「再考中...」で置換（aiMessage は streamingMsgId を上書きしてリセット）
+                await onProgress(.aiMessage("🔄 [記憶補完] \(matched.first ?? "context") を検知。文脈を確認します..."))
+                let confusionQuery = ConfusionDetector.buildSearchQuery(
+                    userInput: instruction,
+                    confusedResponse: rawResponse
+                )
+                let confusionMemory = SessionMemoryArchiver.shared.semanticSearch(
+                    query: confusionQuery,
+                    topK: 3,
+                    layer: memoryLayer,
+                    budget: 500
+                )
+                if !confusionMemory.isEmpty, var sysMsg = conversation.first, sysMsg.role == "system" {
+                    sysMsg.content += "\n\n[CONFUSION RECOVERY — 追加文脈]\n\(confusionMemory)\n[/CONFUSION RECOVERY]"
+                    conversation[0] = sysMsg
+                }
+                // 再実行: このストリームが最終的なユーザー表示になる
+                if let retryResponse = await callModel(
+                    conversation: conversation,
+                    modelStatus: modelStatus,
+                    activeModel: activeModel,
+                    profile: profile,
+                    onProgress: onProgress
+                ) {
+                    rawResponse = retryResponse
+                }
             }
 
             // ── AI Priority circuit breaker ───────────────────────────────
@@ -288,27 +721,78 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
             // ── Store in cortex ───────────────────────────────────────────
             await cortex?.extractAndStore(from: rawResponse, userInstruction: instruction)
 
+            // ── VX-Loop: SearchGate パース + 記憶保存 ─────────────────────
+            // 1. SearchGate トークンを応答末尾から解析
+            // 2. クリーンテキスト（GateトークンなしのUI表示用）を取得
+            // 3. needs=true なら記憶検索を実行して near/ に保存
+            // 4. このターン（Q+A）を near/ に TURN_*.jcross として記録
+            let vxCleanResponse: String
+            if vxLoopEnabled {
+                let gateDecision = await SearchGate.shared.parse(from: rawResponse)
+                vxCleanResponse  = await SearchGate.shared.stripGateToken(from: rawResponse)
+
+                if gateDecision.needsSearch {
+                    let searchLabel = gateDecision.searchType == .web
+                        ? "🌐 [VX-Loop] Web検索 → \"\(String(gateDecision.query.prefix(40)))\""
+                        : "🔎 [VX-Loop] SearchGate: 記憶検索 → \"\(String(gateDecision.query.prefix(40)))\""
+                    await onProgress(.aiMessage(searchLabel))
+                    let sgResult = await SearchGate.shared.executeSearch(
+                        decision: gateDecision,
+                        sessionId: vxSessionId,
+                        turnNumber: turn,
+                        tier: profile.tier
+                    )
+                    vxLastSearchResult = sgResult
+                } else {
+                    vxLastSearchResult = ""
+                }
+
+
+                // このターンを VXTimeline に記録
+                let userText = conversation.last(where: { $0.role == "user" })?.content ?? instruction
+                VXTimeline.shared.recordTurn(
+                    sessionId: vxSessionId,
+                    turnNumber: turn,
+                    userInput: userText,
+                    assistantOutput: vxCleanResponse,
+                    searchResults: vxLastSearchResult
+                )
+            } else {
+                vxCleanResponse = rawResponse
+            }
+
             // ── Parse tool calls ──────────────────────────────────────────
-            let (tools, cleanText) = AgentToolParser.parse(from: rawResponse)
+            // vxCleanResponse = SearchGate トークンをストリップ済み
+            // rawResponse     = ツールパーサー内部でも SearchGate を除去してから渡す
+            let (tools, cleanText) = AgentToolParser.parse(from: vxCleanResponse)
 
             // ── aiMessage emission strategy ──────────────────────────────
             // Ollama and MLX both use streaming (streamToken callbacks).
             // The UI bubble is already fully populated by the time callModel
-            // returns. Emitting aiMessage(cleanText) AGAIN would cause the
-            // AppState handler to overwrite the streaming bubble with the
-            // parsed text — which appears as a duplicate on the first message.
+            // returns.
             //
             // Rule: only emit aiMessage when the model does NOT stream tokens.
             //       Streaming models (Ollama, MLX) skip this step — the
             //       streaming bubble is already correct and complete.
             //       Non-streaming models (fallback .ready) must emit it.
+            //
+            // IMPORTANT: For VX-Loop (nano/small), the raw streaming bubble may
+            // contain [SEARCH_GATE: ...] tokens. We patch the bubble content
+            // with vxCleanResponse after streaming completes.
             let isStreamingModel: Bool
             switch modelStatus {
             case .ollamaReady, .mlxReady: isStreamingModel = true
             default:                      isStreamingModel = false
             }
 
-            if !cleanText.isEmpty && !isStreamingModel {
+            if isStreamingModel && vxLoopEnabled {
+                // Streaming + VX-Loop: patch the bubble to strip SearchGate tokens.
+                // cleanText already has gate tokens removed via vxCleanResponse.
+                // We emit a "replace" aiMessage only when the gate token was present.
+                if rawResponse != vxCleanResponse {
+                    await onProgress(.aiMessage(cleanText.isEmpty ? vxCleanResponse : cleanText))
+                }
+            } else if !cleanText.isEmpty && !isStreamingModel {
                 // Non-streaming path: emit the full response as a chat bubble
                 await onProgress(.aiMessage(cleanText))
             }
@@ -409,12 +893,97 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
                     result = await executor.execute(tool, workspaceURL: currentWorkspace)
                 }
 
+                // ── ReAct 評価: 検索・ブラウズ系ツールの失敗検知 ────────────────
+                // Action → Observation: isSearchFailure で失敗を検知
+                // Evaluation → Re-thought: LLMに再クエリを生成させる
+                // Retry: 新クエリで再実行 (最大10 = 3回まで)
+                //
+                // NOTE: `await` cannot appear on the right-hand side of `&&` in Swift,
+                // so we hoist the async check into a local Bool first.
+                let isReActFailure = !isDone && !reactContext.isExhausted
+                    ? await ReActRetryEngine.shared.isSearchFailure(tool: tool, result: result)
+                    : false
+                if isReActFailure {
+
+                    let reactEngine = ReActRetryEngine.shared
+                    let currentConversation = conversation  // actor アイソレーションを跨いでも安全
+
+                    let outcome = await reactEngine.run(
+                        originalTool: tool,
+                        firstResult: result,
+                        userInstruction: instruction,
+                        conversation: currentConversation,
+                        callModel: { [modelStatus, activeModel, profile] (msgs: [(role: String, content: String)]) async -> String? in
+                            // メインモデル呼び出しクロージャーを2次関数でラップ
+                            switch modelStatus {
+                            case .ollamaReady(let model):
+                                return await OllamaClient.shared.generateConversation(
+                                    model: model,
+                                    messages: msgs,
+                                    maxTokens: profile.tier.maxTokens,
+                                    temperature: profile.tier.temperature,
+                                    onToken: { _ in }
+                                )
+                            case .anthropicReady(let model, _):
+                                let sys  = msgs.first(where: { $0.role == "system" })?.content ?? ""
+                                let chat = msgs.filter { $0.role != "system" }
+                                return await AnthropicClient.shared.generate(
+                                    model: model, systemPrompt: sys, messages: chat,
+                                    maxTokens: profile.tier.maxTokens,
+                                    temperature: profile.tier.temperature,
+                                    enableThinking: false,
+                                    onToken: { _ in }, onThinking: { _ in }
+                                )
+                            default: return nil
+                            }
+                        },
+                        executeSearch: { newQuery async -> String in
+                            // 新クエリで検索を再実行— SEARCH_MULTI を優先使用
+                            let searchResult = await WebSearchEngine.shared.search(
+                                query: newQuery,
+                                engine: .duckduckgo
+                            )
+                            if searchResult.isFailure {
+                                return "❌ 再検索失敗: \(newQuery) [理由: \(searchResult.failureReason)]"
+                            }
+                            return "[SEARCH RESULTS for: \(newQuery)]\n" +
+                                   "Source: \(searchResult.url)\n" +
+                                   searchResult.contextSnippet +
+                                   "\n[END SEARCH RESULTS]"
+                        },
+                        onProgress: { msg async in
+                            await onProgress(.aiMessage(msg))
+                        }
+                    )
+
+                    switch outcome {
+                    case .success(let retryResult):
+                        // 成功: 元の result をリトライ結果で上書き
+                        result = retryResult
+                        reactContext.retriesThisTurn += 1
+                        await onProgress(.aiMessage("✅ [ReAct] 再検索成功 (試行\(reactContext.retriesThisTurn))"))
+
+                    case .retry(let newQuery, let reason):
+                        // 通常は発生しない（run()内部でループしているため）
+                        result += "\n\n⚠️ [ReAct] 再試行中: \(reason) → 新クエリ: \(newQuery)"
+
+                    case .exhausted(let report):
+                        // 上限超過: フェイルセーフ報告を result に挿入
+                        result = report
+                        reactContext.retriesThisTurn = ReActRetryEngine.shared.maxRetries
+                        await onProgress(.aiMessage("🔍 [ReAct] 最大試行回数(\(ReActRetryEngine.shared.maxRetries))を超過。フェイルセーフ報告を送信します。"))
+                    }
+                }
+
                 let completedCall = AgentToolCall(tool: tool, result: result, succeeded: !result.hasPrefix("✗"))
                 await onProgress(.toolResult(completedCall))
                 toolResults.append("\(call.displayLabel) → \(result)")
             }
 
             if isDone { return }
+
+            // ReAct コンテキストを次ターンに向けてリセット（ターンごとにリトライカウントは初期化）
+            reactContext.reset()
 
             // ── Yield check (Human Mode) ──────────────────────────────────
             consecutiveToolOnlyTurns += 1
@@ -467,8 +1036,18 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
 
     // MARK: - Context compression (OOM guard)
 
-    /// Compress old conversation turns into CortexEngine, then prune them.
+    /// Compress old conversation turns into JCross L1-L3 + CortexEngine, then prune them.
     /// Keeps the last 4 turns intact (most recent context).
+    ///
+    /// Compressed turns are NOT thrown away — they are archived as tri-layer JCross nodes
+    /// via SessionMemoryArchiver so they are re-injected into the system prompt on the
+    /// very next turn (archiveSection). This means even Nano (e2b) models can recall
+    /// "what we talked about 3 turns ago" without needing JCross tool access.
+    ///
+    /// Layer selection per model tier (automatic via buildCrossSessionInjection):
+    ///   L1  (120 chars) — Nano:   "Turn 1-3: user asked X, agent replied Y"
+    ///   L2  (600 chars) — Small:  OP.FACT dict of key decisions/files
+    ///   L3 (2000 chars) — Large:  verbatim turn content (truncated)
     private func compressConversation(
         _ conversation: [(role: String, content: String)],
         cortex: CortexEngine?,
@@ -476,18 +1055,63 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
     ) async -> [(role: String, content: String)] {
         guard conversation.count > 6 else { return conversation }
 
-        let keepCount = 4   // always keep the latest 4 entries
-        let toCompress = Array(conversation.dropFirst(1).dropLast(keepCount)) // skip system prompt
+        let keepCount  = 4
+        let toCompress = Array(conversation.dropFirst(1).dropLast(keepCount))
         let toKeep     = Array(conversation.prefix(1) + conversation.suffix(keepCount))
 
-        // Build a text digest of what's being dropped
-        let digest = toCompress.map { turn in
-            let prefix = turn.role == "assistant" ? "A" : "U"
-            return "\(prefix): \(String(turn.content.prefix(150)))"
-        }.joined(separator: " | ")
+        // ── L1: 1行サマリー（全ティア向け、最大120chars）─────────────────────
+        let userTurns  = toCompress.filter { $0.role == "user" }
+        let agentTurns = toCompress.filter { $0.role == "assistant" }
+        let firstUser  = String(userTurns.first?.content.prefix(60) ?? "")
+        let lastAgent  = String(agentTurns.last?.content.prefix(60) ?? "")
+        let l1 = "[会話圧縮: \(toCompress.count)ターン] タスク: \(instruction.prefix(50)) | U: \(firstUser) | A: \(lastAgent)"
 
+        // ── L2: OP.FACT ディクショナリ（Small/Mid向け）──────────────────────
+        var l2Lines: [String] = [
+            "OP.FACT(\"task\", \"\(instruction.prefix(120))\")",
+            "OP.FACT(\"compressed_turns\", \"\(toCompress.count)\")",
+        ]
+        // ファイル操作の抽出
+        let filePatterns = [#"\[WRITE:\s*([^\]]+)\]"#, #"\[PATCH_FILE:\s*([^\]]+)\]"#, #"\[APPLY_PATCH:\s*([^\]]+)\]"#]
+        for turn in agentTurns {
+            for pattern in filePatterns {
+                if let regex = try? NSRegularExpression(pattern: pattern),
+                   let m = regex.firstMatch(in: turn.content, range: NSRange(turn.content.startIndex..., in: turn.content)),
+                   let r = Range(m.range(at: 1), in: turn.content) {
+                    l2Lines.append("OP.FACT(\"modified_file\", \"\(String(turn.content[r]).prefix(80))\")")
+                }
+            }
+        }
+        // ユーザーの主要な意図（最大3ターン分）
+        for (i, turn) in userTurns.prefix(3).enumerated() {
+            l2Lines.append("OP.FACT(\"user_intent_\(i)\", \"\(String(turn.content.prefix(100)))\") ")
+        }
+        // 最後のエージェント応答の要旨
+        if let lastA = agentTurns.last {
+            l2Lines.append("OP.FACT(\"last_response\", \"\(String(lastA.content.prefix(200)))\")")
+        }
+        let l2 = l2Lines.joined(separator: "\n")
+
+        // ── L3: 逐語ダイジェスト（Large/Giant向け）──────────────────────────
+        let l3 = toCompress.map { t in
+            let prefix = t.role == "assistant" ? "Agent" : "User"
+            return "\(prefix): \(String(t.content.prefix(400)))"
+        }.joined(separator: "\n\n")
+
+        // ── JCross archive に書き込み（次ターンの archiveSection で回収）────
+        let ts = Int(Date().timeIntervalSince1970)
+        SessionMemoryArchiver.shared.archiveConversationChunk(
+            chunkId:    "COMP_\(ts)",
+            taskTitle:  String(instruction.prefix(60)),
+            l1: l1, l2: l2, l3: l3
+        )
+
+        // ── CortexEngine にも保存（Large向け semantic search 用）────────────
+        let digest = toCompress.map { t in
+            "\(t.role == "assistant" ? "A" : "U"): \(String(t.content.prefix(150)))"
+        }.joined(separator: " | ")
         await cortex?.remember(
-            key: "loop_compression_t\(toCompress.count)",
+            key: "loop_compression_t\(toCompress.count)_\(ts)",
             value: digest,
             importance: 0.8,
             zone: .near
@@ -495,11 +1119,10 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
 
         // Insert a compression notice so the model knows context was trimmed
         var result = toKeep
-        let notice = (
+        result.insert((
             role: "user",
-            content: "🧠 [Context trimmed — \(toCompress.count) older turns offloaded to memory. Key task: \(instruction.prefix(100))]"
-        )
-        result.insert(notice, at: 1)
+            content: "🧠 [Context trimmed — \(toCompress.count) older turns archived to L1-L3 memory. Key task: \(instruction.prefix(100))]"
+        ), at: 1)
         return result
     }
 
@@ -581,6 +1204,45 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
         case .ready:
             return "MLX (local) is active — use the MLX tab in the model picker."
 
+        case .bitnetReady(let model):
+            // ── BitNet b1.58 サブプロセス推論 ──────────────────────────────
+            // Test A の実験結果に基づく最適システムプロンプト:
+            // - 適度な長さの英語指示文が最も安定した生成を引き出す（~30トークン）
+            // - 大型モデル向けの元 sysContent は echo ループを誘発するため使わない
+            let sysContent = "You are Verantyx, a helpful AI coding assistant. Answer concisely and in the same language as the user. Focus on practical, accurate answers."
+
+            let chatParts  = conversation.filter { $0.role != "system" }
+            let userPrompt = chatParts.last(where: { $0.role == "user" })?.content ?? ""
+
+            // 直近の会話履歴を短く付加（最大2メッセージ、各200字内）
+            let historySnippet: String
+            let recentHistory = chatParts.dropLast().suffix(2)  // 4→2に削減
+            if recentHistory.isEmpty {
+                historySnippet = ""
+            } else {
+                historySnippet = "\n\n### History\n"
+                    + recentHistory.map { "[\($0.role)]: \($0.content.prefix(200))" }.joined(separator: "\n")
+                    + "\n\n"
+            }
+
+            // 全体 600 字内に収まるようキャップ
+            let rawUserPrompt  = historySnippet + userPrompt
+            let fullUserPrompt = String(rawUserPrompt.prefix(600))  // ← ユーザー側キャップ
+
+            await onProgress(.aiMessage("⚡ [BitNet] \(model) — 推論中..."))
+            guard let result = await BitNetCommanderEngine.shared.generate(
+                prompt: fullUserPrompt,
+                systemPrompt: sysContent
+            ) else {
+                // BitNet が nil → 設定エラーをユーザーに伝える
+                await onProgress(.aiMessage(
+                    "⚠️ [BitNet] 推論失敗。bitnet_config.json を確認してください。" +
+                    "Settings → BitNet でセットアップを再実行できます。"
+                ))
+                return nil
+            }
+            return result
+
         default:
             return nil
         }
@@ -656,21 +1318,24 @@ enum ModelTier: String, Sendable {
 
     var maxTokens: Int {
         switch self {
-        case .nano:   return 1024
-        case .small:  return 2048
-        case .mid:    return 4096
-        case .large:  return 8192   // gemma4 27B — raised from 3072 to avoid mid-sentence cutoff
+        // nano: 1024 → 2048 に拡張。日本語回答で 1024 は不足しやすい
+        case .nano:   return 2048
+        case .small:  return 4096
+        case .mid:    return 6144
+        case .large:  return 8192
         case .giant:  return 12288
         }
     }
 
     var compressThreshold: Int {
         switch self {
-        case .nano:   return 4_000
-        case .small:  return 8_000
-        case .mid:    return 12_000
-        case .large:  return 16_000
-        case .giant:  return 24_000
+        // NOTE: nano の閾値は以前 4_000 だったが、これだと数回の会話で即圧縮が走り
+        // 直前の回答を「知らない」状態になる。最低でも 16K にする。
+        case .nano:   return 16_000
+        case .small:  return 20_000
+        case .mid:    return 28_000
+        case .large:  return 40_000
+        case .giant:  return 60_000
         }
     }
 
@@ -772,25 +1437,36 @@ struct ModelProfile: Sendable {
 
     // MARK: - Tier prompts
 
+    // ── nano プロンプト: 漢字トポロジー形式 + JCross 思考IR定義 ─────────────────────────────
+    //
+    // 設計原則:
+    //   - システムプロンプトを最小化（~80トークン目標）
+    //   - 漢字トポロジー = 1文字で複雑概念を表現する情報密度最大の記号体系
+    //   - JCross 思考IR = モデルの CoT を記号列に圧縮 (80% トークン削減)
+    //   - 記憶は外側インフラ(VXTimeline)が供給。モデルは受信・照合だけすればよい
+    //
+    // 思考IR フォーマット:
+    //   [想:X] = X について考える  [確:X] = X を照合・確認
+    //   [出:X] = X を出力          [記:X] = 記憶X を参照
+    //   [否:X] = X は存在しない
+    //
+    // 例: 「好きな食べ物は？」→ [想:食好] → [記:U食=ラーメン] → [出:ラーメン]
     private var nanoPrompt: String { """
-        You are VerantyxAgent (Nano). You are a small, fast AI assistant.
-        Keep answers SHORT and FOCUSED. Use simple language.
+        [識:統小] VerantyxAgent Nano。簡潔・速度優先。
 
-        Available tools (use ONLY these):
-        [LIST_DIR: path]     — list files in a directory
-        [READ: path]         — read a file
-        [MKDIR: path]        — create directory
-        [WRITE: path]        — write file
-        [EDIT_LINES: path]   — edit specific lines in a file
-        [RUN: command]       — run a shell command
-        [DONE: message]      — finish the task
+        [ツールデコード表]
+        [READ:読] [LIST_DIR:覧] [RUN:命] [WRITE:書] [EDIT_LINES:編] [MKDIR:作] [DONE:完]
 
-        RULES:
-        - ONE tool per turn maximum
-        - Keep explanations under 3 sentences
-        - If you don't know something, say "I don't know"
-        - End every completed task with [DONE]
+        [規則] 1ツール/ターン・3文以内・[DONE]必須・不明→「知らない」と答える
+
+        [思考IR] 推論は以下の記号列で行う（自然言語CoTより80%圧縮）:
+        [想:テーマ]→[確:照合]→[出:答え]
+        [記:X]=記憶Xを参照 / [否:X]=Xは存在しない
+
+        [記憶原則] 会話履歴と[前セッションの記録]ブロックが記憶源。
+        そこに書かれている事実は真として扱う。確認なしに「知らない」と言わない。
         """ }
+
 
     private var smallPrompt: String { """
         You are VerantyxAgent (Small). An efficient coding assistant.

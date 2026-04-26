@@ -381,7 +381,12 @@ struct AgentToolParser {
             if      let m = match(trimmed, pattern: #"^\[MKDIR:\s*([^\]]+)\]$"#) {
                 tools.append(.makeDir(expandHome(m)))
             } else if let m = match(trimmed, pattern: #"^\[RUN:\s*([^\]]+)\]$"#) {
-                tools.append(.runCommand(m))
+                // Normalize: nano モデルが [RUN:LIST_DIR] のように型名をコマンド名と将揷して出力するハルシネーションを修正
+                if let normalized = normalizeRunToKnownTool(m) {
+                    tools.append(normalized)
+                } else {
+                    tools.append(.runCommand(m))
+                }
             } else if let m = match(trimmed, pattern: #"^\[WORKSPACE:\s*([^\]]+)\]$"#) {
                 tools.append(.setWorkspace(expandHome(m)))
             } else if let m = match(trimmed, pattern: #"^\[DONE[:\s]*([^\]]*)\]$"#) {
@@ -492,6 +497,41 @@ struct AgentToolParser {
     static func expandHome(_ path: String) -> String {
         if path.hasPrefix("~/") { return NSHomeDirectory() + path.dropFirst(1) }
         return path
+    }
+
+    // MARK: - [RUN: cmd] 正規化ヘルパー
+    // nano モデルが [RUN:LIST_DIR] や [RUN:READ:path] などを誤生成した場合に
+    // 内部ツールにリダイレクトする。シェルに渡さない。
+    private static func normalizeRunToKnownTool(_ cmd: String) -> AgentTool? {
+        let upper = cmd.trimmingCharacters(in: .whitespaces).uppercased()
+        // ツール名そのものが指定された場合
+        switch upper {
+        case "LIST_DIR", "LS", "DIR", "LISTDIR":
+            return .listDir(".")
+        case "BUILD_IDE", "BUILD":
+            return .buildIDE
+        case "RESTART_IDE", "RESTART":
+            return .restartIDE
+        default: break
+        }
+        // [RUN:LIST_DIR: path] のようにコロン付きのパターン
+        if upper.hasPrefix("LIST_DIR:") {
+            let path = expandHome(String(cmd.dropFirst("LIST_DIR:".count)).trimmingCharacters(in: .whitespaces))
+            return .listDir(path.isEmpty ? "." : path)
+        }
+        if upper.hasPrefix("READ:") {
+            let path = expandHome(String(cmd.dropFirst("READ:".count)).trimmingCharacters(in: .whitespaces))
+            return path.isEmpty ? nil : .readFile(path)
+        }
+        if upper.hasPrefix("SEARCH:") {
+            let q = String(cmd.dropFirst("SEARCH:".count)).trimmingCharacters(in: .whitespaces)
+            return q.isEmpty ? nil : .search(query: q)
+        }
+        if upper.hasPrefix("BROWSE:") {
+            let url = String(cmd.dropFirst("BROWSE:".count)).trimmingCharacters(in: .whitespaces)
+            return url.isEmpty ? nil : .browse(url: url)
+        }
+        return nil
     }
 
     // ── Self-Admin parsers ─────────────────────────────────────────────────
@@ -926,6 +966,18 @@ actor AgentToolExecutor {
             return await pullModelWithProgress(modelId)
 
         case .mcpCall(let serverName, let toolName, let arguments):
+            // 必須引数バリデーション — 空引数で MCP プロトコルエラーを起こさないようにガード
+            if let argError = validateMCPArguments(server: serverName, tool: toolName, args: arguments) {
+                return """
+                [MCP ARG ERROR: \(serverName).\(toolName)]
+                \(argError)
+
+                正しい呼び出し例:
+                [MCP_CALL: \(serverName).\(toolName)]{\"url\": \"https://example.com\"}[/MCP_CALL]
+
+                引数を指定して再度呼び出してください。
+                """
+            }
             // Route to MCPEngine — handles both stdio and HTTP transports.
             let result = await MCPEngine.shared.callTool(
                 serverName: serverName,
@@ -977,7 +1029,48 @@ actor AgentToolExecutor {
         }
     }
 
+    // MARK: - MCP 引数バリデーション
+    //
+    // 既知の MCP ツールが必須フィールドなしで呼ばれた場合に Protocol Error を防ぐ。
+    // 新しいサーバー/ツールを追加する場合はここに requiredKeys を追記してください。
+    private func validateMCPArguments(server: String, tool: String, args: [String: Any]) -> String? {
+        // URL 必須ツール定義: (serverName部分一致, toolName部分一致, 必須キー一覧)
+        let urlRequiredTools: [(server: String, tool: String, keys: [String])] = [
+            // Puppeteer
+            (server: "puppeteer", tool: "navigate",    keys: ["url"]),
+            (server: "puppeteer", tool: "goto",        keys: ["url"]),
+            (server: "puppeteer", tool: "screenshot",  keys: []),        // url 不要
+            // Playwright
+            (server: "playwright", tool: "navigate",   keys: ["url"]),
+            (server: "playwright", tool: "goto",       keys: ["url"]),
+            // Browser-use
+            (server: "browser",    tool: "navigate",   keys: ["url"]),
+            (server: "browser",    tool: "open",       keys: ["url"]),
+            // Brave Search
+            (server: "brave",      tool: "search",     keys: ["query"]),
+            (server: "brave-search", tool: "search",   keys: ["query"]),
+            // GitHub
+            (server: "github",     tool: "search_repositories", keys: ["query"]),
+        ]
+
+        let serverLower = server.lowercased()
+        let toolLower   = tool.lowercased()
+
+        for entry in urlRequiredTools {
+            guard serverLower.contains(entry.server) && toolLower.contains(entry.tool) else { continue }
+            for key in entry.keys {
+                let value = args[key] as? String ?? ""
+                if value.trimmingCharacters(in: .whitespaces).isEmpty {
+                    return "必須パラメーター「\(key)」が空です。\n" +
+                           "例: [MCP_CALL: \(server).\(tool)]{\"\\(key)\": \"値\"}[/MCP_CALL]"
+                }
+            }
+        }
+        return nil  // バリデーション通過
+    }
+
     // MARK: - PULL_MODEL: ollama pull with streaming progress
+
 
     private func pullModelWithProgress(_ modelId: String) async -> String {
         // Verify ollama is installed

@@ -6,7 +6,6 @@ import SwiftUI
 struct ChatPanelView: View {
     @EnvironmentObject var app: AppState
     @FocusState private var isFocused: Bool
-    @State private var scrollProxy: ScrollViewProxy?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -26,7 +25,7 @@ struct ChatPanelView: View {
                                 .id(msg.id)
                         }
                         if app.isGenerating {
-                            ThinkingBubble()
+                            LiveThinkingBubble()
                                 .id("generating")
                         }
                     }
@@ -43,6 +42,11 @@ struct ChatPanelView: View {
                 }
                 .onChange(of: app.isGenerating) { _, generating in
                     if generating {
+                        withAnimation { proxy.scrollTo("generating") }
+                    }
+                }
+                .onChange(of: app.processLog.count) { _, _ in
+                    if app.isGenerating {
                         withAnimation { proxy.scrollTo("generating") }
                     }
                 }
@@ -82,7 +86,6 @@ struct ChatPanelView: View {
 
     private var inputBar: some View {
         HStack(alignment: .bottom, spacing: 8) {
-            // Text field with auto-expand
             ZStack(alignment: .leading) {
                 if app.inputText.isEmpty {
                     Text(app.selectedFile == nil
@@ -110,7 +113,6 @@ struct ChatPanelView: View {
                     )
             )
 
-            // Send button
             Button {
                 sendIfPossible()
             } label: {
@@ -125,7 +127,9 @@ struct ChatPanelView: View {
         .padding(.vertical, 10)
     }
 
-    private var canSend: Bool { !app.inputText.trimmingCharacters(in: .whitespaces).isEmpty && !app.isGenerating }
+    private var canSend: Bool {
+        !app.inputText.trimmingCharacters(in: .whitespaces).isEmpty && !app.isGenerating
+    }
 
     private func sendIfPossible() {
         guard canSend else { return }
@@ -153,18 +157,24 @@ struct MessageBubble: View {
             }
 
         case .assistant:
-            HStack(alignment: .top, spacing: 10) {
-                Image(systemName: "brain.head.profile")
-                    .font(.title3)
-                    .foregroundStyle(Color.accentColor)
-                    .frame(width: 28, height: 28)
-                    .background(Color.accentColor.opacity(0.12), in: Circle())
+            VStack(alignment: .leading, spacing: 6) {
+                // Thinking ブロック（ログがある場合のみ表示）
+                if !message.thinkingLog.isEmpty {
+                    CompletedThinkingBlock(log: message.thinkingLog)
+                }
 
-                // Render markdown-style code blocks
-                AssistantText(content: message.content)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                HStack(alignment: .top, spacing: 10) {
+                    Image(systemName: "brain.head.profile")
+                        .font(.title3)
+                        .foregroundStyle(Color.accentColor)
+                        .frame(width: 28, height: 28)
+                        .background(Color.accentColor.opacity(0.12), in: Circle())
 
-                Spacer(minLength: 40)
+                    AssistantText(content: message.content)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    Spacer(minLength: 40)
+                }
             }
 
         case .system:
@@ -180,12 +190,247 @@ struct MessageBubble: View {
     }
 }
 
+// MARK: - LiveThinkingBubble
+// Claudeスタイル：推論中にリアルタイムでログをインライン表示 + 折りたたみ可能
 
-// MARK: - ThinkingBubble
+struct LiveThinkingBubble: View {
+    @EnvironmentObject var app: AppState
+    @State private var isExpanded = true
+    @State private var dotPhase   = 0
 
+    var body: some View {
+        HStack(alignment: .top, spacing: 10) {
+            // ── AI アイコン ────────────────────────────────────────────
+            ZStack {
+                Circle()
+                    .fill(Color.accentColor.opacity(0.12))
+                    .frame(width: 28, height: 28)
+                Image(systemName: "brain.head.profile")
+                    .font(.title3)
+                    .foregroundStyle(Color.accentColor)
+            }
+
+            VStack(alignment: .leading, spacing: 6) {
+                // ── ヘッダー（クリックで折りたたみ） ──────────────────
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        isExpanded.toggle()
+                    }
+                } label: {
+                    HStack(spacing: 8) {
+                        // 生成中ドットアニメーション
+                        HStack(spacing: 3) {
+                            ForEach(0..<3) { i in
+                                Circle()
+                                    .fill(Color.accentColor)
+                                    .frame(width: 5, height: 5)
+                                    .scaleEffect(dotPhase == i ? 1.3 : 0.7)
+                                    .opacity(dotPhase == i ? 1.0 : 0.35)
+                            }
+                        }
+
+                        Text("Thinking…")
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(Color.accentColor)
+
+                        if !app.processLog.isEmpty {
+                            Text("(\(app.processLog.count) steps)")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+
+                        Spacer()
+
+                        Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .buttonStyle(.plain)
+
+                // ── ログ本体（折りたたみ可能） ─────────────────────────
+                if isExpanded {
+                    VStack(alignment: .leading, spacing: 3) {
+                        ForEach(app.processLog.suffix(50)) { entry in
+                            LogEntryRow(entry: entry)
+                        }
+                    }
+                    .padding(10)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color(nsColor: .controlBackgroundColor).opacity(0.7))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .strokeBorder(Color(nsColor: .separatorColor).opacity(0.4), lineWidth: 0.5)
+                    )
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .background(
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(Color.accentColor.opacity(0.04))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .strokeBorder(Color.accentColor.opacity(0.2), lineWidth: 1)
+            )
+
+            Spacer(minLength: 40)
+        }
+        .onAppear {
+            // ドットアニメーションタイマー
+            Timer.scheduledTimer(withTimeInterval: 0.4, repeats: true) { _ in
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    dotPhase = (dotPhase + 1) % 3
+                }
+            }
+        }
+    }
+}
+
+// MARK: - LogEntryRow
+// ProcessLog の1行を表示するビュー（ライブ用 / 保存済み用 両対応）
+
+struct LogEntryRow: View {
+    let entry: AppState.ProcessLogEntry
+
+    var body: some View {
+        ThinkingLogRow(
+            timestamp: entry.timestamp,
+            text:      entry.text,
+            kindStr:   entry.kind.rawValue,
+            color:     entry.color
+        )
+    }
+}
+
+// MARK: - ThinkingLogRow（汎用ログ行 — ライブ / 完了後 両対応）
+
+private struct ThinkingLogRow: View {
+    let timestamp: Date
+    let text:      String
+    let kindStr:   String
+    let color:     Color
+
+    private var icon: String {
+        switch kindStr {
+        case "memory":   return "memorychip"
+        case "tool":     return "wrench.and.screwdriver"
+        case "browser":  return "globe"
+        case "thinking": return "bubble.left.and.text.bubble.right"
+        case "perf":     return "bolt.fill"
+        default:         return "gear"
+        }
+    }
+
+    private var timeStr: String {
+        let f = DateFormatter()
+        f.dateFormat = "HH:mm:ss"
+        return f.string(from: timestamp)
+    }
+
+    var body: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 6) {
+            Text(timeStr)
+                .font(.system(.caption2, design: .monospaced))
+                .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
+                .frame(width: 60, alignment: .leading)
+            Image(systemName: icon)
+                .font(.system(size: 9))
+                .foregroundStyle(color)
+                .frame(width: 12)
+            Text(text)
+                .font(.system(.caption, design: .monospaced))
+                .foregroundStyle(color)
+                .textSelection(.enabled)
+                .lineLimit(3)
+                .truncationMode(.tail)
+        }
+    }
+}
+
+// MARK: - CompletedThinkingBlock
+// 推論完了後のメッセージに添付する折りたたみ可能な Thinking ブロック
+
+struct CompletedThinkingBlock: View {
+    let log: [ChatMessage.ThinkingLogEntry]
+    @State private var isExpanded = false
+
+    private func color(for kind: String) -> Color {
+        switch kind {
+        case "memory":   return Color(red: 0.4, green: 0.9, blue: 0.6)
+        case "tool":     return Color(red: 0.4, green: 0.8, blue: 1.0)
+        case "browser":  return Color(red: 0.9, green: 0.7, blue: 0.3)
+        case "thinking": return Color(red: 0.8, green: 0.8, blue: 1.0)
+        case "perf":     return Color(red: 0.3, green: 1.0, blue: 0.5)
+        default:         return Color(red: 0.6, green: 0.6, blue: 0.6)
+        }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            // ── ヘッダー（クリックで展開・折りたたみ） ─────────────────
+            Button {
+                withAnimation(.easeInOut(duration: 0.2)) { isExpanded.toggle() }
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: "brain")
+                        .font(.system(size: 10))
+                        .foregroundStyle(.secondary)
+                    Text("Thinking")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.secondary)
+                    Text("· \(log.count) steps")
+                        .font(.caption2)
+                        .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
+                    Spacer()
+                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                        .font(.system(size: 9))
+                        .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
+                }
+            }
+            .buttonStyle(.plain)
+
+            // ── ログ本体 ────────────────────────────────────────────────
+            if isExpanded {
+                VStack(alignment: .leading, spacing: 3) {
+                    ForEach(log) { entry in
+                        ThinkingLogRow(
+                            timestamp: entry.timestamp,
+                            text:      entry.text,
+                            kindStr:   entry.kind,
+                            color:     color(for: entry.kind)
+                        )
+                    }
+                }
+                .padding(10)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color(nsColor: .controlBackgroundColor).opacity(0.6))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .strokeBorder(Color(nsColor: .separatorColor).opacity(0.3), lineWidth: 0.5)
+                )
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+        }
+        .padding(.leading, 38)  // アシスタントアイコン分のインデント
+    }
+}
+
+
+// MARK: - ThinkingBubble (後方互換 — 未使用だが残す)
 struct ThinkingBubble: View {
     @State private var dotPhase = 0
-
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
             Image(systemName: "brain.head.profile")
@@ -193,7 +438,6 @@ struct ThinkingBubble: View {
                 .foregroundStyle(Color.accentColor)
                 .frame(width: 28, height: 28)
                 .background(Color.accentColor.opacity(0.12), in: Circle())
-
             HStack(spacing: 4) {
                 ForEach(0..<3) { i in
                     Circle()
@@ -203,15 +447,12 @@ struct ThinkingBubble: View {
                         .opacity(dotPhase == i ? 1.0 : 0.4)
                 }
             }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 12)
+            .padding(.horizontal, 14).padding(.vertical, 12)
             .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 16))
         }
         .onAppear {
             Timer.scheduledTimer(withTimeInterval: 0.4, repeats: true) { _ in
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    dotPhase = (dotPhase + 1) % 3
-                }
+                withAnimation(.easeInOut(duration: 0.3)) { dotPhase = (dotPhase + 1) % 3 }
             }
         }
     }

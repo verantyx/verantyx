@@ -77,6 +77,9 @@ final class CortexEngine: ObservableObject {
 
     var maxNodes: Int = 100  // kept for legacy compatibility; zones have own caps
 
+    /// ロード中フラグ — UI でスピナーを出す用途
+    @Published private(set) var isLoading: Bool = false
+
     // MARK: - Zone directories (MCP parity: ~/.openclaw/memory/<zone>/)
 
     private let mcpMemoryRoot: URL = {
@@ -105,10 +108,15 @@ final class CortexEngine: ObservableObject {
     // MARK: - Init
 
     init() {
-        self.isEnabled       = UserDefaults.standard.object(forKey: "cortex_enabled") as? Bool ?? true
-        self.contextThreshold = UserDefaults.standard.object(forKey: "cortex_threshold") as? Int ?? 3000
-        loadFromZones()
+        self.isEnabled        = UserDefaults.standard.object(forKey: "cortex_enabled")  as? Bool ?? true
+        self.contextThreshold = UserDefaults.standard.object(forKey: "cortex_threshold") as? Int  ?? 3000
         CortexEngine.shared = self
+        // ── 非同期ロード ──────────────────────────────────────────────────────
+        // 21,000+ jcross ファイルをメインスレッドで読むと起動フリーズが発生するため
+        // Task で即座にバックグラウンドへ逃がす。
+        // Phase 1: front + near (高優先度、すぐに使う)
+        // Phase 2: mid + deep   (低優先度、遅延ロード)
+        Task { await loadFromZonesAsync() }
     }
 
     // MARK: - Public API
@@ -355,6 +363,68 @@ final class CortexEngine: ObservableObject {
 
     // MARK: - Load from zones (startup)
 
+    /// 非同期2段階ロード:
+    ///   Phase 1 (userInitiated) : front / near のみ — 即座に表示可能なノード
+    ///   Phase 2 (background)    : mid / deep        — 遅延ロード
+    private func loadFromZonesAsync() async {
+        isLoading = true
+        defer { isLoading = false }
+
+        // Phase 1: front + near をバックグラウンドスレッドで読み、結果をメインへ
+        let phase1Zones: [MemoryNode.Zone] = [.front, .near]
+        let phase1 = await Task.detached(priority: .userInitiated) { [mcpMemoryRoot] in
+            Self.readZones(phase1Zones, root: mcpMemoryRoot)
+        }.value
+
+        // Phase 1 完了でノードを反映 → UI が即座に使えるようになる
+        if !phase1.isEmpty {
+            nodes = phase1
+        } else {
+            // ゾーンファイルがなければレガシー JSON から移行
+            migrateLegacyJSON()
+        }
+
+        // Phase 2: mid + deep を低優先度でロード（UI は既にインタラクティブ）
+        let phase2Zones: [MemoryNode.Zone] = [.mid, .deep]
+        let phase2 = await Task.detached(priority: .background) { [mcpMemoryRoot] in
+            Self.readZones(phase2Zones, root: mcpMemoryRoot)
+        }.value
+
+        if !phase2.isEmpty {
+            nodes.append(contentsOf: phase2)
+        }
+    }
+
+    /// nonisolated static: Task.detached から安全に呼べるよう self をキャプチャしない
+    private nonisolated static func readZones(_ zones: [MemoryNode.Zone], root: URL) -> [MemoryNode] {
+        var loaded: [MemoryNode] = []
+        let fm = FileManager.default
+        for zone in zones {
+            let dir   = root.appendingPathComponent(zone.rawValue)
+            let files = (try? fm.contentsOfDirectory(
+                at: dir, includingPropertiesForKeys: [.creationDateKey]
+            )) ?? []
+
+            for file in files
+                where file.pathExtension == "jcross"
+                   && !file.lastPathComponent.hasPrefix("JCROSS_TOMB") {
+                guard let raw    = try? String(contentsOf: file, encoding: .utf8),
+                      let parsed = JCrossFormatter.parseNode(from: raw)
+                else { continue }
+
+                loaded.append(MemoryNode(
+                    key:        parsed.key,
+                    value:      parsed.value,
+                    importance: 0.6,
+                    zone:       zone,
+                    kanjiTags:  parsed.kanjiTags
+                ))
+            }
+        }
+        return loaded
+    }
+
+    /// 旧 loadFromZones() — 後方互換のため残す（直接呼ばない）
     private func loadFromZones() {
         var loaded: [MemoryNode] = []
 

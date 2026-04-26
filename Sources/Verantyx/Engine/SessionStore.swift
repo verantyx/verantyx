@@ -132,6 +132,25 @@ final class SessionStore: ObservableObject {
         save(sessions[idx])
     }
 
+    /// 終了時専用の同期セーブ。
+    /// `save()` は毎 5 メッセージごとに `Task.detached { archiveProgressively() }` を起動するが、
+    /// `applicationShouldTerminate` の同期コンテキストでこれを呼ぶとメインスレッドがブロックされる。
+    /// このメソッドは JSON ディスク書き込みのみを行い、非同期タスクを一切起動しない。
+    func saveForQuit(messages: [ChatMessage], workspacePath: String? = nil) {
+        guard let id = activeSessionId,
+              let idx = sessions.firstIndex(where: { $0.id == id }) else { return }
+        let clean = messages.filter { msg in
+            !(msg.role == .assistant && msg.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+        }
+        sessions[idx].messages  = clean
+        sessions[idx].updatedAt = Date()
+        if let wp = workspacePath { sessions[idx].workspacePath = wp }
+        sessions[idx].autoTitle()
+        // JSON のみ書き込む — archiveProgressively は起動しない
+        guard let data = try? JSONEncoder().encode(sessions[idx]) else { return }
+        try? data.write(to: sessionURL(sessions[idx].id))
+    }
+
     func setLayer(_ layer: JCrossLayer, for sessionId: UUID) {
         guard let idx = sessions.firstIndex(where: { $0.id == sessionId }) else { return }
         sessions[idx].activeLayer = layer

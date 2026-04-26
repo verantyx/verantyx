@@ -120,6 +120,27 @@ actor MLXRunner {
 
     // MARK: - Load model
 
+    /// Immediately release the model container from Unified Memory.
+    /// After this call, isLoaded == false and currentModelId == nil.
+    /// The MLX runtime's deinit path frees all GPU/ANE allocations.
+    /// Call from a Task on MainActor: `await MLXRunner.shared.unloadModel()`
+    func unloadModel() async {
+        let name = currentModelId ?? "model"
+        container = nil
+        isLoaded = false
+        currentModelId = nil
+        kvTokensConsumed = 0
+        // Notify UI on main thread via Notification (MLXRunner is actor, no SwiftUI import)
+        let displayName = name.components(separatedBy: "/").last ?? name
+        await MainActor.run {
+            NotificationCenter.default.post(
+                name: Notification.Name("MLXModelEjected"),
+                object: nil,
+                userInfo: ["modelName": displayName]
+            )
+        }
+    }
+
     func loadModel(
         id modelId: String,
         hfToken: String? = nil,

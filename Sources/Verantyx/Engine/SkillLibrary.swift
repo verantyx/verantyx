@@ -92,6 +92,8 @@ actor SkillLibrary {
         }
         if loaded > 0 {
             print("[SkillLibrary] Loaded \(loaded) skill(s) from \(skillsDir.path)")
+            // JCross カタログノードを全ティアに注入する（archiveSection 経由）
+            archiveSkillCatalog()
         }
     }
 
@@ -140,6 +142,72 @@ actor SkillLibrary {
         guard let data = try? enc.encode(node) else { return }
         let file = skillsDir.appendingPathComponent("\(node.name).skill.json")
         try? data.write(to: file, options: .atomic)
+
+        // ── JCross Tri-Layer への同期保存 ──────────────────────────────────
+        // スキルを archiveSection 経由で全ティア（Nano含む）のシステムプロンプトに自動注入する。
+        // L1 = 名前 + 1文（120 chars 以内） → Nano 向け最小コスト
+        // L2 = OP.FACT ディクショナリ → Small/Mid 標準注入
+        // L3 = フルテキスト → Large/Giant 詳細参照
+        writeToJCross(node)
+    }
+
+    // MARK: - JCross Integration
+
+    /// スキル 1件を JCross Tri-Layerノードとして保存。
+    /// SessionMemoryArchiver.sessions の先頭に挿入することで
+    /// buildCrossSessionInjection() で topK に入る。
+    private func writeToJCross(_ node: SkillNode) {
+        let dateStr = ISO8601DateFormatter().string(from: node.updatedAt)
+        let badge   = node.source == "distilled" ? "✔蛸濾" :
+                      node.source == "community"  ? "★共有" : ""
+        let tags    = node.tags.prefix(4).joined(separator: ", ")
+
+        // L1: カタログ展示用、120 chars 以内
+        let l1 = "[Skill] \(node.name) v\(node.version)\(badge) — \(node.description.prefix(80))"
+
+        // L2: OP.FACT ディクショナリ
+        var l2Lines = [
+            "OP.FACT(\"skill_name\", \"\(node.name)\")",
+            "OP.FACT(\"skill_version\", \"v\(node.version)\")",
+            "OP.FACT(\"skill_added\", \"\(dateStr.prefix(10))\")",
+            "OP.FACT(\"skill_desc\", \"\(node.description.prefix(120))\")",
+            "OP.FACT(\"skill_type\", \"\(node.executionType.rawValue)\")",
+        ]
+        if !tags.isEmpty {
+            l2Lines.append("OP.FACT(\"skill_tags\", \"\(tags)\")")
+        }
+        if let k = node.kanjiTags, !k.isEmpty {
+            l2Lines.append("OP.FACT(\"skill_kanji\", \"\(k)\")")
+        }
+        l2Lines.append("OP.FACT(\"skill_stats\", \"success=\(node.successCount) fail=\(node.failCount)\")")
+        let l2 = l2Lines.joined(separator: "\n")
+
+        // L3: フルペイロード展開（参照用）
+        let payloadPreview = node.payload.prefix(10).joined(separator: "\n")
+        let l3 = """
+        [SkillNode: \(node.name)]
+        description: \(node.description)
+        version: \(node.version) | type: \(node.executionType.rawValue)
+        tags: \(tags) | source: \(node.source ?? "user")
+        updatedAt: \(dateStr)
+        payload (\(node.payload.count) step(s)):
+        \(payloadPreview)
+        """
+
+        SessionMemoryArchiver.shared.archiveSkillNode(
+            title:  "Skill: \(node.name)",
+            l1:     l1,
+            l2:     l2,
+            l3:     l3
+        )
+    }
+
+    /// インデックス全体を JCross に濡れ込み。loadIndex() 後に呼ぶ。
+    private func archiveSkillCatalog() {
+        for node in index.values {
+            writeToJCross(node)
+        }
+        print("[SkillLibrary] \(index.count) skill(s) archived to JCross L1-L3")
     }
 
     // MARK: - Retrieval
@@ -208,9 +276,14 @@ actor SkillLibrary {
 
 // MARK: - MCPSkillSync
 
-/// Polls the MCP HTTP bridge at http://127.0.0.1:5420/skills/version every 5 seconds.
+/// Polls the MCP HTTP bridge at http://127.0.0.1:5420/skills/version.
 /// When the version token changes (new skill distilled from cloud), triggers a full
 /// index reload so VerantyxIDE picks up new skills without requiring a restart.
+///
+/// Resilience strategy:
+///   • 2-second connection timeout (separate URLSession, waitsForConnectivity = false)
+///   • Exponential backoff: 5s → 10s → 20s → 40s → 60s cap on consecutive failures
+///   • Circuit breaker: after 5 consecutive failures, pause for 5 minutes before retry
 ///
 /// Usage:
 ///   MCPSkillSync.shared.startPolling()   // called from app launch
@@ -221,7 +294,26 @@ final class MCPSkillSync: ObservableObject {
     static let shared = MCPSkillSync()
 
     private let bridgeBase = URL(string: "http://127.0.0.1:5420")!
-    private let pollInterval: TimeInterval = 5.0
+
+    // ── Resilience constants ───────────────────────────────────────────────
+    /// Base interval when the bridge is reachable.
+    private let baseInterval:       TimeInterval = 5.0
+    /// Maximum back-off interval while the bridge is unavailable.
+    private let maxBackoffInterval: TimeInterval = 60.0
+    /// After this many consecutive failures, enter the circuit-breaker cooldown.
+    private let circuitBreakerThreshold = 5
+    /// How long to wait after the circuit opens before trying again.
+    private let circuitBreakerCooldown: TimeInterval = 5 * 60  // 5 minutes
+
+    // Dedicated URLSession: 2s timeout, no waitsForConnectivity
+    private let session: URLSession = {
+        let cfg = URLSessionConfiguration.ephemeral
+        cfg.timeoutIntervalForRequest  = 2.0
+        cfg.timeoutIntervalForResource = 2.0
+        cfg.waitsForConnectivity       = false
+        cfg.allowsExpensiveNetworkAccess = false
+        return URLSession(configuration: cfg)
+    }()
 
     /// Last version token received from /skills/version
     @Published private(set) var lastVersion: Int = 0
@@ -231,6 +323,8 @@ final class MCPSkillSync: ObservableObject {
     @Published private(set) var bridgeReachable: Bool = false
 
     private var pollTask: Task<Void, Never>?
+    private var consecutiveFailures = 0
+
     private init() {}
 
     // MARK: - Lifecycle
@@ -239,8 +333,35 @@ final class MCPSkillSync: ObservableObject {
         guard pollTask == nil else { return }
         pollTask = Task { [weak self] in
             while !Task.isCancelled {
-                await self?.poll()
-                try? await Task.sleep(nanoseconds: UInt64(5.0 * 1_000_000_000))
+                guard let self else { return }
+
+                let shouldPoll: Bool
+                let sleepNs: UInt64
+
+                // Circuit breaker: open after threshold failures
+                if self.consecutiveFailures >= self.circuitBreakerThreshold {
+                    // Cool down, then reset so we try again
+                    sleepNs = UInt64(self.circuitBreakerCooldown * 1_000_000_000)
+                    shouldPoll = false
+                    print("[MCPSkillSync] Circuit open — MCP bridge not reachable. Retrying in \(Int(self.circuitBreakerCooldown / 60)) min.")
+                    // Reset counter so next attempt gets a fresh backoff
+                    self.consecutiveFailures = 0
+                } else {
+                    shouldPoll = true
+                    // Exponential backoff: 5 → 10 → 20 → 40 → 60 (capped)
+                    let backoff = min(
+                        self.baseInterval * pow(2.0, Double(max(0, self.consecutiveFailures - 1))),
+                        self.maxBackoffInterval
+                    )
+                    let interval = self.consecutiveFailures == 0 ? self.baseInterval : backoff
+                    sleepNs = UInt64(interval * 1_000_000_000)
+                }
+
+                if shouldPoll {
+                    await self.poll()
+                }
+
+                try? await Task.sleep(nanoseconds: sleepNs)
             }
         }
     }
@@ -255,39 +376,44 @@ final class MCPSkillSync: ObservableObject {
     private func poll() async {
         let url = bridgeBase.appendingPathComponent("skills/version")
         do {
-            let (data, resp) = try await URLSession.shared.data(from: url)
+            let (data, resp) = try await session.data(from: url)
             guard let http = resp as? HTTPURLResponse, http.statusCode == 200 else {
-                await MainActor.run { self.bridgeReachable = false }
+                consecutiveFailures += 1
+                bridgeReachable = false
                 return
             }
             guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                  let version = json["version"] as? Int else { return }
-
-            let count = json["count"] as? Int ?? 0
-            let changed = version != self.lastVersion
-
-            await MainActor.run {
-                self.bridgeReachable = true
-                self.mcpSkillCount   = count
+                  let version = json["version"] as? Int else {
+                consecutiveFailures += 1
+                return
             }
 
+            // Connection succeeded — reset resilience counters
+            consecutiveFailures = 0
+            let count   = json["count"] as? Int ?? 0
+            let changed = version != lastVersion
+
+            bridgeReachable = true
+            mcpSkillCount   = count
+
             if changed {
-                await MainActor.run { self.lastVersion = version }
-                // Version changed — reload the full index
+                lastVersion = version
                 await SkillLibrary.shared.reloadIndex()
                 let n = await SkillLibrary.shared.count
                 print("[MCPSkillSync] Version changed → \(version). Reloaded \(n) skill(s).")
-                // Notify any observers (e.g. SkillLibraryView)
-                await MainActor.run {
-                    NotificationCenter.default.post(
-                        name: .skillLibraryDidReload,
-                        object: nil,
-                        userInfo: ["version": version, "count": count]
-                    )
-                }
+                NotificationCenter.default.post(
+                    name: .skillLibraryDidReload,
+                    object: nil,
+                    userInfo: ["version": version, "count": count]
+                )
             }
         } catch {
-            await MainActor.run { self.bridgeReachable = false }
+            consecutiveFailures += 1
+            bridgeReachable = false
+            // Swallow the error — log only on first failure to avoid spam
+            if consecutiveFailures == 1 {
+                print("[MCPSkillSync] MCP bridge unavailable (\(error.localizedDescription)). Backing off.")
+            }
         }
     }
 }

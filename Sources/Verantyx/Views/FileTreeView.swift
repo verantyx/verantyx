@@ -12,6 +12,7 @@ import AppKit
 
 struct FileTreeView: View {
     @EnvironmentObject var app: AppState
+    @StateObject private var gatekeeper = GatekeeperModeState.shared
     @State private var expandedFolders: Set<String> = []
     @State private var isScanning = false
 
@@ -106,20 +107,13 @@ struct FileTreeView: View {
     // MARK: - Tree List
 
     private var treeList: some View {
-        ScrollView {
-            LazyVStack(alignment: .leading, spacing: 0) {
-                ForEach(visibleNodes) { node in
-                    // EquatableView: row body is skipped when node/isExpanded/isSelected unchanged
-                    EquatableView(content: TreeRowView(
-                        node: node,
-                        isExpanded: expandedFolders.contains(node.id),
-                        isSelected: node.url != nil && node.url == app.selectedFile,
-                        onTap: { handleTap(node) }
-                    ))
-                }
-            }
-            .padding(.vertical, 4)
-        }
+        TreeListView(
+            visibleNodes: visibleNodes,
+            expandedFolders: expandedFolders,
+            selectedFile: app.selectedFile,
+            vault: gatekeeper.vault,
+            onTap: handleTap
+        )
     }
 
     private func handleTap(_ node: TreeNode) {
@@ -141,9 +135,25 @@ struct FileTreeView: View {
             ProgressView().scaleEffect(0.8)
             Text("Scanning…")
                 .font(.system(size: 10, design: .monospaced)).foregroundStyle(.secondary)
+
+            // Cancel button — forces scanning to stop
+            Button("Cancel") {
+                isScanning = false
+            }
+            .font(.system(size: 10))
+            .foregroundStyle(Color(red: 0.9, green: 0.4, blue: 0.4))
+            .buttonStyle(.plain)
+            .padding(.top, 4)
+
             Spacer()
         }
         .frame(maxWidth: .infinity)
+        // Auto-cancel after 10 seconds if still scanning
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+                if isScanning { isScanning = false }
+            }
+        }
     }
 
     private var emptyState: some View {
@@ -400,13 +410,15 @@ struct TreeRowView: View, Equatable {
     let node: TreeNode
     let isExpanded: Bool
     let isSelected: Bool
+    let isConverted: Bool
     let onTap: () -> Void
 
     static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.node.id         == rhs.node.id &&
         lhs.node.name       == rhs.node.name &&
         lhs.isExpanded      == rhs.isExpanded &&
-        lhs.isSelected      == rhs.isSelected
+        lhs.isSelected      == rhs.isSelected &&
+        lhs.isConverted     == rhs.isConverted
     }
 
     var body: some View {
@@ -430,12 +442,17 @@ struct TreeRowView: View, Equatable {
 
                 Text(node.name)
                     .font(.system(size: 11, design: .monospaced))
-                    .foregroundStyle(isSelected ? .white : Color(red: 0.80, green: 0.80, blue: 0.86))
+                    .foregroundStyle(
+                        isSelected ? .white :
+                        isConverted ? .orange :
+                        Color(red: 0.80, green: 0.80, blue: 0.86)
+                    )
                     .lineLimit(1)
 
                 Spacer()
             }
             .padding(.vertical, 3).padding(.horizontal, 4)
+            .contentShape(Rectangle())
             .background(
                 isSelected
                     ? Color(red: 0.2, green: 0.4, blue: 0.8).opacity(0.4)
@@ -445,5 +462,35 @@ struct TreeRowView: View, Equatable {
         }
         .buttonStyle(.plain)
         .padding(.horizontal, 4)
+    }
+}
+
+// MARK: - TreeListView
+// Extracted to observe vault changes securely.
+
+struct TreeListView: View {
+    let visibleNodes: [TreeNode]
+    let expandedFolders: Set<String>
+    let selectedFile: URL?
+    @ObservedObject var vault: JCrossVault
+    let onTap: (TreeNode) -> Void
+    
+    var body: some View {
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 0) {
+                ForEach(visibleNodes) { node in
+                    let isConverted = !node.isDir && vault.vaultIndex?.entries[node.id] != nil
+                    // EquatableView: row body is skipped when node/isExpanded/isSelected/isConverted unchanged
+                    EquatableView(content: TreeRowView(
+                        node: node,
+                        isExpanded: expandedFolders.contains(node.id),
+                        isSelected: node.url != nil && node.url == selectedFile,
+                        isConverted: isConverted,
+                        onTap: { onTap(node) }
+                    ))
+                }
+            }
+            .padding(.vertical, 4)
+        }
     }
 }

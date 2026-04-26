@@ -257,9 +257,12 @@ actor StdioSession {
         p.executableURL = URL(fileURLWithPath: "/usr/bin/env")
         p.arguments     = tokenise(server.command)
 
+        // ENV 構築: プロセス ENV + PATH 拡張 + Keychain 解決済み API キー
         var env = ProcessInfo.processInfo.environment
         env["PATH"] = "/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin:" + (env["PATH"] ?? "")
-        server.envVars.forEach { env[$0.key] = $0.value }
+        // Keychain から解決した値を注入（空の env vars を上書き）
+        let resolvedEnv = MCPKeychainStore.resolvedEnv(for: server)
+        resolvedEnv.forEach { env[$0.key] = $0.value }
         p.environment = env
 
         p.standardInput  = stdinPipe
@@ -488,6 +491,32 @@ final class MCPEngine: ObservableObject {
         if let idx = servers.firstIndex(where: { $0.id == config.id }) {
             servers[idx] = config
         }
+    }
+
+    /// サーバーのプロセスを強制終了して再接続する（再起動ボタン）
+    func restartServer(id: UUID) async {
+        // 既存セッションをクリーンに終了
+        if let session = stdioSessions.removeValue(forKey: id) {
+            await session.terminate()
+        }
+        connectionStatus[id] = .disconnected
+        // ツールリストをクリアして再取得
+        if let server = servers.first(where: { $0.id == id }) {
+            connectedTools.removeAll { $0.serverName == server.name }
+            await connect(server: server)
+        }
+    }
+
+    /// 全サーバーをリロード（新たに接続されたものを含めて再スキャン）
+    func reloadAll() async {
+        // 全セッション終了
+        for (_, session) in stdioSessions {
+            await session.terminate()
+        }
+        stdioSessions.removeAll()
+        connectedTools.removeAll()
+        connectionStatus.removeAll()
+        await connectAll()
     }
 
     // MARK: - Connect / discover tools

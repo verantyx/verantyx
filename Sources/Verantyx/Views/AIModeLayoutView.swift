@@ -49,6 +49,18 @@ struct AIModeLayoutView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
+            // ── Loaded Model Panel — shows when model is active ───────
+            Group {
+                switch app.modelStatus {
+                case .mlxReady, .ollamaReady, .bitnetReady:
+                    LoadedModelPanel()
+                        .environmentObject(app)
+                default:
+                    EmptyView()
+                }
+            }
+            .animation(.spring(response: 0.32, dampingFraction: 0.78), value: app.modelStatus)
+
             // ── Status bar ─────────────────────────────────────────────
             Divider().opacity(0.4)
             StatusBarView(terminal: app.terminal)
@@ -68,7 +80,7 @@ struct AIModeLayoutView: View {
                 Text("AI PRIORITY MODE")
                     .font(.system(size: 11, weight: .black, design: .monospaced))
                     .foregroundStyle(Color(red: 1.0, green: 0.45, blue: 0.30))
-                Text("承認なし · 自律書き込み · Artifact自動表示")
+                Text(app.t("No approvals · Auto-write · Artifacts auto-show", "承認なし · 自律書き込み · Artifact自動表示"))
                     .font(.system(size: 9, weight: .medium))
                     .foregroundStyle(Color(red: 0.75, green: 0.42, blue: 0.32))
             }
@@ -88,7 +100,7 @@ struct AIModeLayoutView: View {
             }
             .buttonStyle(.plain)
             .popover(isPresented: $showModelPicker, arrowEdge: .bottom) {
-                ModelPickerView().environmentObject(app).frame(width: 300)
+                ModelPickerView().environmentObject(app).frame(width: 380)
             }
 
             // Switch to Human mode
@@ -100,7 +112,7 @@ struct AIModeLayoutView: View {
                 HStack(spacing: 5) {
                     Image(systemName: "person.fill")
                         .font(.system(size: 10))
-                    Text("Human Mode へ")
+                    Text(app.t("To Human Mode", "Human Mode へ"))
                         .font(.system(size: 11, weight: .semibold))
                 }
                 .foregroundStyle(Color(red: 0.88, green: 0.88, blue: 0.96))
@@ -156,7 +168,7 @@ struct AIModeLayoutView: View {
                                          : .secondary)
                 }
                 .buttonStyle(.plain)
-                .help("ターミナル")
+                .help(AppLanguage.shared.t("Terminal", "ターミナル"))
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 8)
@@ -174,6 +186,7 @@ struct AIModeLayoutView: View {
         switch app.modelStatus {
         case .ollamaReady(let m): return m.components(separatedBy: ":").first ?? m
         case .mlxReady(let m):   return "MLX/" + (m.components(separatedBy: "/").last ?? m)
+        case .bitnetReady(let m): return "⚡" + m.components(separatedBy: "-").prefix(3).joined(separator: "-")
         default:                  return "no model"
         }
     }

@@ -236,6 +236,7 @@ struct AgentChatView: View {
                 .background(Color.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 6))
                 .overlay(RoundedRectangle(cornerRadius: 6)
                     .strokeBorder(Color.white.opacity(0.1), lineWidth: 0.5))
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
 
@@ -256,6 +257,7 @@ struct AgentChatView: View {
                         RoundedRectangle(cornerRadius: 6)
                             .fill(Color(red: 0.8, green: 0.2, blue: 0.2))
                     )
+                    .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .transition(.scale.combined(with: .opacity))
@@ -273,6 +275,7 @@ struct AgentChatView: View {
                         )
                         .padding(8)
                 }
+                .contentShape(Rectangle())
                 .buttonStyle(.plain)
                 .disabled(inputText.trimmingCharacters(in: .whitespaces).isEmpty
                           && app.attachedImages.isEmpty
@@ -751,6 +754,7 @@ struct AgentMessageView: View, Equatable {
                 .frame(width: 22, height: 22)
                 .background(Color.white.opacity(0.06), in: RoundedRectangle(cornerRadius: 5))
         }
+        .contentShape(Rectangle())
         .buttonStyle(.plain)
         .help(copied ? L("Copied!", "コピーしました！") : L("Copy message", "メッセージをコピー"))
     }

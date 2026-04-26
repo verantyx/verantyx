@@ -8,9 +8,11 @@ import SwiftUI
 struct MCPView: View {
     @EnvironmentObject var app: AppState
     @ObservedObject var mcp = MCPEngine.shared
-    @State private var showAddSheet = false
+    @State private var showAddSheet       = false
     @State private var editingServer: MCPServerConfig? = nil
     @State private var selectedServerId: UUID? = nil
+    @State private var showCatalogPicker  = false
+    @State private var apiKeyTargetServer: MCPServerConfig? = nil
 
     var body: some View {
         VStack(spacing: 0) {
@@ -87,14 +89,41 @@ struct MCPView: View {
                 mcp.addServer(saved)
                 showAddSheet = false
             }
-            .frame(width: 500, height: 520)
+            .frame(width: 500, height: 560)
         }
         .sheet(item: $editingServer) { server in
             MCPServerEditSheet(config: server) { saved in
                 mcp.updateServer(saved)
                 editingServer = nil
             }
-            .frame(width: 500, height: 520)
+            .frame(width: 500, height: 560)
+        }
+        // カタログ選択シート
+        .sheet(isPresented: $showCatalogPicker) {
+            MCPCatalogPickerSheet { entry in
+                let config = MCPServerConfig(
+                    name: entry.displayName,
+                    command: entry.defaultCommand,
+                    envVars: Dictionary(uniqueKeysWithValues: entry.requiredEnv.map { ($0.key, "") }),
+                    mode: .ai
+                )
+                mcp.addServer(config)
+                showCatalogPicker = false
+                // 必須環境変数があれば直後に API キー入力シートを開く
+                if !entry.requiredEnv.isEmpty {
+                    apiKeyTargetServer = config
+                }
+            }
+            .frame(width: 420, height: 480)
+        }
+        // API キー入力シート
+        .sheet(item: $apiKeyTargetServer) { server in
+            MCPApiKeySheet(server: server) {
+                apiKeyTargetServer = nil
+                // 保存後に自動再接続
+                Task { await mcp.restartServer(id: server.id) }
+            }
+            .frame(width: 440, height: 360)
         }
     }
 
@@ -161,6 +190,17 @@ struct MCPView: View {
                 .font(.system(size: 10, weight: .semibold, design: .monospaced))
                 .foregroundStyle(.secondary)
             Spacer()
+            // 全サーバーリロード（途中で追加した MCP を再認識）
+            Button {
+                Task { await mcp.reloadAll() }
+            } label: {
+                Image(systemName: "arrow.triangle.2.circlepath")
+                    .font(.system(size: 10))
+                    .foregroundStyle(Color(red: 0.4, green: 0.75, blue: 1.0))
+            }
+            .buttonStyle(.plain)
+            .help("全 MCP サーバーを再接続（途中で追加したものも認識）")
+
             Button {
                 Task { await mcp.connectAll() }
             } label: {
@@ -169,11 +209,18 @@ struct MCPView: View {
                     .foregroundStyle(Color(red: 0.4, green: 0.9, blue: 0.5))
             }
             .buttonStyle(.plain)
-            .help("Connect all enabled servers")
+            .help("全有効サーバーに接続")
 
-            Button {
-                showAddSheet = true
-            } label: {
+            // カタログから追加
+            Button { showCatalogPicker = true } label: {
+                Image(systemName: "square.grid.2x2.fill")
+                    .font(.system(size: 10))
+                    .foregroundStyle(.secondary)
+            }
+            .buttonStyle(.plain)
+            .help("既知 MCP カタログから追加")
+
+            Button { showAddSheet = true } label: {
                 Image(systemName: "plus")
                     .font(.system(size: 11))
             }
@@ -207,7 +254,7 @@ struct MCPView: View {
                 modeBadge(server.mode)
             }
 
-            // Connection controls — compact for sidebar
+            // Connection controls
             HStack(spacing: 6) {
                 Button {
                     Task { await mcp.connect(server: server) }
@@ -217,6 +264,16 @@ struct MCPView: View {
                 .buttonStyle(.borderedProminent)
                 .controlSize(.mini)
                 .disabled(isConnecting(server.id))
+
+                // 再起動ボタン — プロセスを即座にキルして再接続
+                Button {
+                    Task { await mcp.restartServer(id: server.id) }
+                } label: {
+                    Label("再起動", systemImage: "arrow.clockwise")
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.mini)
+                .tint(Color(red: 0.4, green: 0.75, blue: 1.0))
 
                 Button {
                     mcp.disconnect(serverId: server.id)
@@ -229,6 +286,25 @@ struct MCPView: View {
                 Button("Edit") { editingServer = server }
                     .buttonStyle(.bordered)
                     .controlSize(.mini)
+            }
+
+            // Keychain API キー欠子警告
+            let catalogEntry = MCPCatalog.find(byName: server.name)
+            if let entry = catalogEntry, !entry.requiredEnv.isEmpty {
+                let missingKeys = entry.requiredEnv.filter { spec in
+                    let stored = MCPKeychainStore.load(key: "\(server.id).\(spec.key)")
+                    return (stored ?? "").isEmpty && (server.envVars[spec.key] ?? "").isEmpty
+                }
+                if !missingKeys.isEmpty {
+                    Button {
+                        apiKeyTargetServer = server
+                    } label: {
+                        Label("⚠️ API キーを設定…", systemImage: "key.fill")
+                            .font(.system(size: 10))
+                            .foregroundStyle(Color(red: 1.0, green: 0.75, blue: 0.2))
+                    }
+                    .buttonStyle(.plain)
+                }
             }
 
             let status = mcp.connectionStatus[server.id] ?? .disconnected
@@ -629,5 +705,196 @@ struct FormRow<Content: View>: View {
             content
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
+    }
+}
+
+// MARK: - MCPCatalogPickerSheet
+// カタログから既知の MCP サーバーをワンクリックで追加する
+
+struct MCPCatalogPickerSheet: View {
+    let onSelect: (MCPCatalogEntry) -> Void
+    @Environment(\.dismiss) var dismiss
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            // Header
+            HStack {
+                Image(systemName: "square.grid.2x2.fill")
+                    .foregroundStyle(Color(red: 0.4, green: 0.75, blue: 1.0))
+                Text("MCP カタログから追加")
+                    .font(.system(size: 14, weight: .bold))
+                Spacer()
+                Button("閉じる") { dismiss() }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+            }
+            .padding(16)
+
+            Divider().opacity(0.3)
+
+            ScrollView {
+                LazyVStack(spacing: 8) {
+                    ForEach(MCPCatalog.all) { entry in
+                        HStack(spacing: 12) {
+                            Image(systemName: entry.icon)
+                                .font(.system(size: 18))
+                                .foregroundStyle(Color(red: 0.4, green: 0.75, blue: 1.0))
+                                .frame(width: 32)
+
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(entry.displayName)
+                                    .font(.system(size: 13, weight: .semibold))
+                                Text(entry.defaultCommand)
+                                    .font(.system(size: 9, design: .monospaced))
+                                    .foregroundStyle(.secondary)
+                                    .lineLimit(1)
+                                if !entry.requiredEnv.isEmpty {
+                                    HStack(spacing: 4) {
+                                        Image(systemName: "key.fill")
+                                            .font(.system(size: 8))
+                                            .foregroundStyle(Color(red: 1.0, green: 0.75, blue: 0.2))
+                                        Text(entry.requiredEnv.map(\.key).joined(separator: ", "))
+                                            .font(.system(size: 9, design: .monospaced))
+                                            .foregroundStyle(Color(red: 1.0, green: 0.75, blue: 0.2))
+                                    }
+                                }
+                            }
+
+                            Spacer()
+
+                            Button("追加") { onSelect(entry) }
+                                .buttonStyle(.borderedProminent)
+                                .controlSize(.small)
+                        }
+                        .padding(12)
+                        .background(Color(red: 0.12, green: 0.12, blue: 0.16),
+                                    in: RoundedRectangle(cornerRadius: 8))
+                    }
+                }
+                .padding(12)
+            }
+        }
+        .background(Color(red: 0.10, green: 0.10, blue: 0.14))
+    }
+}
+
+// MARK: - MCPApiKeySheet
+// API キーを Keychain に安全に保存する入力フォーム
+
+struct MCPApiKeySheet: View {
+    let server: MCPServerConfig
+    let onSave: () -> Void
+    @Environment(\.dismiss) var dismiss
+
+    // カタログエントリ
+    private var entry: MCPCatalogEntry? { MCPCatalog.find(byName: server.name) }
+    // 入力値を一時保持（SecureField は @State で管理）
+    @State private var values: [String: String] = [:]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            // Header
+            HStack(spacing: 8) {
+                Image(systemName: "key.fill")
+                    .foregroundStyle(Color(red: 1.0, green: 0.75, blue: 0.2))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("\(server.name) — API キーを設定")
+                        .font(.system(size: 13, weight: .bold))
+                    Text("入力値は macOS Keychain に暗号化保存されます")
+                        .font(.system(size: 10))
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+            }
+            .padding(16)
+
+            Divider().opacity(0.3)
+
+            if let e = entry {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 14) {
+                        ForEach(e.requiredEnv, id: \.key) { spec in
+                            VStack(alignment: .leading, spacing: 5) {
+                                HStack(spacing: 6) {
+                                    Text(spec.key)
+                                        .font(.system(size: 11, weight: .semibold, design: .monospaced))
+                                    Text("必須")
+                                        .font(.system(size: 9, weight: .bold))
+                                        .foregroundStyle(.white)
+                                        .padding(.horizontal, 5).padding(.vertical, 2)
+                                        .background(Color(red: 0.9, green: 0.3, blue: 0.3),
+                                                    in: RoundedRectangle(cornerRadius: 3))
+                                    Spacer()
+                                    if !spec.helpURL.isEmpty {
+                                        Link("取得する →", destination: URL(string: spec.helpURL)!)
+                                            .font(.system(size: 9))
+                                    }
+                                }
+                                SecureField(spec.hint, text: Binding(
+                                    get: {
+                                        values[spec.key]
+                                        ?? MCPKeychainStore.load(key: "\(server.id).\(spec.key)")
+                                        ?? ""
+                                    },
+                                    set: { values[spec.key] = $0 }
+                                ))
+                                .textFieldStyle(.roundedBorder)
+                                .font(.system(size: 11, design: .monospaced))
+                            }
+                        }
+                        ForEach(e.optionalEnv, id: \.key) { spec in
+                            VStack(alignment: .leading, spacing: 5) {
+                                HStack(spacing: 6) {
+                                    Text(spec.key)
+                                        .font(.system(size: 11, weight: .semibold, design: .monospaced))
+                                    Text("任意")
+                                        .font(.system(size: 9))
+                                        .foregroundStyle(.secondary)
+                                        .padding(.horizontal, 4).padding(.vertical, 2)
+                                        .background(.quaternary,
+                                                    in: RoundedRectangle(cornerRadius: 3))
+                                }
+                                SecureField(spec.hint, text: Binding(
+                                    get: {
+                                        values[spec.key]
+                                        ?? MCPKeychainStore.load(key: "\(server.id).\(spec.key)")
+                                        ?? ""
+                                    },
+                                    set: { values[spec.key] = $0 }
+                                ))
+                                .textFieldStyle(.roundedBorder)
+                                .font(.system(size: 11, design: .monospaced))
+                            }
+                        }
+                    }
+                    .padding(16)
+                }
+            } else {
+                Text("このサーバーはカタログに未登録です。Edit から手動で設定してください。")
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+                    .padding(16)
+            }
+
+            Divider().opacity(0.3)
+
+            HStack {
+                Button("キャンセル") { dismiss() }
+                    .buttonStyle(.bordered)
+                Spacer()
+                Button("Keychain に保存して再接続") {
+                    // 入力値を Keychain に書き込む
+                    for (key, val) in values where !val.isEmpty {
+                        MCPKeychainStore.save(key: "\(server.id).\(key)", value: val)
+                    }
+                    onSave()
+                    dismiss()
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(values.values.allSatisfy { $0.isEmpty })
+            }
+            .padding(16)
+        }
+        .background(Color(red: 0.10, green: 0.10, blue: 0.14))
     }
 }

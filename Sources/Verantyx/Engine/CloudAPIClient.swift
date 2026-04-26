@@ -8,31 +8,35 @@ import Foundation
 // MARK: - CloudProvider
 
 enum CloudProvider: String, CaseIterable, Codable {
-    case claude  = "Claude (Anthropic)"
-    case openai  = "GPT-4 (OpenAI)"
-    case gemini  = "Gemini (Google)"
+    case claude   = "Claude (Anthropic)"
+    case openai   = "GPT-4 (OpenAI)"
+    case gemini   = "Gemini (Google)"
+    case deepseek = "DeepSeek"
 
     var icon: String {
         switch self {
-        case .claude:  return "sparkles"
-        case .openai:  return "circlebadge.2"
-        case .gemini:  return "star.circle"
+        case .claude:   return "sparkles"
+        case .openai:   return "circlebadge.2"
+        case .gemini:   return "star.circle"
+        case .deepseek: return "waveform.circle"
         }
     }
 
     var defaultModel: String {
         switch self {
-        case .claude:  return "claude-sonnet-4-5"
-        case .openai:  return "gpt-4o"
-        case .gemini:  return "gemini-2.5-pro-preview-03-25"
+        case .claude:   return "claude-sonnet-4-5"
+        case .openai:   return "gpt-4o"
+        case .gemini:   return "gemini-2.5-pro-preview-03-25"
+        case .deepseek: return "deepseek-coder"
         }
     }
 
     var maxTokens: Int {
         switch self {
-        case .claude:  return 8192
-        case .openai:  return 4096
-        case .gemini:  return 8192
+        case .claude:   return 8192
+        case .openai:   return 4096
+        case .gemini:   return 8192
+        case .deepseek: return 8192
         }
     }
 }
@@ -74,9 +78,10 @@ actor CloudAPIClient {
         let model = modelOverride ?? provider.defaultModel
 
         switch provider {
-        case .claude:  return await callClaude(systemPrompt: systemPrompt, userMessage: userMessage, model: model, apiKey: key)
-        case .openai:  return await callOpenAI(systemPrompt: systemPrompt, userMessage: userMessage, model: model, apiKey: key)
-        case .gemini:  return await callGemini(systemPrompt: systemPrompt, userMessage: userMessage, model: model, apiKey: key)
+        case .claude:   return await callClaude(systemPrompt: systemPrompt, userMessage: userMessage, model: model, apiKey: key)
+        case .openai:   return await callOpenAI(systemPrompt: systemPrompt, userMessage: userMessage, model: model, apiKey: key)
+        case .gemini:   return await callGemini(systemPrompt: systemPrompt, userMessage: userMessage, model: model, apiKey: key)
+        case .deepseek: return await callDeepSeek(systemPrompt: systemPrompt, userMessage: userMessage, model: model, apiKey: key)
         }
     }
 
@@ -206,6 +211,50 @@ actor CloudAPIClient {
                   let content = first["content"] as? [String: Any],
                   let parts = content["parts"] as? [[String: Any]],
                   let text = parts.first?["text"] as? String
+            else { return .failure(.parseError) }
+
+            return .success(text)
+        } catch {
+            return .failure(.networkError(error.localizedDescription))
+        }
+    }
+
+    // MARK: - DeepSeek
+
+    private func callDeepSeek(systemPrompt: String, userMessage: String, model: String, apiKey: String) async -> Result<String, CloudError> {
+        let url = URL(string: "https://api.deepseek.com/chat/completions")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.timeoutInterval = 120
+
+        let body: [String: Any] = [
+            "model": model,
+            "max_tokens": CloudProvider.deepseek.maxTokens,
+            "messages": [
+                ["role": "system", "content": systemPrompt],
+                ["role": "user",   "content": userMessage]
+            ]
+        ]
+
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: body)
+            let (data, response) = try await URLSession.shared.data(for: request)
+
+            guard let httpResponse = response as? HTTPURLResponse else {
+                return .failure(.invalidResponse)
+            }
+            guard httpResponse.statusCode == 200 else {
+                let errStr = String(data: data, encoding: .utf8) ?? "unknown"
+                return .failure(.apiError(httpResponse.statusCode, errStr.prefix(200).description))
+            }
+
+            guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let choices = json["choices"] as? [[String: Any]],
+                  let first = choices.first,
+                  let message = first["message"] as? [String: Any],
+                  let text = message["content"] as? String
             else { return .failure(.parseError) }
 
             return .success(text)

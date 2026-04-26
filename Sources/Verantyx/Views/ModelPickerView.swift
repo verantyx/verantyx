@@ -8,8 +8,9 @@ struct ModelPickerView: View {
     @State private var tab: Tab = .ollama
 
     enum Tab: String, CaseIterable {
-        case ollama = "Ollama"
-        case mlx    = "MLX 🚀"
+        case ollama      = "Ollama"
+        case mlx         = "MLX 🚀"
+        case bitnet      = "BitNet ⚡"
         case huggingface = "HuggingFace"
     }
 
@@ -29,6 +30,7 @@ struct ModelPickerView: View {
             switch tab {
             case .ollama:      ollamaTab
             case .mlx:         mlxTab
+            case .bitnet:      bitnetTab
             case .huggingface: huggingFaceTab
             }
         }
@@ -298,6 +300,135 @@ struct ModelPickerView: View {
         .buttonStyle(.plain)
     }
 
+
+    // MARK: - BitNet tab
+
+    @State private var bitnetConfig: BitNetConfig? = nil
+    @State private var bitnetChecked = false
+
+    private var bitnetTab: some View {
+        VStack(alignment: .leading, spacing: 12) {
+
+            // ステータス行
+            HStack(spacing: 8) {
+                Circle()
+                    .fill(bitnetConfig?.isValid == true ? Color.green : Color.gray)
+                    .frame(width: 8, height: 8)
+                Text(bitnetConfig?.isValid == true
+                     ? app.t("BitNet ready", "BitNet 準備完了")
+                     : app.t("BitNet not installed", "BitNet 未インストール"))
+                    .font(.callout)
+                    .foregroundStyle(bitnetConfig?.isValid == true ? .green : .secondary)
+                Spacer()
+                if case .bitnetReady = app.modelStatus {
+                    Label(app.t("Active", "稼働中"),
+                          systemImage: "checkmark.circle.fill")
+                        .font(.caption).foregroundStyle(.green)
+                }
+            }
+
+            Divider()
+
+            if let cfg = bitnetConfig, cfg.isValid {
+                // インストール済みビュー
+                VStack(alignment: .leading, spacing: 6) {
+                    Label(cfg.modelName, systemImage: "cpu")
+                        .font(.subheadline.bold())
+                        .foregroundStyle(.primary)
+
+                    Group {
+                        infoRow("モデル", value: cfg.modelPath.components(separatedBy: "/").last ?? cfg.modelPath)
+                        infoRow("バイナリ", value: cfg.binaryPath.components(separatedBy: "/").last ?? cfg.binaryPath)
+                        infoRow("Max tokens", value: "\(cfg.maxTokens)")
+                        infoRow("Temp", value: String(format: "%.2f", cfg.temperature))
+                    }
+                }
+                .padding(10)
+                .background(Color.green.opacity(0.07), in: RoundedRectangle(cornerRadius: 8))
+
+                // 起動 / 停止ボタン
+                HStack(spacing: 8) {
+                    if case .bitnetReady = app.modelStatus {
+                        Button {
+                            app.modelStatus = .none
+                            app.addSystemMessage("⏹️ BitNet を停止しました")
+                        } label: {
+                            Label(app.t("Stop BitNet", "BitNet 停止"),
+                                  systemImage: "stop.circle.fill")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(.red)
+                    } else {
+                        Button {
+                            app.modelStatus = .bitnetReady(model: cfg.modelName)
+                            app.addSystemMessage("⚡ BitNet \(cfg.modelName) を有効化しました")
+                        } label: {
+                            Label(app.t("Use BitNet", "BitNet を使用"),
+                                  systemImage: "play.fill")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(Color(red: 0.3, green: 0.7, blue: 1.0))
+                    }
+                }
+
+            } else {
+                // 未インストールガイド
+                VStack(alignment: .leading, spacing: 8) {
+                    Label(app.t("BitNet is not set up yet.",
+                                "BitNet はまだセットアップされていません。"),
+                          systemImage: "exclamationmark.triangle.fill")
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+
+                    Text(app.t("Install BitNet from Settings → BitNet, then return here to activate.",
+                               "設定 → BitNet からインストールし、再度ここに戻ってください。"))
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+
+                    Text("# Quick install (Terminal):\n" +
+                         "git clone https://github.com/microsoft/BitNet.git ~/BitNet\n" +
+                         "cd ~/BitNet && python setup_env.py -md Llama3.2-3B")
+                        .font(.system(size: 9, design: .monospaced))
+                        .foregroundStyle(.secondary)
+                        .padding(8)
+                        .background(Color.black.opacity(0.3),
+                                    in: RoundedRectangle(cornerRadius: 6))
+                }
+
+                Button {
+                    Task { await recheckBitNet() }
+                } label: {
+                    Label(app.t("Check Again", "再検査"), systemImage: "arrow.clockwise")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+            }
+        }
+        .padding(12)
+        .task {
+            if !bitnetChecked { bitnetChecked = true; await recheckBitNet() }
+        }
+    }
+
+    private func infoRow(_ label: String, value: String) -> some View {
+        HStack {
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(.tertiary)
+                .frame(width: 70, alignment: .leading)
+            Text(value)
+                .font(.system(.caption2, design: .monospaced))
+                .lineLimit(1)
+                .truncationMode(.middle)
+        }
+    }
+
+    @MainActor
+    private func recheckBitNet() async {
+        bitnetConfig = BitNetConfig.load()
+    }
 
 
     // MARK: - Helpers

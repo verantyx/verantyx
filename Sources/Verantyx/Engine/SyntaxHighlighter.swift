@@ -25,13 +25,14 @@ public struct SyntaxHighlighter {
         case "json":                    return .json
         case "yaml", "yml":             return .yaml
         case "md", "markdown":          return .markdown
+        case "jcross":                  return .jcross
         default:                        return .plain
         }
     }
 
     public enum Language: String {
         case swift, python, typescript, javascript, rust, go, c, cpp
-        case json, yaml, markdown, plain
+        case json, yaml, markdown, jcross, plain
     }
 
     // MARK: - Token kinds + colors
@@ -85,6 +86,7 @@ public struct SyntaxHighlighter {
         case .json:        return tokenize(source, spec: jsonSpec)
         case .yaml:        return tokenize(source, spec: yamlSpec)
         case .markdown:    return tokenize(source, spec: markdownSpec)
+        case .jcross:      return tokenize(source, spec: jcrossSpec)
         case .plain:       return [Token(kind: .plain, text: source)]
         }
     }
@@ -113,6 +115,14 @@ public struct SyntaxHighlighter {
         let pattern: String
         let kind: TokenKind
         let group: Int  // regex capture group containing the token text
+        let regex: NSRegularExpression
+
+        init(pattern: String, kind: TokenKind, group: Int) {
+            self.pattern = pattern
+            self.kind = kind
+            self.group = group
+            self.regex = try! NSRegularExpression(pattern: pattern, options: [])
+        }
     }
 
     private struct LangSpec {
@@ -130,9 +140,8 @@ public struct SyntaxHighlighter {
         while index < source.endIndex {
             var matched = false
             for rule in spec.rules {
-                guard let regex = try? NSRegularExpression(pattern: rule.pattern, options: []) else { continue }
                 let searchRange = NSRange(index..., in: source)
-                guard let m = regex.firstMatch(in: source, options: .anchored, range: searchRange) else { continue }
+                guard let m = rule.regex.firstMatch(in: source, options: .anchored, range: searchRange) else { continue }
                 let captureRange = rule.group < m.numberOfRanges
                     ? Range(m.range(at: rule.group), in: source)
                     : Range(m.range, in: source)
@@ -348,5 +357,19 @@ public struct SyntaxHighlighter {
             wsRule
         ],
         keywords: [], keywords2: [], types: []
+    )
+
+    // MARK: JCross IR
+    private static let jcrossSpec = LangSpec(
+        rules: [
+            Rule(pattern: #";;;[^\n]*"#, kind: .comment, group: 0),
+            Rule(pattern: #"//[^\n]*"#, kind: .comment, group: 0),
+            Rule(pattern: #"\[[A-Za-z0-9_\-\.]+\]"#, kind: .type, group: 0),      // Node IDs e.g. [VAR_1]
+            Rule(pattern: #""(?:[^"\\]|\\.)*""#, kind: .string, group: 0),
+            numberRule, identRule, punctRule, opRule, wsRule
+        ],
+        keywords: ["true", "false", "null", "nil"],
+        keywords2: ["SCHEMA", "NODE", "EDGE", "MEM", "REF", "OP", "FACT", "ENTITY", "STATE", "TENSION", "VOID", "SOUL", "FRONT", "NEAR", "MID", "DEEP"],
+        types: []
     )
 }

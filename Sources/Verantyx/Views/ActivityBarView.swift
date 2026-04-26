@@ -99,6 +99,7 @@ struct ActivityBarView: View {
                     }
                 }
             }
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .help(helpLabel(section))

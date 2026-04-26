@@ -3,35 +3,76 @@ import SwiftUI
 
 // MARK: - OperationMode
 // Controls the overall agent behavior:
-//   .aiPriority — no confirmations, no MCP timeouts, full-screen Gemini-style UI
-//   .human      — standard confirmations, 60s MCP timeout, 4-pane IDE layout
+//   .aiPriority    — no confirmations, no MCP timeouts, full-screen Gemini-style UI
+//   .human         — standard confirmations, 60s MCP timeout, 4-pane IDE layout
+//   .humanPriority — VS Code-style: FileTree | CodeEditor | AI chat (right)
+//   .gatekeeper    — Local LLM as Commander; external API sees JCross IR only
 
 enum OperationMode: String, CaseIterable, Codable, Identifiable {
-    case aiPriority = "AI Priority"
-    case human      = "Human"
+    case aiPriority    = "AI_Priority"
+    case human         = "Human"
+    case humanPriority = "Human_Priority"
+    case gatekeeper    = "Gatekeeper"
 
     var id: String { rawValue }
 
     var icon: String {
         switch self {
-        case .aiPriority: return "bolt.fill"
-        case .human:      return "person.fill"
+        case .aiPriority:    return "bolt.fill"
+        case .human:         return "person.fill"
+        case .humanPriority: return "keyboard"
+        case .gatekeeper:    return "shield.lefthalf.filled"
         }
     }
 
     var accentColor: Color {
         switch self {
-        case .aiPriority: return Color(red: 1.0, green: 0.35, blue: 0.25)
-        case .human:      return Color(red: 0.4, green: 0.75, blue: 1.0)
+        case .aiPriority:    return Color(red: 1.0,  green: 0.35, blue: 0.25)
+        case .human:         return Color(red: 0.4,  green: 0.75, blue: 1.0)
+        case .humanPriority: return Color(red: 0.55, green: 1.0,  blue: 0.65)
+        case .gatekeeper:    return Color(red: 0.2,  green: 0.9,  blue: 0.5)
         }
     }
 
     var description: String {
         switch self {
         case .aiPriority:
-            return "承認なし・MCP無制限・フルスクリーンチャット"
+            return L("No approvals, unlimited MCP, fullscreen AI chat", "承認なし・MCP無制限・フルスクリーンチャット")
         case .human:
-            return "Diff確認あり・MCP 60秒制限・通常IDE"
+            return L("Diff confirmation, 60s MCP limit, standard IDE", "Diff確認あり・MCP 60秒制限・通常IDE")
+        case .humanPriority:
+            return L("VS Code style: Code editor centered, AI right", "VS Codeスタイル: コードエディタ中心・AIチャット右")
+        case .gatekeeper:
+            return L("Local LLM commander, JCross IR only, source hidden", "ローカルLLMが司令官・外部APIはJCross IRのみ・ソースコード非公開")
+        }
+    }
+    
+    var displayName: String {
+        switch self {
+        case .aiPriority:    return L("AI Priority", "AI優先")
+        case .human:         return L("Human", "ヒューマン")
+        case .humanPriority: return L("Human Priority", "ヒューマン優先")
+        case .gatekeeper:    return L("Gatekeeper", "ゲートキーパー")
+        }
+    }
+
+    /// Short 2-letter badge displayed in the toolbar chip
+    var badge: String {
+        switch self {
+        case .aiPriority:    return "AI"
+        case .human:         return "HM"
+        case .humanPriority: return "HP"
+        case .gatekeeper:    return "GK"
+        }
+    }
+
+    /// Next mode in the cycle
+    var next: OperationMode {
+        switch self {
+        case .human:         return .humanPriority
+        case .humanPriority: return .aiPriority
+        case .aiPriority:    return .gatekeeper
+        case .gatekeeper:    return .human
         }
     }
 }

@@ -1,15 +1,17 @@
 import Foundation
 
 // MARK: - BrowserBridge
-// Controls verantyx-browser (Rust/WKWebView) via JSON IPC over stdin/stdout.
-// The browser runs invisibly in bridge mode — gives the AI a real browser engine
-// without sending identifying headers (stealth WebKit, not Chromium CDP).
 //
-// Protocol:
-//   Swift → Rust:  {"cmd": "navigate", "url": "..."}   (JSON lines on stdin)
-//   Rust → Swift:  {"status": "ok", "markdown": "..."}  (JSON lines on stdout)
+// verantyx-browser (Rust/WKWebView) を JSON IPC (stdin/stdout) で制御する。
+//
+// ── 改善点 (v2) ──────────────────────────────────────────────────────────
+//   ・リクエスト ID 対応: 全コマンドに UInt64 ID を付与、レスポンスで照合
+//   ・lastResponse ポーリング廃止 → CheckedContinuation マップで即時 resolve
+//   ・"navigating" レスポンスを中間状態として扱い "hitl_done" を最終完了とする
+//   ・ping コマンドによるヘルスチェック
+//   ・自動再接続: クラッシュ時に次のリクエストで再 launch を試みる
 
-// MARK: - Bridge data types
+// MARK: - Data types
 
 struct BrowserCommand: Codable {
     var cmd:  String
@@ -19,14 +21,13 @@ struct BrowserCommand: Codable {
 }
 
 struct BrowserResponse: Codable {
+    var id:       UInt64?   // ← Rust 側からエコーバックされる
     var status:   String
     var message:  String?
     var url:      String?
     var markdown: String?
     var title:    String?
 }
-
-// MARK: - BrowserState
 
 enum BrowserState: Equatable {
     case idle
@@ -36,217 +37,306 @@ enum BrowserState: Equatable {
     case error(String)
 }
 
+// MARK: - Pending request types
+
+private enum PendingKind {
+    case markdown   // HITL_DONE / DOM → markdown を返す
+    case eval       // EVAL_RES / EVAL_ERR → message を返す
+    case pong       // ping → status == "pong"
+}
+
+private struct PendingRequest {
+    let kind: PendingKind
+    let continuation: CheckedContinuation<BrowserResponse, Error>
+}
+
 // MARK: - BrowserBridge Actor
 
 actor BrowserBridge {
 
     static let shared = BrowserBridge()
 
-    // ── Binary path ────────────────────────────────────────────────
-    private var binaryPath: String {
-        // 1. Debug build (development)
-        let debug = "\(projectRoot)/verantyx-browser/target/debug/verantyx-browser"
-        if FileManager.default.fileExists(atPath: debug) { return debug }
-        // 2. Release build
-        let release = "\(projectRoot)/verantyx-browser/target/release/verantyx-browser"
+    // ── プロセス状態 ────────────────────────────────────────────────────────
+    private var process:      Process?
+    private var stdinPipe:    Pipe?
+    private var stdoutPipe:   Pipe?
+    private var readerTask:   Task<Void, Never>?
+
+    // ── リクエスト管理 ───────────────────────────────────────────────────────
+    private var nextID:    UInt64 = 1
+    private var pending:   [UInt64: PendingRequest] = [:]
+    /// PAGE_READY 待ち専用 Continuation（穎動中に最大1個）
+    private var readyCont: CheckedContinuation<Void, Error>?
+
+    private(set) var state: BrowserState = .idle
+
+    // ── バイナリパス ────────────────────────────────────────────────────────
+    //
+    // 解決順序（配信時・開発時の両方に対応）:
+    //   1. Bundle.main の MacOS/ フォルダ内（配信 .app パッケージ）
+    //   2. Bundle.main の Resources/ フォルダ内（XcodeGen 経由でコピーされる）
+    //   3. Cargo debug ビルド出力（開発専用）
+    //   4. Cargo release ビルド出力（開発専用）
+    var binaryPath: String {
+        // ① アプリバンドル内を最優先（配信時は必ずここにある）
+        let bundleMacOS = Bundle.main.bundleURL
+            .appendingPathComponent("Contents/MacOS/verantyx-browser").path
+        if FileManager.default.fileExists(atPath: bundleMacOS) { return bundleMacOS }
+
+        // ② Bundle.main forResource（Resources/ にコピーされたケース）
+        if let bundleRes = Bundle.main.path(forResource: "verantyx-browser", ofType: nil) {
+            return bundleRes
+        }
+
+        // ③④ 開発時 Cargo ビルド出力
+        let root    = projectRoot
+        let debug   = "\(root)/verantyx-browser/target/debug/verantyx-browser"
+        let release = "\(root)/verantyx-browser/target/release/verantyx-browser"
+        if FileManager.default.fileExists(atPath: debug)   { return debug }
         if FileManager.default.fileExists(atPath: release) { return release }
-        // 3. In-bundle (future distribution)
-        return Bundle.main.path(forResource: "verantyx-browser", ofType: nil) ?? debug
+
+        // フォールバック（起動失敗エラーで詳細パスをログ出力させる）
+        return debug
     }
 
     private var projectRoot: String {
-        // Walk up from the bundle to find the workspace root
         var url = Bundle.main.bundleURL
-        for _ in 0..<6 {
+        for _ in 0..<8 {
             url = url.deletingLastPathComponent()
             if FileManager.default.fileExists(atPath: url.appendingPathComponent("verantyx-browser").path) {
                 return url.path
             }
         }
         return URL(fileURLWithPath: #file)
-            .deletingLastPathComponent()         // Engine/
-            .deletingLastPathComponent()         // Verantyx/
-            .deletingLastPathComponent()         // Sources/
-            .deletingLastPathComponent()         // VerantyxIDE/
-            .deletingLastPathComponent()         // verantyx-cli/
-            .path
+            .deletingLastPathComponent().deletingLastPathComponent()
+            .deletingLastPathComponent().deletingLastPathComponent()
+            .deletingLastPathComponent().path
     }
 
-    // ── Process state ──────────────────────────────────────────────
-    private var process: Process?
-    private var stdin:   Pipe?
-    private var stdout:  Pipe?
-    private var stdoutReader: Task<Void, Never>?
-
-    private var pendingCallbacks: [String: CheckedContinuation<BrowserResponse, Error>] = [:]
-    private var lastResponse: BrowserResponse?
-    private(set) var state: BrowserState = .idle
-
-    // ── Launch ─────────────────────────────────────────────────────
+    // MARK: - Launch
 
     func launch(visible: Bool = false) async throws {
-        guard state == .idle || state == .error("") else { return }
+        // .error(...) は内容問わず再起動を許可（空文字列のみ一致していたバグを修正）
+        if case .launching = state { return }
+        if case .ready     = state { return }
         state = .launching
 
         let path = binaryPath
         guard FileManager.default.fileExists(atPath: path) else {
-            state = .error("Binary not found: \(path). Run: cd verantyx-browser && cargo build --package vx-browser")
+            let msg = "Binary not found: \(path)"
+            state = .error(msg)
             throw BrowserError.binaryNotFound(path)
         }
 
-        let proc  = Process()
+        let proc   = Process()
         let stdin  = Pipe()
         let stdout = Pipe()
         let stderr = Pipe()
 
-        proc.executableURL = URL(fileURLWithPath: path)
-        proc.arguments     = ["--bridge"] + (visible ? ["--visible"] : [])
-        proc.standardInput  = stdin
-        proc.standardOutput = stdout
-        proc.standardError  = stderr
-        proc.qualityOfService = .userInitiated
+        proc.executableURL     = URL(fileURLWithPath: path)
+        proc.arguments         = ["--bridge"] + (visible ? ["--visible"] : [])
+        proc.standardInput     = stdin
+        proc.standardOutput    = stdout
+        proc.standardError     = stderr
+        proc.qualityOfService  = .userInitiated
 
         try proc.run()
 
-        self.process = proc
-        self.stdin   = stdin
-        self.stdout  = stdout
+        self.process   = proc
+        self.stdinPipe = stdin
+        self.stdoutPipe = stdout
 
-        // Background reader task — parses JSON lines from Rust stdout
-        stdoutReader = Task.detached(priority: .high) { [weak self] in
-            let outHandle = stdout.fileHandleForReading
+        // ── stdout リーダータスク ──────────────────────────────────────────
+        readerTask = Task.detached(priority: .high) { [weak self] in
+            let handle = stdout.fileHandleForReading
             var buffer = ""
             while true {
-                let data = outHandle.availableData
-                if data.isEmpty { try? await Task.sleep(nanoseconds: 10_000_000); continue }
+                let data = handle.availableData
+                if data.isEmpty {
+                    try? await Task.sleep(nanoseconds: 10_000_000)
+                    if Task.isCancelled { break }
+                    continue
+                }
                 guard let chunk = String(data: data, encoding: .utf8) else { continue }
                 buffer += chunk
-                while let newlineRange = buffer.range(of: "\n") {
-                    let line = String(buffer[..<newlineRange.lowerBound]).trimmingCharacters(in: .whitespaces)
-                    buffer.removeSubrange(..<newlineRange.upperBound)
-                    if !line.isEmpty {
-                        if let resp = try? JSONDecoder().decode(BrowserResponse.self, from: Data(line.utf8)) {
-                            await self?.handleResponse(resp)
-                        }
+                while let nl = buffer.range(of: "\n") {
+                    let line = String(buffer[..<nl.lowerBound]).trimmingCharacters(in: .whitespaces)
+                    buffer.removeSubrange(..<nl.upperBound)
+                    guard !line.isEmpty else { continue }
+                    if let resp = try? JSONDecoder().decode(BrowserResponse.self, from: Data(line.utf8)) {
+                        await self?.handleResponse(resp)
                     }
                 }
                 if Task.isCancelled { break }
             }
         }
 
-        // Wait for initial PAGE_READY acknowledgment (up to 5 s)
-        try await waitForReady(timeout: 5)
+        // PAGE_READY を待つ（最大 6 秒）
+        try await waitForReady(timeout: 6)
         state = .ready
     }
 
-    private func waitForReady(timeout: Double) async throws {
-        let deadline = Date().addingTimeInterval(timeout)
-        while Date() < deadline {
-            if let resp = lastResponse, resp.status == "ok" && resp.message == "ready" {
-                return
-            }
-            try await Task.sleep(nanoseconds: 200_000_000)
-        }
-        // If no PAGE_READY — browser is still usable, just no initial blank DOM confirmation
-    }
+    // MARK: - Public API
 
-    // ── Commands ───────────────────────────────────────────────────
-
-    /// Navigate to a URL. Returns when the browser has loaded (or timeout).
-    func navigate(to url: String) async throws -> String {
-        try ensureRunning()
-        state = .navigating(url)
-        try send(BrowserCommand(cmd: "navigate", url: url))
-
-        // Give WKWebView time to load — wait for HITL_DONE or hitl_done
-        let markdown = try await waitForPage(timeout: 15)
-        state = .ready
-        return markdown
-    }
-
-    /// Navigate and immediately get page content as Markdown.
+    /// URL に移動して Markdown を返す（HITL_DONE 待ち）
     func fetch(_ url: String) async throws -> String {
-        let _ = try await navigate(to: url)
-        // Small delay for dynamic content
-        try await Task.sleep(nanoseconds: 1_500_000_000)
-        return try await getPage()
+        try await ensureRunning()
+        let id = makeID()
+        let resp: BrowserResponse = try await withCheckedThrowingContinuation { cont in
+            pending[id] = PendingRequest(kind: .markdown, continuation: cont)
+            try? send(BrowserCommand(cmd: "navigate", url: url, id: id))
+            // タイムアウト: 20秒
+            Task { try? await Task.sleep(nanoseconds: 20_000_000_000); self.expire(id: id) }
+        }
+        return resp.markdown ?? ""
     }
 
-    /// Get current page as Markdown.
+    /// 現在ページを Markdown で取得
     func getPage() async throws -> String {
-        try ensureRunning()
-        try send(BrowserCommand(cmd: "get_page"))
-        return try await waitForMarkdown(timeout: 10)
+        try await ensureRunning()
+        let id = makeID()
+        let resp: BrowserResponse = try await withCheckedThrowingContinuation { cont in
+            pending[id] = PendingRequest(kind: .markdown, continuation: cont)
+            try? send(BrowserCommand(cmd: "get_page", id: id))
+            Task { try? await Task.sleep(nanoseconds: 12_000_000_000); self.expire(id: id) }
+        }
+        return resp.markdown ?? ""
     }
 
-    /// Execute JavaScript in the current page.
+    /// JavaScript を実行して結果を返す
     func evalJS(_ script: String) async throws -> String {
-        try ensureRunning()
-        try send(BrowserCommand(cmd: "eval_js", text: script))
-        return try await waitForEval(timeout: 10)
+        try await ensureRunning()
+        let id = makeID()
+        let resp: BrowserResponse = try await withCheckedThrowingContinuation { cont in
+            pending[id] = PendingRequest(kind: .eval, continuation: cont)
+            try? send(BrowserCommand(cmd: "eval_js", text: script, id: id))
+            Task { try? await Task.sleep(nanoseconds: 12_000_000_000); self.expire(id: id) }
+        }
+        return resp.message ?? ""
     }
 
-    /// Quit the browser process.
+    /// ヘルスチェック（プロセスが生きているか確認）
+    func ping() async -> Bool {
+        guard let proc = process, proc.isRunning else { return false }
+        let id = makeID()
+        do {
+            return try await withCheckedThrowingContinuation { cont in
+                pending[id] = PendingRequest(kind: .pong, continuation: cont)
+                try? send(BrowserCommand(cmd: "ping", id: id))
+                Task {
+                    try? await Task.sleep(nanoseconds: 3_000_000_000)
+                    self.expire(id: id)
+                }
+            }.status == "pong"
+        } catch {
+            return false
+        }
+    }
+
+    /// プロセスを終了する
     func quit() {
         try? send(BrowserCommand(cmd: "quit"))
         process?.terminate()
-        process = nil
-        stdoutReader?.cancel()
-        state = .idle
+        process    = nil
+        readerTask?.cancel()
+        readerTask = nil
+        state      = .idle
+        // 残 pending をすべてキャンセル
+        for (_, req) in pending {
+            req.continuation.resume(throwing: BrowserError.notRunning)
+        }
+        pending.removeAll()
     }
 
-    // ── Private helpers ────────────────────────────────────────────
-
-    private func send(_ cmd: BrowserCommand) throws {
-        guard let stdin = stdin else { throw BrowserError.notRunning }
-        let data = try JSONEncoder().encode(cmd)
-        var line = data
-        line.append(0x0A) // newline
-        stdin.fileHandleForWriting.write(line)
-    }
+    // MARK: - Private: response routing
 
     private func handleResponse(_ resp: BrowserResponse) {
-        lastResponse = resp
-    }
-
-    private func waitForPage(timeout: Double) async throws -> String {
-        let deadline = Date().addingTimeInterval(timeout)
-        while Date() < deadline {
-            if let resp = lastResponse {
-                if resp.status == "hitl_done", let md = resp.markdown { lastResponse = nil; return md }
-                if resp.status == "ok", let md = resp.markdown { lastResponse = nil; return md }
+        // PAGE_READY → readyCont を優先して resume
+        if resp.status == "ok", resp.message == "ready" || resp.message == "ready_timeout" {
+            if let cont = readyCont {
+                readyCont = nil
+                cont.resume(returning: ())
+                return
             }
-            try await Task.sleep(nanoseconds: 300_000_000)
         }
-        return "(page loading timed out)"
-    }
 
-    private func waitForMarkdown(timeout: Double) async throws -> String {
-        let deadline = Date().addingTimeInterval(timeout)
-        while Date() < deadline {
-            if let resp = lastResponse, let md = resp.markdown { lastResponse = nil; return md }
-            try await Task.sleep(nanoseconds: 200_000_000)
-        }
-        return "(could not fetch page content)"
-    }
+        guard let id = resp.id, let req = pending[id] else { return }
 
-    private func waitForEval(timeout: Double) async throws -> String {
-        let deadline = Date().addingTimeInterval(timeout)
-        while Date() < deadline {
-            if let resp = lastResponse {
-                if resp.status == "eval_ok" { let m = resp.message ?? ""; lastResponse = nil; return m }
-                if resp.status == "eval_err" { let m = resp.message ?? "unknown"; lastResponse = nil; throw BrowserError.jsError(m) }
+        switch req.kind {
+        case .markdown:
+            // "navigating" は中間状態 — hitl_done / ok (with markdown) が最終
+            if resp.status == "navigating" { return }
+            pending.removeValue(forKey: id)
+            req.continuation.resume(returning: resp)
+        case .eval:
+            guard resp.status == "eval_ok" || resp.status == "eval_err" else { return }
+            pending.removeValue(forKey: id)
+            if resp.status == "eval_err" {
+                req.continuation.resume(throwing: BrowserError.jsError(resp.message ?? "unknown"))
+            } else {
+                req.continuation.resume(returning: resp)
             }
-            try await Task.sleep(nanoseconds: 200_000_000)
+        case .pong:
+            guard resp.status == "pong" else { return }
+            pending.removeValue(forKey: id)
+            req.continuation.resume(returning: resp)
         }
-        throw BrowserError.timeout
     }
 
-    private func ensureRunning() throws {
-        guard let proc = process, proc.isRunning else {
-            state = .idle
-            throw BrowserError.notRunning
+    // MARK: - Private: helpers
+
+    private func makeID() -> UInt64 {
+        let id = nextID
+        nextID &+= 1
+        return id
+    }
+
+    private func send(_ cmd: BrowserCommand) throws {
+        guard let pipe = stdinPipe else { throw BrowserError.notRunning }
+        let data = try JSONEncoder().encode(cmd)
+        var line = data
+        line.append(0x0A)  // newline delimiter
+
+        // SIGPIPE-safe write: fileHandleForWriting.write() は SIGPIPE を
+        // 内部で握り潰さず、かつ SIG_IGN 無効時にクラッシュする。
+        // FileHandle の fileDescriptor に直接 write(2) することで
+        // EPIPE エラーをキャッチして BrowserError.notRunning を投げる。
+        let fd = pipe.fileHandleForWriting.fileDescriptor
+        let result = line.withUnsafeBytes { ptr -> Int in
+            Darwin.write(fd, ptr.baseAddress!, ptr.count)
         }
+        if result < 0 {
+            let code = errno
+            throw code == EPIPE
+                ? BrowserError.notRunning                          // プロセスが既に死んでいる
+                : BrowserError.ioError("write(2) errno=\(code)")  // その他 I/O エラー
+        }
+    }
+
+    private func expire(id: UInt64) {
+        guard let req = pending[id] else { return }
+        pending.removeValue(forKey: id)
+        req.continuation.resume(throwing: BrowserError.timeout)
+    }
+
+    private func waitForReady(timeout: Double) async throws {
+        // Void Continuation で PAGE_READY を待つ（型安全）
+        try await withCheckedThrowingContinuation { (cont: CheckedContinuation<Void, Error>) in
+            self.readyCont = cont
+            Task {
+                try? await Task.sleep(nanoseconds: UInt64(timeout * 1_000_000_000))
+                if self.readyCont != nil {
+                    self.readyCont = nil
+                    cont.resume(returning: ())
+                }
+            }
+        }
+    }
+
+    func ensureRunning() async throws {
+        if let proc = process, proc.isRunning { return }
+        state = .idle
+        try await launch()
     }
 }
 
@@ -257,13 +347,15 @@ enum BrowserError: Error, LocalizedError {
     case notRunning
     case timeout
     case jsError(String)
+    case ioError(String)           // write(2) / pipe I/O failure
 
     var errorDescription: String? {
         switch self {
-        case .binaryNotFound(let p): return "verantyx-browser not found at \(p). Build it first."
-        case .notRunning:            return "Browser not running. Call launch() first."
+        case .binaryNotFound(let p): return "verantyx-browser not found at \(p). Run: cargo build -p vx-browser"
+        case .notRunning:            return "Browser not running."
         case .timeout:               return "Browser operation timed out."
         case .jsError(let e):        return "JS error: \(e)"
+        case .ioError(let e):        return "Browser I/O error: \(e)"
         }
     }
 }

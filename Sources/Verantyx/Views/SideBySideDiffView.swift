@@ -399,7 +399,7 @@ struct SideBySideDiffView: View {
             Text("Diff will appear here")
                 .font(.headline)
                 .foregroundStyle(Color(red: 0.40, green: 0.42, blue: 0.58))
-            Text("AIがファイルを変更すると\nここにDiffが表示されます")
+            Text(AppLanguage.shared.t("Diffs will appear here\\nwhen AI makes changes", "AIがファイルを変更すると\\nここにDiffが表示されます"))
                 .font(.callout)
                 .foregroundStyle(Color(red: 0.32, green: 0.32, blue: 0.46))
                 .multilineTextAlignment(.center)

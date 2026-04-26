@@ -47,12 +47,18 @@ mkdir -p "$STAGING_DIR"
 # ── 2. Build Release ────────────────────────────────────────────────────────
 echo "[2/7] Release ビルド中..."
 if [ "$SIGN_MODE" = "developer_id" ]; then
+  # Extract team ID directly from the Developer ID cert
+  DEV_ID_TEAM=$(echo "$DEV_ID_CERT" | grep -oE '\([A-Z0-9]{10}\)' | tr -d '()')
+  echo "   Team ID (from cert): $DEV_ID_TEAM"
   xcodebuild \
     -scheme "$SCHEME" \
     -configuration "$CONFIGURATION" \
     -destination "platform=macOS" \
-    CODE_SIGN_STYLE="Automatic" \
-    DEVELOPMENT_TEAM="${TEAM_ID:-NC46WGQVFP}" \
+    CODE_SIGN_STYLE="Manual" \
+    CODE_SIGN_IDENTITY="$DEV_ID_CERT" \
+    DEVELOPMENT_TEAM="$DEV_ID_TEAM" \
+    CODE_SIGNING_REQUIRED=YES \
+    OTHER_CODE_SIGN_FLAGS="--timestamp" \
     BUILD_DIR="$(pwd)/build" \
     build 2>&1 | grep -E "error:|warning:|SUCCEEDED|FAILED" | tail -10
 else

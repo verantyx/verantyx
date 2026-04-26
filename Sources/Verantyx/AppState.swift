@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import AppKit
+import WebKit
 
 // MARK: - Core data models
 
@@ -9,15 +10,27 @@ struct ChatMessage: Identifiable, Equatable, Codable {
     var role: Role
     var content: String
     var timestamp = Date()
+    /// 推論中のプロセスログのスナップショット（折りたたみ可能な Thinking ブロックに表示）
+    var thinkingLog: [ThinkingLogEntry] = []
 
-    init(id: UUID = UUID(), role: Role, content: String) {
+    init(id: UUID = UUID(), role: Role, content: String, thinkingLog: [ThinkingLogEntry] = []) {
         self.id = id
         self.role = role
         self.content = content
+        self.thinkingLog = thinkingLog
     }
 
     enum Role: String, Codable { case user, assistant, system }
+
+    // ProcessLogEntry の Codable スナップショット（Color は保存しないためシンプル化）
+    struct ThinkingLogEntry: Identifiable, Codable, Equatable {
+        var id = UUID()
+        var timestamp: Date
+        var text: String
+        var kind: String    // "memory" | "tool" | "browser" | "thinking" | "system" | "perf"
+    }
 }
+
 
 struct FileDiff: Identifiable, Equatable {
     let id = UUID()
@@ -55,15 +68,42 @@ final class AppState: ObservableObject {
     @MainActor static weak var shared: AppState?
 
     // Workspace
+    @Published var activeWebViews: [String: WKWebView] = [:]
     @Published var workspaceURL: URL?
     @Published var workspaceFiles: [URL] = []
-    @Published var selectedFile: URL?
-    @Published var selectedFileContent: String = ""
+    @Published var selectedFile: URL? {
+        didSet {
+            // Notify Extension Host that a new document was opened
+            if let file = selectedFile {
+                ExtensionHostManager.shared.sendNotification(method: "workspace.didOpenTextDocument", params: [
+                    "uri": file.path,
+                    "languageId": file.pathExtension,
+                    "version": 1,
+                    "text": selectedFileContent
+                ])
+            }
+        }
+    }
+    @Published var selectedFileContent: String = "" {
+        didSet {
+            // Notify Extension Host that the document content changed
+            if let file = selectedFile {
+                ExtensionHostManager.shared.sendNotification(method: "workspace.didChangeTextDocument", params: [
+                    "uri": file.path,
+                    "text": selectedFileContent,
+                    "range": [
+                        "startLine": 0,
+                        "endLine": max(0, oldValue.filter { $0 == "\n" }.count)
+                    ]
+                ])
+            }
+        }
+    }
 
     // Model
     @Published var modelStatus: ModelStatus = .none
     @Published var ollamaModels: [String] = []
-    @Published var activeOllamaModel: String = "gemma4:26b"
+    // activeOllamaModel は下記(L412付近)でdidSetつきで宣言済み
     @Published var anthropicApiKey: String = "" {
         didSet {
             // Anthropic API キーを AnthropicClient に反映
@@ -116,7 +156,7 @@ final class AppState: ObservableObject {
         var text: String
         var kind: Kind
 
-        enum Kind { case memory, tool, browser, thinking, system, perf }
+        enum Kind: String { case memory, tool, browser, thinking, system, perf }
 
         var prefix: String {
             switch kind {
@@ -316,9 +356,10 @@ final class AppState: ObservableObject {
         case downloading(progress: Double)
         case ready(name: String)
         case ollamaReady(model: String)
-        case anthropicReady(model: String, maskedKey: String)  // NEW: Anthropic API
-        case mlxReady(model: String)          // ← MLX server running at localhost:8080
-        case mlxDownloading(model: String)    // ← mlx_lm download in progress
+        case anthropicReady(model: String, maskedKey: String)  // Anthropic API
+        case mlxReady(model: String)          // MLX server running at localhost:8080
+        case mlxDownloading(model: String)    // mlx_lm download in progress
+        case bitnetReady(model: String)       // BitNet local subprocess
         case error(String)
     }
 
@@ -346,7 +387,9 @@ final class AppState: ObservableObject {
         case "system_prompt":
             systemPrompt = value
         case "operation_mode":
-            operationMode = (value == "aiPriority" || value == "ai") ? .aiPriority : .human
+            if value == "aiPriority" || value == "ai" { operationMode = .aiPriority }
+            else if value == "humanPriority" || value == "Human Priority" { operationMode = .humanPriority }
+            else { operationMode = .human }
         case "temperature":
             if let d = Double(value) { temperature = max(0.0, min(2.0, d)) }
             else { return "⚠️ Invalid temperature: \(value) (expected 0.0–2.0)" }
@@ -377,7 +420,12 @@ final class AppState: ObservableObject {
     }
 
     // MLX state
-    @Published var activeMlxModel: String = "mlx-community/gemma-4-26b-a4b-it-4bit"
+    @Published var activeMlxModel: String = {
+        UserDefaults.standard.string(forKey: "active_mlx_model")
+            ?? "mlx-community/gemma-4-26b-a4b-it-4bit"
+    }() {
+        didSet { UserDefaults.standard.set(activeMlxModel, forKey: "active_mlx_model") }
+    }
     @Published var mlxServerLogs: [String] = []
 
     // Agent loop
@@ -385,19 +433,59 @@ final class AppState: ObservableObject {
         didSet { UserDefaults.standard.set(agentLoopEnabled, forKey: "agent_loop_enabled") }
     }
 
+    // ── VX-Loop: Chat session-level persistent ID for VXTimeline ─────────
+    // nano/small モデル使用時、全ターンで同一IDを共有することで
+    // VXTimeline内の履歴記録を次のターンで参照できる。
+    // newChatSession() でリセットされる。
+    var vxChatSessionId: String = String(UUID().uuidString.prefix(8))
+
+    // nano/small モデル選択時に AI Priority を強制するフラグ
+    @Published var isNanoSmallModelActive: Bool = false
+
+    // モデル変更時: nano/small → AI Priority 強制、large/giant → human に復帰
+    @Published var activeOllamaModel: String = {
+        UserDefaults.standard.string(forKey: "active_ollama_model") ?? "gemma4:26b"
+    }() {
+        didSet {
+            // UserDefaults に保存（再起動後も復元）
+            UserDefaults.standard.set(activeOllamaModel, forKey: "active_ollama_model")
+
+            let tier = ModelProfileDetector.detect(modelId: activeOllamaModel).tier
+            let isSmall = (tier == .nano || tier == .small)
+            let wasSmall = isNanoSmallModelActive
+            isNanoSmallModelActive = isSmall
+
+            if isSmall && operationMode != .aiPriority {
+                operationMode = .aiPriority
+                addSystemMessage(
+                    "🧠 [Nano Cortex] \(tier.displayName) モデルを検出。" +
+                    "AI Priority + VX-Loop + ConfusionDetector を自動有効化しました"
+                )
+            } else if !isSmall && wasSmall && operationMode == .aiPriority {
+                operationMode = .human
+                addSystemMessage(
+                    "💬 [モード復帰] \(tier.displayName) モデルに切り替えました。Human モードに戻りました"
+                )
+            }
+        }
+    }
+
     // MARK: - Workspace actions
 
     func openWorkspace() {
         guard let url = workspace.pickFolder() else { return }
         workspaceURL = url
-        workspaceFiles = []          // clear instantly for UI responsiveness
+        workspaceFiles = []
         selectedFile = nil
         selectedFileContent = ""
         terminal.workingDirectory = url
+        // 再起動後も最後のワークスペースを復元できるよう保存
+        UserDefaults.standard.set(url.path, forKey: "last_workspace_path")
         addSystemMessage("📂 Workspace: \(url.lastPathComponent)")
-        // Hint the Self-Evolution engine so it can find xcodeproj from here
         SelfEvolutionEngine.shared.setWorkspaceHint(url)
-        refreshFiles()               // async scan in background
+        // Gatekeeper Vault を実ワークスペースに再設定（読み取り専用バンドルを回避）
+        GatekeeperModeState.shared.configure(workspaceURL: url)
+        refreshFiles()
     }
 
     /// Progressive directory scan — yields partial results as they arrive.
@@ -448,15 +536,97 @@ final class AppState: ObservableObject {
     }
 
 
+    /// Helper to safely read and truncate file content for UI preview
+    nonisolated private func safePreview(for url: URL) -> String {
+        do {
+            let attr = try FileManager.default.attributesOfItem(atPath: url.path)
+            if let size = attr[.size] as? UInt64, size > 2_000_000 { // >2MB is too big for SwiftUI Text
+                return ";;; ⚠️ File is too large to preview (\(size / 1_000_000) MB)"
+            }
+            let text = try String(contentsOf: url, encoding: .utf8)
+            return truncatePreview(text: text)
+        } catch {
+            if let text = try? String(contentsOf: url, encoding: .isoLatin1) {
+                return truncatePreview(text: text)
+            }
+            return ";;; ⚠️ Unable to read file content (binary or unknown encoding)"
+        }
+    }
+
+    nonisolated private func truncatePreview(text: String) -> String {
+        let maxChars = 100_000 // Safe limit for SwiftUI Text
+        if text.count > maxChars {
+            return String(text.prefix(maxChars)) + "\n\n... (File truncated for preview limit) ..."
+        }
+        return text
+    }
+
+    @Published var showGatekeeperRawCode: Bool = false {
+        didSet {
+            if let file = selectedFile { selectFile(file) }
+        }
+    }
+
     /// Instant selection — show name immediately, read content async.
     func selectFile(_ url: URL) {
         selectedFile = url          // highlight instantly (no wait)
         selectedFileContent = ""    // clear old content immediately
+
+        // ── Gatekeeper Mode: Vault の JCross IR を表示 ────────────────
+        // 有効な場合は実コードの代わりに JCross 変換済みコンテンツを表示する。
+        // Vault 未登録ファイルは実コード + 警告バナーで表示。
+        let gatekeeperEnabled = GatekeeperModeState.shared.isEnabled
+        if gatekeeperEnabled && !showGatekeeperRawCode {
+            let relativePath: String
+            if let wsPath = workspaceURL?.path,
+               url.path.hasPrefix(wsPath + "/") {
+                relativePath = String(url.path.dropFirst(wsPath.count + 1))
+            } else {
+                relativePath = url.lastPathComponent
+            }
+
+            Task.detached(priority: .userInitiated) { [weak self] in
+                guard let self else { return }
+                let vault = await MainActor.run { GatekeeperModeState.shared.vault }
+                let result = await MainActor.run { vault.read(relativePath: relativePath) }
+
+                await MainActor.run {
+                    guard self.selectedFile == url else { return }
+                    if let vaultResult = result {
+                        // JCross IR を表示（先頭にバナーを付ける）
+                        let banner = """
+                        ;;; 🛡️ GATEKEEPER MODE — JCross IR View
+                        ;;; Real identifiers have been replaced with node IDs.
+                        ;;; Schema: \(vaultResult.entry.schemaSessionID.prefix(12))
+                        ;;; Nodes: \(vaultResult.entry.nodeCount) | Secrets redacted: \(vaultResult.entry.secretCount)
+                        ;;; Source: \(relativePath)
+                        ;;; 
+                        ;;; (To view raw code, toggle "Show Raw Code" above)
+                        ;;;
+                        """
+                        self.selectedFileContent = banner + "\n" + self.truncatePreview(text: vaultResult.jcrossContent)
+                    } else {
+                        // Vault 未変換: 実コードを読み込み + 警告バナー
+                        let raw = self.safePreview(for: url)
+                        let warning = """
+                        ;;; ⚠️ GATEKEEPER MODE — このファイルはまだ JCross 変換されていません
+                        ;;; [Gatekeeper 設定] → [一括変換を開始] でVaultを更新してください
+                        ;;; ※ 以下は実コードです。このビューは一時的なものです
+                        ;;;
+                        
+                        """
+                        self.selectedFileContent = warning + raw
+                    }
+                }
+            }
+            return
+        }
+
+        // ── 通常モード: 実ファイルを読み込む ─────────────────────────
         Task.detached(priority: .userInitiated) { [weak self] in
             guard let self else { return }
             // Read on background thread — never blocks UI
-            let content = (try? String(contentsOf: url, encoding: .utf8)) ??
-                          (try? String(contentsOf: url, encoding: .isoLatin1)) ?? ""
+            let content = self.safePreview(for: url)
             await MainActor.run {
                 // Only update if this file is still selected
                 guard self.selectedFile == url else { return }
@@ -478,6 +648,9 @@ final class AppState: ObservableObject {
 
     /// Start a fresh chat  (old session saved automatically).
     func newChatSession() {
+        // 新規セッション開始時は常にフォルダ選択ダイアログを開く
+        openWorkspace()
+
         // Before clearing, archive the current session progressively
         if let currentId = sessions.activeSessionId,
            let current = sessions.sessions.first(where: { $0.id == currentId }),
@@ -489,6 +662,8 @@ final class AppState: ObservableObject {
         messages.removeAll()
         pendingDiff = nil
         showDiff    = false
+        // 新セッション開始時に VXTimeline ID をリセット
+        vxChatSessionId = String(UUID().uuidString.prefix(8))
         let newSession = sessions.newSession(messages: [], workspacePath: workspaceURL?.path)
 
         // ── Cross-session memory injection ───────────────────────────
@@ -507,7 +682,7 @@ final class AppState: ObservableObject {
                         ChatMessage(role: .system, content: injection),
                         at: 0
                     )
-                    self.addSystemMessage("🧠 過去セッションの記憶を注入しました (\(layer.rawValue) レイヤー)")
+                    self.addSystemMessage(self.t("🧠 Injected memory from past session (\\(layer.rawValue) layer)", "🧠 過去セッションの記憶を注入しました (\\(layer.rawValue) レイヤー)"))
                 }
             }
         }
@@ -556,7 +731,7 @@ final class AppState: ObservableObject {
                 }
             }
         }
-        addSystemMessage("📂 セッション「\(session.title)」を復元しました")
+        addSystemMessage(self.t("📂 Restored session '\\(session.title)'", "📂 セッション「\\(session.title)」を復元しました"))
         activeChatTab = 0
     }
 
@@ -600,7 +775,10 @@ final class AppState: ObservableObject {
             }
 
             // Route: Privacy Shield / Cloud modes bypass agent loop
-            if inferenceMode == .cloudDirect || inferenceMode == .privacyShield || inferenceMode == .paranoiaMode {
+            if await MainActor.run(body: { GatekeeperModeState.shared.isEnabled }) {
+                await CommanderOrchestrator.shared.handleUserMessage(text)
+                await MainActor.run { self.isGenerating = false }
+            } else if inferenceMode == .cloudDirect || inferenceMode == .privacyShield || inferenceMode == .paranoiaMode {
                 await runHybrid(instruction: text)
             } else if agentLoopEnabled {
                 // Pass images to agent loop so the model can see them
@@ -623,7 +801,7 @@ final class AppState: ObservableObject {
         inferenceTask?.cancel()
         inferenceTask = nil
         isGenerating = false
-        addSystemMessage("⏹ 推論を中断しました")
+        addSystemMessage(self.t("⏹ Inference aborted", "⏹ 推論を中断しました"))
     }
 
     // MARK: - Hybrid Engine (Privacy Shield / Cloud Direct)
@@ -744,9 +922,9 @@ final class AppState: ObservableObject {
         do {
             try diff.modifiedContent.write(to: diff.fileURL, atomically: true, encoding: .utf8)
             selectedFileContent = diff.modifiedContent
-            addSystemMessage("⚡ [AI Priority] 差分を自動適用: \(diff.fileURL.lastPathComponent)")
+            addSystemMessage(self.t("⚡ [AI Priority] Auto-applied diff: \\(diff.fileURL.lastPathComponent)", "⚡ [AI Priority] 差分を自動適用: \\(diff.fileURL.lastPathComponent)"))
         } catch {
-            addSystemMessage("❌ 自動適用失敗: \(error.localizedDescription)")
+            addSystemMessage(self.t("❌ Auto-apply failed: \\(error.localizedDescription)", "❌ 自動適用失敗: \\(error.localizedDescription)"))
         }
         pendingDiff = nil
         showDiff = false
@@ -774,7 +952,9 @@ final class AppState: ObservableObject {
         // We only snapshot the current value to pass into AgentLoop.
         let snap_selfFix = selfFixMode
 
-        let snap_isAIPriority = (operationMode == .aiPriority)
+        // nano/small モデルはユーザーが operationMode を手動変更していても
+        // 常に AI Priority ループで動作させる（VX-Loop + ConfusionDetector が必須なため）
+        let snap_isAIPriority = (operationMode == .aiPriority) || isNanoSmallModelActive
 
         // Build image context suffix so models that read text still see the filename
         var imageContext = ""
@@ -799,7 +979,8 @@ final class AppState: ObservableObject {
             cortex: cortex,
             selfFixMode: snap_selfFix,
             isAIPriority: snap_isAIPriority,
-            memoryLayer: sessions.activeSession?.activeLayer ?? .l2
+            memoryLayer: sessions.activeSession?.activeLayer ?? .l2,
+            chatSessionId: vxChatSessionId
         ) { [weak self] event in
             guard let self else { return }
             await MainActor.run {
@@ -847,13 +1028,25 @@ final class AppState: ObservableObject {
                             // Find the exact streaming message by its UUID.
                             // This is safe even when tool/system messages follow
                             // the streaming message ("last role" check would fail).
+
+                            // Snapshot processLog → thinkingLog for post-completion display
+                            let logSnapshot = self.processLog.map { e in
+                                ChatMessage.ThinkingLogEntry(
+                                    timestamp: e.timestamp,
+                                    text:      e.text,
+                                    kind:      e.kind.rawValue
+                                )
+                            }
+
                             if let sid = self.streamingMsgId,
                                let idx = self.messages.firstIndex(where: { $0.id == sid }) {
                                 // Finalise in-place with the clean stripped version
-                                self.messages[idx].content = stripped
+                                self.messages[idx].content      = stripped
+                                self.messages[idx].thinkingLog  = logSnapshot
                             } else {
                                 // No streaming message for this turn → new bubble
-                                let msg = ChatMessage(role: .assistant, content: stripped)
+                                var msg = ChatMessage(role: .assistant, content: stripped)
+                                msg.thinkingLog = logSnapshot
                                 self.streamingMsgId = msg.id
                                 self.messages.append(msg)
                             }
@@ -862,7 +1055,7 @@ final class AppState: ObservableObject {
                         }
                         // Notify if patches detected
                         if !patches.isEmpty {
-                            self.addSystemMessage("🧬 \(patches.count) 個のパッチを検出 — Self-Evolution パネルで確認できます")
+                            self.addSystemMessage(self.t("🧬 Detected \\(patches.count) patches — check Self-Evolution panel", "🧬 \\(patches.count) 個のパッチを検出 — Self-Evolution パネルで確認できます"))
                         }
                     }
 
@@ -1161,7 +1354,7 @@ final class AppState: ObservableObject {
         guard let req = pendingFileApproval else { return }
         pendingFileApproval = nil
         req.approve()
-        addSystemMessage("✅ 承認しました: \(req.displayFileName)")
+        addSystemMessage(self.t("✅ Approved: \\(req.displayFileName)", "✅ 承認しました: \\(req.displayFileName)"))
     }
 
     /// User tapped "拒否" — resume the AgentLoop continuation with false, skip write.
@@ -1170,7 +1363,7 @@ final class AppState: ObservableObject {
         let name = req.displayFileName
         pendingFileApproval = nil
         req.reject()
-        addSystemMessage("⏸ 拒否しました: \(name)")
+        addSystemMessage(self.t("⏸ Rejected: \\(name)", "⏸ 拒否しました: \\(name)"))
     }
 
 
@@ -1206,12 +1399,137 @@ final class AppState: ObservableObject {
         }
     }
 
+    // MARK: - Model Eject (from LoadedModelPanel)
+
+    /// Unload the currently active model, freeing all memory.
+    ///
+    /// • MLX: releases ModelContainer via MLXRunner.unloadModel() → deinit path frees GPU/ANE.
+    /// • Ollama: sends DELETE /api/delete or keep-alive=0 to unload from RAM.
+    ///
+    /// After ejection, modelStatus → .none and a Deep→Front topology alias is persisted
+    /// so the cognitive engine remembers which models have been used.
+    func ejectModel() {
+        let snap = modelStatus
+        switch snap {
+        case .mlxReady(let m), .mlxDownloading(let m):
+            modelStatus = .none
+            addSystemMessage(self.t("⏏ Ejected MLX Model: \\(m)", "⏏ MLX モデルをリジェクト: \\(m)"))
+            Task.detached(priority: .userInitiated) {
+                await MLXRunner.shared.unloadModel()
+                // Write a topology alias into front/ for future reference
+                Task.detached(priority: .utility) {
+                    SessionMemoryArchiver.shared.writeDeepAlias(
+                        modelId: m,
+                        backend: "MLX",
+                        kanjiTags: "[技:1.0] [速:0.8] [軽:0.7]"
+                    )
+                }
+            }
+        case .ollamaReady(let m):
+            modelStatus = .none
+            addSystemMessage(self.t("⏏ Ejected Ollama Model: \\(m)", "⏏ Ollama モデルをリジェクト: \\(m)"))
+            let endpoint = ollamaEndpoint   // capture on MainActor before detaching
+            Task.detached(priority: .userInitiated) {
+                // Ollama: unload via generate API with keep_alive=0
+                if let url = URL(string: "\(endpoint)/api/generate") {
+                    var req = URLRequest(url: url)
+                    req.httpMethod = "POST"
+                    req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                    req.httpBody = try? JSONSerialization.data(withJSONObject: [
+                        "model": m, "keep_alive": 0
+                    ])
+                    _ = try? await URLSession.shared.data(for: req)
+                }
+                Task.detached(priority: .utility) {
+                    SessionMemoryArchiver.shared.writeDeepAlias(
+                        modelId: m,
+                        backend: "Ollama",
+                        kanjiTags: "[技:1.0] [通:0.8] [外:0.6]"
+                    )
+                }
+            }
+        default:
+            // Nothing loaded — just reset
+            modelStatus = .none
+        }
+        // Toast notification
+        ToastManager.shared.show(
+            "モデルをリジェクトしました",
+            icon: "eject.fill",
+            color: Color(red: 1.0, green: 0.55, blue: 0.2)
+        )
+    }
+
+
     // MARK: - Helpers
 
     func addSystemMessage(_ text: String) {
         // Only show agent-loop tool events — NOT model load events (those use Toast)
         guard !text.hasPrefix("🟢") && !text.hasPrefix("🔌") else { return }
         messages.append(ChatMessage(role: .system, content: text))
+    }
+
+    // MARK: - Settings Persistence (Startup Restore)
+    //
+    // activeOllamaModel と activeMlxModel は宣言時のデフォルト値として
+    // UserDefaults から直接復元される（上記の ={ UserDefaults... }() パターン）。
+    // その他の設定も同様に didSet で自動保存されるが、
+    // 起動時のデフォルト値が UserDefaults を参照していない項目をここで補完する。
+
+    func loadPersistedSettings() {
+        let ud = UserDefaults.standard
+
+        // ── Workspace ──────────────────────────────────────────────────────
+        if let path = ud.string(forKey: "last_workspace_path") {
+            let url = URL(fileURLWithPath: path)
+            var isDir: ObjCBool = false
+            if FileManager.default.fileExists(atPath: path, isDirectory: &isDir), isDir.boolValue {
+                workspaceURL = url
+                terminal.workingDirectory = url
+                // 起動時復元: Gatekeeper Vault も実ワークスペースに設定
+                GatekeeperModeState.shared.configure(workspaceURL: url)
+                refreshFiles()
+            }
+        }
+
+        // ── Anthropic ──────────────────────────────────────────────────────
+        if let key = ud.string(forKey: "anthropic_api_key"), !key.isEmpty {
+            anthropicApiKey = key                       // didSet → AnthropicClient.configure
+        }
+        if let model = ud.string(forKey: "anthropic_model"), !model.isEmpty {
+            activeAnthropicModel = model
+        }
+
+        // ── Model config ───────────────────────────────────────────────────
+        // temperature/maxTokens/systemPrompt 等は宣言時のデフォルトが UD を見ていない
+        // ため、ここで上書きする（didSet による二重保存は無害）。
+        if let t = ud.object(forKey: "model_temperature") as? Double { temperature = t }
+        if let n = ud.object(forKey: "max_tokens_ollama") as? Int    { maxTokensOllama = n }
+        if let n = ud.object(forKey: "max_tokens_mlx") as? Int       { maxTokensMLX = n }
+        if let e = ud.string(forKey: "ollama_endpoint"), !e.isEmpty  { ollamaEndpoint = e }
+        if let s = ud.string(forKey: "system_prompt"), !s.isEmpty    { systemPrompt = s }
+
+        // ── Toggles ────────────────────────────────────────────────────────
+        if let v = ud.object(forKey: "agent_loop_enabled") as? Bool  { agentLoopEnabled = v }
+        if let v = ud.object(forKey: "streaming_enabled")  as? Bool  { streamingEnabled = v }
+        if let v = ud.object(forKey: "tool_browser")       as? Bool  { toolBrowserEnabled = v }
+        if let v = ud.object(forKey: "tool_web_search")    as? Bool  { toolWebSearchEnabled = v }
+        if let v = ud.object(forKey: "tool_terminal")      as? Bool  { toolTerminalEnabled = v }
+        if let v = ud.object(forKey: "tool_diff")          as? Bool  { toolDiffEnabled = v }
+        if let v = ud.object(forKey: "tool_jcross")        as? Bool  { toolJCrossEnabled = v }
+        if let v = ud.object(forKey: "gemma_semantic_masking") as? Bool { gemmaSemanticMaskingEnabled = v }
+
+        // ── Modes ──────────────────────────────────────────────────────────
+        if let raw = ud.string(forKey: "inference_mode"),
+           let m = InferenceMode(rawValue: raw) { inferenceMode = m }
+        if let raw = ud.string(forKey: "cloud_provider"),
+           let p = CloudProvider(rawValue: raw) { cloudProvider = p }
+        if let raw = ud.string(forKey: "operation_mode"),
+           let o = OperationMode(rawValue: raw) { operationMode = o }
+
+        // ── Notification ───────────────────────────────────────────────────
+        if let v = ud.object(forKey: "notify_diff_apply") as? Bool { notifyOnDiffApply = v }
+        if let v = ud.object(forKey: "notify_error")      as? Bool { notifyOnError = v }
     }
 
     // MARK: - CI/CD Auto-Reply Hook
@@ -1274,7 +1592,7 @@ final class AppState: ObservableObject {
 
     var isReady: Bool {
         switch modelStatus {
-        case .ready, .ollamaReady, .mlxReady: return true
+        case .ready, .ollamaReady, .mlxReady, .bitnetReady: return true
         default: return false
         }
     }
@@ -1289,13 +1607,14 @@ final class AppState: ObservableObject {
         case .anthropicReady(let m, _):      return "Claude: \(m)"
         case .mlxReady(let m):              return "MLX: \(m.components(separatedBy: "/").last ?? m)"
         case .mlxDownloading(let m):        return "⏬ \(m.components(separatedBy: "/").last ?? m)"
+        case .bitnetReady(let m):           return "BitNet: \(m)"
         case .error(let e):                  return "Error: \(e)"
         }
     }
 
     var statusColor: Color {
         switch modelStatus {
-        case .ready, .ollamaReady, .mlxReady, .anthropicReady: return .green
+        case .ready, .ollamaReady, .mlxReady, .anthropicReady, .bitnetReady: return .green
         case .error:                           return .red
         case .downloading, .connecting,
              .mlxDownloading:                  return .orange

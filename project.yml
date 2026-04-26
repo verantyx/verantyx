@@ -53,3 +53,52 @@ targets:
         product: MLXLLM
       - package: Hub
         product: Transformers
+    postBuildScripts:
+      # ── verantyx-browser をアプリバンドルに埋め込む ────────────────────────
+      #
+      # Xcode はバイナリファイルを resources: 経由では実行ファイルとして
+      # 正しくバンドルしないため、postBuildScript で
+      # BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/Contents/MacOS/ に直接コピーする。
+      #
+      # 解決順序（どこにバイナリがあるか探す）:
+      #   1. Resources/verantyx-browser（rebuild.sh or 前フェーズでコピー済み）
+      #   2. Cargo release ビルド出力
+      #   3. Cargo debug ビルド出力
+      - name: "Embed verantyx-browser into App Bundle"
+        script: |
+          set -e
+          export PATH="$PATH:$HOME/.cargo/bin"
+
+          BUNDLE_MACOS="$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/Contents/MacOS"
+          DEST="$BUNDLE_MACOS/verantyx-browser"
+
+          # バイナリのソースを探す（優先順）
+          BROWSER_DIR="$SRCROOT/../verantyx-browser"
+          if [ ! -d "$BROWSER_DIR" ]; then
+            echo "warning: verantyx-browser ディレクトリが見つかりません: $BROWSER_DIR"
+          fi
+
+          SRC=""
+          # ① Resources/ に既にコピー済みのバイナリ
+          if [ -f "$SRCROOT/Resources/verantyx-browser" ]; then
+            SRC="$SRCROOT/Resources/verantyx-browser"
+          # ② Cargo release
+          elif [ -f "$BROWSER_DIR/target/release/verantyx-browser" ]; then
+            SRC="$BROWSER_DIR/target/release/verantyx-browser"
+          # ③ Cargo debug
+          elif [ -f "$BROWSER_DIR/target/debug/verantyx-browser" ]; then
+            SRC="$BROWSER_DIR/target/debug/verantyx-browser"
+          fi
+
+          if [ -z "$SRC" ]; then
+            echo "⚠️  verantyx-browser バイナリが見つかりません。cargo build を先に実行してください。"
+            echo "   cd $BROWSER_DIR && cargo build --release -p vx-browser"
+            exit 0
+          fi
+
+          # Contents/MacOS/ にコピーして実行権限を付与
+          mkdir -p "$BUNDLE_MACOS"
+          cp -f "$SRC" "$DEST"
+          chmod +x "$DEST"
+          echo "✅ verantyx-browser → $DEST"
+        basedOnDependencyAnalysis: false

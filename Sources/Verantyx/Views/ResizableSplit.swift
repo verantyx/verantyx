@@ -8,7 +8,7 @@ import SwiftUI
 
 struct ResizableHSplit<Left: View, Right: View>: View {
     var minLeft: CGFloat
-    var maxLeft: CGFloat
+    var maxLeft: CGFloat 
     var minRight: CGFloat
 
     let left: Left

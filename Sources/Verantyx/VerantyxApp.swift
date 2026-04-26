@@ -1,5 +1,6 @@
 import SwiftUI
 import AppKit
+import Darwin   // signal()
 
 // MARK: - AppDelegate for Close/Quit Guard
 
@@ -15,6 +16,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // AI cannot modify this logic because it runs before the agent system initializes.
 
     func applicationWillFinishLaunching(_ notification: Notification) {
+        // ── SIGPIPE を無視する（最重要・最初に実行） ───────────────────────────
+        // verantyx-browser (Rust) プロセスが予期せず終了した後にパイプへ書き込むと
+        // デフォルトでは SIGPIPE がアプリ全体をクラッシュさせる（signal 13）。
+        // SIG_IGN を設定することで write() が -1/EPIPE を返すだけになり、
+        // Swift 側の throw BrowserError.notRunning で安全にハンドリングできる。
+        signal(SIGPIPE, SIG_IGN)
+
         guard SafeModeGuard.shared.checkOnLaunch() else { return }
 
         // Show Safe Mode window BLOCKING the normal UI
@@ -39,22 +47,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        // MCP Bridge (port 5420) と verantyx-browser を先に終了
+        MCPBridgeLauncher.shared.stop()
+        ExtensionHostManager.shared.stop()
+        Task.detached(priority: .utility) {
+            await BrowserBridgePool.shared.shutdown()
+        }
+
         guard let state = appState, state.isDirty else { return .terminateNow }
 
         // Show confirmation on main thread synchronously (legacy Modal)
-        let alert           = NSAlert()
-        alert.messageText   = "このセッションを保存しますか？"
+        let alert             = NSAlert()
+        alert.messageText     = "このセッションを保存しますか？"
         alert.informativeText = "作業中のプロジェクトがあります。終了前にセッションを保存することを推奨します。"
         alert.addButton(withTitle: "保存して終了")
         alert.addButton(withTitle: "保存せずに終了")
         alert.addButton(withTitle: "キャンセル")
-        alert.alertStyle  = .warning
+        alert.alertStyle      = .warning
 
         let response = alert.runModal()
         switch response {
         case .alertFirstButtonReturn:   // 保存して終了
-            state.sessions.updateActiveSession(messages: state.messages,
-                                               workspacePath: state.workspaceURL?.path)
+            // ⚠️ IMPORTANT: ここは同期コンテキスト (applicationShouldTerminate) 。
+            // updateActiveSession → save() → Task.detached { archiveProgressively() } は
+            // 非同期 MCP ネットワーク呼び出しを起動しメインスレッドをブロックしてしまう。
+            // 代わりに「JSON ディスク書き込みのみ」の同期パスを直接呼ぶ。
+            state.sessions.saveForQuit(messages: state.messages,
+                                       workspacePath: state.workspaceURL?.path)
             return .terminateNow
         case .alertSecondButtonReturn:  // 保存せずに終了
             return .terminateNow
@@ -89,13 +108,31 @@ struct VerantyxApp: App {
                 .onAppear {
                     AppState.shared = appState
                     delegate.appState = appState
+
+                    // ── 永続化設定を最初に復元（モデル/ワークスペース/APIキー等） ──
+                    appState.loadPersistedSettings()
+
                     appState.registerCIErrorHook()
                     appState.registerRestartHook()
+                    // ── MCP Bridge 自動起動（port 5420）──────────────────
+                    // MCPSkillSync のポーリング開始前に Bridge を起動しておく。
+                    // MCPBridgeLauncher が /health 疎通確認後に isRunning = true にする。
+                    MCPBridgeLauncher.shared.start()
                     MCPSkillSync.shared.startPolling()
+                    
+                    // ── VS Code Extension Host 自動起動 ──────────────────
+                    ExtensionHostManager.shared.start()
 
-                    // Show Cortex onboarding on first launch (or if not dismissed)
+                    Task.detached(priority: .utility) {
+                        await BrowserBridgePool.shared.warmUp()
+                    }
+
+                    let wsURL = appState.workspaceURL
+                    Task.detached(priority: .utility) {
+                        SessionMemoryArchiver.shared.indexSkills(workspaceRoot: wsURL)
+                    }
+
                     if !cortexDismissed {
-                        // Slight delay so the main window renders first
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                             showCortexOnboarding = true
                         }

@@ -48,21 +48,21 @@ final class WorkspaceManager {
                 var batchBuffer: [URL] = []
                 batchBuffer.reserveCapacity(200)
 
-                let batchSize = 150          // yield to UI every N new files found
-                var yieldCount = 0
+                let batchSize  = 150          // yield to UI every N new files found
+                let maxFiles   = 5_000        // hard cap — stop after this many files
+                let deadline   = Date().addingTimeInterval(8.0)  // 8 second timeout
 
                 self._scanDirectory(
                     root: root,
                     extensions: extensions,
                     onFile: { url in
+                        guard accumulated.count < maxFiles, Date() < deadline else { return }
                         accumulated.append(url)
                         batchBuffer.append(url)
                         if batchBuffer.count >= batchSize {
-                            // Sort only the accumulated slice for display
                             let snapshot = accumulated.sorted { $0.path < $1.path }
                             continuation.yield(snapshot)
                             batchBuffer.removeAll(keepingCapacity: true)
-                            yieldCount += 1
                         }
                     }
                 )
@@ -78,11 +78,9 @@ final class WorkspaceManager {
     // MARK: - Core scanner
 
     /// Heavy directories that should NEVER be descended into.
-    /// Using skipDescendants() at directory entry is the VS Code trick:
-    /// instead of visiting thousands of files just to discard them, we skip the whole subtree.
     private static let skipDirNames: Set<String> = [
         // JavaScript / Node
-        "node_modules",
+        "node_modules", ".npm", ".yarn", ".pnpm",
         // Rust
         "target",
         // Swift Package Manager
@@ -92,16 +90,21 @@ final class WorkspaceManager {
         // Python
         "__pycache__", "venv", ".venv", "env", ".env",
         "eggs", ".eggs", ".mypy_cache", ".pytest_cache", ".tox",
+        "site-packages", "dist-packages",
         // Java / Android / Gradle
-        ".gradle", ".idea",
+        ".gradle", ".idea", "bin", "obj",
         // iOS/macOS
         "Pods", "Carthage",
         // Web bundlers
-        "dist", ".next", ".nuxt", ".output",
+        "dist", ".next", ".nuxt", ".output", ".svelte-kit",
         // Generic build/coverage/cache
-        "build", "coverage", ".cache",
+        "build", "coverage", ".cache", ".parcel-cache", ".turbo",
         // Git LFS object store (can be huge)
         "lfs",
+        // Firebase / cloud
+        ".firebase",
+        // ML / datasets
+        "__MACOSX", ".DS_Store",
     ]
     // Note: .skipsHiddenFiles already handles .git, .svn, .hg, etc.
 

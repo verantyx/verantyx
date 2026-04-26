@@ -1,9 +1,12 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 // MARK: - MainSplitView
 // Verantyx IDE layout — switches between:
-//   • Human Mode   → 4-pane IDE (Activity + File Tree + Chat + Diff/Terminal)
-//   • AI Priority  → Full-screen 2-pane (Chat | Artifact) — AIModeLayoutView
+//   • Human Mode          → 4-pane IDE (Activity + File Tree + Chat + Diff/Terminal)
+//   • AI Priority         → Full-screen 2-pane (Chat | Artifact) — AIModeLayoutView
+//   • Human Priority Mode → VS Code-style (File Tree | Code Editor | AI Chat right)
+//   • Gatekeeper Mode     → Human Priority layout + persistent green Gatekeeper border
 
 struct MainSplitView: View {
     @EnvironmentObject var app: AppState
@@ -11,6 +14,7 @@ struct MainSplitView: View {
     @State private var showModelPicker  = false
     @State private var showSettings     = false
     @State private var showMCPQuick     = false
+    @State private var showExtensionStore = false
 
     /// True once any non-system message exists — locks the mode toggle
     private var chatStarted: Bool {
@@ -28,6 +32,43 @@ struct MainSplitView: View {
                             insertion: .move(edge: .trailing).combined(with: .opacity),
                             removal:   .move(edge: .trailing).combined(with: .opacity)
                         ))
+                } else if app.operationMode == .humanPriority {
+                    // ── Human Priority: VS Code-style IDE ─────────────────
+                    HumanPriorityModeView()
+                        .environmentObject(app)
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .bottom).combined(with: .opacity),
+                            removal:   .move(edge: .bottom).combined(with: .opacity)
+                        ))
+                } else if app.operationMode == .gatekeeper {
+                    // ── Gatekeeper Mode: Human Priority layout + GK overlay ─
+                    ZStack {
+                        HumanPriorityModeView()
+                            .environmentObject(app)
+                        // Persistent green border — makes mode boundary unmistakable
+                        RoundedRectangle(cornerRadius: 0)
+                            .strokeBorder(
+                                LinearGradient(
+                                    colors: [Color(red: 0.1, green: 0.9, blue: 0.45).opacity(0.85),
+                                             Color(red: 0.1, green: 0.6, blue: 0.35).opacity(0.5)],
+                                    startPoint: .topLeading, endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 2.5
+                            )
+                            .ignoresSafeArea()
+                            .allowsHitTesting(false)
+                        // GK status pill — top center
+                        VStack {
+                            GatekeeperStatusPill()
+                                .padding(.top, 6)
+                            Spacer()
+                        }
+                        .allowsHitTesting(false)
+                    }
+                    .transition(.asymmetric(
+                        insertion: .move(edge: .top).combined(with: .opacity),
+                        removal:   .move(edge: .top).combined(with: .opacity)
+                    ))
                 } else {
                     // ── Human Mode: standard 4-pane IDE ───────────────────
                     humanModeLayout
@@ -63,6 +104,25 @@ struct MainSplitView: View {
                 .transition(.scale(scale: 0.96).combined(with: .opacity))
                 .zIndex(10)
             }
+            
+            // ── Extension Store overlay ───────────────────────────────────
+            if showExtensionStore {
+                Color.black.opacity(0.55)
+                    .ignoresSafeArea()
+                    .onTapGesture { withAnimation(.easeOut(duration: 0.18)) { showExtensionStore = false } }
+                    .transition(.opacity)
+                
+                ExtensionStoreView(onDismiss: {
+                    withAnimation(.easeOut(duration: 0.18)) { showExtensionStore = false }
+                })
+                .environmentObject(app)
+                .transition(.scale(scale: 0.96).combined(with: .opacity))
+                .zIndex(15)
+            }
+            
+            // ── VS Code Extension UI Overlay ──────────────────────────────
+            ExtensionUIPanelView()
+                .zIndex(105)
         }
         .toolbar { toolbarContent }
         .onAppear { app.connectOllama() }
@@ -199,6 +259,7 @@ struct MainSplitView: View {
                     }
                     .foregroundStyle(Color(red: 0.9, green: 0.4, blue: 0.4))
                     .padding(.horizontal, 20).padding(.vertical, 9)
+                    .contentShape(Rectangle())
                     .background(Color(red: 0.32, green: 0.10, blue: 0.10).opacity(0.7),
                                 in: RoundedRectangle(cornerRadius: 8))
                     .overlay(RoundedRectangle(cornerRadius: 8)
@@ -219,6 +280,7 @@ struct MainSplitView: View {
                     }
                     .foregroundStyle(Color(red: 0.3, green: 0.92, blue: 0.5))
                     .padding(.horizontal, 20).padding(.vertical, 9)
+                    .contentShape(Rectangle())
                     .background(Color(red: 0.10, green: 0.28, blue: 0.15).opacity(0.8),
                                 in: RoundedRectangle(cornerRadius: 8))
                     .overlay(RoundedRectangle(cornerRadius: 8)
@@ -315,6 +377,8 @@ struct MainSplitView: View {
                         switch activitySection {
                         case .mcp:       MCPView()
                         case .evolution: SelfEvolutionView().environmentObject(app)
+                        case .search:    GlobalSearchView().environmentObject(app)
+                        case .git:       GitPanelView().environmentObject(app)
                         default:         FileTreeView()
                         }
                     }
@@ -360,6 +424,23 @@ struct MainSplitView: View {
             if app.operationMode == .human, let diff = app.pendingDiff {
                 humanApprovalBanner(diff: diff)
             }
+
+            // ── Loaded Model Panel — shows when model is active ───────
+            Group {
+                switch app.modelStatus {
+                case .mlxReady, .ollamaReady, .bitnetReady:
+                    LoadedModelPanel()
+                        .environmentObject(app)
+                default:
+                    EmptyView()
+                }
+            }
+            .animation(.spring(response: 0.32, dampingFraction: 0.78), value: {
+                switch app.modelStatus {
+                case .mlxReady, .ollamaReady, .bitnetReady: return true
+                default: return false
+                }
+            }())
 
             Divider().opacity(0.4)
             StatusBarView(terminal: app.terminal)
@@ -455,26 +536,37 @@ struct MainSplitView: View {
             }
         }
 
-        // ── Operation Mode chip (compact — no text, just icon + tooltip) ────
+        // ── Operation Mode chip — cycles: HM → HP → AI → GK → HM ──
         ToolbarItem(placement: .automatic) {
             Button {
                 guard !chatStarted else { return }
                 withAnimation(.easeInOut(duration: 0.2)) {
-                    app.operationMode = app.operationMode == .aiPriority ? .human : .aiPriority
+                    // sync GatekeeperModeState when entering/leaving Gatekeeper
+                    let next = app.operationMode.next
+                    if next == .gatekeeper {
+                        GatekeeperModeState.shared.isEnabled = true
+                    } else if app.operationMode == .gatekeeper {
+                        GatekeeperModeState.shared.isEnabled = false
+                    }
+                    app.operationMode = next
                 }
             } label: {
-                Image(systemName: app.operationMode.icon)
-                    .font(.system(size: 12))
-                    .foregroundStyle(chatStarted
-                                     ? app.operationMode.accentColor.opacity(0.35)
-                                     : app.operationMode.accentColor)
+                HStack(spacing: 4) {
+                    Image(systemName: app.operationMode.icon)
+                        .font(.system(size: 12))
+                    Text(app.operationMode.badge)
+                        .font(.system(size: 9, weight: .bold, design: .monospaced))
+                }
+                .foregroundStyle(chatStarted
+                                 ? app.operationMode.accentColor.opacity(0.35)
+                                 : app.operationMode.accentColor)
             }
             .buttonStyle(.plain)
             .disabled(chatStarted)
             .help(chatStarted
                   ? app.t("Mode cannot be changed after chat has started", "モードはチャット開始後に変更できません")
-                  : app.t("Switch mode: " + (app.operationMode == .aiPriority ? "to Human Mode" : "to AI Priority"),
-                          "モード切替: " + (app.operationMode == .aiPriority ? "Human Modeへ" : "AI Priorityへ")))
+                  : app.t("Current: " + app.operationMode.displayName + " (click to cycle)",
+                          "現在: " + app.operationMode.displayName + " (クリックで切替)"))
         }
 
         // ── Model picker ────────────────────────────────────────────────────
@@ -488,7 +580,7 @@ struct MainSplitView: View {
                 .foregroundStyle(Color(red: 0.75, green: 0.75, blue: 0.88))
             }
             .popover(isPresented: $showModelPicker, arrowEdge: .bottom) {
-                ModelPickerView().environmentObject(app).frame(width: 340)
+                ModelPickerView().environmentObject(app).frame(width: 380)
             }
             .help("Model Picker")
         }
@@ -532,6 +624,35 @@ struct MainSplitView: View {
             .help("Toggle Terminal (⌘⇧L)")
         }
 
+        // ── Load VS Code Extension ──────────────────────────────────────────
+        ToolbarItem(placement: .primaryAction) {
+            Menu {
+                Button("Extension Store (Open VSX)") {
+                    withAnimation(.easeOut(duration: 0.18)) { showExtensionStore = true }
+                }
+                Button("Install from VSIX...") {
+                    let panel = NSOpenPanel()
+                    panel.allowedContentTypes = [UTType(filenameExtension: "vsix")].compactMap { $0 }
+                    panel.allowsMultipleSelection = false
+                    panel.canChooseDirectories = false
+                    if panel.runModal() == .OK, let url = panel.url {
+                        Task {
+                            do {
+                                try await VSIXPackageManager.shared.installExtension(from: url)
+                                app.addSystemMessage("✅ Loaded VS Code Extension: \(url.lastPathComponent)")
+                            } catch {
+                                app.addSystemMessage("❌ Failed to load extension: \(error.localizedDescription)")
+                            }
+                        }
+                    }
+                }
+            } label: {
+                Image(systemName: "shippingbox")
+                    .foregroundStyle(.secondary)
+            }
+            .help("VS Code Extensions")
+        }
+
         // ── Settings ────────────────────────────────────────────────────────
         ToolbarItem(placement: .primaryAction) {
             Button {
@@ -546,11 +667,12 @@ struct MainSplitView: View {
 
     private var shortModelLabel: String {
         switch app.modelStatus {
-        case .ollamaReady(let m): return m.components(separatedBy: ":").first ?? m
-        case .mlxReady(let m):   return "MLX:" + (m.components(separatedBy: "/").last ?? m)
-        case .connecting:         return "connecting…"
-        case .error:              return "error"
-        default:                  return "no model"
+        case .ollamaReady(let m):   return m.components(separatedBy: ":").first ?? m
+        case .mlxReady(let m):      return "MLX:" + (m.components(separatedBy: "/").last ?? m)
+        case .bitnetReady(let m):   return "⚡" + m.components(separatedBy: "-").prefix(3).joined(separator: "-")
+        case .connecting:            return "connecting…"
+        case .error:                 return "error"
+        default:                     return "no model"
         }
     }
 }

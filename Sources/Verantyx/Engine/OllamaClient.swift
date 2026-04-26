@@ -159,6 +159,71 @@ public actor OllamaClient {
         } catch { return [] }
     }
 
+    // MARK: - Pull Model (Method 3: HuggingFace via Ollama API)
+    // URLSession を用いて進捗をストリーミングで取得する
+
+    public struct PullProgress: Sendable {
+        public let status: String
+        public let completed: Int64
+        public let total: Int64
+        public var percent: Double {
+            guard total > 0 else { return 0 }
+            return Double(completed) / Double(total)
+        }
+    }
+
+    nonisolated public func pullModel(name: String) -> AsyncThrowingStream<PullProgress, Error> {
+        let baseURL = self.baseURL
+        return AsyncThrowingStream { continuation in
+            Task {
+                guard let url = URL(string: "\(baseURL)/api/pull") else {
+                    continuation.finish()
+                    return
+                }
+                var req = URLRequest(url: url)
+                req.httpMethod = "POST"
+                req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                req.timeoutInterval = .infinity
+
+                let body: [String: Any] = ["name": name, "stream": true]
+                guard let bodyData = try? JSONSerialization.data(withJSONObject: body) else {
+                    continuation.finish()
+                    return
+                }
+                req.httpBody = bodyData
+
+                do {
+                    let (stream, resp) = try await OllamaClient.noTimeoutSession.bytes(for: req)
+                    guard let httpResp = resp as? HTTPURLResponse, httpResp.statusCode == 200 else {
+                        continuation.yield(.init(status: "HTTP Error \((resp as? HTTPURLResponse)?.statusCode ?? -1)", completed: 0, total: 0))
+                        continuation.finish()
+                        return
+                    }
+
+                    for try await line in stream.lines {
+                        guard !line.isEmpty,
+                              let data = line.data(using: .utf8),
+                              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
+                        else { continue }
+
+                        let status = json["status"] as? String ?? "downloading"
+                        let completed = (json["completed"] as? Int64) ?? 0
+                        let total = (json["total"] as? Int64) ?? 0
+                        
+                        continuation.yield(PullProgress(status: status, completed: completed, total: total))
+                        
+                        if status == "success" {
+                            break
+                        }
+                    }
+                    continuation.finish()
+                } catch {
+                    continuation.finish(throwing: error)
+                }
+            }
+        }
+    }
+
     // MARK: - generate() — streaming token-by-token (replaces batch mode)
     // openclaw: ollama-stream.ts の createOllamaStreamFn() を参考に実装。
     // Ollamaは stream:true 時に NDJSON チャンクを逐次返す。

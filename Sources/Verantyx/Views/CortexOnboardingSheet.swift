@@ -123,11 +123,11 @@ struct CortexOnboardingSheet: View {
             }
             .padding(.top, 28)
 
-            Text("Verantyx Cortex でさらに強力に")
+            Text(AppLanguage.shared.t("Supercharge with Verantyx Cortex", "Verantyx Cortex でさらに強力に"))
                 .font(.system(size: 22, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
 
-            Text("AI の記憶を永続化する MCP サーバーと組み合わせると、\nVerantyx IDE が真の長期記憶エージェントに進化します。")
+            Text(AppLanguage.shared.t("Combined with our MCP server that persists AI memory,\nVerantyx IDE evolves into a true long-term cognitive agent.", "AI の記憶を永続化する MCP サーバーと組み合わせると、\nVerantyx IDE が真の長期記憶エージェントに進化します。"))
                 .font(.system(size: 13.5))
                 .foregroundStyle(Color.white.opacity(0.60))
                 .multilineTextAlignment(.center)
@@ -144,20 +144,20 @@ struct CortexOnboardingSheet: View {
             featureRow(
                 icon: "memorychip",
                 color: Color(red: 0.40, green: 0.70, blue: 1.00),
-                title: "セッションを超えた長期記憶",
-                detail: "会話・決定・コードパターンを JCross ノードに永続保存"
+                title: AppLanguage.shared.t("Cross-session Long-term Memory", "セッションを超えた長期記憶"),
+                detail: AppLanguage.shared.t("Persists conversations, decisions, and patterns to JCross nodes", "会話・決定・コードパターンを JCross ノードに永続保存")
             )
             featureRow(
                 icon: "arrow.triangle.2.circlepath",
                 color: Color(red: 0.35, green: 0.85, blue: 0.70),
-                title: "Claude / Cursor / Antigravity と共有",
-                detail: "distill_skill でクラウドモデルのスキルをローカルに蒸留"
+                title: AppLanguage.shared.t("Share with Claude / Cursor", "Claude / Cursor / Antigravity と共有"),
+                detail: AppLanguage.shared.t("Distill skills from cloud models to local environment", "distill_skill でクラウドモデルのスキルをローカルに蒸留")
             )
             featureRow(
                 icon: "sparkles",
                 color: Color(red: 0.75, green: 0.50, blue: 1.00),
-                title: "起動時に記憶を自動注入",
-                detail: "boot() / guide() で前回の作業コンテキストを即座に復元"
+                title: AppLanguage.shared.t("Auto-inject Memory at Startup", "起動時に記憶を自動注入"),
+                detail: AppLanguage.shared.t("Instantly restore previous context via boot() / guide()", "boot() / guide() で前回の作業コンテキストを即座に復元")
             )
         }
     }
@@ -214,7 +214,7 @@ struct CortexOnboardingSheet: View {
                     .foregroundStyle(Color.white.opacity(0.45))
             }
             .buttonStyle(.plain)
-            .help("クリップボードにコピー")
+            .help(AppLanguage.shared.t("Copy to clipboard", "クリップボードにコピー"))
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
@@ -235,7 +235,7 @@ struct CortexOnboardingSheet: View {
             // "もう表示しない" toggle
             HStack {
                 Toggle(isOn: $neverShowAgain) {
-                    Text("次回から表示しない")
+                    Text(AppLanguage.shared.t("Don't show again", "次回から表示しない"))
                         .font(.system(size: 12))
                         .foregroundStyle(Color.white.opacity(0.50))
                 }
@@ -250,7 +250,7 @@ struct CortexOnboardingSheet: View {
                 Button {
                     dismiss()
                 } label: {
-                    Text("閉じる")
+                    Text(AppLanguage.shared.t("Close", "閉じる"))
                         .font(.system(size: 13, weight: .medium))
                         .foregroundStyle(Color.white.opacity(0.55))
                         .frame(maxWidth: .infinity)
@@ -270,7 +270,7 @@ struct CortexOnboardingSheet: View {
                     HStack(spacing: 6) {
                         Image(systemName: "arrow.up.right.square")
                             .font(.system(size: 12, weight: .semibold))
-                        Text("GitHub で見る")
+                        Text(AppLanguage.shared.t("View on GitHub", "GitHub で見る"))
                             .font(.system(size: 13, weight: .semibold))
                     }
                     .foregroundStyle(.white)

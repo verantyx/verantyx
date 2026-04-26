@@ -45,7 +45,8 @@ final class FileApprovalRequest: Identifiable, @unchecked Sendable {
 
     var isNewFile: Bool {
         switch kind {
-        case .createNew, .makeDirectory, .applyPatch where originalContent.isEmpty: return true
+        case .createNew, .makeDirectory: return true
+        case .applyPatch: return originalContent.isEmpty
         default: return false
         }
     }

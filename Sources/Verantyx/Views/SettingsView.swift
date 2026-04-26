@@ -13,6 +13,7 @@ struct SettingsView: View {
     @State private var anthropicTestResult: String? = nil
     @State private var showAnthropicKey = false
     @State private var showOpenAIKey = false
+    @State private var showDeepSeekKey = false
 
     enum SettingsTab: String, CaseIterable {
         case general = "General"
@@ -23,6 +24,7 @@ struct SettingsView: View {
         case memory  = "Memory"
         case privacy = "Privacy"
         case mcp     = "MCP"
+        case bitnet  = "BitNet"
 
         var icon: String {
             switch self {
@@ -34,6 +36,7 @@ struct SettingsView: View {
             case .memory:  return "brain"
             case .privacy: return "lock.shield"
             case .mcp:     return "network"
+            case .bitnet:  return "cpu.fill"
             }
         }
 
@@ -47,6 +50,7 @@ struct SettingsView: View {
             case .memory:  return Color(red: 0.8, green: 0.5, blue: 1.0)
             case .privacy: return Color(red: 0.4, green: 0.9, blue: 0.5)
             case .mcp:     return Color(red: 0.3, green: 0.8, blue: 1.0)
+            case .bitnet:  return Color(red: 0.7, green: 0.4, blue: 1.0)
             }
         }
     }
@@ -123,6 +127,16 @@ struct SettingsView: View {
                                         .fill(Color(red: 0.9, green: 0.4, blue: 0.2))
                                         .frame(width: 6, height: 6)
                                 }
+                                // BitNet not-installed indicator
+                                if tab == .bitnet {
+                                    let gkStatus = BitNetEngineManager.shared.status
+                                    if case .notInstalled = gkStatus {
+                                        Spacer()
+                                        Circle()
+                                            .fill(Color(red: 0.7, green: 0.4, blue: 1.0))
+                                            .frame(width: 6, height: 6)
+                                    }
+                                }
                             }
                             .foregroundStyle(selectedTab == tab ? .white : Color(red: 0.6, green: 0.6, blue: 0.7))
                             .padding(.horizontal, 12)
@@ -169,6 +183,7 @@ struct SettingsView: View {
                         case .memory:  memorySettings
                         case .privacy: privacySettings
                         case .mcp:     mcpSettings
+                        case .bitnet:  bitnetSettings
                         }
                     }
                     .padding(22)
@@ -751,6 +766,62 @@ struct SettingsView: View {
                 }
             }
 
+            // ── DeepSeek ──────────────────────────────────────────────
+            settingsCard {
+                VStack(alignment: .leading, spacing: 14) {
+                    HStack(spacing: 10) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(Color(red: 0.3, green: 0.5, blue: 0.9).opacity(0.15))
+                                .frame(width: 32, height: 32)
+                            Image(systemName: "waveform.circle")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(Color(red: 0.3, green: 0.5, blue: 0.9))
+                        }
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("DeepSeek").font(.system(size: 13, weight: .semibold)).foregroundStyle(.white)
+                            Text("deepseek-coder, deepseek-chat")
+                                .font(.system(size: 10)).foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        if let key = UserDefaults.standard.string(forKey: "api_key_DeepSeek"), !key.isEmpty {
+                            Text("✓ Configured")
+                                .font(.system(size: 10, weight: .semibold))
+                                .foregroundStyle(Color(red: 0.3, green: 0.9, blue: 0.5))
+                                .padding(.horizontal, 8).padding(.vertical, 3)
+                                .background(Color(red: 0.3, green: 0.9, blue: 0.5).opacity(0.1), in: Capsule())
+                        }
+                    }
+
+                    Divider().opacity(0.2)
+
+                    rowLabel("API Key") {
+                        HStack(spacing: 6) {
+                            let binding = Binding<String>(
+                                get: { UserDefaults.standard.string(forKey: "api_key_DeepSeek") ?? "" },
+                                set: { UserDefaults.standard.set($0, forKey: "api_key_DeepSeek") }
+                            )
+                            if showDeepSeekKey {
+                                TextField("sk-...", text: binding)
+                                    .textFieldStyle(.roundedBorder)
+                                    .font(.system(size: 11, design: .monospaced))
+                                    .frame(width: 220)
+                            } else {
+                                SecureField("sk-...", text: binding)
+                                    .textFieldStyle(.roundedBorder)
+                                    .font(.system(size: 11, design: .monospaced))
+                                    .frame(width: 220)
+                            }
+                            Button { showDeepSeekKey.toggle() } label: {
+                                Image(systemName: showDeepSeekKey ? "eye.slash" : "eye")
+                                    .font(.system(size: 11))
+                            }
+                            .buttonStyle(.plain).foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            }
+
             // ── Usage tip ──────────────────────────────────────────────
             settingsCard {
                 HStack(spacing: 12) {
@@ -968,8 +1039,9 @@ struct SettingsView: View {
                                 Text("Claude").tag(CloudProvider.claude)
                                 Text("GPT-4").tag(CloudProvider.openai)
                                 Text("Gemini").tag(CloudProvider.gemini)
+                                Text("DeepSeek").tag(CloudProvider.deepseek)
                             }
-                            .pickerStyle(.segmented).frame(width: 160)
+                            .pickerStyle(.segmented).frame(width: 240)
                         }
                     }
                 }
@@ -1090,6 +1162,140 @@ struct SettingsView: View {
                     Spacer()
                 }
             }
+
+            // ── Gatekeeper Mode ────────────────────────────────────────
+            sectionHeader("Gatekeeper Mode", icon: "shield.lefthalf.filled")
+
+            Text("ローカル LLM を司令官にし、外部 API（Claude 等）にはソースコードを一切見せず JCross IR のみを送信します。")
+                .font(.system(size: 11)).foregroundStyle(.secondary)
+
+            GatekeeperQuickSettingsCard()
+        }
+    }
+
+    // MARK: - Gatekeeper Quick Settings Card
+
+    private struct GatekeeperQuickSettingsCard: View {
+        @StateObject private var gk = GatekeeperModeState.shared
+        @State private var availableModels: [String] = []
+        @State private var showFullView = false
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 0) {
+                // ── Enable toggle ──────────────────────────────────────
+                HStack(spacing: 12) {
+                    ZStack {
+                        Circle()
+                            .fill(gk.isEnabled
+                                  ? Color.green.opacity(0.15)
+                                  : Color.white.opacity(0.05))
+                            .frame(width: 36, height: 36)
+                        Image(systemName: gk.isEnabled ? "shield.lefthalf.filled" : "shield")
+                            .font(.system(size: 16))
+                            .foregroundStyle(gk.isEnabled ? .green : .secondary)
+                    }
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Gatekeeper Mode")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(.white)
+                        Text(gk.isEnabled
+                             ? "🟢 有効 — ローカル LLM が司令官。外部 API は JCross IR しか見えない"
+                             : "局所 LLM を司令官にして外部 API からソースコードを隠す")
+                            .font(.system(size: 10))
+                            .foregroundStyle(gk.isEnabled ? Color.green : .secondary)
+                            .lineSpacing(2)
+                    }
+                    Spacer()
+                    Toggle("", isOn: $gk.isEnabled)
+                        .toggleStyle(.switch)
+                        .scaleEffect(0.85)
+                        .tint(.green)
+                }
+                .padding(.vertical, 12)
+
+                if gk.isEnabled {
+                    Divider().opacity(0.15)
+
+                    // ── Commander model ────────────────────────────────
+                    HStack(spacing: 8) {
+                        Image(systemName: "cpu").font(.system(size: 11)).foregroundStyle(.green)
+                        Text("Commander")
+                            .font(.system(size: 11))
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        Picker("", selection: $gk.commanderModel) {
+                            ForEach(availableModels.isEmpty ? [gk.commanderModel] : availableModels, id: \.self) { m in
+                                Text(m).tag(m)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .frame(width: 180)
+                    }
+                    .padding(.vertical, 10)
+
+                    Divider().opacity(0.15)
+
+                    // ── Vault status ───────────────────────────────────
+                    HStack(spacing: 8) {
+                        Image(systemName: "externaldrive.fill")
+                            .font(.system(size: 11))
+                            .foregroundStyle(.orange)
+                        Group {
+                            switch gk.vault.vaultStatus {
+                            case .notInitialized:
+                                Text("Vault 未初期化 — 有効化すると自動変換開始")
+                                    .foregroundStyle(.secondary)
+                            case .converting(let p, _):
+                                Text("変換中 \(Int(p * 100))%...")
+                                    .foregroundStyle(.orange)
+                            case .ready(let n, _):
+                                Text("\(n) ファイル変換済み ✓")
+                                    .foregroundStyle(.green)
+                            case .error(let e):
+                                Text(e).foregroundStyle(.red)
+                            }
+                        }
+                        .font(.system(size: 10))
+                        Spacer()
+                        Button("詳細") { showFullView = true }
+                            .buttonStyle(.bordered)
+                            .controlSize(.small)
+                            .font(.system(size: 10))
+                    }
+                    .padding(.vertical, 10)
+                }
+            }
+            .padding(.horizontal, 14)
+            .background(Color.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 10))
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .strokeBorder(gk.isEnabled ? Color.green.opacity(0.3) : Color.white.opacity(0.07), lineWidth: 1)
+            )
+            .task { await loadModels() }
+            .sheet(isPresented: $showFullView) {
+                GatekeeperModeView()
+                    .frame(width: 540, height: 750)
+            }
+        }
+
+        private func loadModels() async {
+            var models: [String] = []
+            
+            // 1. Fetch Ollama models
+            struct TagsResp: Decodable {
+                struct M: Decodable { let name: String }
+                let models: [M]
+            }
+            if let url = URL(string: "http://localhost:11434/api/tags"),
+               let (data, _) = try? await URLSession.shared.data(from: url),
+               let json = try? JSONDecoder().decode(TagsResp.self, from: data) {
+                models.append(contentsOf: json.models.map { $0.name })
+            }
+            
+            // 2. Add MLX models
+            models.append(contentsOf: MLXRunner.popularModels.map { $0.id })
+            
+            self.availableModels = models
         }
     }
 
@@ -1397,7 +1603,7 @@ struct SettingsView: View {
         testingAnthropic = true
         anthropicTestResult = nil
         Task {
-            AnthropicClient.shared.configure(apiKey: app.anthropicApiKey)
+            await AnthropicClient.shared.configure(apiKey: app.anthropicApiKey)
             // Send a minimal ping request
             let stream = AnthropicClient.shared.streamGenerate(
                 model: app.activeAnthropicModel,
@@ -1424,6 +1630,102 @@ struct SettingsView: View {
                     anthropicTestResult = "✗ \(result.prefix(60))"
                 }
             }
+        }
+    }
+
+    // MARK: - BitNet Settings
+
+    private var bitnetSettings: some View {
+        VStack(alignment: .leading, spacing: 20) {
+
+            // ── Gatekeeper Commander 説明 ─────────────────────────────────
+            sectionHeader("Gatekeeper Commander", icon: "lock.shield")
+
+            settingsCard {
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack(spacing: 12) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color(red: 0.7, green: 0.4, blue: 1.0).opacity(0.15))
+                                .frame(width: 36, height: 36)
+                            Image(systemName: "cpu.fill")
+                                .font(.system(size: 16))
+                                .foregroundStyle(Color(red: 0.7, green: 0.4, blue: 1.0))
+                        }
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("BitNet b1.58 — ローカル Commander LLM")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundStyle(.white)
+                            Text("Gatekeeper Mode 専用。ゼロネットワーク・プライバシー優先推論")
+                                .font(.system(size: 10))
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
+
+                        // ステータスバッジ
+                        Group {
+                            switch BitNetEngineManager.shared.status {
+                            case .ready(let name, _):
+                                Label(name, systemImage: "circle.fill")
+                                    .foregroundStyle(Color(red: 0.3, green: 0.9, blue: 0.5))
+                                    .font(.system(size: 10, weight: .semibold))
+                                    .padding(.horizontal, 8).padding(.vertical, 3)
+                                    .background(Color(red: 0.3, green: 0.9, blue: 0.5).opacity(0.1),
+                                                in: Capsule())
+                            case .notInstalled:
+                                Label("未インストール", systemImage: "circle")
+                                    .foregroundStyle(Color(red: 0.7, green: 0.4, blue: 1.0))
+                                    .font(.system(size: 10, weight: .semibold))
+                                    .padding(.horizontal, 8).padding(.vertical, 3)
+                                    .background(Color(red: 0.7, green: 0.4, blue: 1.0).opacity(0.1),
+                                                in: Capsule())
+                            default:
+                                EmptyView()
+                            }
+                        }
+                    }
+
+                    Divider().opacity(0.2)
+
+                    // フロー説明
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("優先順位:")
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundStyle(.secondary)
+
+                        HStack(spacing: 8) {
+                            Text("①")
+                                .font(.system(size: 10, design: .monospaced))
+                                .foregroundStyle(Color(red: 0.7, green: 0.4, blue: 1.0))
+                            Text("BitNet b1.58 (インストール済みの場合)")
+                                .font(.system(size: 10))
+                                .foregroundStyle(Color(red: 0.85, green: 0.85, blue: 0.95))
+                        }
+                        HStack(spacing: 8) {
+                            Text("②")
+                                .font(.system(size: 10, design: .monospaced))
+                                .foregroundStyle(Color(red: 0.5, green: 0.7, blue: 1.0))
+                            Text("Ollama (localhost:11434) — 自動フォールバック")
+                                .font(.system(size: 10))
+                                .foregroundStyle(Color(red: 0.65, green: 0.65, blue: 0.75))
+                        }
+                    }
+                    .padding(10)
+                    .background(Color(red: 0.7, green: 0.4, blue: 1.0).opacity(0.05),
+                                in: RoundedRectangle(cornerRadius: 8))
+                }
+            }
+
+            // ── BitNetSetupView を埋め込み ──────────────────────────────────
+            sectionHeader("BitNet b1.58 セットアップ", icon: "arrow.down.circle")
+
+            BitNetSetupView()
+                .frame(maxWidth: .infinity)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(Color(red: 0.7, green: 0.4, blue: 1.0).opacity(0.25), lineWidth: 1)
+                )
         }
     }
 }
