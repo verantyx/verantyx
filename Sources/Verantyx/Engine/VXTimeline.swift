@@ -24,10 +24,64 @@ final class VXTimeline {
     static let verbatimWindow  = 5   // 直近 N ターンは verbatim 注入
     static let compressionAt   = 50  // このターン数で 1 ノードに圧縮
 
+    // ── セッション別ターンカウンター（AgentLoop が複数回呼ばれても連番維持）──
+    // キー: sessionId, 値: そのセッションで最後に記録したターン番号
+    private var sessionTurnCounters: [String: Int] = [:]
+    private let countersLock = NSLock()
+
+    /// 次のターン番号を採番する（スレッドセーフ）
+    /// near/ / mid/ / deep/ を走査して既存最大値を初期化ベースにする
+    func nextTurnNumber(for sessionId: String) -> Int {
+        countersLock.lock()
+        defer { countersLock.unlock() }
+
+        if let current = sessionTurnCounters[sessionId] {
+            let next = current + 1
+            sessionTurnCounters[sessionId] = next
+            return next
+        }
+
+        // 初回: ディスク上の既存 TURN ファイルから最大ターン番号を探す
+        let memRoot = URL(fileURLWithPath: NSHomeDirectory())
+            .appendingPathComponent(".openclaw/memory", isDirectory: true)
+        let zones = ["near", "mid", "deep"]
+        var maxTurn = 0
+        for zone in zones {
+            let dir = memRoot.appendingPathComponent(zone)
+            let files = (try? FileManager.default.contentsOfDirectory(
+                at: dir, includingPropertiesForKeys: nil)) ?? []
+            for file in files where file.lastPathComponent.hasPrefix("TURN_\(sessionId)_") {
+                // TURN_{sessionId}_{turnNum:04d}_{ts}.jcross
+                let parts = file.deletingPathExtension().lastPathComponent.components(separatedBy: "_")
+                // parts[0]=TURN, parts[1]=sessionId, parts[2]=turnNum, parts[3]=ts
+                if parts.count >= 4, let n = Int(parts[2]) {
+                    maxTurn = max(maxTurn, n)
+                }
+            }
+        }
+        let next = maxTurn + 1
+        sessionTurnCounters[sessionId] = next
+        return next
+    }
+
     // ── ゾーンディレクトリ ─────────────────────────────────────────────────
     private let nearDir: URL = {
         let dir = URL(fileURLWithPath: NSHomeDirectory())
             .appendingPathComponent(".openclaw/memory/near", isDirectory: true)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        return dir
+    }()
+
+    private let midDir: URL = {
+        let dir = URL(fileURLWithPath: NSHomeDirectory())
+            .appendingPathComponent(".openclaw/memory/mid", isDirectory: true)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        return dir
+    }()
+
+    private let deepDir: URL = {
+        let dir = URL(fileURLWithPath: NSHomeDirectory())
+            .appendingPathComponent(".openclaw/memory/deep", isDirectory: true)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         return dir
     }()
@@ -142,23 +196,27 @@ final class VXTimeline {
     // MARK: - 直近 N ターンを conversation 注入用文字列配列として返す
 
     /// AgentLoop の conversation 配列に直接挿入するための形式で返す。
-    /// 各要素は「User: xxx\nAssistant: yyy」形式の文字列。
-    /// nano モデルがシステムプロンプトの長い context を無視する問題を回避するため、
-    /// conversation history として直前に注入する。
-    func buildTimelineAsMessages(sessionId: String, topK: Int) -> [String] {
+    /// useL1Only=true (nano): L1_SUMMARY（短いファクト）で 2048 トークン制限を節約
+    /// useL1Only=false (large): L3_VERBATIM（逐語）で詳細を保持
+    func buildTimelineAsMessages(sessionId: String, topK: Int, useL1Only: Bool = false) -> [String] {
         let turns = listTurns(sessionId: sessionId, topK: topK)
         guard !turns.isEmpty else { return [] }
 
         var lines: [String] = []
-        for url in turns.reversed() {  // 古い順 → 新しい順
+        for url in turns.reversed() {
             guard let raw = try? String(contentsOf: url, encoding: .utf8) else { continue }
-            // L3 verbatim から User/Assistant を抽出
-            guard let l3 = extractSection(from: raw, tag: "L3_VERBATIM") else { continue }
-            // 先頭400文字に絞る（nano の context limit を考慮）
-            let trimmed = String(l3.prefix(400)).trimmingCharacters(in: .whitespacesAndNewlines)
-            if !trimmed.isEmpty {
-                lines.append(trimmed)
+            let extracted: String
+            if useL1Only {
+                if let l1 = extractSection(from: raw, tag: "L1_SUMMARY") {
+                    extracted = l1.trimmingCharacters(in: .whitespacesAndNewlines)
+                } else if let l3 = extractSection(from: raw, tag: "L3_VERBATIM") {
+                    extracted = String(l3.prefix(200)).trimmingCharacters(in: .whitespacesAndNewlines)
+                } else { continue }
+            } else {
+                guard let l3 = extractSection(from: raw, tag: "L3_VERBATIM") else { continue }
+                extracted = String(l3.prefix(600)).trimmingCharacters(in: .whitespacesAndNewlines)
             }
+            if !extracted.isEmpty { lines.append(extracted) }
         }
         return lines
     }
@@ -244,19 +302,34 @@ final class VXTimeline {
 
     // MARK: - ヘルパー
 
-    /// near/ から sessionId に属する TURN_* ファイルを新しい順で topK 件返す
+    /// near/ + mid/ + deep/ から sessionId に属する TURN_* ファイルを新しい順で topK 件返す
+    /// GC により near/ から追い出されたターンも確実に取得する
     private func listTurns(sessionId: String, topK: Int) -> [URL] {
         let fm = FileManager.default
-        let files = (try? fm.contentsOfDirectory(
-            at: nearDir,
-            includingPropertiesForKeys: [.creationDateKey]
-        )) ?? []
-        return files
-            .filter { $0.pathExtension == "jcross" && $0.lastPathComponent.hasPrefix("TURN_\(sessionId)_") }
-            .sorted {
-                let da = (try? $0.resourceValues(forKeys: [.creationDateKey]).creationDate) ?? .distantPast
-                let db = (try? $1.resourceValues(forKeys: [.creationDateKey]).creationDate) ?? .distantPast
-                return da > db
+        // 全ゾーンを検索（GCで追い出されたファイルも拾う）
+        let searchDirs = [nearDir, midDir, deepDir]
+        var allFiles: [URL] = []
+        for dir in searchDirs {
+            let files = (try? fm.contentsOfDirectory(
+                at: dir,
+                includingPropertiesForKeys: [.creationDateKey]
+            )) ?? []
+            let matched = files.filter {
+                $0.pathExtension == "jcross"
+                && $0.lastPathComponent.hasPrefix("TURN_\(sessionId)_")
+                && !$0.lastPathComponent.hasPrefix("JCROSS_TOMB")
+            }
+            allFiles.append(contentsOf: matched)
+        }
+        // ターン番号で降順ソート（タイムスタンプより確実）
+        return allFiles
+            .sorted { a, b in
+                // TURN_{sessionId}_{turnNum}_{ts}.jcross
+                let partsA = a.deletingPathExtension().lastPathComponent.components(separatedBy: "_")
+                let partsB = b.deletingPathExtension().lastPathComponent.components(separatedBy: "_")
+                let numA = partsA.count >= 3 ? (Int(partsA[2]) ?? 0) : 0
+                let numB = partsB.count >= 3 ? (Int(partsB[2]) ?? 0) : 0
+                return numA > numB
             }
             .prefix(topK)
             .map { $0 }

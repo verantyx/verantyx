@@ -447,9 +447,12 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
             //      → 圧縮で失われたコンテキストを補完（上の OOM guard 内で処理済み）
             if vxLoopEnabled && turn == 1 {
                 // クロスセッション: 前セッションの記憶がある場合のみ注入
+                // nano は L1 サマリー（短いファクト）、larger は L3 逐語
+                let useL1 = (profile.tier == .nano)
                 let priorTurns = VXTimeline.shared.buildTimelineAsMessages(
                     sessionId: vxSessionId,
-                    topK: VXTimeline.verbatimWindow
+                    topK: VXTimeline.verbatimWindow,
+                    useL1Only: useL1
                 )
                 if !priorTurns.isEmpty {
                     // system prompt の直後（index=1）に挿入して優先度を確保
@@ -749,10 +752,13 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
 
 
                 // このターンを VXTimeline に記録
+                // turn は AgentLoop 内のループカウンタ（毎メッセージリセット）のため
+                // セッション横断の連番には nextTurnNumber() を使用する
                 let userText = conversation.last(where: { $0.role == "user" })?.content ?? instruction
+                let globalTurnNumber = VXTimeline.shared.nextTurnNumber(for: vxSessionId)
                 VXTimeline.shared.recordTurn(
                     sessionId: vxSessionId,
-                    turnNumber: turn,
+                    turnNumber: globalTurnNumber,
                     userInput: userText,
                     assistantOutput: vxCleanResponse,
                     searchResults: vxLastSearchResult
