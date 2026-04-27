@@ -90,10 +90,15 @@ actor BrowserBridge {
 
         // ③④ 開発時 Cargo ビルド出力
         let root    = projectRoot
-        let debug   = "\(root)/verantyx-browser/target/debug/verantyx-browser"
-        let release = "\(root)/verantyx-browser/target/release/verantyx-browser"
+        let debug   = "\(root)/VerantyxIDE/verantyx-browser/target/debug/verantyx-browser"
+        let release = "\(root)/VerantyxIDE/verantyx-browser/target/release/verantyx-browser"
+        let fallbackDebug = "\(root)/verantyx-browser/target/debug/verantyx-browser"
+        let fallbackRelease = "\(root)/verantyx-browser/target/release/verantyx-browser"
+
         if FileManager.default.fileExists(atPath: debug)   { return debug }
         if FileManager.default.fileExists(atPath: release) { return release }
+        if FileManager.default.fileExists(atPath: fallbackDebug)   { return fallbackDebug }
+        if FileManager.default.fileExists(atPath: fallbackRelease) { return fallbackRelease }
 
         // フォールバック（起動失敗エラーで詳細パスをログ出力させる）
         return debug
@@ -101,16 +106,33 @@ actor BrowserBridge {
 
     private var projectRoot: String {
         var url = Bundle.main.bundleURL
+        
+        // 1. バンドル階層から親を辿る（標準構成用）
         for _ in 0..<8 {
             url = url.deletingLastPathComponent()
             if FileManager.default.fileExists(atPath: url.appendingPathComponent("verantyx-browser").path) {
                 return url.path
             }
+            if FileManager.default.fileExists(atPath: url.appendingPathComponent("VerantyxIDE/verantyx-browser").path) {
+                return url.path
+            }
         }
-        return URL(fileURLWithPath: #file)
-            .deletingLastPathComponent().deletingLastPathComponent()
-            .deletingLastPathComponent().deletingLastPathComponent()
-            .deletingLastPathComponent().path
+        
+        // 2. #fileマクロベースの相対位置（ソースファイルからの相対位置）
+        let srcPath = URL(fileURLWithPath: #file)
+        var parent = srcPath
+        for _ in 0..<8 {
+            parent = parent.deletingLastPathComponent()
+            if FileManager.default.fileExists(atPath: parent.appendingPathComponent("verantyx-browser").path) {
+                return parent.path
+            }
+            if FileManager.default.fileExists(atPath: parent.appendingPathComponent("VerantyxIDE/verantyx-browser").path) {
+                return parent.path
+            }
+        }
+        
+        // 3. ハードコードフォールバック（開発時の確実な代替手段）
+        return "/Users/motonishikoudai/verantyx-cli"
     }
 
     // MARK: - Launch
