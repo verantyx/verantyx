@@ -7,11 +7,11 @@
 
 ### Local Nano LLM Memory & Kanji Topology
 Demonstrating infinite context retention and language enforcement on local 2B models using `[和:1.0]` Kanji Topology memory nodes.
-![Local LLM Memory](/Users/motonishikoudai/verantyx-cli/extensions/brave/画面収録 2026-04-27 22.48.39.mov)
+https://github.com/Ag3497120/verantyx/releases/download/v1.1.0/nano_memory_demo.mov
 
 ### Gatekeeper Mode in Action
 Protecting intellectual property by converting Swift code into abstracted JCross IR before sending to cloud LLMs.
-![Gatekeeper Mode](/Users/motonishikoudai/verantyx-cli/extensions/brave/画面収録 2026-04-26 21.27.30.mov)
+https://github.com/Ag3497120/verantyx/releases/download/v1.1.0/gatekeeper_demo.mov
 
 ---
 
