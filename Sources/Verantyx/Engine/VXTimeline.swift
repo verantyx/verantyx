@@ -25,42 +25,19 @@ final class VXTimeline {
     static let compressionAt   = 50  // このターン数で 1 ノードに圧縮
 
     // ── セッション別ターンカウンター（AgentLoop が複数回呼ばれても連番維持）──
-    // NSLock の代わりにシリアルキューを使用（Singleton 初期化クラッシュ回避）
+    // ディスクスキャンなし: ファイル名にタイムスタンプが含まれるため一意性は保証済み
+    // メインスレッドブロック防止のため同期ディスクI/Oを排除
     private var sessionTurnCounters: [String: Int] = [:]
-    private let counterQueue = DispatchQueue(label: "vx.timeline.counter")
 
-    /// 次のターン番号を採番する（スレッドセーフ）
-    /// near/ / mid/ / deep/ を走査して既存最大値を初期化ベースにする
+    /// 次のターン番号を採番する（軽量・ノンブロッキング）
+    /// ディスクスキャンを行わず、インメモリカウンターのみ使用する。
+    /// ファイル名に {sessionId}_{turnNum}_{unixTimestamp} を含むため重複は発生しない。
     func nextTurnNumber(for sessionId: String) -> Int {
-        counterQueue.sync {
-            if let current = sessionTurnCounters[sessionId] {
-                let next = current + 1
-                sessionTurnCounters[sessionId] = next
-                return next
-            }
-
-            // 初回: ディスク上の既存 TURN ファイルから最大ターン番号を探す
-            let memRoot = URL(fileURLWithPath: NSHomeDirectory())
-                .appendingPathComponent(".openclaw/memory", isDirectory: true)
-            let zones = ["near", "mid", "deep"]
-            var maxTurn = 0
-            for zone in zones {
-                let dir = memRoot.appendingPathComponent(zone)
-                let files = (try? FileManager.default.contentsOfDirectory(
-                    at: dir, includingPropertiesForKeys: nil)) ?? []
-                for file in files where file.lastPathComponent.hasPrefix("TURN_\(sessionId)_") {
-                    // TURN_{sessionId}_{turnNum:04d}_{ts}.jcross
-                    let parts = file.deletingPathExtension().lastPathComponent.components(separatedBy: "_")
-                    // parts[0]=TURN, parts[1]=sessionId(8chars), parts[2]=turnNum, parts[3]=ts
-                    if parts.count >= 4, let n = Int(parts[2]) {
-                        maxTurn = max(maxTurn, n)
-                    }
-                }
-            }
-            let next = maxTurn + 1
-            sessionTurnCounters[sessionId] = next
-            return next
-        }
+        // Swift の Dictionary アクセスはシングルスレッド前提（AgentLoop は async/await）
+        // メインスレッドをブロックしないよう同期I/Oは行わない
+        let next = (sessionTurnCounters[sessionId] ?? 0) + 1
+        sessionTurnCounters[sessionId] = next
+        return next
     }
 
     // ── ゾーンディレクトリ ─────────────────────────────────────────────────
