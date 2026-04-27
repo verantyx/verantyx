@@ -384,8 +384,8 @@ final class CortexEngine: ObservableObject {
             migrateLegacyJSON()
         }
 
-        // Phase 2: mid + deep を低優先度でロード（UI は既にインタラクティブ）
-        let phase2Zones: [MemoryNode.Zone] = [.mid, .deep]
+        // Phase 2: mid のみを低優先度でロード（deepはディスク検索のみとするためメモリには載せない）
+        let phase2Zones: [MemoryNode.Zone] = [.mid]
         let phase2 = await Task.detached(priority: .background) { [mcpMemoryRoot] in
             Self.readZones(phase2Zones, root: mcpMemoryRoot)
         }.value
@@ -402,7 +402,7 @@ final class CortexEngine: ObservableObject {
         for zone in zones {
             let dir   = root.appendingPathComponent(zone.rawValue)
             let files = (try? fm.contentsOfDirectory(
-                at: dir, includingPropertiesForKeys: [.creationDateKey]
+                at: dir, includingPropertiesForKeys: nil
             )) ?? []
 
             for file in files
@@ -431,7 +431,7 @@ final class CortexEngine: ObservableObject {
         for zone in MemoryNode.Zone.allCases {
             let dir   = mcpMemoryRoot.appendingPathComponent(zone.rawValue)
             let files = (try? FileManager.default.contentsOfDirectory(
-                at: dir, includingPropertiesForKeys: [.creationDateKey]
+                at: dir, includingPropertiesForKeys: nil
             )) ?? []
 
             for file in files where file.pathExtension == "jcross"

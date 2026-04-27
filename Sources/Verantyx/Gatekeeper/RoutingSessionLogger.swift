@@ -456,7 +456,7 @@ final class RoutingSessionLogger: ObservableObject {
     private func pruneNearZone() {
         let fm = FileManager.default
         let cutoff = Date().timeIntervalSince1970 - (24 * 3600) // 24h
-        guard let files = try? fm.contentsOfDirectory(at: nearDir, includingPropertiesForKeys: [.creationDateKey]) else { return }
+        guard let files = try? fm.contentsOfDirectory(at: nearDir, includingPropertiesForKeys: nil) else { return }
 
         for file in files where file.pathExtension == "json" {
             let attrs = try? fm.attributesOfItem(atPath: file.path)
