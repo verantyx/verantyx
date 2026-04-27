@@ -1,138 +1,65 @@
-# ⚡ Verantyx IDE
+<div align="center">
+  <h1>Verantyx IDE — Native macOS AI Code Editor</h1>
+  <p><b>A neuro-symbolic long-term memory architecture and secure Gatekeeper IDE, built on Apple MLX, JCross spatial nodes, and Swift.</b></p>
+</div>
 
-> **Apple Silicon-native AI coding assistant. Fully offline. Zero API cost.**
+## 🎥 Demos
 
-<!-- TODO: Add 30-second demo GIF here -->
-<!-- ![demo.gif](demo.gif) -->
+### Local Nano LLM Memory & Kanji Topology
+Demonstrating infinite context retention and language enforcement on local 2B models using `[和:1.0]` Kanji Topology memory nodes.
+![Local LLM Memory](/Users/motonishikoudai/verantyx-cli/extensions/brave/画面収録 2026-04-27 22.48.39.mov)
 
-Verantyx is a macOS AI code editor that runs inference locally using MLX models (Apple Silicon) or Ollama — no cloud, no subscription.  
-Select a file, give a natural-language instruction, and Verantyx proposes a diff you can review and apply in one click.
-
----
-
-## 📦 Download
-
-**[→ Download Latest Release](https://github.com/Ag3497120/verantyx/releases/latest)**
-
-1. Download **`VerantyxIDE-x.x.x.dmg`**
-2. Open the DMG and drag **Verantyx.app** to your **Applications** folder
-3. **First launch — bypass Gatekeeper (macOS security prompt):**
-   - Right-click `Verantyx.app` in Finder → **"Open"**
-   - Click **"Open"** in the unidentified developer dialog
-   - _Or run in Terminal:_ `xattr -d com.apple.quarantine /Applications/Verantyx.app`
+### Gatekeeper Mode in Action
+Protecting intellectual property by converting Swift code into abstracted JCross IR before sending to cloud LLMs.
+![Gatekeeper Mode](/Users/motonishikoudai/verantyx-cli/extensions/brave/画面収録 2026-04-26 21.27.30.mov)
 
 ---
 
-## ✨ Features
+## 🚀 Latest Features
 
-| Feature | Status |
-|---|---|
-| 🤖 Ollama integration (gemma4:26b, etc.) | ✅ v1.0 |
-| ⚡ MLX Apple Silicon inference (offline) | ✅ v1.0 |
-| 🔑 Anthropic Claude integration | ✅ v1.0 |
-| 💬 Natural language → file edits | ✅ v1.0 |
-| 🔍 Diff review → one-click Apply | ✅ v1.0 |
-| 📂 Open any folder as workspace | ✅ v1.0 |
-| 🔒 Fully offline (no Wi-Fi required) | ✅ v1.0 |
-| 🧠 JCross long-term memory (Cortex) | ✅ v1.0 |
-| 🔒 Privacy Gateway: 3-phase PII masking | ✅ v1.0 |
-| 🧬 Self-Evolution: live IDE self-patching | ✅ v1.0 |
-| 📜 Session history with restore | ✅ v1.0 |
-| 🛠️ MCP (Model Context Protocol) client | ✅ v1.0 |
+### 1. The Native macOS IDE (`VerantyxIDE`)
+Verantyx has evolved from a Node.js CLI into a fully native macOS application built with Swift and SwiftUI. It features a hyper-fast code editor, deeply integrated with Apple's **MLX** framework for ultra-low latency local AI inference directly on Apple Silicon.
 
----
+### 2. JCross Tri-Layer Memory & Kanji Topology
+A radical departure from standard RAG. Memory is encoded in a proprietary format that small local models (~2B) can actually understand without context-blindness:
+- **L1 (Kanji Topology)**: Semantic anchors (e.g., `[和:1.0][疑:1.0]`) used to instantly force language modes and fight LLM sycophancy.
+- **L1.5 (Bridge Index)**: One-line summaries for massive O(1) scanning without context pollution.
+- **L2 & L3 (Facts & Raw Text)**: The actual conversation and structural code storage.
+This enables infinite context retention and perfect recall even on extreme edge models like Gemma-2B.
 
-## 🧠 Verantyx Cortex (Recommended)
+### 3. Gatekeeper Mode (Zero-Knowledge Inference)
+Cloud LLMs (like Claude/GPT) are incredible, but sending proprietary source code is a major security risk. **Gatekeeper Mode** acts as a blind proxy:
+1. It transpiles your source code into a synthetic, anonymized language called **JCross IR**.
+2. It sends this IR to the cloud LLM.
+3. The LLM returns a patch in IR, and the IDE automatically reverse-transpiles it back into working Swift/TS code.
+*Your raw source code never leaves your machine.*
 
-Cortex gives the AI persistent long-term memory across sessions using the JCross spatial memory system.
-
-```bash
-npx -y @verantyx/cortex setup
-```
-
-More info: [github.com/Ag3497120/verantyx-cortex](https://github.com/Ag3497120/verantyx-cortex)
+### 4. BitNet (1-bit LLM) Subprocess Inference
+Native integration for ultra-fast, ultra-low memory 1.58-bit models. Verantyx uses BitNet models silently in the background (e.g., as an L1 Tagger) to dynamically organize memory and tag code without burning through your main GPU cycles or token budgets.
 
 ---
 
-## 🚀 System Requirements
+## 🛣 Windows Roadmap
 
-- macOS 14 Sonoma or later
-- Apple Silicon (M1 / M2 / M3 / M4)
-- [Ollama](https://ollama.com) _(recommended: `ollama pull gemma4:26b`)_
-- **OR** an MLX model downloaded from HuggingFace
+Thanks for the interest! A Windows version is definitely on the radar, but it's going to be a massive undertaking.
 
----
+To make it cross-platform, I essentially have to rewrite the core cognitive engine (Swift -> Rust) and swap out Apple's MLX backend for something like llama.cpp to get CUDA/DirectML support.
 
-## 🛠 Build from Source
+Since I'm building this solo, my strategy right now is to stay hyper-focused and get the macOS/Swift version to 100% completion first before splitting my attention.
 
-```bash
-git clone https://github.com/Ag3497120/verantyx.git
-cd verantyx/VerantyxIDE
-open Verantyx.xcodeproj
-```
+Also, full disclosure: I actually don't own a Windows rig with an NVIDIA GPU at the moment! 😅 So when the time finally comes to build the Windows port, I won't be able to run local tests or benchmark the CUDA performance myself. I'll definitely be leaning heavily on this community for beta testing and feedback when that happens.
 
-Build (`⌘B`) and run (`⌘R`) in Xcode 16+.
-
-To create a distributable DMG locally:
-
-```bash
-cd VerantyxIDE
-bash package_dmg.sh 1.0.0
-# → dist/VerantyxIDE-1.0.0.dmg
-```
+I hope you'll stick around to help me out when the time comes!
 
 ---
 
-## 🔧 Usage
+## 🛠 Building from Source (macOS Only)
 
-1. **Start Ollama** (if using Ollama): `ollama serve`
-2. **Launch Verantyx**
-3. Click **"Connect"** in the toolbar to link your model
-4. Click **"Open Workspace"** to select your project folder
-5. Click any file in the file tree to load it as context
-6. Type your instruction in the chat and press Enter
-7. Review the diff in the right panel → click **Apply** to write changes
+### Prerequisites
+- macOS 14.0+ (Apple Silicon highly recommended)
+- Xcode 15+
 
----
-
-## 📐 Architecture
-
-```
-VerantyxIDE/
-├── Sources/Verantyx/
-│   ├── AppState.swift              # Central state + inference routing
-│   ├── Engine/
-│   │   ├── AgentLoop.swift         # Agentic loop with tool execution
-│   │   ├── MLXRunner.swift         # Apple Silicon MLX inference
-│   │   ├── OllamaClient.swift      # Ollama + Anthropic API client
-│   │   ├── CortexEngine.swift      # JCross memory compression
-│   │   ├── SessionStore.swift      # Session persistence + restore
-│   │   ├── PrivacyGateway.swift    # 3-phase PII masking
-│   │   ├── MCPEngine.swift         # MCP tool injection
-│   │   └── SelfEvolutionEngine.swift # Live IDE self-patching
-│   └── Views/
-│       ├── AgentChatView.swift     # Main chat UI
-│       ├── FileTreeView.swift      # Workspace file tree
-│       ├── ArtifactPanelView.swift # HTML/SVG/Mermaid render
-│       ├── ModelPickerView.swift   # Model selection
-│       └── SessionHistoryView.swift# Session history browser
-└── .github/workflows/release.yml  # Auto-build DMG on tag push
-```
-
----
-
-## 🔄 Release Automation
-
-Push a version tag to trigger an automatic DMG build via GitHub Actions:
-
-```bash
-git tag v1.1.0
-git push origin v1.1.0
-# → GitHub Actions builds & publishes VerantyxIDE-1.1.0.dmg automatically
-```
-
----
-
-## 📄 License
-
-MIT License — fork & hack freely.
+### Build & Run
+1. Clone the repository.
+2. Open `VerantyxIDE/Verantyx.xcodeproj` in Xcode.
+3. Select the `Verantyx` scheme and hit Run (Cmd+R).
