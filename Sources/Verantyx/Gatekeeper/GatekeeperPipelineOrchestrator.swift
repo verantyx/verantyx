@@ -66,7 +66,7 @@ final class GatekeeperPipelineOrchestrator: ObservableObject {
     }
 
     private func setupRoutingLogger() {
-        guard let vaultURL = state.vaultRootURL else { return }
+        let vaultURL = state.vault.vaultRootURL
         routingLogger = RoutingSessionLogger(vaultRootURL: vaultURL)
     }
 
@@ -421,52 +421,4 @@ extension CommanderOrchestrator {
         }
     }
 
-    // callCommander はprivateなため internal に昇格するラッパー
-    func callCommander(prompt: String, systemPrompt: String) async -> String {
-        // Tier1: BitNet → Tier2: MLX → Tier3: Ollama
-        if case .ready = await MainActor.run(body: { BitNetEngineManager.shared.status }) {
-            let result = await BitNetCommanderEngine.shared.generate(prompt: prompt, systemPrompt: systemPrompt)
-            if let result, !result.isEmpty { return result }
-        }
-        let modelStatus = await MainActor.run { AppState.shared?.modelStatus }
-        if case .mlxReady = modelStatus ?? .none {
-            if let result = try? await MLXRunner.shared.generate(prompt: systemPrompt + "\n" + prompt, maxTokens: 2048, temperature: 0.3),
-               !result.isEmpty { return result }
-        }
-        return await callOllamaPublic(model: state.commanderModel, prompt: prompt, systemPrompt: systemPrompt)
-    }
-
-    func callOllamaPublic(model: String, prompt: String, systemPrompt: String) async -> String {
-        var endpoint = await MainActor.run { AppState.shared?.ollamaEndpoint ?? "http://127.0.0.1:11434" }
-        endpoint = endpoint.replacingOccurrences(of: "localhost", with: "127.0.0.1")
-        guard let url = URL(string: "\(endpoint)/api/chat") else { return "" }
-
-        struct Msg: Encodable { let role: String; let content: String }
-        struct Req: Encodable {
-            let model: String; let messages: [Msg]; let stream: Bool
-            let options: Opt
-            struct Opt: Encodable { let temperature: Double; let num_predict: Int }
-        }
-        struct Resp: Decodable {
-            struct MsgD: Decodable { let role: String; let content: String }
-            let message: MsgD
-        }
-
-        let body = Req(model: model, messages: [
-            Msg(role: "system", content: systemPrompt),
-            Msg(role: "user", content: prompt)
-        ], stream: false, options: .init(temperature: 0.3, num_predict: 1024))
-
-        guard let data = try? JSONEncoder().encode(body) else { return "" }
-
-        var r = URLRequest(url: url)
-        r.httpMethod = "POST"
-        r.httpBody = data
-        r.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        r.timeoutInterval = 120
-
-        guard let (resp, _) = try? await URLSession.shared.data(for: r),
-              let decoded = try? JSONDecoder().decode(Resp.self, from: resp) else { return "" }
-        return decoded.message.content
-    }
 }

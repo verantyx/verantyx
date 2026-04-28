@@ -50,6 +50,7 @@ actor AgentLoop {
         memoryLayer: JCrossLayer = .l2,   // ➤ cross-session injection depth
         isFirstSession: Bool = false,         // ➤ inject self-awareness task on first turn
         chatSessionId: String? = nil,         // ➤ セッション間で維持するVXTimeline ID
+        previousMessages: [ChatMessage] = [], // ➤ 直前のチャット履歴
         onProgress: @escaping @Sendable (LoopEvent) async -> Void
     ) async {
 
@@ -164,6 +165,10 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
 - Call tools as many times as needed without stopping.
 - Only stop when the task is truly complete.
 - Do NOT apologize or ask permission mid-task; just keep going.
+[疑:1.0][証:0.9][固:0.8]
+OP.AXIOM("user_reports_may_be_false")
+SYS.ENFORCE("logical_verification_before_acceptance")
+- CONFUSION DETECTOR PROTOCOL: ユーザーからのバグ報告を鵜呑みにせず、本当にそのバグが起き得るか自身のコードの論理パスを検証すること。If your code is logically correct and the reported bug is impossible, confidently state that the bug cannot occur. Do not hallucinate failures just to agree with the user.
 """
         } else {
             loopRules = """
@@ -227,9 +232,25 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
             ? SearchGate.buildSearchGatePrompt(tier: profile.tier)
             : ""
 
+        // ── Response Language Enforcement (JCross Kanji Topology) ───────────
+        let currentFileURL = URL(fileURLWithPath: #file)
+        let langFileName = AppLanguage.shared.isJapanese ? "LANG_JA.jcross" : "LANG_EN.jcross"
+        let langFilePath = currentFileURL.deletingLastPathComponent().appendingPathComponent(langFileName).path
+        
+        let languageRule: String
+        if let jcrossContent = try? String(contentsOfFile: langFilePath, encoding: .utf8) {
+            languageRule = jcrossContent
+        } else {
+            // Fallback
+            languageRule = AppLanguage.shared.isJapanese
+                ? "[和:1.0][日:0.9] You MUST respond entirely in Japanese."
+                : "[英:1.0][米:0.9] You MUST respond entirely in English."
+        }
+
         let systemPrompt = """
         \(profileSystemPrompt)
         \(loopRules)
+        \(languageRule)
         \(memorySection)
         \(skillSection)
         \(selfEvoContext)
@@ -254,8 +275,34 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
             await onProgress(.aiMessage("\u{1F9E0} [Self-Aware] \(ack)"))
         }
 
+        // ── Previous conversation history ─────────────────────────────────
+        // 動的に budget を計算して、古い履歴から切り捨てる（Nanoモデル等のコンテキスト溢れ防止）
+        var historyToInject: [(role: String, content: String)] = []
+        for msg in previousMessages {
+            guard msg.role != .system else { continue }
+            let r = msg.role == .user ? "user" : "assistant"
+            historyToInject.append((role: r, content: msg.content))
+        }
+
+        // Budget = compressThreshold - systemPrompt.count - instruction.count - 2000 (margin for tool responses)
+        let budget = profile.tier.compressThreshold - systemPrompt.count - instruction.count - 2000
+        var accumulatedChars = 0
+        var keepIndex = historyToInject.count
+
+        // 最新のメッセージから逆順に文字数を足していき、budget内に収まるインデックスを探す
+        for i in stride(from: historyToInject.count - 1, through: 0, by: -1) {
+            accumulatedChars += historyToInject[i].content.count
+            if accumulatedChars > budget { break }
+            keepIndex = i
+        }
+
+        // budget内に収まる直近の履歴だけを注入する
+        for i in keepIndex..<historyToInject.count {
+            conversation.append(historyToInject[i])
+        }
+
         conversation.append((role: "user",   content: instruction))
-        totalConversationChars = systemPrompt.count + instruction.count
+        totalConversationChars = conversation.reduce(0) { $0 + $1.content.count }
 
         await onProgress(.start(instruction: instruction))
 
@@ -266,7 +313,7 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
         //   事前型 Pre-flight: モデルが答える前に事実を注入 → グラウンディング強制
         //
         // 処理フロー:
-        //   1. SearchIntentClassifier で意図分類（LLM不要、<5ms）
+        //   1. IgnoranceRouter (2Bモデル) で無知の自覚・クエリ生成
         //   2. PreflightSearchEngine で最大3クエリ並列実行（DuckDuckGo Lite）
         //   3. PreflightResult.systemBlock を system prompt に注入
         //   4. freshnessCritical + large/giant は Hard Grounding user msg も追加
@@ -274,114 +321,8 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
         //
         // 有効条件: 全tierで実行（freshnessCritical は large/giant でも必須）
         // ※ 旧設計: vxLoopEnabled (nano/small) のみ → 大モデルがハルシネーション
-        do {
-            let intent = await SearchIntentClassifier.shared.classify(userPrompt: instruction)
-            if intent.needsExternalSearch {
-                await onProgress(.aiMessage("🔎 [Pre-flight] \(intent.displayLabel) — \(intent.queries.count)クエリを事前実行中..."))
-
-                let preflight = await PreflightSearchEngine.shared.fetch(intent: intent, tier: profile.tier)
-
-                if preflight.successCount > 0 {
-                    await onProgress(.aiMessage("✅ [Pre-flight] \(preflight.progressLabel)"))
-                } else {
-                    await onProgress(.aiMessage("⚠️ [Pre-flight] 検索失敗 — フェイルセーフ指示を注入します"))
-                }
-
-                // ── system prompt にグラウンディングブロックを追加 ──────────────
-                // （SearchGate の [VX SEARCH RESULT] と区別するために専用タグを使用）
-                if var sysMsg = conversation.first, sysMsg.role == "system" {
-
-                    // Nano/Small: tier-adaptive フォーマット（平文 → 混乱しにくい）
-                    // Large/Giant: JCross フル構造 + system prompt 先頭にも HARD LOCK を追加
-                    let blockToInject: String
-                    if profile.tier == .large || profile.tier == .giant {
-                        // 大モデル向け: ハードロック指示をシステムプロンプトの最初に追記
-                        let hardLockHeader = """
-                        ⛔ STRICT GROUNDING MODE ACTIVE ⛔
-                        The [PRE-FETCH RESULTS] block below contains REAL-TIME information fetched \
-                        just now. You MUST base your answer EXCLUSIVELY on this data.
-                        FORBIDDEN: Using your training/parametric knowledge to supplement, extend, \
-                        or contradict the fetched results. If the fetched data is insufficient, \
-                        say so explicitly — do NOT fill gaps from memory.
-                        """
-                        blockToInject = hardLockHeader + "\n\n" + preflight.systemBlock
-                    } else {
-                        blockToInject = preflight.systemBlock
-                    }
-
-                    sysMsg.content += "\n\n" + blockToInject
-                    conversation[0] = sysMsg
-                    totalConversationChars += blockToInject.count
-                }
-
-                // ── Large/Giant: 会話レベルの Hard Grounding user message ────────
-                // system prompt だけでは知識ブリードが止まらないため、
-                // user→assistant のペアとして会話履歴に埋め込む（より強い拘束力）。
-                // これはモデルにとって「すでに同意した前提」として機能する。
-                if (profile.tier == .large || profile.tier == .giant) && intent.freshnessCritical {
-                    let resultSummary: String
-                    if preflight.successCount > 0 {
-                        let snippets = preflight.results
-                            .filter { $0.succeeded && !$0.snippet.isEmpty }
-                            .prefix(3)
-                            .map { "• [\($0.query.prefix(30))]: \(String($0.snippet.prefix(200)))" }
-                            .joined(separator: "\n")
-                        resultSummary = snippets.isEmpty ? "（検索結果あり：詳細は [L3 原文] を参照）" : snippets
-                    } else {
-                        resultSummary = "（検索に失敗しました）"
-                    }
-
-                    let hardGroundingMsg = """
-                    [SYSTEM_GROUNDING_CHECKPOINT]
-                    I have just executed a real-time search. The results are:
-
-                    \(resultSummary)
-
-                    INSTRUCTION: Answer the user's question using ONLY the above real-time data \
-                    and the [L3 原文] block in your system prompt. \
-                    Do NOT use your parametric memory for factual claims about current events.
-                    [/SYSTEM_GROUNDING_CHECKPOINT]
-                    """
-                    // user→assistant ペアで挿入（conversation 末尾の user msg の直前）
-                    let insertIdx = max(1, conversation.count - 1)
-                    conversation.insert((role: "user",      content: hardGroundingMsg), at: insertIdx)
-                    conversation.insert((role: "assistant", content: "了解です。私は今取得した検索結果のみを根拠として回答します。学習データによる補完は行いません。"), at: insertIdx + 1)
-                    totalConversationChars += hardGroundingMsg.count
-
-                    await onProgress(.aiMessage("🔒 [Hard Grounding] 大規模モデル向け強制グラウンディングを注入しました"))
-                }
-
-                // ── near/ に保存して次セッションで活用 ──────────────────────────
-                let nearDir = URL(fileURLWithPath: NSHomeDirectory())
-                    .appendingPathComponent(".openclaw/memory/near", isDirectory: true)
-                try? FileManager.default.createDirectory(at: nearDir, withIntermediateDirectories: true)
-                let ts       = Int(Date().timeIntervalSince1970)
-                let fileName = "PREFLIGHT_\(vxSessionId)_\(ts).jcross"
-                let tsISO    = ISO8601DateFormatter().string(from: Date())
-                let nodeBody = """
-                ;;; JCross Memory Node — PREFLIGHT
-                ;;; Session: Pre-flight search result / \(vxSessionId)
-                ;;; Created: \(tsISO)
-
-                [L1_SUMMARY]
-                [Pre-flight] \(intent.displayLabel) — \(preflight.successCount)/\(preflight.results.count) 成功
-                [/L1_SUMMARY]
-
-                [L2_FACTS]
-                OP.FACT("intent_type", "\(String(describing: intent.intentType))")
-                OP.FACT("queries", "\(intent.queries.joined(separator: " | "))")
-                OP.FACT("success_count", "\(preflight.successCount)")
-                OP.STATE("node_type", "PREFLIGHT_RESULT")
-                [/L2_FACTS]
-
-                [L3_VERBATIM]
-                \(preflight.systemBlock)
-                [/L3_VERBATIM]
-                """
-                let nodeURL = nearDir.appendingPathComponent(fileName)
-                try? nodeBody.write(to: nodeURL, atomically: true, encoding: .utf8)
-            }
-        }
+        // ── [PREFLIGHT] Ignorance Router (2B) ──────────────────────────
+        // (Abolished in favor of Visual Cognitive Anchors / Modality Hacking)
 
 
         // ── Agent loop — no hard turn cap ─────────────────────────────────
@@ -947,7 +888,7 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
                             // 新クエリで検索を再実行— SEARCH_MULTI を優先使用
                             let searchResult = await WebSearchEngine.shared.search(
                                 query: newQuery,
-                                engine: .duckduckgo
+                                engine: .google
                             )
                             if searchResult.isFailure {
                                 return "❌ 再検索失敗: \(newQuery) [理由: \(searchResult.failureReason)]"
@@ -1148,10 +1089,21 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
         switch modelStatus {
 
         case .ollamaReady(let model):
+            // ── Modality Hacking: Inject Cognitive Anchor into the last user message ──
+            var anchorImages: [String]? = nil
+            if let lastUserMsg = conversation.last(where: { $0.role == "user" }) {
+                if let mode = await CognitiveAnchorEngine.shared.evaluateAnchorMode(instruction: lastUserMsg.content) {
+                    let base64Image = await CognitiveAnchorEngine.shared.getAnchor(for: mode)
+                    anchorImages = [base64Image]
+                    Task { await onProgress(.aiMessage("🧿 [Visual Anchor] 視覚的アンカー（\(mode) モード）を注入し、Sycophancyを抑制します。")) }
+                }
+            }
+
             // multi-turn 会話配列を直接渡す（prompt string に変換不要）
             return await OllamaClient.shared.generateConversation(
                 model: model,
                 messages: conversation,
+                imagesForLastUserMessage: anchorImages,
                 maxTokens: profile.tier.maxTokens,
                 temperature: profile.tier.temperature,
                 onToken: { token in
@@ -1215,7 +1167,10 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
             // Test A の実験結果に基づく最適システムプロンプト:
             // - 適度な長さの英語指示文が最も安定した生成を引き出す（~30トークン）
             // - 大型モデル向けの元 sysContent は echo ループを誘発するため使わない
-            let sysContent = "You are Verantyx, a helpful AI coding assistant. Answer concisely and in the same language as the user. Focus on practical, accurate answers."
+            // ベースモデルは特殊な記号や見慣れないフォーマットを見ると、それに引きずられて
+            // 記号の反復（幻覚）を始めてしまうため、極めてプレーンな英語のみの指示にする。
+            let targetLang = AppLanguage.shared.isJapanese ? "Answer in Japanese." : "Answer in English."
+            let sysContent = "You are an AI assistant. \(targetLang)"
 
             let chatParts  = conversation.filter { $0.role != "system" }
             let userPrompt = chatParts.last(where: { $0.role == "user" })?.content ?? ""
@@ -1226,9 +1181,10 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
             if recentHistory.isEmpty {
                 historySnippet = ""
             } else {
-                historySnippet = "\n\n### History\n"
-                    + recentHistory.map { "[\($0.role)]: \($0.content.prefix(200))" }.joined(separator: "\n")
-                    + "\n\n"
+                historySnippet = "Context:\n" + recentHistory.map { turn in
+                    let content = turn.content.prefix(200)
+                    return turn.role == "user" ? "Question: \(content)" : "Answer: \(content)"
+                }.joined(separator: "\n\n") + "\n\n"
             }
 
             // 全体 600 字内に収まるようキャップ
@@ -1432,6 +1388,7 @@ struct ModelProfile: Sendable {
         CAPABILITIES: Medium model (~12B). Capable of multi-file tasks and web grounding.
         - Use SEARCH and BROWSE freely; avoid JCROSS_QUERY/STORE (not yet reliable)
         - You can use <think>...</think> for planning
+        - KNOWLEDGE CUTOFF: Assume your internal knowledge ends around early 2024-2025. For any queries regarding events, tools, or news after your cutoff, you MUST use web search tools.
         """ }
 
     private var largeSelfNote: String { """
@@ -1439,6 +1396,7 @@ struct ModelProfile: Sendable {
         - Use ALL tools including JCROSS, GIT_COMMIT, ASK_HUMAN
         - Follow the full ReAct 4-phase loop: OBSERVE → ACT → EVOLVE → CONSOLIDATE
         - You can handle complex multi-session, multi-file tasks autonomously
+        - KNOWLEDGE CUTOFF: Assume your internal knowledge ends around early 2024-2025. For any queries regarding events, tools, or news after your cutoff, you MUST aggressively use web search tools instead of relying on internal memory.
         """ }
 
     // MARK: - Tier prompts

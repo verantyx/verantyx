@@ -45,7 +45,7 @@ final class CommanderOrchestrator: ObservableObject {
         case error(String)
     }
 
-    private let state  = GatekeeperModeState.shared
+    internal let state  = GatekeeperModeState.shared
     private let mcpServer = GatekeeperMCPServer.shared
     private var vault: JCrossVault { state.vault }
 
@@ -417,8 +417,8 @@ final class CommanderOrchestrator: ObservableObject {
 
         // ── Tier 3: Ollama ────────────────────────
 
-        return await callOllama(
-            model: state.commanderModel,
+        return await self.callOllama(
+            model: self.state.commanderModel,
             prompt: prompt,
             systemPrompt: systemPrompt
         )

@@ -40,6 +40,7 @@ final class GatekeeperModeState: ObservableObject {
     @Published var vault: JCrossVault
     @Published var accessLog: [GatekeeperAccessLogEntry] = []
     @Published var phase: GatekeeperPhase = .idle
+    @Published var currentProjectID: String = "default"
 
     // MARK: - Models
 

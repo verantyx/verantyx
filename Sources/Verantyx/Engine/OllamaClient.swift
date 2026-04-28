@@ -253,11 +253,19 @@ public actor OllamaClient {
     public func generateConversation(
         model: String,
         messages: [(role: String, content: String)],
+        imagesForLastUserMessage: [String]? = nil,
         maxTokens: Int = 2048,
         temperature: Double = 0.15,
         onToken: (@Sendable (String) -> Void)? = nil
     ) async -> String? {
-        let ollamaMessages: [[String: Any]] = messages.map { ["role": $0.role, "content": $0.content] }
+        var ollamaMessages: [[String: Any]] = messages.map { ["role": $0.role, "content": $0.content] }
+        
+        if let images = imagesForLastUserMessage, !images.isEmpty {
+            if let lastIdx = ollamaMessages.lastIndex(where: { $0["role"] as? String == "user" }) {
+                ollamaMessages[lastIdx]["images"] = images
+            }
+        }
+        
         return await streamChat(
             model: model,
             messages: ollamaMessages,
@@ -287,8 +295,9 @@ public actor OllamaClient {
         onToken: (@Sendable (String) -> Void)? = nil,
         onError: (@Sendable (String) -> Void)? = nil
     ) async -> String? {
-        // まず大きいコンテキストで試み、失敗したら小さくリトライ
-        let ctxSizes = [65536, 16384, 8192]
+        // まず大きいコンテキストで試み、失敗したら小さくリトライ（MacのVRAM制約への適応）
+        // 65536は27Bモデル等で即死OOMを引く確率が高いため、最大32768スタートとする
+        let ctxSizes = [32768, 16384, 8192, 4096]
         for (attempt, numCtx) in ctxSizes.enumerated() {
             if let result = await streamChatAttempt(
                 model: model,

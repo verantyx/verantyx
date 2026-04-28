@@ -262,10 +262,10 @@ actor PreflightSearchEngine {
             return String(result.contextSnippet.prefix(budget))
         }
 
-        // ── 汎用テキストクエリ → verantyx-browser 経由 DDG 検索 ────────────
+        // ── 汎用テキストクエリ → verantyx-browser 経由 Google 検索 ────────────
         let result = await WebSearchEngine.shared.search(
             query: query,
-            engine: .duckduckgo,
+            engine: .google,
             preferredSource: .verantyxBrowser
         )
         let text = String(result.contextSnippet.prefix(budget))
@@ -436,5 +436,103 @@ private extension String {
             .replacingOccurrences(of: "&nbsp;", with: " ")
             .replacingOccurrences(of: #"\s+"#,  with: " ", options: .regularExpression)
             .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+}
+
+// MARK: - IgnoranceRouter
+/// Nano Cortex Protocol - Ignorance Router
+/// 2Bモデル（Nano）を「無知の検出器」として利用し、メインモデル（26B等）に渡す前の
+/// 事前フライト検索用クエリを生成するルーティング層。
+actor IgnoranceRouter {
+
+    static let shared = IgnoranceRouter()
+    private init() {}
+
+    /// Ollama でロード可能な Nano モデル（2Bクラス）を探す
+    private func detectNanoModel() async -> String? {
+        let models = await OllamaClient.shared.listModels()
+        // gemma4:e2b, gemma-2b などを優先
+        let nanoKeywords = ["e2b", ":2b", "-2b", "nano", "mini", "gemma2b"]
+        for keyword in nanoKeywords {
+            if let found = models.first(where: { $0.lowercased().contains(keyword) }) {
+                return found
+            }
+        }
+        return nil
+    }
+
+    /// ユーザーの指示文に対し、Nano モデルが「自分の知識で回答可能か」を判断し、
+    /// 知識がない場合は「検索の必要性を示す文章」をユーザーの質問文に付与して返す。
+    /// 回答可能な場合は nil を返す（元の質問のまま）。
+    func evaluate(instruction: String) async -> String? {
+        guard let nanoModel = await detectNanoModel() else {
+            return nil
+        }
+
+        let systemPrompt = """
+        [核:無知検出] [職:Router] [標:JSON出力のみ] [禁:回答生成]
+        あなたは知識の限界を判定するルーターです。
+        ユーザーの質問に対して、あなたの貧弱な知識（2Bパラメータ相当）で自信を持って答えられない場合、
+        または最新情報や特定の事実確認が必要な場合は、必ず検索クエリを生成してください。
+        答えられる場合は needs_search を false にしてください。
+        
+        OUTPUT FORMAT (JSON ONLY):
+        {
+          "needs_search": true or false,
+          "query": "search keywords"
+        }
+        """
+
+        let prompt = "User Query: \(instruction)"
+
+        print("🧠 [IgnoranceRouter] 2Bモデル (\(nanoModel)) に無知判定を依頼中...")
+        let response = await OllamaClient.shared.generate(
+            model: nanoModel,
+            prompt: "\(systemPrompt)\n\n\(prompt)",
+            maxTokens: 50,
+            temperature: 0.1
+        )
+
+        guard let text = response else { return nil }
+
+        // JSON部分を抽出
+        guard let jsonStart = text.firstIndex(of: "{"),
+              let jsonEnd = text.lastIndex(of: "}") else {
+            return nil
+        }
+        
+        let jsonStr = String(text[jsonStart...jsonEnd])
+        guard let data = jsonStr.data(using: .utf8),
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            return nil
+        }
+
+        let needsSearch = json["needs_search"] as? Bool ?? false
+        if needsSearch, let query = json["query"] as? String, !query.isEmpty {
+            print("🧠 [IgnoranceRouter] 2Bモデルが未知の概念を検出。26Bに検索を指示します。")
+            // 26Bモデルに検索を強制する文章を付加する
+            let mcpTools = await MainActor.run { MCPEngine.shared.connectedTools }
+            var overrideText = """
+            [ROUTER OVERRIDE]
+            This query contains concepts or recent information that require external knowledge.
+            You MUST use a Search tool using the query: "\(query)" before attempting to answer.
+            Do NOT rely on your internal knowledge.
+            """
+
+            if !mcpTools.isEmpty {
+                let serverNames = Array(Set(mcpTools.map { $0.serverName })).joined(separator: ", ")
+                overrideText += "\nIMPORTANT: You have connected MCP tools (\(serverNames)). You MUST prioritize using [MCP_CALL] for search over the default [SEARCH] tool."
+            }
+            
+            return """
+            \(overrideText)
+            
+            USER QUERY:
+            \(instruction)
+            """
+        } else {
+            print("🧠 [IgnoranceRouter] 2Bモデル: 検索不要と判定。")
+            return nil
+        }
     }
 }

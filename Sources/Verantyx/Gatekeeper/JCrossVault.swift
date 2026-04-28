@@ -56,7 +56,7 @@ final class JCrossVault: ObservableObject {
     let workspaceURL: URL
     var vaultIndex: VaultIndex?
 
-    private lazy var vaultRootURL: URL = {
+    lazy var vaultRootURL: URL = {
         workspaceURL.appendingPathComponent(".verantyx/jcross_vault")
     }()
 
