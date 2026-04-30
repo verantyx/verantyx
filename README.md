@@ -24,15 +24,20 @@ We convert your source code into a synthetic, mathematically anonymized graph ca
 ### 2. Forced Structural Reasoning
 By stripping away English semantics and replacing them with Kanji dimensional weights (e.g., `[核:1.0][像:0.8]`), we force LLMs to stop guessing based on variable names and start reasoning about the pure logic graph. This unlocks massive-scale refactoring capabilities without syntax hallucination.
 
-### 3. Ultra-Small Local Models at Massive Scale
-Because the model only processes structure and not complex domain semantics, we can achieve massive-scale development workflows using **ultra-small, hyper-fast local models (1.5B - 3B)** running entirely offline on Apple Silicon via MLX.
+### 💡 The Verantyx Paradox: Burning Tokens vs. Infinite Local Memory
 
-### 💡 Our Philosophy: The Trade-off We Proudly Make
-*We do not care about saving API tokens. We do not care if the LLM gets to read "human-readable" variable names.*
+This architecture embraces what might seem like a direct contradiction. 
 
-Most AI coding tools are just thin API wrappers optimized to send your raw code to the cloud as cheaply and quickly as possible. We take the exact opposite approach. By converting your code into JCross IR, we **intentionally increase token consumption by 30-40%** and strip away semantic context. 
+**On one hand (The Cloud Gatekeeper):** We do *not* care about saving API tokens. When routing tasks to external LLMs (Claude/GPT), we intentionally inflate token consumption by 30-40% by obfuscating code into JCross IR. We proudly trade API efficiency for **mathematically guaranteed security (zero-leakage)** and deterministic patching for enterprise logic.
 
-Why? Because in enterprise, finance, and defense, API tokens cost pennies, but leaking proprietary business logic or blindly applying a hallucinated, syntax-breaking AI patch costs millions. We proudly trade token efficiency for **mathematically guaranteed security (zero-leakage) and deterministic AST patching**. If you share this philosophy, you belong here.
+**On the other hand (The Local Cortex):** We are building the ultimate zero-cost, infinite-context local engine. By leveraging the same JCross IR format, we have implemented a **Tri-Layer Cognitive Memory System** that mimics human biological memory:
+- **L1 (Kanji Topology)**: Semantic anchors used to instantly grasp structure.
+- **L1.5 (Bridge Index)**: One-line summaries for massive O(1) scanning without context-window pollution.
+- **L2 & L3 (Facts & Raw Text)**: The actual deep storage of code graphs and decisions.
+
+Because our models only need to process *mathematical structure* rather than massive raw text payloads, we enable **ultra-small, 2B-class local models** (running entirely offline on Apple Silicon via MLX) to navigate and manage massive, enterprise-scale codebases *without ever suffering from context loss*. 
+
+We burn tokens in the cloud to buy perfect security. We compress structure locally to achieve infinite memory on edge devices. If you share this vision of the future, you belong here.
 
 ---
 
