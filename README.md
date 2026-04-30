@@ -1,57 +1,76 @@
 <div align="center">
-  <h1>Verantyx IDE — Native macOS AI Code Editor</h1>
-  <p><b>A neuro-symbolic long-term memory architecture and secure Gatekeeper IDE, built on Apple MLX, JCross spatial nodes, and Swift.</b></p>
+  <h1>🛡️ Verantyx IDE & Cortex Engine</h1>
+  <p><b>The Zero-Leakage, Neuro-Symbolic AI Coding Gateway & Native macOS IDE</b></p>
+  <p><i>We trade token cost for absolute security, deterministic patching, and forced structural reasoning.</i></p>
+  
+  <p>
+    <a href="#-the-vision-why-verantyx-exists">Vision</a> •
+    <a href="#-the-contributor-strategy-join-the-core-engineering-team"><b>Contribute! (Help Wanted)</b></a> •
+    <a href="#-demos">Demos</a>
+  </p>
 </div>
 
+---
+
+## 🌌 The Vision: Why Verantyx Exists
+
+The AI coding revolution is broken for enterprise. **Semantic Leakage** prevents banks, healthcare systems, and defense contractors from uploading their proprietary code to APIs like OpenAI or Anthropic. Furthermore, even when code is uploaded, LLMs frequently hallucinate syntax errors, hallucinate non-existent variables, and break build pipelines.
+
+Verantyx takes a radically different approach. We are building the **Enterprise Security Gateway for AI Coding**.
+
+### 1. Zero-Leakage Gatekeeper Mode
+We convert your source code into a synthetic, mathematically anonymized graph called **JCross IR**. External LLMs *never* see your business logic—they only see abstract structural shapes. We gladly sacrifice token efficiency (API costs) to guarantee 100% intellectual property protection and flawless, deterministic AST patching.
+
+### 2. Forced Structural Reasoning
+By stripping away English semantics and replacing them with Kanji dimensional weights (e.g., `[核:1.0][像:0.8]`), we force LLMs to stop guessing based on variable names and start reasoning about the pure logic graph. This unlocks massive-scale refactoring capabilities without syntax hallucination.
+
+### 3. Ultra-Small Local Models at Massive Scale
+Because the model only processes structure and not complex domain semantics, we can achieve massive-scale development workflows using **ultra-small, hyper-fast local models (1.5B - 3B)** running entirely offline on Apple Silicon via MLX.
+
+### 💡 Our Philosophy: The Trade-off We Proudly Make
+*We do not care about saving API tokens. We do not care if the LLM gets to read "human-readable" variable names.*
+
+Most AI coding tools are just thin API wrappers optimized to send your raw code to the cloud as cheaply and quickly as possible. We take the exact opposite approach. By converting your code into JCross IR, we **intentionally increase token consumption by 30-40%** and strip away semantic context. 
+
+Why? Because in enterprise, finance, and defense, API tokens cost pennies, but leaking proprietary business logic or blindly applying a hallucinated, syntax-breaking AI patch costs millions. We proudly trade token efficiency for **mathematically guaranteed security (zero-leakage) and deterministic AST patching**. If you share this philosophy, you belong here.
+
+---
+
+## 🤝 The Contributor Strategy: Join the Core Engineering Team
+
+AST parsing, memory management, and neuro-symbolic transformations are notoriously complex system programming challenges. We know developers can't just "drop in and fix 5 lines of code." 
+
+To make contributing highly accessible and incredibly impactful, we have deliberately designed a decoupled architecture:
+
+### 🧠 The Core vs. The Periphery
+- **The Core Engine (Maintained by Verantyx):** The complex JCross Topology Matrix, memory classifiers, and Reverse-Transpilation engines.
+- **The Periphery (Built by the Community):** The language-specific AST Extraction Parsers. 
+
+**We have already built the Python and Swift parsers. We desperately need the open-source community to build the bridges for the rest of the programming world.**
+
+### 🎯 We Need Your Help
+If you want to build a serious OSS portfolio in system programming and AI architecture, here is where you can make a massive impact today. Search our issues for these tags:
+
+*   🏷️ **`help wanted` Go AST Parser:** Build the structural extractor that maps Golang `struct` and `interface` to JCross IR.
+*   🏷️ **`help wanted` Java/Kotlin AST Parser:** Help bring Verantyx to the massive enterprise Java ecosystem.
+*   🏷️ **`good first issue` Rust AST Parser (Partial):** We have the foundation, but need help mapping Rust's lifetime syntax to JCross edges.
+*   🏷️ **`good first issue` UI Integrations:** Help us build toggle switches for the JCross/Raw view in the macOS Native Editor.
+
+*We actively review, merge, and mentor contributors on these issues. Your code will directly power the future of secure AI development.*
+
+---
+
 ## 🎥 Demos
-
-### Local Nano LLM Memory & Kanji Topology
-Demonstrating infinite context retention and language enforcement on local 2B models using `[和:1.0]` Kanji Topology memory nodes.
-
-<video src="https://github.com/Ag3497120/verantyx/releases/download/v1.1.0/nano_memory_demo.mov" controls="controls" muted="muted" style="max-width: 100%;"></video>
 
 ### Gatekeeper Mode in Action
 Protecting intellectual property by converting Swift code into abstracted JCross IR before sending to cloud LLMs.
 
 <video src="https://github.com/Ag3497120/verantyx/releases/download/v1.1.0/gatekeeper_demo.mov" controls="controls" muted="muted" style="max-width: 100%;"></video>
 
----
+### Local Nano LLM Memory & Kanji Topology
+Demonstrating infinite context retention and language enforcement on local 2B models using `[和:1.0]` Kanji Topology memory nodes.
 
-## 🚀 Latest Features
-
-### 1. The Native macOS IDE (`VerantyxIDE`)
-Verantyx has evolved from a Node.js CLI into a fully native macOS application built with Swift and SwiftUI. It features a hyper-fast code editor, deeply integrated with Apple's **MLX** framework for ultra-low latency local AI inference directly on Apple Silicon.
-
-### 2. JCross Tri-Layer Memory & Kanji Topology
-A radical departure from standard RAG. Memory is encoded in a proprietary format that small local models (~2B) can actually understand without context-blindness:
-- **L1 (Kanji Topology)**: Semantic anchors (e.g., `[和:1.0][疑:1.0]`) used to instantly force language modes and fight LLM sycophancy.
-- **L1.5 (Bridge Index)**: One-line summaries for massive O(1) scanning without context pollution.
-- **L2 & L3 (Facts & Raw Text)**: The actual conversation and structural code storage.
-This enables infinite context retention and perfect recall even on extreme edge models like Gemma-2B.
-
-### 3. Gatekeeper Mode (Zero-Knowledge Inference)
-Cloud LLMs (like Claude/GPT) are incredible, but sending proprietary source code is a major security risk. **Gatekeeper Mode** acts as a blind proxy:
-1. It transpiles your source code into a synthetic, anonymized language called **JCross IR**.
-2. It sends this IR to the cloud LLM.
-3. The LLM returns a patch in IR, and the IDE automatically reverse-transpiles it back into working Swift/TS code.
-*Your raw source code never leaves your machine.*
-
-### 4. BitNet (1-bit LLM) Subprocess Inference
-Native integration for ultra-fast, ultra-low memory 1.58-bit models. Verantyx uses BitNet models silently in the background (e.g., as an L1 Tagger) to dynamically organize memory and tag code without burning through your main GPU cycles or token budgets.
-
----
-
-## 🛣 Windows Roadmap
-
-Thanks for the interest! A Windows version is definitely on the radar, but it's going to be a massive undertaking.
-
-To make it cross-platform, I essentially have to rewrite the core cognitive engine (Swift -> Rust) and swap out Apple's MLX backend for something like llama.cpp to get CUDA/DirectML support.
-
-Since I'm building this solo, my strategy right now is to stay hyper-focused and get the macOS/Swift version to 100% completion first before splitting my attention.
-
-Also, full disclosure: I actually don't own a Windows rig with an NVIDIA GPU at the moment! 😅 So when the time finally comes to build the Windows port, I won't be able to run local tests or benchmark the CUDA performance myself. I'll definitely be leaning heavily on this community for beta testing and feedback when that happens.
-
-I hope you'll stick around to help me out when the time comes!
+<video src="https://github.com/Ag3497120/verantyx/releases/download/v1.1.0/nano_memory_demo.mov" controls="controls" muted="muted" style="max-width: 100%;"></video>
 
 ---
 
@@ -65,3 +84,5 @@ I hope you'll stick around to help me out when the time comes!
 1. Clone the repository.
 2. Open `VerantyxIDE/Verantyx.xcodeproj` in Xcode.
 3. Select the `Verantyx` scheme and hit Run (Cmd+R).
+
+*Note: A Windows port (Rust core + llama.cpp) is on our long-term roadmap, but we are laser-focused on perfecting the macOS MLX architecture first. We will lean heavily on the community for beta testing when the time comes!*
