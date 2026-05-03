@@ -4,7 +4,7 @@
   <p><i>We trade token cost for absolute security, deterministic patching, and forced structural reasoning.</i></p>
 
   <p>
-    <img src="https://img.shields.io/badge/version-0.2.0-blue?style=flat-square" alt="Version 0.2.0">
+    <img src="https://img.shields.io/badge/version-0.3.0-blue?style=flat-square" alt="Version 0.3.0">
     <img src="https://img.shields.io/badge/platform-macOS%2014%2B-lightgrey?style=flat-square">
     <img src="https://img.shields.io/badge/Apple%20Silicon-optimized-orange?style=flat-square">
     <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square">
@@ -13,7 +13,7 @@
   <p>
     <a href="#-the-vision-why-verantyx-exists">Vision</a> •
     <a href="#-gatekeeper-mode-architecture">Gatekeeper Architecture</a> •
-    <a href="#-whats-new-in-v020">What's New</a> •
+    <a href="#-whats-new-in-v030">What's New</a> •
     <a href="#-the-contributor-strategy-join-the-core-engineering-team"><b>Contribute!</b></a> •
     <a href="#-demos">Demos</a>
   </p>
@@ -23,9 +23,9 @@
 
 ## 📦 Download
 
-**[→ Download Latest Release (v0.2.0)](https://github.com/Ag3497120/verantyx/releases/latest)**
+**[→ Download Latest Release (v0.3.0)](https://github.com/Ag3497120/verantyx/releases/latest)**
 
-1. Download **`VerantyxIDE-0.2.0.dmg`**
+1. Download **`VerantyxIDE-0.3.0.dmg`**
 2. Open the DMG and drag **Verantyx.app** to your **Applications** folder
 3. **First launch — bypass Gatekeeper (macOS security prompt):**
    - Right-click `Verantyx.app` in Finder → **"Open"**
@@ -134,61 +134,31 @@ When the Cloud LLM's patch fails to apply (compile error, type mismatch, etc.), 
 
 ---
 
-## ✨ What's New in v0.2.0
+## ✨ What's New in v0.3.0
 
-### 🔧 Critical Stability: Deadlock & Crash Elimination
+### 🚀 Massive IDE Stability Overhaul & Scroll Fixes
 
-**v0.2.0 is a major stability release.** The root cause of persistent `[__NSDictionaryM objectForKey:]` SIGTERM crashes and `swift_conformsToProtocolMaybe` deadlocks has been identified and **systemically eliminated**.
+**v0.3.0 is a monumental stability release.** We have systemically eliminated the root causes of the most frustrating UI freezes, deadlocks, and scrolling bugs that plagued the IDE during heavy local AI inference.
 
-#### Root Cause
-`Task.detached { [weak self] }` used inside `@MainActor` classes (`AppState`, `CommanderOrchestrator`, `L25IndexEngine`) caused the Swift runtime to check `ObservableObject` protocol conformance from a non-main thread — triggering a memory race → SIGTERM.
+#### 🔧 Scroll-Freezing & Layout Deadlocks Resolved
+- **Trackpad Scroll Lock Fixed:** Fixed a major issue where rapid UI updates during LLM generation (via `processLog`) would force continuous `ScrollViewReader` jumps, completely locking user trackpad scrolling.
+- **Hit-Test Boundaries Restored:** Re-applied `.clipped()` boundaries to all `ResizableSplit` panes, ensuring that invisible overflow views no longer intercept pointer events or block hover effects.
+- **Gesture Conflict Resolved:** Reverted the `ResizableHSplit` divider gesture from `highPriorityGesture` back to a standard `.gesture` with `minimumDistance: 4`, completely resolving conflicts with macOS native scrolling gestures.
 
-#### Fixes Applied
+#### 🛡️ MainActor Deadlocks & SIGTERM Crashes Eliminated
+- **Asynchronous Disk I/O:** Initializing `SessionStore` and running repository directory scans no longer freeze the main thread at launch. Heavy initialization logic has been moved to safely detached background tasks.
+- **Safe Process Execution:** `JCrossVault` no longer runs synchronous `Process().waitUntilExit()` for Git Diff operations on the main thread. It now utilizes non-blocking `Task.detached` patterns that safely return values back to the UI.
+- **Golden Threading Rule Enforced:** Eradicated all unsafe `Task.detached { [weak self] }` closures that were previously causing Swift runtime memory races when evaluating `ObservableObject` conformance.
 
-| File | Fix |
-|---|---|
-| `CommanderOrchestrator.swift` | `Task.detached → Task` for all `@MainActor`-isolated closures |
-| `AppState.swift` | `Task.detached { [weak self] } → Task { [weak self] }` (file selection, model eject) |
-| `L25IndexEngine.swift` | Replaced all `Task.detached+[weak self]` with `static nonisolated` pure-function helpers |
-| `GatekeeperStatusPill.swift` | `@StateObject → @ObservedObject` (singleton double-init fix) |
-| `GatekeeperModeView.swift` | `@StateObject → @ObservedObject` ×2 |
-| `OllamaNEREngine.swift` | `@StateObject → @ObservedObject` |
-| `SafeModeGuard.swift` | `@StateObject → @ObservedObject` |
+### 🧩 Seamless MCP (Model Context Protocol) Integration
+- **Unified Spotlight UI (`MCPQuickPanel`):** Press `⌘⇧M` from anywhere to summon a floating, fuzzy-searchable overlay to instantly invoke MCP tools, connect servers, and manage capabilities without leaving your code.
+- **One-Click Templates:** Add full servers like GitHub, Brave Search, FileSystem, and PostgreSQL in seconds via the pre-configured template picker.
 
-**The golden rule now enforced throughout the codebase:**
-```swift
-// ❌ BANNED in @MainActor classes
-Task.detached { [weak self] in self?.publishedVar = x }
+### 🧬 Self-Evolution & Continuous Integration
+- **SelfEvolutionView Integration:** The IDE can now build itself, apply its own patches, and run a virtual CI pipeline. It even generates and submits GitHub PRs directly from the editor using a single unified interface.
 
-// ✅ Safe pattern
-Task { self.publishedVar = x }
-
-// ✅ Safe pattern for heavy I/O
-let value = await Self.loadFromDisk(url: url)
-self.publishedVar = value
-```
-
-### 🪟 Window Resize Fix
-
-Resizing the IDE window no longer causes content to scale instead of reflow. `ResizableHSplit` and `ResizableVSplit` now store pane widths as **fractions (0–1) of total width** rather than fixed pixel values, so all panes resize proportionally with the window.
-
-### 🧠 Pipeline Flow: Commander Now Visible
-
-The **Settings → Gatekeeper → Pipeline Flow** diagram now shows the Commander as an explicit step between IR generation and intent translation, with a dedicated settings card explaining its 5 roles:
-
-1. **Intent Analysis** — natural language → structural command
-2. **File Selection** — identify target files from Vault index
-3. **IR Query Generation** — build the JCross IR sent to Cloud LLM
-4. **Validation** — verify Cloud LLM response, trigger retry on failure
-5. **Security Gate** — final check that no real values are included
-
-### 🏎️ Model Picker: No More Blank Screen
-
-The Model Picker no longer freezes with a white screen after model eject. Ollama status polling now runs with a **2-second timeout** in a background task, showing cached model lists instantly.
-
-### ⚡ BitNet Engine: Availability Check
-
-`BitNetCommanderEngine.isAvailable()` now prevents silent hang-ups when BitNet is not installed. Missing BitNet gracefully falls back to standard inference.
+### ⚡ BitNet b1.58 Integration Guard
+- `BitNetCommanderEngine` now robustly verifies installation state before attempting to run local 1-bit inference, gracefully failing over to Ollama if the 800MB local model is unavailable, rather than silently hanging the orchestrator.
 
 ---
 
@@ -208,11 +178,13 @@ The Model Picker no longer freezes with a white screen after model eject. Ollama
 | 🧬 Self-Evolution: live IDE self-patching | ✅ v0.1.0 |
 | 📜 Session history with restore | ✅ v0.1.0 |
 | 🛠️ MCP (Model Context Protocol) client | ✅ v0.1.0 |
-| 🔧 Deadlock-free @MainActor threading | ✅ **v0.2.0** |
-| 🪟 Proportional window resize | ✅ **v0.2.0** |
-| 🧠 Commander role visible in Pipeline UI | ✅ **v0.2.0** |
-| 🏎️ Instant model picker (no blank freeze) | ✅ **v0.2.0** |
-| ⚡ BitNet availability guard | ✅ **v0.2.0** |
+| 🪟 Proportional window resize | ✅ v0.2.0 |
+| 🏎️ Instant model picker (no blank freeze) | ✅ v0.2.0 |
+| 🔧 Deadlock-free @MainActor threading | ✅ **v0.3.0** |
+| 🖱️ Trackpad UI scroll-freezing fixed | ✅ **v0.3.0** |
+| 🧠 Commander role visible in Pipeline UI | ✅ **v0.3.0** |
+| ⚡ BitNet 1.58b integration guard | ✅ **v0.3.0** |
+| 🧩 Spotlight-style MCP Quick Panel | ✅ **v0.3.0** |
 
 ---
 
