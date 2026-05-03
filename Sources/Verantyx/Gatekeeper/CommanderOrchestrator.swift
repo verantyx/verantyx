@@ -59,13 +59,15 @@ final class CommanderOrchestrator: ObservableObject {
 
         appendMessage(.user(message))
 
+        let isJp = AppLanguage.shared.isJapanese
+
         // Step 0: Verantyx Compiler Memory Search
-        phase = .commanderPlanning(step: "L1-L3 メモリを検索中...")
-        appendMessage(.system("🧠 Verantyx Compiler (MCP): boot() 完了。過去のセッション記憶・フロントノードを検索中..."))
+        phase = .commanderPlanning(step: isJp ? "L1-L3 メモリを検索中..." : "Searching L1-L3 memory...")
+        appendMessage(.system(isJp ? "🧠 Verantyx Compiler (MCP): boot() 完了。過去のセッション記憶・フロントノードを検索中..." : "🧠 Verantyx Compiler (MCP): boot() completed. Searching past session memory and front nodes..."))
         try? await Task.sleep(nanoseconds: 1_000_000_000)
 
         // Step 1: Commander Bypass (直接 Worker への案内を作成)
-        phase = .commanderPlanning(step: "Worker への JCross コンテキスト構成中...")
+        phase = .commanderPlanning(step: isJp ? "Worker への JCross コンテキスト構成中..." : "Composing JCross context for Worker...")
         let vaultList = vault.listDirectory(relativePath: "").prefix(20).map { item in
             item.isDirectory ? "📁 \(item.name)/" : "📄 \(item.name)"
         }.joined(separator: "\n")
@@ -79,7 +81,7 @@ final class CommanderOrchestrator: ObservableObject {
         """
         
         let commanderPlan = CommanderPlan(
-            explanation: "ユーザーの要求を JCross 空間で処理するため、そのまま外部の Worker (\(state.workerProvider.rawValue)) に委譲します。",
+            explanation: isJp ? "ユーザーの要求を JCross 空間で処理するため、そのまま外部の Worker (\(state.workerProvider.rawValue)) に委譲します。" : "Delegating user request to external Worker (\(state.workerProvider.rawValue)) for processing in JCross space.",
             relevantFiles: [],
             workerInstructions: workerInstructions
         )
@@ -91,12 +93,12 @@ final class CommanderOrchestrator: ObservableObject {
         var hasBuildError = false
         var buildErrorMessage = ""
         var diffsToApply: [(String, String, JCrossVault.VaultEntry, URL)] = []
-        var maxRetries = 1
+        var maxRetries = state.maxWorkerRetries
         var currentInstruction = message
 
         while maxRetries >= 0 {
             phase = .workerCalling
-            appendMessage(.system("🔐 Worker (\(state.workerProvider.rawValue)) に JCross 空間への案内と要求を送信中..."))
+            appendMessage(.system(isJp ? "🔐 Worker (\(state.workerProvider.rawValue)) に JCross 空間への案内と要求を送信中..." : "🔐 Sending JCross guidance and request to Worker (\(state.workerProvider.rawValue))..."))
 
             let relatedFiles = inferRelevantFiles(from: currentInstruction)
             let vaultContext = buildVaultContext(from: relatedFiles)
@@ -119,8 +121,8 @@ final class CommanderOrchestrator: ObservableObject {
                 break
             }
 
-            phase = .commanderPlanning(step: "JCross IR を解読・ローカル検証中...")
-            appendMessage(.system("🛠️ Commander: Worker の JCross 変更を解読し、ビルド検証を実行中..."))
+            phase = .commanderPlanning(step: isJp ? "JCross IR を解読・ローカル検証中..." : "Decoding JCross IR and running local verification...")
+            appendMessage(.system(isJp ? "🛠️ Commander: Worker の JCross 変更を解読し、ビルド検証を実行中..." : "🛠️ Commander: Decoding Worker's JCross modifications and verifying build..."))
 
             hasBuildError = false
             diffsToApply.removeAll()
@@ -138,13 +140,19 @@ final class CommanderOrchestrator: ObservableObject {
                 }
 
                 guard let entry = targetEntry else {
-                    appendMessage(.system("❌ エラー: \(diff.path) の元のファイルがVaultに見つかりません"))
-                    continue
+                    let errMsg = isJp ? "❌ エラー: \(diff.path) の元のファイルがVaultに見つかりません" : "❌ Error: Original file for \(diff.path) not found in Vault"
+                    appendMessage(.system(errMsg))
+                    hasBuildError = true
+                    buildErrorMessage = "File \(diff.path) was not found in the JCross Vault. You may have hallucinated the file extension or path. Please use the exact path from the provided context."
+                    break
                 }
 
                 guard let restored = transpiler.reverseTranspile(diff.content, schemaID: entry.schemaSessionID) else {
-                    appendMessage(.system("❌ 逆変換失敗: \(entry.relativePath)"))
-                    continue
+                    let errMsg = isJp ? "❌ 逆変換失敗: \(entry.relativePath)" : "❌ Reverse transpilation failed: \(entry.relativePath)"
+                    appendMessage(.system(errMsg))
+                    hasBuildError = true
+                    buildErrorMessage = "Failed to reverse transpile \(entry.relativePath). Check your JCross node ID syntax."
+                    break
                 }
 
                 let fileURL = vault.workspaceURL.appendingPathComponent(entry.relativePath)
@@ -168,14 +176,14 @@ final class CommanderOrchestrator: ObservableObject {
             }
 
             if hasBuildError {
-                appendMessage(.system("❌ ビルドエラー検出。Workerに修正を依頼します。"))
+                appendMessage(.system(isJp ? "❌ ビルドエラー検出。Workerに修正を依頼します。" : "❌ Build error detected. Requesting Worker to fix."))
                 currentInstruction = "The previous JCross IR diff caused a build error:\n```\n\(buildErrorMessage)\n```\nPlease fix the bug and provide the corrected JCross IR diff."
                 maxRetries -= 1
                 if maxRetries < 0 {
-                    appendMessage(.system("⚠️ Workerによる自動修正の試行上限に達しました。"))
+                    appendMessage(.system(isJp ? "⚠️ Workerによる自動修正の試行上限に達しました。" : "⚠️ Worker auto-fix retry limit reached."))
                 }
             } else {
-                appendMessage(.system("✅ Commander: ビルド検証に成功しました。"))
+                appendMessage(.system(isJp ? "✅ Commander: ビルド検証に成功しました。" : "✅ Commander: Build verification successful."))
                 break
             }
         }
@@ -198,14 +206,22 @@ final class CommanderOrchestrator: ObservableObject {
                 phase = .writingToDisk(file: entry.relativePath)
                 try? restored.write(to: fileURL, atomically: true, encoding: String.Encoding.utf8)
                 await vault.updateDelta()
-                appendMessage(.system("✅ 承認されました: \(entry.relativePath)"))
+                appendMessage(.system(isJp ? "✅ 承認されました: \(entry.relativePath)" : "✅ Approved: \(entry.relativePath)"))
             } else {
-                appendMessage(.system("⏸ 変更が拒否されました: \(entry.relativePath)"))
+                appendMessage(.system(isJp ? "⏸ 変更が拒否されました: \(entry.relativePath)" : "⏸ Modification rejected: \(entry.relativePath)"))
             }
         }
 
         // Step 6: Commander が最終回答をユーザーに提示
-        phase = .commanderPlanning(step: "最終回答を生成中...")
+        if diffsToApply.isEmpty {
+            appendMessage(.system(isJp ? "⚠️ 変更が一つも適用されませんでした。Workerがコンテキストを読み取れなかったか、不正なパスを出力した可能性があります。" : "⚠️ No modifications applied. The Worker may have failed to read the context or output an invalid path."))
+            phase = .done
+            try? await Task.sleep(nanoseconds: 1_000_000_000)
+            phase = .idle
+            return
+        }
+
+        phase = .commanderPlanning(step: isJp ? "最終回答を生成中..." : "Generating final response...")
         let finalResponse = await generateFinalResponse(
             userMessage: message,
             workerSummary: workerResult?.summary ?? "No changes"
@@ -214,7 +230,7 @@ final class CommanderOrchestrator: ObservableObject {
         appendMessage(.assistant(finalResponse))
         
         // Step 7: Continuous Memory (remember)
-        appendMessage(.system("🧠 Verantyx Compiler (MCP): remember() を実行。今回の決定・文脈を JCross メモリノードに圧縮保存しました。"))
+        appendMessage(.system(isJp ? "🧠 Verantyx Compiler (MCP): remember() を実行。今回の決定・文脈を JCross メモリノードに圧縮保存しました。" : "🧠 Verantyx Compiler (MCP): Executed remember(). Compressed and saved context into JCross memory node."))
         
         phase = .done
 
@@ -554,13 +570,12 @@ final class CommanderOrchestrator: ObservableObject {
     }
 
     private func inferRelevantFiles(from message: String) -> [String] {
-        let items = vault.listDirectory(relativePath: "")
-        return items
-            .filter { !$0.isDirectory }
-            .map { $0.name }
-            .filter { name in
-                message.lowercased().contains(name.components(separatedBy: ".").first?.lowercased() ?? "")
-            }
+        guard let index = vault.vaultIndex else { return [] }
+        return index.entries.keys.filter { path in
+            let filename = URL(fileURLWithPath: path).lastPathComponent.lowercased()
+            let baseName = filename.components(separatedBy: ".").first ?? filename
+            return message.lowercased().contains(baseName)
+        }
     }
 
     private func buildVaultContext(from paths: [String]) -> String {

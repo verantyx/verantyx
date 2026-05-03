@@ -41,7 +41,7 @@ public actor CognitiveAnchorEngine {
             return bluePixelBase64
         case .searchForce:
             return renderDynamicAnchor(
-                text: "[ SEARCH REQUIRED ]\nKNOWLEDGE BOUNDARY DETECTED",
+                text: "⚠️ KNOWLEDGE BOUNDARY ⚠️\nYOU MUST SEARCH.\nOUTPUT: [SEARCH_MULTI: \"query\"]",
                 backgroundColor: NSColor.systemYellow,
                 textColor: NSColor.black
             ) ?? redPixelBase64
@@ -50,7 +50,7 @@ public actor CognitiveAnchorEngine {
             formatter.dateFormat = "yyyy-MM-dd HH:mm"
             let nowStr = formatter.string(from: Date())
             return renderDynamicAnchor(
-                text: "CURRENT TIME:\n\(nowStr)\nYOUR KNOWLEDGE IS OUTDATED",
+                text: "TIME: \(nowStr)\nYOUR KNOWLEDGE IS OLD.\nOUTPUT: [SEARCH_MULTI: \"query\"]",
                 backgroundColor: NSColor.black,
                 textColor: NSColor.green
             ) ?? bluePixelBase64

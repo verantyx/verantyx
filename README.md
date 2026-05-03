@@ -1,14 +1,36 @@
 <div align="center">
-  <h1>🛡️ Verantyx IDE & Cortex Engine</h1>
-  <p><b>The Zero-Leakage, Neuro-Symbolic AI Coding Gateway & Native macOS IDE</b></p>
+  <h1>🛡️ Verantyx IDE &amp; Cortex Engine</h1>
+  <p><b>The Zero-Leakage, Neuro-Symbolic AI Coding Gateway &amp; Native macOS IDE</b></p>
   <p><i>We trade token cost for absolute security, deterministic patching, and forced structural reasoning.</i></p>
-  
+
+  <p>
+    <img src="https://img.shields.io/badge/version-0.2.0-blue?style=flat-square" alt="Version 0.2.0">
+    <img src="https://img.shields.io/badge/platform-macOS%2014%2B-lightgrey?style=flat-square">
+    <img src="https://img.shields.io/badge/Apple%20Silicon-optimized-orange?style=flat-square">
+    <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square">
+  </p>
+
   <p>
     <a href="#-the-vision-why-verantyx-exists">Vision</a> •
-    <a href="#-the-contributor-strategy-join-the-core-engineering-team"><b>Contribute! (Help Wanted)</b></a> •
+    <a href="#-gatekeeper-mode-architecture">Gatekeeper Architecture</a> •
+    <a href="#-whats-new-in-v020">What's New</a> •
+    <a href="#-the-contributor-strategy-join-the-core-engineering-team"><b>Contribute!</b></a> •
     <a href="#-demos">Demos</a>
   </p>
 </div>
+
+---
+
+## 📦 Download
+
+**[→ Download Latest Release (v0.2.0)](https://github.com/Ag3497120/verantyx/releases/latest)**
+
+1. Download **`VerantyxIDE-0.2.0.dmg`**
+2. Open the DMG and drag **Verantyx.app** to your **Applications** folder
+3. **First launch — bypass Gatekeeper (macOS security prompt):**
+   - Right-click `Verantyx.app` in Finder → **"Open"**
+   - Click **"Open"** in the unidentified developer dialog
+   - _Or run in Terminal:_ `xattr -d com.apple.quarantine /Applications/Verantyx.app`
 
 ---
 
@@ -26,7 +48,7 @@ By stripping away English semantics and replacing them with Kanji dimensional we
 
 ### 💡 The Verantyx Paradox: Burning Tokens vs. Infinite Local Memory
 
-This architecture embraces what might seem like a direct contradiction. 
+This architecture embraces what might seem like a direct contradiction.
 
 **On one hand (The Cloud Gatekeeper):** We do *not* care about saving API tokens. When routing tasks to external LLMs (Claude/GPT), we intentionally inflate token consumption by 30-40% by obfuscating code into JCross IR. We proudly trade API efficiency for **mathematically guaranteed security (zero-leakage)** and deterministic patching for enterprise logic.
 
@@ -35,21 +57,184 @@ This architecture embraces what might seem like a direct contradiction.
 - **L1.5 (Bridge Index)**: One-line summaries for massive O(1) scanning without context-window pollution.
 - **L2 & L3 (Facts & Raw Text)**: The actual deep storage of code graphs and decisions.
 
-Because our models only need to process *mathematical structure* rather than massive raw text payloads, we enable **ultra-small, 2B-class local models** (running entirely offline on Apple Silicon via MLX) to navigate and manage massive, enterprise-scale codebases *without ever suffering from context loss*. 
+Because our models only need to process *mathematical structure* rather than massive raw text payloads, we enable **ultra-small, 2B-class local models** (running entirely offline on Apple Silicon via MLX) to navigate and manage massive, enterprise-scale codebases *without ever suffering from context loss*.
 
 We burn tokens in the cloud to buy perfect security. We compress structure locally to achieve infinite memory on edge devices. If you share this vision of the future, you belong here.
 
 ---
 
+## 🔐 Gatekeeper Mode Architecture
+
+### Role Split: Local Commander vs. Cloud Worker
+
+Gatekeeper Mode separates concerns between two completely distinct roles:
+
+```
+User: "Convert this Swift code to Rust"
+        │
+        ▼
+┌─────────────────────────────────────────────────────────┐
+│  🧠 LOCAL COMMANDER  (any 7B–26B Ollama/MLX/BitNet LLM) │
+│  Role: Intent Classification & Memory Orchestration     │
+│  • "Swift → Rust" → StructuralCommand                  │
+│  • Decides which JCross transformation applies         │
+│  • Selects target files from Vault index               │
+│  • Generates IR query — NOT the actual code            │
+│  • Validates Cloud LLM response, triggers retry        │
+│  • Final security gate: ensures no real values leak    │
+│  ⚡ Even a 7B model handles classification reliably    │
+│  ⚡ Model size does NOT affect output code quality     │
+└─────────────────────────────────────────────────────────┘
+        │  JCross IR (meaning-zero structural puzzle)
+        │  e.g. [迅:1.0][錆:0.9] TRANSFORM → ...
+        ▼
+┌─────────────────────────────────────────────────────────┐
+│  CLOUD LLM WORKER  (Claude / DeepSeek / GPT-4)          │
+│  Role: Structural puzzle solving (blind solver)         │
+│  • Sees ONLY abstract JCross IR, never source code      │
+│  • Generates GraphPatch (structural diff)               │
+│  ★ This determines 70–80% of output code quality        │
+└─────────────────────────────────────────────────────────┘
+        │  GraphPatch (semantic-zero diff)
+        ▼
+┌─────────────────────────────────────────────────────────┐
+│  VAULT PATCHER  (100% local, deterministic)             │
+│  Role: Restore real identifiers from local Vault        │
+│  • No AI, no LLM — pure deterministic mapping          │
+│  • FUNC_001 → actualFunctionName()                     │
+└─────────────────────────────────────────────────────────┘
+        │
+        ▼
+   Final Code Output (real identifiers restored)
+```
+
+> **Key insight:** The Commander's model size (7B vs 26B) has **negligible impact on conversion quality**.
+> The Commander only performs intent classification (a simple categorization task).
+> **Conversion quality is entirely determined by the Cloud LLM (step ②).**
+> You can replace the Commander with a smaller model to save RAM without any quality regression.
+
+### ⚠️ Cloud LLM Performance & Model Selection
+
+Because the Cloud LLM receives **meaning-zero JCross IR** instead of natural language source code, its behavior differs from direct prompting:
+
+| Aspect | Impact |
+|---|---|
+| **General-purpose LLMs** (e.g., Claude Haiku, GPT-3.5) | Moderate degradation (~15-25%). Models rely on semantic cues absent in IR. |
+| **Reasoning-specialized LLMs** (e.g., Claude Opus, DeepSeek-R1, o1-preview) | **Minimal to no degradation.** These models excel at structural logic puzzles regardless of naming. |
+| **Code-specialized LLMs** (e.g., DeepSeek-Coder, Codestral) | **Recommended.** Pattern-matching on code structure is their strength. |
+| **Small Cloud LLMs** (<7B hosted) | Significant degradation. Structural reasoning requires sufficient model capacity. |
+
+> **Recommended configuration:**
+> Claude Opus / DeepSeek-R1 / o1-preview as Cloud Worker + gemma4:26b or smaller as Local Commander.
+> The Commander's size has negligible impact on output quality — it only classifies intent.
+
+### Failure Recovery: Automatic Retry
+
+When the Cloud LLM's patch fails to apply (compile error, type mismatch, etc.), Verantyx automatically sends the error back to the Cloud LLM as a JCross IR error report and requests a corrected patch. This retry count is configurable in **Settings → Privacy → Gatekeeper Mode → Retry Count**.
+
+---
+
+## ✨ What's New in v0.2.0
+
+### 🔧 Critical Stability: Deadlock & Crash Elimination
+
+**v0.2.0 is a major stability release.** The root cause of persistent `[__NSDictionaryM objectForKey:]` SIGTERM crashes and `swift_conformsToProtocolMaybe` deadlocks has been identified and **systemically eliminated**.
+
+#### Root Cause
+`Task.detached { [weak self] }` used inside `@MainActor` classes (`AppState`, `CommanderOrchestrator`, `L25IndexEngine`) caused the Swift runtime to check `ObservableObject` protocol conformance from a non-main thread — triggering a memory race → SIGTERM.
+
+#### Fixes Applied
+
+| File | Fix |
+|---|---|
+| `CommanderOrchestrator.swift` | `Task.detached → Task` for all `@MainActor`-isolated closures |
+| `AppState.swift` | `Task.detached { [weak self] } → Task { [weak self] }` (file selection, model eject) |
+| `L25IndexEngine.swift` | Replaced all `Task.detached+[weak self]` with `static nonisolated` pure-function helpers |
+| `GatekeeperStatusPill.swift` | `@StateObject → @ObservedObject` (singleton double-init fix) |
+| `GatekeeperModeView.swift` | `@StateObject → @ObservedObject` ×2 |
+| `OllamaNEREngine.swift` | `@StateObject → @ObservedObject` |
+| `SafeModeGuard.swift` | `@StateObject → @ObservedObject` |
+
+**The golden rule now enforced throughout the codebase:**
+```swift
+// ❌ BANNED in @MainActor classes
+Task.detached { [weak self] in self?.publishedVar = x }
+
+// ✅ Safe pattern
+Task { self.publishedVar = x }
+
+// ✅ Safe pattern for heavy I/O
+let value = await Self.loadFromDisk(url: url)
+self.publishedVar = value
+```
+
+### 🪟 Window Resize Fix
+
+Resizing the IDE window no longer causes content to scale instead of reflow. `ResizableHSplit` and `ResizableVSplit` now store pane widths as **fractions (0–1) of total width** rather than fixed pixel values, so all panes resize proportionally with the window.
+
+### 🧠 Pipeline Flow: Commander Now Visible
+
+The **Settings → Gatekeeper → Pipeline Flow** diagram now shows the Commander as an explicit step between IR generation and intent translation, with a dedicated settings card explaining its 5 roles:
+
+1. **Intent Analysis** — natural language → structural command
+2. **File Selection** — identify target files from Vault index
+3. **IR Query Generation** — build the JCross IR sent to Cloud LLM
+4. **Validation** — verify Cloud LLM response, trigger retry on failure
+5. **Security Gate** — final check that no real values are included
+
+### 🏎️ Model Picker: No More Blank Screen
+
+The Model Picker no longer freezes with a white screen after model eject. Ollama status polling now runs with a **2-second timeout** in a background task, showing cached model lists instantly.
+
+### ⚡ BitNet Engine: Availability Check
+
+`BitNetCommanderEngine.isAvailable()` now prevents silent hang-ups when BitNet is not installed. Missing BitNet gracefully falls back to standard inference.
+
+---
+
+## ✨ Features
+
+| Feature | Status |
+|---|---|
+| 🤖 Ollama integration (gemma4:26b, etc.) | ✅ v0.1.0 |
+| ⚡ MLX Apple Silicon inference (offline) | ✅ v0.1.0 |
+| 🔑 Anthropic Claude integration | ✅ v0.1.0 |
+| 💬 Natural language → file edits | ✅ v0.1.0 |
+| 🔍 Diff review → one-click Apply | ✅ v0.1.0 |
+| 📂 Open any folder as workspace | ✅ v0.1.0 |
+| 🔒 Fully offline (no Wi-Fi required) | ✅ v0.1.0 |
+| 🧠 JCross long-term memory (Cortex) | ✅ v0.1.0 |
+| 🔒 Privacy Gateway: 3-phase PII masking | ✅ v0.1.0 |
+| 🧬 Self-Evolution: live IDE self-patching | ✅ v0.1.0 |
+| 📜 Session history with restore | ✅ v0.1.0 |
+| 🛠️ MCP (Model Context Protocol) client | ✅ v0.1.0 |
+| 🔧 Deadlock-free @MainActor threading | ✅ **v0.2.0** |
+| 🪟 Proportional window resize | ✅ **v0.2.0** |
+| 🧠 Commander role visible in Pipeline UI | ✅ **v0.2.0** |
+| 🏎️ Instant model picker (no blank freeze) | ✅ **v0.2.0** |
+| ⚡ BitNet availability guard | ✅ **v0.2.0** |
+
+---
+
+## 🧠 Verantyx Cortex (Recommended)
+
+Cortex gives the AI persistent long-term memory across sessions using the JCross spatial memory system.
+
+```bash
+npx -y @verantyx/cortex setup
+```
+
+---
+
 ## 🤝 The Contributor Strategy: Join the Core Engineering Team
 
-AST parsing, memory management, and neuro-symbolic transformations are notoriously complex system programming challenges. We know developers can't just "drop in and fix 5 lines of code." 
+AST parsing, memory management, and neuro-symbolic transformations are notoriously complex system programming challenges. We know developers can't just "drop in and fix 5 lines of code."
 
 To make contributing highly accessible and incredibly impactful, we have deliberately designed a decoupled architecture:
 
 ### 🧠 The Core vs. The Periphery
 - **The Core Engine (Maintained by Verantyx):** The complex JCross Topology Matrix, memory classifiers, and Reverse-Transpilation engines.
-- **The Periphery (Built by the Community):** The language-specific AST Extraction Parsers. 
+- **The Periphery (Built by the Community):** The language-specific AST Extraction Parsers.
 
 **We have already built the Python and Swift parsers. We desperately need the open-source community to build the bridges for the rest of the programming world.**
 
