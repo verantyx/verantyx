@@ -4,7 +4,7 @@
   <p><i>We trade token cost for absolute security, deterministic patching, and forced structural reasoning.</i></p>
 
   <p>
-    <img src="https://img.shields.io/badge/version-0.3.0-blue?style=flat-square" alt="Version 0.3.0">
+    <img src="https://img.shields.io/badge/version-0.4.0-blue?style=flat-square" alt="Version 0.4.0">
     <img src="https://img.shields.io/badge/platform-macOS%2014%2B-lightgrey?style=flat-square">
     <img src="https://img.shields.io/badge/Apple%20Silicon-optimized-orange?style=flat-square">
     <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square">
@@ -23,9 +23,9 @@
 
 ## 📦 Download
 
-**[→ Download Latest Release (v0.3.0)](https://github.com/Ag3497120/verantyx/releases/latest)**
+**[→ Download Latest Release (v0.4.0)](https://github.com/Ag3497120/verantyx/releases/latest)**
 
-1. Download **`VerantyxIDE-0.3.0.dmg`**
+1. Download **`VerantyxIDE-0.4.0.dmg`**
 2. Open the DMG and drag **Verantyx.app** to your **Applications** folder
 3. **First launch — bypass Gatekeeper (macOS security prompt):**
    - Right-click `Verantyx.app` in Finder → **"Open"**
@@ -160,6 +160,11 @@ When the Cloud LLM's patch fails to apply (compile error, type mismatch, etc.), 
 ### ⚡ BitNet b1.58 Integration Guard
 - `BitNetCommanderEngine` now robustly verifies installation state before attempting to run local 1-bit inference, gracefully failing over to Ollama if the 800MB local model is unavailable, rather than silently hanging the orchestrator.
 
+### 🕵️‍♂️ Biometric Stealth Browser (New in v0.4.0)
+- **Hybrid Injection Pipeline**: The agent now physically drives a headless browser using OS-level macOS `CGEvent` simulation combined with DOM-level JavaScript synchronization.
+- **BotGuard Evasion**: Captures the user's actual typing cadence (keyboard entropy) and mouse trajectories (mouse entropy) during chat interactions, and replays them perfectly during agent web searches to bypass Cloudflare and reCAPTCHA bot detection.
+- **Zero-Steal Focus**: The agent injects physical keystrokes and DOM updates invisibly in the background without stealing the user's OS keyboard focus, allowing parallel multitasking while the agent scours the web.
+
 ---
 
 ## ✨ Features
@@ -180,11 +185,13 @@ When the Cloud LLM's patch fails to apply (compile error, type mismatch, etc.), 
 | 🛠️ MCP (Model Context Protocol) client | ✅ v0.1.0 |
 | 🪟 Proportional window resize | ✅ v0.2.0 |
 | 🏎️ Instant model picker (no blank freeze) | ✅ v0.2.0 |
-| 🔧 Deadlock-free @MainActor threading | ✅ **v0.3.0** |
-| 🖱️ Trackpad UI scroll-freezing fixed | ✅ **v0.3.0** |
-| 🧠 Commander role visible in Pipeline UI | ✅ **v0.3.0** |
-| ⚡ BitNet 1.58b integration guard | ✅ **v0.3.0** |
-| 🧩 Spotlight-style MCP Quick Panel | ✅ **v0.3.0** |
+| 🔧 Deadlock-free @MainActor threading | ✅ v0.3.0 |
+| 🖱️ Trackpad UI scroll-freezing fixed | ✅ v0.3.0 |
+| 🧠 Commander role visible in Pipeline UI | ✅ v0.3.0 |
+| ⚡ BitNet 1.58b integration guard | ✅ v0.3.0 |
+| 🧩 Spotlight-style MCP Quick Panel | ✅ v0.3.0 |
+| 🕵️‍♂️ Biometric Stealth Browser (Hybrid JS/HID) | ✅ **v0.4.0** |
+| 🛡️ BotGuard & Cloudflare bypass simulation | ✅ **v0.4.0** |
 
 ---
 

@@ -16,6 +16,9 @@ pub struct BridgeCommand {
     pub url:  Option<String>,
     pub id:   Option<u64>,   // リクエスト ID — レスポンスにエコーバック
     pub text: Option<String>,
+    pub entropy: Option<Vec<[f64; 2]>>, // Human mouse movements
+    pub keyboard_entropy: Option<Vec<f64>>, // Human keystroke timings
+    pub target: Option<[f64; 2]>,       // Target coordinates from Vision Model
 }
 
 /// Response from Rust stealth_bridge → Swift BrowserBridge
@@ -46,13 +49,14 @@ pub fn run_event_loop(visible: bool) -> anyhow::Result<()> {
     let pending_id_ipc = Arc::clone(&pending_id);
 
     // ── stdin リーダースレッド ─────────────────────────────────────────────
+    let proxy_for_reader = proxy.clone();
     thread::spawn(move || {
         let stdin  = io::stdin();
         let reader = stdin.lock();
         for line_res in reader.lines() {
             if let Ok(line) = line_res {
                 if let Ok(cmd) = serde_json::from_str::<BridgeCommand>(&line) {
-                    if proxy.send_event(cmd).is_err() { break; }
+                    if proxy_for_reader.send_event(cmd).is_err() { break; }
                 }
             }
         }
@@ -139,6 +143,7 @@ pub fn run_event_loop(visible: bool) -> anyhow::Result<()> {
         .build(&window)?;
 
     // ── イベントループ ─────────────────────────────────────────────────────
+    let proxy_for_typing = proxy.clone();
     event_loop.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Wait;
 
@@ -153,7 +158,142 @@ pub fn run_event_loop(visible: bool) -> anyhow::Result<()> {
                     "navigate" => {
                         if let Some(url) = cmd.url {
                             let _ = webview.evaluate_script("window.__vx_notified = false;");
-                            webview.load_url(&url);
+                            
+                            if let Some(entropy) = cmd.entropy {
+                                // Native macOS CoreGraphics Trajectory Playback
+                                let target_clone = cmd.target;
+                                let url_clone = url.clone();
+                                
+                                // Launch trajectory thread
+                                thread::spawn(move || {
+                                    if entropy.len() < 2 { return; }
+                                    
+                                    use core_graphics::event::{CGEvent, CGEventType, CGMouseButton};
+                                    use core_graphics::event_source::{CGEventSource, CGEventSourceStateID};
+                                    use core_graphics::geometry::CGPoint;
+                                    use core_graphics::event::{CGEventTap, CGEventTapLocation, CGEventTapPlacement, CGEventTapOptions};
+                                    use core_foundation::runloop::CFRunLoop;
+                                    use std::time::{Duration, SystemTime, UNIX_EPOCH};
+                                    use std::sync::mpsc;
+                                    
+                                    let (tx, rx) = mpsc::channel();
+                                    
+                                    // Step 1: Tap thread to drop physical HID inputs
+                                    thread::spawn(move || {
+                                        let tap_res = CGEventTap::new(
+                                            CGEventTapLocation::HID,
+                                            CGEventTapPlacement::HeadInsertEventTap,
+                                            CGEventTapOptions::Default,
+                                            vec![
+                                                CGEventType::MouseMoved,
+                                                CGEventType::LeftMouseDown, CGEventType::LeftMouseUp, CGEventType::LeftMouseDragged,
+                                                CGEventType::RightMouseDown, CGEventType::RightMouseUp, CGEventType::RightMouseDragged,
+                                                CGEventType::ScrollWheel
+                                            ],
+                                            |_proxy, _type, _event| {
+                                                // Drop the physical hardware event
+                                                None
+                                            }
+                                        );
+                                        
+                                        if let Ok(tap) = tap_res {
+                                            let loop_source = tap.mach_port.create_runloop_source(0).unwrap();
+                                            let current_loop = CFRunLoop::get_current();
+                                            current_loop.add_source(&loop_source, unsafe { core_foundation::runloop::kCFRunLoopCommonModes });
+                                            tap.enable();
+                                            
+                                            // Send the run_loop instance to the playback thread
+                                            let _ = tx.send(Some(current_loop));
+                                            
+                                            CFRunLoop::run_current();
+                                        } else {
+                                            let _ = tx.send(None);
+                                        }
+                                    });
+                                    
+                                    let tap_run_loop = rx.recv().unwrap_or(None);
+                                    
+                                    let source = CGEventSource::new(CGEventSourceStateID::HIDSystemState).unwrap();
+                                    
+                                    let o_start = entropy[0];
+                                    let o_end = entropy[entropy.len() - 1];
+                                    let dx = o_end[0] - o_start[0];
+                                    let dy = o_end[1] - o_start[1];
+                                    let mut orig_dist = (dx*dx + dy*dy).sqrt();
+                                    if orig_dist < 1.0 { orig_dist = 1.0; }
+                                    let orig_angle = dy.atan2(dx);
+                                    
+                                    // Start from random screen location or near center
+                                    let t_start_x = 200.0;
+                                    let t_start_y = 200.0;
+                                    
+                                    // Target (Vision Model) or fallback
+                                    let (t_end_x, t_end_y) = if let Some(t) = target_clone {
+                                        (t[0], t[1])
+                                    } else {
+                                        (500.0, 500.0)
+                                    };
+                                    
+                                    let t_dx = t_end_x - t_start_x;
+                                    let t_dy = t_end_y - t_start_y;
+                                    let target_dist = (t_dx*t_dx + t_dy*t_dy).sqrt();
+                                    let target_angle = t_dy.atan2(t_dx);
+                                    
+                                    let scale = target_dist / orig_dist;
+                                    let rotation = target_angle - orig_angle;
+                                    let cos_r = rotation.cos();
+                                    let sin_r = rotation.sin();
+                                    
+                                    let mut transformed = Vec::new();
+                                    for p in entropy.iter() {
+                                        let x = p[0] - o_start[0];
+                                        let y = p[1] - o_start[1];
+                                        let rx = x * cos_r - y * sin_r;
+                                        let ry = x * sin_r + y * cos_r;
+                                        transformed.push(CGPoint::new(t_start_x + rx * scale, t_start_y + ry * scale));
+                                    }
+                                    
+                                    for point in transformed.iter() {
+                                        if let Ok(event) = CGEvent::new_mouse_event(source.clone(), CGEventType::MouseMoved, *point, CGMouseButton::Left) {
+                                            // Post at Session level so our injected events bypass the HID tap
+                                            event.post(CGEventTapLocation::Session);
+                                        }
+                                        
+                                        // Random jitter 5-15ms
+                                        let nanos = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().subsec_nanos();
+                                        let delay = (nanos % 10) + 5;
+                                        thread::sleep(Duration::from_millis(delay as u64));
+                                    }
+                                    
+                                    // Step 4: Micro-delay click at the final destination
+                                    if let Some(final_point) = transformed.last() {
+                                        // MouseDown
+                                        if let Ok(event) = CGEvent::new_mouse_event(source.clone(), CGEventType::LeftMouseDown, *final_point, CGMouseButton::Left) {
+                                            event.post(CGEventTapLocation::Session);
+                                        }
+                                        
+                                        // Natural click hold duration (50-100ms)
+                                        let hold_delay = (SystemTime::now().duration_since(UNIX_EPOCH).unwrap().subsec_nanos() % 50) + 50;
+                                        thread::sleep(Duration::from_millis(hold_delay as u64));
+                                        
+                                        // MouseUp
+                                        if let Ok(event) = CGEvent::new_mouse_event(source.clone(), CGEventType::LeftMouseUp, *final_point, CGMouseButton::Left) {
+                                            event.post(CGEventTapLocation::Session);
+                                        }
+                                    }
+                                    
+                                    // Release the physical input lock
+                                    if let Some(rl) = tap_run_loop {
+                                        rl.stop();
+                                    }
+                                });
+                                
+                                // Navigate immediately - the ghost mouse will move during page load!
+                                webview.load_url(&url);
+                            } else {
+                                webview.load_url(&url);
+                            }
+                            
                             let id = *pending_id.lock().unwrap();
                             emit!(BridgeResponse { id, status: "navigating".into(), message: Some("started".into()), url: None, title: None, markdown: None });
                         }
@@ -167,6 +307,72 @@ pub fn run_event_loop(visible: bool) -> anyhow::Result<()> {
                         let _ = webview.evaluate_script(
                             "(function(){window.ipc.postMessage('RAW_DOM:'+document.documentElement.outerHTML);})();"
                         );
+                    }
+                    "type_text" => {
+                        if let Some(text) = cmd.text {
+                            let kb_entropy = cmd.keyboard_entropy.clone().unwrap_or_default();
+                            let proxy_clone = proxy_for_typing.clone();
+                            thread::spawn(move || {
+                                use core_graphics::event::{CGEvent, CGEventType, CGMouseButton};
+                                use core_graphics::event_source::{CGEventSource, CGEventSourceStateID};
+                                use std::time::Duration;
+                                
+                                let source = CGEventSource::new(CGEventSourceStateID::HIDSystemState).unwrap();
+                                let chars: Vec<char> = text.chars().collect();
+                                
+                                // Create an infinite iterator over the entropy delays, fallback to 50ms
+                                let mut delays = kb_entropy.into_iter().chain(std::iter::repeat(0.05));
+                                
+                                for c in chars {
+                                    let mut buf = [0; 4];
+                                    let s = c.encode_utf8(&mut buf);
+                                    
+                                    let delay_secs = delays.next().unwrap_or(0.05);
+                                    
+                                    // Split the delay: 30% for key down hold duration, 70% for pause before next key
+                                    let hold_duration = (delay_secs * 0.3).max(0.01);
+                                    let pause_duration = (delay_secs * 0.7).max(0.01);
+                                    
+                                    // OS-Level Dummy Event (to generate physical keyboard entropy logs for bot detection)
+                                    // We use keycode 0 ('a') as a dummy, it is sent to the OS level but may miss the browser
+                                    if let Ok(event) = CGEvent::new_keyboard_event(source.clone(), 0, true) {
+                                        event.set_string(s);
+                                        event.post(core_graphics::event::CGEventTapLocation::Session);
+                                    }
+                                    
+                                    // Hold delay (natural human keystroke dwell time)
+                                    thread::sleep(Duration::from_secs_f64(hold_duration));
+                                    
+                                    // JS Injection (Guarantees the text actually appears in the focused input field)
+                                    let js_val = serde_json::to_string(&s).unwrap();
+                                    let js = format!(
+                                        "var el = document.activeElement; if (el && typeof el.value !== 'undefined') {{ el.value += {}; el.dispatchEvent(new Event('input', {{ bubbles: true }})); }}",
+                                        js_val
+                                    );
+                                    let _ = proxy_clone.send_event(BridgeCommand {
+                                        cmd: "eval_js".into(),
+                                        url: None,
+                                        id: None,
+                                        text: Some(js),
+                                        entropy: None,
+                                        keyboard_entropy: None,
+                                        target: None,
+                                    });
+                                    
+                                    // KeyUp
+                                    if let Ok(event) = CGEvent::new_keyboard_event(source.clone(), 0, false) {
+                                        event.set_string(s);
+                                        event.post(core_graphics::event::CGEventTapLocation::Session);
+                                    }
+                                    
+                                    // Pause before next keystroke
+                                    thread::sleep(Duration::from_secs_f64(pause_duration));
+                                }
+                            });
+                            
+                            let id = *pending_id.lock().unwrap();
+                            emit!(BridgeResponse { id, status: "ok".into(), message: Some("typed".into()), url: None, title: None, markdown: None });
+                        }
                     }
                     "eval_js" => {
                         if let Some(script) = cmd.text {
