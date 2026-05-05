@@ -597,7 +597,7 @@ struct AgentChatView: View {
                           : app.t("Self Fix: auto-fix IDE source", "Self Fix: IDEソースを自己修正"))
                 }
                 // FIXED width — never changes regardless of selfFixMode
-                .frame(width: 86, alignment: .leading)
+                .frame(width: 114, alignment: .leading)
 
                 // ── TextEditor + placeholder ───────────────────────────
                 // Placeholder padding must match NSTextView's internal insets:
