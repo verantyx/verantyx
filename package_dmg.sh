@@ -140,40 +140,39 @@ else
   echo "[6/7] 公証スキップ (Developer ID + Apple ID が必要)"
 fi
 
-# ── 7. Create DMG ───────────────────────────────────────────────────────────
-echo "[7/7] DMG を作成中..."
+# ── 7. Create PKG Installer (Forced Overwrite) ────────────────────────────────
+echo "[7/7] PKG インストーラーを作成中..."
 mkdir -p "$DIST_DIR"
-TEMP_DMG="$DIST_DIR/.tmp_${DMG_NAME}.dmg"
+PKG_NAME="VerantyxIDE-${VERSION}.pkg"
 
-hdiutil create \
-  -srcfolder "$STAGING_DIR" \
-  -volname "Verantyx IDE ${VERSION}" \
-  -fs HFS+ \
-  -fsargs "-c c=64,a=16,b=16" \
-  -format UDRW \
-  -size 512m \
-  "$TEMP_DMG" > /dev/null
+# Create preinstall script to force quit the app before overwriting
+mkdir -p "$STAGING_DIR/scripts"
+cat > "$STAGING_DIR/scripts/preinstall" << 'EOF'
+#!/bin/bash
+killall Verantyx 2>/dev/null || true
+exit 0
+EOF
+chmod +x "$STAGING_DIR/scripts/preinstall"
 
-MOUNT_DIR="/Volumes/VerantyxIDE_${VERSION}"
-hdiutil attach "$TEMP_DMG" -mountpoint "$MOUNT_DIR" -noautoopen -quiet
-ln -sf /Applications "$MOUNT_DIR/Applications" 2>/dev/null || true
-sleep 1
-hdiutil detach "$MOUNT_DIR" -quiet
+# Create a temporary root folder for pkgbuild
+mkdir -p "$STAGING_DIR/root/Applications"
+mv "$STAGING_DIR/${APP_NAME}.app" "$STAGING_DIR/root/Applications/"
 
-hdiutil convert "$TEMP_DMG" \
-  -format UDZO \
-  -imagekey "zlib-level=9" \
-  -o "$DIST_DIR/${DMG_NAME}.dmg" > /dev/null
+pkgbuild --root "$STAGING_DIR/root" \
+         --scripts "$STAGING_DIR/scripts" \
+         --identifier "com.verantyx.ide.pkg" \
+         --version "$VERSION" \
+         --install-location "/" \
+         "$DIST_DIR/$PKG_NAME" > /dev/null
 
-rm -f "$TEMP_DMG"
 rm -rf "$STAGING_DIR"
 
 # ── Done ────────────────────────────────────────────────────────────────────
-DMG_SIZE=$(du -sh "$DIST_DIR/${DMG_NAME}.dmg" | cut -f1)
+PKG_SIZE=$(du -sh "$DIST_DIR/${PKG_NAME}" | cut -f1)
 echo ""
 echo "================================================"
 echo "✅ 完了!"
-echo "   出力: dist/${DMG_NAME}.dmg (${DMG_SIZE})"
+echo "   出力: dist/${PKG_NAME} (${PKG_SIZE})"
 echo "   署名: ${SIGN_MODE}"
 echo ""
 
@@ -192,5 +191,5 @@ fi
 
 echo ""
 echo "📌 GitHub Release に添付:"
-echo "   gh release create v${VERSION} dist/${DMG_NAME}.dmg --repo verantyx/verantyx"
+echo "   gh release create v${VERSION} dist/${PKG_NAME} --repo verantyx/verantyx"
 echo "================================================"
