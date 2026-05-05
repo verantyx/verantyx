@@ -73,7 +73,7 @@ extension View {
 }
 
 struct ToastContainerView: View {
-    @StateObject private var manager = ToastManager.shared
+    @ObservedObject private var manager = ToastManager.shared
 
     var body: some View {
         Group {

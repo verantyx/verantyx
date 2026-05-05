@@ -14,6 +14,7 @@ struct SettingsView: View {
     @State private var showAnthropicKey = false
     @State private var showOpenAIKey = false
     @State private var showDeepSeekKey = false
+    @State private var showGeminiKey = false
 
     enum SettingsTab: String, CaseIterable {
         case general = "General"
@@ -72,6 +73,7 @@ struct SettingsView: View {
                         .frame(width: 22, height: 22)
                         .background(Color.white.opacity(0.07), in: Circle())
                 }
+                .contentShape(Rectangle())
                 .buttonStyle(.plain)
                 .keyboardShortcut(.escape, modifiers: [])
                 .help(app.t("Close Settings (Esc)", "設定を閉じる (Esc)"))
@@ -155,6 +157,7 @@ struct SettingsView: View {
                                     : nil
                             )
                         }
+                        .contentShape(Rectangle())
                         .buttonStyle(.plain)
                         .padding(.horizontal, 6)
                     }
@@ -266,6 +269,7 @@ struct SettingsView: View {
                                         )
                                 )
                             }
+                            .contentShape(Rectangle())
                             .buttonStyle(.plain)
                         }
                     }
@@ -364,21 +368,50 @@ struct SettingsView: View {
                             .onSubmit { app.connectOllama() }
                     }
 
+                    rowLabel("Target Mode") {
+                        HStack(spacing: 12) {
+                            Picker("", selection: $app.editingMode) {
+                                ForEach(OperationMode.allCases) { m in
+                                    Text(m.displayName).tag(m)
+                                }
+                            }
+                            .frame(width: 150)
+                            
+                            Button {
+                                app.switchModeAndEjectOldModel(to: app.editingMode)
+                            } label: {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "checkmark.circle.fill")
+                                    Text(app.t("Enable Mode", "モードを有効にする"))
+                                }
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .controlSize(.small)
+                            .tint(app.editingMode == app.operationMode ? .green : .blue)
+                        }
+                    }
+
+                    Divider().opacity(0.2)
+
                     rowLabel("Ollama model") {
                         HStack(spacing: 6) {
+                            let modelBinding = Binding<String>(
+                                get: { app.getOllamaModel(for: app.editingMode) },
+                                set: { app.setOllamaModel($0, for: app.editingMode) }
+                            )
+                            
                             if app.ollamaModels.isEmpty {
-                                TextField("gemma4:26b", text: $app.activeOllamaModel)
+                                TextField("gemma4:26b", text: modelBinding)
                                     .textFieldStyle(.roundedBorder)
                                     .font(.system(size: 11, design: .monospaced))
                                     .frame(width: 200)
                             } else {
-                                Picker("", selection: $app.activeOllamaModel) {
+                                Picker("", selection: modelBinding) {
                                     ForEach(app.ollamaModels, id: \.self) { m in
                                         Text(m).tag(m)
                                     }
                                 }
                                 .frame(width: 200)
-                                .onChange(of: app.activeOllamaModel) { _, _ in app.connectOllama() }
                             }
                             Button("↺") { testConnection() }
                                 .buttonStyle(.borderedProminent)
@@ -502,6 +535,7 @@ struct SettingsView: View {
                                             )
                                     )
                                 }
+                                .contentShape(Rectangle())
                                 .buttonStyle(.plain)
                             }
                         }
@@ -669,6 +703,7 @@ struct SettingsView: View {
                                 Image(systemName: showAnthropicKey ? "eye.slash" : "eye")
                                     .font(.system(size: 11))
                             }
+                            .contentShape(Rectangle())
                             .buttonStyle(.plain)
                             .foregroundStyle(.secondary)
                         }
@@ -760,8 +795,19 @@ struct SettingsView: View {
                                 Image(systemName: showOpenAIKey ? "eye.slash" : "eye")
                                     .font(.system(size: 11))
                             }
+                            .contentShape(Rectangle())
                             .buttonStyle(.plain).foregroundStyle(.secondary)
                         }
+                    }
+
+                    rowLabel("Model") {
+                        Picker("", selection: $app.activeOpenAIModel) {
+                            Text("gpt-4o").tag("gpt-4o")
+                            Text("gpt-4-turbo").tag("gpt-4-turbo")
+                            Text("o1").tag("o1")
+                            Text("o3-mini").tag("o3-mini")
+                        }
+                        .frame(width: 240)
                     }
                 }
             }
@@ -816,8 +862,85 @@ struct SettingsView: View {
                                 Image(systemName: showDeepSeekKey ? "eye.slash" : "eye")
                                     .font(.system(size: 11))
                             }
+                            .contentShape(Rectangle())
                             .buttonStyle(.plain).foregroundStyle(.secondary)
                         }
+                    }
+
+                    rowLabel("Model") {
+                        Picker("", selection: $app.activeDeepSeekModel) {
+                            Text("deepseek-coder").tag("deepseek-coder")
+                            Text("deepseek-chat").tag("deepseek-chat")
+                            Text("deepseek-reasoner").tag("deepseek-reasoner")
+                        }
+                        .frame(width: 240)
+                    }
+                }
+            }
+
+            // ── Gemini ────────────────────────────────────────────────
+            settingsCard {
+                VStack(alignment: .leading, spacing: 14) {
+                    HStack(spacing: 10) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(Color(red: 0.2, green: 0.6, blue: 0.8).opacity(0.15))
+                                .frame(width: 32, height: 32)
+                            Image(systemName: "star.circle")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(Color(red: 0.2, green: 0.6, blue: 0.8))
+                        }
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Gemini").font(.system(size: 13, weight: .semibold)).foregroundStyle(.white)
+                            Text("gemini-2.5-pro, gemini-1.5-flash")
+                                .font(.system(size: 10)).foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        if let key = UserDefaults.standard.string(forKey: "gemini_api_key"), !key.isEmpty {
+                            Text("✓ Configured")
+                                .font(.system(size: 10, weight: .semibold))
+                                .foregroundStyle(Color(red: 0.3, green: 0.9, blue: 0.5))
+                                .padding(.horizontal, 8).padding(.vertical, 3)
+                                .background(Color(red: 0.3, green: 0.9, blue: 0.5).opacity(0.1), in: Capsule())
+                        }
+                    }
+
+                    Divider().opacity(0.2)
+
+                    rowLabel("API Key") {
+                        HStack(spacing: 6) {
+                            let binding = Binding<String>(
+                                get: { UserDefaults.standard.string(forKey: "gemini_api_key") ?? "" },
+                                set: { UserDefaults.standard.set($0, forKey: "gemini_api_key") }
+                            )
+                            if showGeminiKey {
+                                TextField("AIza...", text: binding)
+                                    .textFieldStyle(.roundedBorder)
+                                    .font(.system(size: 11, design: .monospaced))
+                                    .frame(width: 220)
+                            } else {
+                                SecureField("AIza...", text: binding)
+                                    .textFieldStyle(.roundedBorder)
+                                    .font(.system(size: 11, design: .monospaced))
+                                    .frame(width: 220)
+                            }
+                            Button { showGeminiKey.toggle() } label: {
+                                Image(systemName: showGeminiKey ? "eye.slash" : "eye")
+                                    .font(.system(size: 11))
+                            }
+                            .contentShape(Rectangle())
+                            .buttonStyle(.plain).foregroundStyle(.secondary)
+                        }
+                    }
+
+                    rowLabel("Model") {
+                        Picker("", selection: $app.activeGeminiModel) {
+                            Text("gemini-3.1-pro").tag("gemini-3.1-pro")
+                            Text("gemini-2.5-pro").tag("gemini-2.5-pro")
+                            Text("gemini-2.5-flash").tag("gemini-2.5-flash")
+                            Text("gemini-1.5-pro").tag("gemini-1.5-pro")
+                        }
+                        .frame(width: 240)
                     }
                 }
             }
@@ -1018,7 +1141,7 @@ struct SettingsView: View {
                             Text("Privacy Shield").tag(InferenceMode.privacyShield)
                             Text("Cloud Direct").tag(InferenceMode.cloudDirect)
                         }
-                        .pickerStyle(.segmented).frame(width: 260)
+                        .pickerStyle(.segmented).frame(width: 320)
                     }
 
                     switch app.inferenceMode {
@@ -1041,7 +1164,7 @@ struct SettingsView: View {
                                 Text("Gemini").tag(CloudProvider.gemini)
                                 Text("DeepSeek").tag(CloudProvider.deepseek)
                             }
-                            .pickerStyle(.segmented).frame(width: 240)
+                            .pickerStyle(.segmented).frame(width: 340)
                         }
                     }
                 }
@@ -1163,21 +1286,26 @@ struct SettingsView: View {
                 }
             }
 
-            // ── Gatekeeper Mode ────────────────────────────────────────
+            // ── Gatekeeper（統合セクション）──────────────────────────────
             sectionHeader("Gatekeeper Mode", icon: "shield.lefthalf.filled")
 
-            Text("ローカル LLM を司令官にし、外部 API（Claude 等）にはソースコードを一切見せず JCross IR のみを送信します。")
+            Text(AppLanguage.shared.t("Use local LLM as commander, sending only zero-semantic JCross IR to Cloud LLM without showing source code. If conversion fails, error info is resent to request fixes.", "ローカル LLM を司令官にし、Cloud LLM にはソースコードを一切見せず意味ゼロの JCross IR のみを送信します。変換が失敗した場合はエラー情報を Cloud LLM に再送して修正を依頼します。"))
                 .font(.system(size: 11)).foregroundStyle(.secondary)
 
-            GatekeeperQuickSettingsCard()
+            // 統合カード（Mode + Retry + Pipeline を1か所に集約）
+            UnifiedGatekeeperCard()
         }
     }
 
-    // MARK: - Gatekeeper Quick Settings Card
+    // MARK: - Unified Gatekeeper Card
+    // Gatekeeper Mode + リトライ（失敗時再送）+ Pipeline を1つのカードに統合
+    // 旧: GatekeeperQuickSettingsCard + GatekeeperPipelineSettingsView が別々に存在して混乱を招いていた
 
-    private struct GatekeeperQuickSettingsCard: View {
-        @StateObject private var gk = GatekeeperModeState.shared
+    private struct UnifiedGatekeeperCard: View {
+        @EnvironmentObject var app: AppState
+        @ObservedObject private var gk = GatekeeperModeState.shared
         @State private var availableModels: [String] = []
+        @State private var showPipelineDetail = false
         @State private var showFullView = false
 
         var body: some View {
@@ -1199,8 +1327,8 @@ struct SettingsView: View {
                             .font(.system(size: 12, weight: .semibold))
                             .foregroundStyle(.white)
                         Text(gk.isEnabled
-                             ? "🟢 有効 — ローカル LLM が司令官。外部 API は JCross IR しか見えない"
-                             : "局所 LLM を司令官にして外部 API からソースコードを隠す")
+                             ? app.t("🟢 Enabled — Local LLM commands. APIs only see JCross IR.", "🟢 有効 — ローカル LLM が司令官。外部 API は JCross IR しか見えない")
+                             : app.t("Set Local LLM as commander to hide source code from APIs", "局所 LLM を司令官にして外部 API からソースコードを隠す"))
                             .font(.system(size: 10))
                             .foregroundStyle(gk.isEnabled ? Color.green : .secondary)
                             .lineSpacing(2)
@@ -1229,9 +1357,88 @@ struct SettingsView: View {
                             }
                         }
                         .pickerStyle(.menu)
-                        .frame(width: 180)
+                        .frame(width: 240)
                     }
                     .padding(.vertical, 10)
+
+                    Divider().opacity(0.15)
+
+                    // ── 失敗時 Cloud LLM 再送回数（旧: Max Worker Retries）────
+                    // 変換が失敗した際にエラー内容を Cloud LLM へ再送して修正を依頼する回数
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "arrow.triangle.2.circlepath")
+                                .font(.system(size: 11)).foregroundStyle(Color(red: 0.4, green: 0.7, blue: 1.0))
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(AppLanguage.shared.t("Cloud LLM Resend Count on Failure", "失敗時 Cloud LLM 再送回数"))
+                                    .font(.system(size: 11)).foregroundStyle(.white)
+                                Text(AppLanguage.shared.t("Max times to send bug info back to Cloud LLM to request fixes on conversion error", "変換エラー発生時にバグ内容を Cloud LLM に返して修正を依頼する最大回数"))
+                                    .font(.system(size: 9)).foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                            Text(gk.maxWorkerRetries == -1 ? "無制限" : "\(gk.maxWorkerRetries) 回")
+                                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                                .foregroundStyle(gk.maxWorkerRetries == -1 ? .orange : .white)
+                        }
+                        Slider(value: Binding(
+                            get: { gk.maxWorkerRetries == -1 ? 20 : Double(gk.maxWorkerRetries) },
+                            set: { val in gk.maxWorkerRetries = Int(val) == 20 ? -1 : Int(val) }
+                        ), in: 0...20, step: 1)
+                        .tint(Color(red: 0.4, green: 0.7, blue: 1.0))
+                        HStack {
+                            Text(AppLanguage.shared.t("0 (No resends)", "0（再送なし）"))
+                            Spacer()
+                            Text(AppLanguage.shared.t("Unlimited", "無制限"))
+                        }
+                        .font(.system(size: 8)).foregroundStyle(.tertiary)
+                    }
+                    .padding(.vertical, 10)
+
+                    Divider().opacity(0.15)
+
+                    // ── External LLM Toggle ────────────────────────────────
+                    HStack(spacing: 8) {
+                        Image(systemName: "cpu").font(.system(size: 11)).foregroundStyle(.blue)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(app.t("Allow External LLM Commander", "外部LLM司令官の許可"))
+                                .font(.system(size: 11)).foregroundStyle(.white)
+                            Text(app.t("If OFF, BitNet forces as Commander", "オフ時はBitNetが強制的にCommanderとして動作"))
+                                .font(.system(size: 9)).foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Toggle("", isOn: $gk.allowExternalLLMForCommander).toggleStyle(.switch).scaleEffect(0.85)
+                    }
+                    .padding(.vertical, 5)
+
+                    if !gk.allowExternalLLMForCommander {
+                        HStack(spacing: 8) {
+                            Image(systemName: "brain").font(.system(size: 11)).foregroundStyle(.purple)
+                            Text(app.t("BitNet Memory", "BitNet 記憶階層"))
+                                .font(.system(size: 11)).foregroundStyle(.secondary)
+                            Spacer()
+                            Picker("", selection: $gk.bitnetMemoryLayerMode) {
+                                Text("L1 Only (2B)").tag(GatekeeperModeState.MemoryLayerMode.l1Only)
+                                Text("L1-L3 (Large)").tag(GatekeeperModeState.MemoryLayerMode.l1ToL3)
+                            }.pickerStyle(.segmented).frame(width: 160)
+                        }
+                        .padding(.vertical, 5)
+                    }
+
+                    Divider().opacity(0.15)
+
+                    // ── Ollama NER Engine ──────────────────────────────────
+                    HStack(spacing: 8) {
+                        Image(systemName: "bolt.fill").font(.system(size: 11)).foregroundStyle(gk.useOllamaNER ? .yellow : .secondary)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(app.t("Use Ollama NER Engine", "Ollama NER エンジンを使用"))
+                                .font(.system(size: 11)).foregroundStyle(.white)
+                            Text(app.t("Requires local Ollama. Disable to fix timeouts if Ollama is off.", "ローカルOllama必須。未起動時のフリーズを防ぐにはオフにしてください"))
+                                .font(.system(size: 9)).foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Toggle("", isOn: $gk.useOllamaNER).toggleStyle(.switch).scaleEffect(0.85)
+                    }
+                    .padding(.vertical, 5)
 
                     Divider().opacity(0.15)
 
@@ -1243,13 +1450,13 @@ struct SettingsView: View {
                         Group {
                             switch gk.vault.vaultStatus {
                             case .notInitialized:
-                                Text("Vault 未初期化 — 有効化すると自動変換開始")
+                                Text(app.t("Vault Uninitialized — Auto-conversion on enable", "Vault 未初期化 — 有効化すると自動変換開始"))
                                     .foregroundStyle(.secondary)
                             case .converting(let p, _):
-                                Text("変換中 \(Int(p * 100))%...")
+                                Text(app.t("Converting \(Int(p * 100))%...", "変換中 \(Int(p * 100))%..."))
                                     .foregroundStyle(.orange)
                             case .ready(let n, _):
-                                Text("\(n) ファイル変換済み ✓")
+                                Text(app.t("\(n) files converted ✓", "\(n) ファイル変換済み ✓"))
                                     .foregroundStyle(.green)
                             case .error(let e):
                                 Text(e).foregroundStyle(.red)
@@ -1263,6 +1470,35 @@ struct SettingsView: View {
                             .font(.system(size: 10))
                     }
                     .padding(.vertical, 10)
+
+                    Divider().opacity(0.15)
+
+                    // ── Pipeline 折りたたみサマリー ──────────────────────────
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.2)) { showPipelineDetail.toggle() }
+                    } label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: "arrow.triangle.branch")
+                                .font(.system(size: 11)).foregroundStyle(.cyan)
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text(AppLanguage.shared.t("Processing Pipeline", "処理パイプライン"))
+                                    .font(.system(size: 11, weight: .semibold)).foregroundStyle(.white)
+                                Text(AppLanguage.shared.t("IR Gen → Vault Split → Cloud LLM → Apply Patch", "IR生成 → Vault分離 → Cloud LLM → パッチ適用"))
+                                    .font(.system(size: 9)).foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                            Image(systemName: showPipelineDetail ? "chevron.up" : "chevron.down")
+                                .font(.caption2).foregroundStyle(.secondary)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.vertical, 8)
+
+                    if showPipelineDetail {
+                        GatekeeperPipelineSettingsView()
+                            .padding(.top, 4)
+                            .transition(.opacity.combined(with: .move(edge: .top)))
+                    }
                 }
             }
             .padding(.horizontal, 14)
@@ -1439,7 +1675,7 @@ struct SettingsView: View {
                     .background(modeColor.opacity(0.12), in: Capsule())
                 if isRunning {
                     Button { mcp.killActiveCall() } label: {
-                        Label("停止", systemImage: "stop.fill")
+                        Label(app.t("Stop", "停止"), systemImage: "stop.fill")
                             .font(.system(size: 10, weight: .semibold))
                             .foregroundStyle(Color(red: 1.0, green: 0.4, blue: 0.4))
                     }
@@ -1653,10 +1889,10 @@ struct SettingsView: View {
                                 .foregroundStyle(Color(red: 0.7, green: 0.4, blue: 1.0))
                         }
                         VStack(alignment: .leading, spacing: 3) {
-                            Text("BitNet b1.58 — ローカル Commander LLM")
+                            Text(app.t("BitNet b1.58 — Local Commander LLM", "BitNet b1.58 — ローカル Commander LLM"))
                                 .font(.system(size: 12, weight: .semibold))
                                 .foregroundStyle(.white)
-                            Text("Gatekeeper Mode 専用。ゼロネットワーク・プライバシー優先推論")
+                            Text(app.t("Gatekeeper Mode exclusive. Zero-network, privacy-first inference.", "Gatekeeper Mode 専用。ゼロネットワーク・プライバシー優先推論"))
                                 .font(.system(size: 10))
                                 .foregroundStyle(.secondary)
                         }
@@ -1673,7 +1909,7 @@ struct SettingsView: View {
                                     .background(Color(red: 0.3, green: 0.9, blue: 0.5).opacity(0.1),
                                                 in: Capsule())
                             case .notInstalled:
-                                Label("未インストール", systemImage: "circle")
+                                Label(app.t("Not Installed", "未インストール"), systemImage: "circle")
                                     .foregroundStyle(Color(red: 0.7, green: 0.4, blue: 1.0))
                                     .font(.system(size: 10, weight: .semibold))
                                     .padding(.horizontal, 8).padding(.vertical, 3)
@@ -1689,7 +1925,7 @@ struct SettingsView: View {
 
                     // フロー説明
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("優先順位:")
+                        Text(app.t("Priority:", "優先順位:"))
                             .font(.system(size: 10, weight: .semibold))
                             .foregroundStyle(.secondary)
 
@@ -1697,7 +1933,7 @@ struct SettingsView: View {
                             Text("①")
                                 .font(.system(size: 10, design: .monospaced))
                                 .foregroundStyle(Color(red: 0.7, green: 0.4, blue: 1.0))
-                            Text("BitNet b1.58 (インストール済みの場合)")
+                            Text(app.t("BitNet b1.58 (If installed)", "BitNet b1.58 (インストール済みの場合)"))
                                 .font(.system(size: 10))
                                 .foregroundStyle(Color(red: 0.85, green: 0.85, blue: 0.95))
                         }
@@ -1705,7 +1941,7 @@ struct SettingsView: View {
                             Text("②")
                                 .font(.system(size: 10, design: .monospaced))
                                 .foregroundStyle(Color(red: 0.5, green: 0.7, blue: 1.0))
-                            Text("Ollama (localhost:11434) — 自動フォールバック")
+                            Text(app.t("Ollama (localhost:11434) — Auto Fallback", "Ollama (localhost:11434) — 自動フォールバック"))
                                 .font(.system(size: 10))
                                 .foregroundStyle(Color(red: 0.65, green: 0.65, blue: 0.75))
                         }
@@ -1717,7 +1953,7 @@ struct SettingsView: View {
             }
 
             // ── BitNetSetupView を埋め込み ──────────────────────────────────
-            sectionHeader("BitNet b1.58 セットアップ", icon: "arrow.down.circle")
+            sectionHeader(app.t("BitNet b1.58 Setup", "BitNet b1.58 セットアップ"), icon: "arrow.down.circle")
 
             BitNetSetupView()
                 .frame(maxWidth: .infinity)

@@ -50,7 +50,7 @@ final class ExtensionHostManager: ObservableObject {
         let hostPath = currentDir.appendingPathComponent("Resources/ExtensionHost/dist/main.js").path
 
         guard fm.fileExists(atPath: hostPath) else {
-            AppState.shared?.logProcess("❌ Extension Host not found at \(hostPath)", kind: .system)
+            AppState.shared?.logProcess(AppLanguage.shared.t("❌ Extension Host not found at \(hostPath)", "❌ Extension Host が \(hostPath) に見つかりません"), kind: .system)
             return
         }
 
@@ -94,16 +94,16 @@ final class ExtensionHostManager: ObservableObject {
             Task { @MainActor in
                 self?.isRunning = false
                 self?.process = nil
-                AppState.shared?.logProcess("Extension Host terminated", kind: .system)
+                AppState.shared?.logProcess(AppLanguage.shared.t("Extension Host terminated", "Extension Host が終了しました"), kind: .system)
             }
         }
 
         do {
             try process.run()
             isRunning = true
-            AppState.shared?.logProcess("🚀 VS Code Extension Host started", kind: .system)
+            AppState.shared?.logProcess(AppLanguage.shared.t("🚀 VS Code Extension Host started", "🚀 VS Code Extension Host が起動しました"), kind: .system)
         } catch {
-            AppState.shared?.logProcess("❌ Failed to start Extension Host: \(error.localizedDescription)", kind: .system)
+            AppState.shared?.logProcess(AppLanguage.shared.t("❌ Failed to start Extension Host: \(error.localizedDescription)", "❌ Extension Host の起動に失敗: \(error.localizedDescription)"), kind: .system)
         }
     }
 
@@ -160,12 +160,12 @@ final class ExtensionHostManager: ObservableObject {
         switch request.method {
         case "window.showInformationMessage":
             if let params = request.params, let msg = params["message"]?.value as? String {
-                AppState.shared?.addSystemMessage("ℹ️ [Extension] \(msg)")
+                AppState.shared?.addSystemMessage(AppLanguage.shared.t("ℹ️ [Extension] \(msg)", "ℹ️ [拡張機能] \(msg)"))
                 if let id = request.id { sendResponse(id: id, result: "OK") }
             }
         case "window.showErrorMessage":
             if let params = request.params, let msg = params["message"]?.value as? String {
-                AppState.shared?.addSystemMessage("❌ [Extension Error] \(msg)")
+                AppState.shared?.addSystemMessage(AppLanguage.shared.t("❌ [Extension Error] \(msg)", "❌ [拡張機能エラー] \(msg)"))
                 if let id = request.id { sendResponse(id: id, result: "OK") }
             }
         case "commands.registerCommand":
@@ -267,7 +267,7 @@ final class ExtensionHostManager: ObservableObject {
             }
             
         default:
-            AppState.shared?.logProcess("⚠️ Unknown RPC method from host: \(request.method)", kind: .system)
+            AppState.shared?.logProcess(AppLanguage.shared.t("⚠️ Unknown RPC method from host: \(request.method)", "⚠️ ホストからの不明なRPCメソッド: \(request.method)"), kind: .system)
             if let id = request.id { sendResponse(id: id, result: nil) }
         }
     }

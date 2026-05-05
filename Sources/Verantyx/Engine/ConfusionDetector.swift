@@ -55,6 +55,8 @@ enum ConfusionDetector {
         .init(pattern: "i don't know",               weight: 1.0),
         .init(pattern: "i do not know",              weight: 1.0),
         .init(pattern: "i have no information",      weight: 1.0),
+        .init(pattern: "i do not have information",  weight: 1.0),
+        .init(pattern: "i don't have information",   weight: 1.0),
         .init(pattern: "i have no memory",           weight: 1.0),
         .init(pattern: "i don't recall",             weight: 1.0),
         .init(pattern: "i do not recall",            weight: 1.0),

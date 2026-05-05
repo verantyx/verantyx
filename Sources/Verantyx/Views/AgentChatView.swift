@@ -37,9 +37,53 @@ struct AgentChatView: View {
 
             Divider().opacity(0.3)
 
+            // ── Puzzle Overlay ───────────────────────────────────────
+            if app.requiresHumanPuzzle {
+                HumanProofPuzzleView { entropy, duration, frames in
+                    print("Puzzle solved in \(duration)s with \(entropy.count) entropy points.")
+                    app.lastEntropy = entropy
+                    app.lastVideoFrames = frames
+                    app.lastEntropyTimestamp = Date()
+                    // Hide puzzle after solve
+                    app.requiresHumanPuzzle = false
+                    
+                    // Proceed with background botguard bypass using this entropy
+                    // ... (send entropy to backend via AppState logic if needed)
+                }
+                .padding()
+            }
+            
             // ── Input ────────────────────────────────────────────────
             inputBar
         }
+        .overlay(
+            Group {
+                if app.isAgentControllingMouse {
+                    ZStack {
+                        // Semi-transparent black background
+                        Color.black.opacity(0.85)
+                            .edgesIgnoringSafeArea(.all)
+                        
+                        VStack(spacing: 20) {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: Color(red: 0.0, green: 1.0, blue: 0.8)))
+                                .scaleEffect(2.0)
+                            
+                            Text(AppLanguage.shared.t("🧩 Injecting biometric trajectory...", "🧩 生体データを注入中... (Injecting trajectory...)"))
+                                .font(.system(size: 24, weight: .bold, design: .monospaced))
+                                .foregroundColor(Color(red: 0.0, green: 1.0, blue: 0.8))
+                                .shadow(color: Color(red: 0.0, green: 1.0, blue: 0.8).opacity(0.5), radius: 10, x: 0, y: 0)
+                            
+                            Text(AppLanguage.shared.t("Physical mouse input temporarily blocked", "物理的なマウス入力を一時的に遮断しています"))
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(.gray)
+                        }
+                    }
+                    .transition(.opacity)
+                    .animation(.easeInOut(duration: 0.3), value: app.isAgentControllingMouse)
+                }
+            }
+        )
         .background(Color(red: 0.13, green: 0.13, blue: 0.16))
         // ─ Sync tab state with AppState (for session restore programmatic switch) ─
         .onChange(of: app.activeChatTab) { _, newVal in
@@ -72,8 +116,10 @@ struct AgentChatView: View {
                     HStack(spacing: 6) {
                         Image(systemName: tabIcon(tab))
                             .font(.system(size: 10))
-                        Text(tab.rawValue)
+                        Text(tabLabel(tab))
                             .font(.system(size: 12, weight: activeTab == tab ? .semibold : .regular))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
                     }
                     .foregroundStyle(activeTab == tab
                         ? Color.white
@@ -93,6 +139,7 @@ struct AgentChatView: View {
                     )
                     .opacity(activeTab == tab ? 1 : 0.7)
                 }
+                .contentShape(Rectangle())
                 .buttonStyle(.plain)
 
                 // Session badge on History tab
@@ -116,6 +163,7 @@ struct AgentChatView: View {
                     .font(.system(size: 10))
                     .foregroundStyle(Color(red: 0.5, green: 0.5, blue: 0.6))
             }
+            .contentShape(Rectangle())
             .buttonStyle(.plain)
             .padding(.horizontal, 6)
             .help(app.t("New session", "新しいセッション"))
@@ -125,6 +173,7 @@ struct AgentChatView: View {
                     .font(.system(size: 11))
                     .foregroundStyle(Color(red: 0.5, green: 0.5, blue: 0.6))
             }
+            .contentShape(Rectangle())
             .buttonStyle(.plain)
             .padding(.horizontal, 8)
         }
@@ -147,12 +196,42 @@ struct AgentChatView: View {
         }
     }
 
+    private func tabLabel(_ tab: Tab) -> String {
+        switch tab {
+        case .workspace: return app.t("Workspace", "ワークスペース")
+        case .history:   return app.t("History", "履歴")
+        case .thinking:  return app.t("Thinking", "思考ログ")
+        }
+    }
+
     // MARK: - Workspace (main chat)
 
     private var workspaceView: some View {
-        // NSTextView ベースのトランスクリプト。
-        // 単一テキストストレージのためメッセージをまたいでドラッグ選択・コピーができる。
-        ChatTranscriptView(messages: app.messages, isGenerating: app.isGenerating)
+        ZStack(alignment: .bottomLeading) {
+            // NSTextView ベースのトランスクリプト。
+            // 単一テキストストレージのためメッセージをまたいでドラッグ選択・コピーができる。
+            ChatTranscriptView(messages: app.messages, isGenerating: app.isGenerating)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            
+            if app.isGenerating {
+                HStack(spacing: 8) {
+                    if let url = URL(string: "file:///Users/motonishikoudai/verantyx-cli/VerantyxIDE/Sources/Verantyx/Views/mp_.mp4") {
+                        VideoSpinnerView(videoURL: url, speed: 2.7)
+                            .frame(width: 18, height: 18)
+                    }
+                    Text("Generating...")
+                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        .foregroundStyle(Color(red: 0.35, green: 0.85, blue: 0.80))
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(Color(red: 0.13, green: 0.13, blue: 0.16).opacity(0.85), in: Capsule())
+                .overlay(Capsule().stroke(Color(red: 0.35, green: 0.85, blue: 0.80).opacity(0.3), lineWidth: 1))
+                .padding(16)
+                .transition(.opacity.combined(with: .move(edge: .bottom)))
+                .animation(.easeInOut(duration: 0.3), value: app.isGenerating)
+            }
+        }
     }
 
 
@@ -196,12 +275,53 @@ struct AgentChatView: View {
 
     private var modelSelectorBar: some View {
         HStack(spacing: 8) {
-            // ── Model chip ────────────────────────────────────────────
-            Button {
-                // Tapping re-opens model selection (no-op action; just shows the intent)
-            } label: {
+            // ── Target Mode & Model Sync Configuration ──────────────
+            ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    // Backend badge — dynamic based on active backend
+                    // Target Mode
+                    Picker("", selection: $app.editingMode) {
+                        ForEach(OperationMode.allCases) { m in
+                            Text(m.displayName).tag(m)
+                        }
+                    }
+                    .labelsHidden()
+                    .frame(width: 120)
+                    
+                    // Ollama model picker
+                    let modelBinding = Binding<String>(
+                        get: { app.getOllamaModel(for: app.editingMode) },
+                        set: { app.setOllamaModel($0, for: app.editingMode) }
+                    )
+                    
+                    if app.ollamaModels.isEmpty {
+                        TextField("gemma4:26b", text: modelBinding)
+                            .textFieldStyle(.roundedBorder)
+                            .font(.system(size: 11, design: .monospaced))
+                            .frame(width: 130)
+                    } else {
+                        Picker("", selection: modelBinding) {
+                            ForEach(app.ollamaModels, id: \.self) { m in
+                                Text(m).tag(m)
+                            }
+                        }
+                        .labelsHidden()
+                        .frame(width: 140)
+                    }
+                    
+                    // Enable mode button
+                    Button {
+                        app.switchModeAndEjectOldModel(to: app.editingMode)
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "checkmark.circle.fill")
+                            Text(app.t("Enable Mode", "モードを有効にする"))
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.small)
+                    .tint(app.editingMode == app.operationMode ? .green : .blue)
+                    
+                    // Active Backend Badge
                     let isOllama: Bool = {
                         if case .ollamaReady = app.modelStatus { return true }
                         return false
@@ -216,29 +336,16 @@ struct AgentChatView: View {
                                 : Color(red: 0.65, green: 0.5, blue: 1.0),  // purple for MLX
                             in: RoundedRectangle(cornerRadius: 3)
                         )
-
-                    Text(modelDisplayName)
-                        .font(.system(size: 12, design: .monospaced))
-                        .foregroundStyle(Color(red: 0.75, green: 0.75, blue: 0.85))
-
-                    // Multimodal badge
+                    
                     if app.isMultimodalModel {
                         Text("👁")
                             .font(.system(size: 10))
                             .help("Multimodal — images supported")
                     }
-
-                    Image(systemName: "chevron.down")
-                        .font(.system(size: 9))
-                        .foregroundStyle(Color(red: 0.5, green: 0.5, blue: 0.6))
+                    
+                    RateLimitStatusView()
                 }
-                .padding(.horizontal, 12).padding(.vertical, 6)
-                .background(Color.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 6))
-                .overlay(RoundedRectangle(cornerRadius: 6)
-                    .strokeBorder(Color.white.opacity(0.1), lineWidth: 0.5))
-                .contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
 
             Spacer()
 
@@ -259,6 +366,7 @@ struct AgentChatView: View {
                     )
                     .contentShape(Rectangle())
                 }
+                .contentShape(Rectangle())
                 .buttonStyle(.plain)
                 .transition(.scale.combined(with: .opacity))
             }
@@ -341,6 +449,7 @@ struct AgentChatView: View {
                                 .stroke(Color(red: 1.0, green: 0.65, blue: 0.15).opacity(0.5), lineWidth: 1)
                         )
                     }
+                    .contentShape(Rectangle())
                     .buttonStyle(.plain)
                 }
                 .padding(.horizontal, 12)
@@ -360,21 +469,6 @@ struct AgentChatView: View {
                         .frame(height: 1),
                     alignment: .bottom
                 )
-            } else if let file = app.selectedFile {
-                // Normal mode: selected code-file badge
-                HStack(spacing: 6) {
-                    Image(systemName: FileIcons.icon(for: file)).font(.system(size: 10))
-                    Text(file.lastPathComponent).font(.system(size: 11, design: .monospaced))
-                    Spacer()
-                    Button {
-                        app.selectedFile = nil; app.selectedFileContent = ""
-                    } label: {
-                        Image(systemName: "xmark.circle.fill").font(.system(size: 10))
-                    }.buttonStyle(.plain)
-                }
-                .foregroundStyle(Color(red: 0.5, green: 0.7, blue: 0.9))
-                .padding(.horizontal, 12).padding(.vertical, 5)
-                .background(Color(red: 0.2, green: 0.3, blue: 0.45).opacity(0.5))
             }
 
             // ── Text input + action buttons ───────────────────────────
@@ -398,6 +492,7 @@ struct AgentChatView: View {
                             )
                             .frame(width: 26, height: 26)
                     }
+                    .contentShape(Rectangle())
                     .buttonStyle(.plain)
                     .disabled(!app.isMultimodalModel)
                     .help(app.isMultimodalModel ? app.t("Attach image", "画像を添付") : app.t("Multimodal not supported by this model", "このモデルはマルチモーダル非対応です"))
@@ -412,6 +507,7 @@ struct AgentChatView: View {
                             .foregroundStyle(Color(red: 0.6, green: 0.7, blue: 0.85))
                             .frame(width: 26, height: 26)
                     }
+                    .contentShape(Rectangle())
                     .buttonStyle(.plain)
                     .help(app.t("Attach file", "ファイルを添付"))
 
@@ -436,6 +532,7 @@ struct AgentChatView: View {
                                 in: RoundedRectangle(cornerRadius: 5)
                             )
                     }
+                    .contentShape(Rectangle())
                     .buttonStyle(.plain)
                     .help(app.selfFixMode
                           ? app.t("Self Fix Mode ON — tap to disable", "Self Fix モード ON — タップで解除")
@@ -472,7 +569,7 @@ struct AgentChatView: View {
                         onSend: { sendMessage() },
                         isFocused: $inputFocused
                     )
-                    .frame(minHeight: 44, maxHeight: 110)
+                    .frame(maxWidth: .infinity, minHeight: 44, maxHeight: 110)
                 }
             }
 
@@ -525,6 +622,7 @@ struct AgentChatView: View {
                                 .foregroundStyle(.white)
                                 .background(Circle().fill(Color.black.opacity(0.55)))
                         }
+                        .contentShape(Rectangle())
                         .buttonStyle(.plain)
                         .offset(x: 4, y: -4)
                     }
@@ -543,7 +641,9 @@ struct AgentChatView: View {
                             app.attachedFiles.removeAll { $0 == url }
                         } label: {
                             Image(systemName: "xmark").font(.system(size: 8))
-                        }.buttonStyle(.plain)
+                        }
+                        .contentShape(Rectangle())
+                        .buttonStyle(.plain)
                     }
                     .foregroundStyle(Color(red: 0.75, green: 0.75, blue: 0.85))
                     .padding(.horizontal, 8).padding(.vertical, 4)
@@ -788,7 +888,6 @@ struct AgentMessageView: View, Equatable {
 // MARK: - AgentThinkingView (animated)
 
 struct AgentThinkingView: View {
-    @State private var dotPhase = 0
     @State private var thinkingText = "Analyzing…"
 
     private let thinkingSteps = [
@@ -835,15 +934,10 @@ struct AgentThinkingView: View {
                         }
                     }
 
-                    // Animated dots
-                    HStack(spacing: 4) {
-                        ForEach(0..<3) { i in
-                            Circle()
-                                .fill(Color(red: 0.35, green: 0.85, blue: 0.80))
-                                .frame(width: 4, height: 4)
-                                .scaleEffect(dotPhase == i ? 1.4 : 0.8)
-                                .opacity(dotPhase == i ? 1 : 0.3)
-                        }
+                    // 新しい動画スピナー（2.7倍速でピンポンループ再生・青い部分を丸く切り出し）
+                    if let url = URL(string: "file:///Users/motonishikoudai/verantyx-cli/VerantyxIDE/Sources/Verantyx/Views/mp_.mp4") {
+                        VideoSpinnerView(videoURL: url, speed: 2.7)
+                            .frame(width: 16, height: 16)
                     }
                 }
                 .padding(8)
@@ -851,11 +945,6 @@ struct AgentThinkingView: View {
             }
         }
         .onAppear {
-            Timer.scheduledTimer(withTimeInterval: 0.35, repeats: true) { _ in
-                withAnimation(.easeInOut(duration: 0.25)) {
-                    dotPhase = (dotPhase + 1) % 3
-                }
-            }
             Timer.scheduledTimer(withTimeInterval: 1.2, repeats: true) { _ in
                 withAnimation {
                     if stepIndex < thinkingSteps.count - 1 { stepIndex += 1 }
@@ -901,6 +990,8 @@ struct ChatInputTextView: NSViewRepresentable {
         textView.textColor = NSColor(red: 0.88, green: 0.88, blue: 0.92, alpha: 1.0)
         textView.backgroundColor = .clear
         textView.drawsBackground = false
+        textView.minSize = NSSize(width: 0, height: 0)
+        textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
         textView.isVerticallyResizable = true
         textView.isHorizontallyResizable = false
         textView.autoresizingMask = [.width]
@@ -1010,11 +1101,70 @@ final class IMEAwareTextView: NSTextView {
 
     // Also support ⌘+Enter as a legacy send shortcut
     override func keyDown(with event: NSEvent) {
+        let now = Date()
+        Task { @MainActor in
+            if let app = AppState.shared {
+                if let last = app.lastKeystrokeTime {
+                    let interval = now.timeIntervalSince(last)
+                    if interval < 2.0 { // only capture continuous typing
+                        var current = app.lastKeyboardEntropy ?? []
+                        current.append(interval)
+                        if current.count > 100 { current.removeFirst(current.count - 100) }
+                        app.lastKeyboardEntropy = current
+                    }
+                }
+                app.lastKeystrokeTime = now
+            }
+        }
+
         if event.keyCode == 36,  // Return key
            event.modifierFlags.contains(.command) {
             onSend?()
             return
         }
         super.keyDown(with: event)
+    }
+}
+
+// MARK: - RateLimitStatusView
+
+struct RateLimitStatusView: View {
+    @EnvironmentObject var app: AppState
+    
+    var body: some View {
+        TimelineView(.periodic(from: .now, by: 1.0)) { timeline in
+            HStack(spacing: 6) {
+                // Rate Limit Cooldown
+                if let cooldown = app.searchCooldownUntil {
+                    let remaining = cooldown.timeIntervalSince(timeline.date)
+                    if remaining > 0 {
+                        HStack(spacing: 4) {
+                            Image(systemName: "timer")
+                            Text("Cooldown: \(Int(remaining))s")
+                        }
+                        .font(.system(size: 10, weight: .bold, design: .monospaced))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 6).padding(.vertical, 2)
+                        .background(Color.red.opacity(0.8), in: RoundedRectangle(cornerRadius: 3))
+                    }
+                }
+                
+                // Entropy Freshness
+                if let ts = app.lastEntropyTimestamp {
+                    let elapsed = timeline.date.timeIntervalSince(ts)
+                    let remaining = 300 - elapsed
+                    if remaining > 0 {
+                        HStack(spacing: 4) {
+                            Image(systemName: "shield.fill")
+                            Text("Fresh: \(Int(remaining))s")
+                        }
+                        .font(.system(size: 10, weight: .bold, design: .monospaced))
+                        .foregroundStyle(.black)
+                        .padding(.horizontal, 6).padding(.vertical, 2)
+                        .background(Color.green.opacity(0.8), in: RoundedRectangle(cornerRadius: 3))
+                    }
+                }
+            }
+        }
     }
 }

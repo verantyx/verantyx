@@ -50,6 +50,7 @@ enum BrowseSource {
     case chrome
     case arc
     case fetch              // URLSession fallback (no JS)
+    case firefoxBridge      // Python script for Stealth Browser
 }
 
 // MARK: - WebSearchEngine
@@ -65,47 +66,127 @@ actor WebSearchEngine {
 
     func search(
         query: String,
-        engine: SearchEngine = .duckduckgo,
-        preferredSource: BrowseSource = .verantyxBrowser
+        engine: SearchEngine = .google,
+        preferredSource: BrowseSource = .safari,
+        entropy: [[Double]]? = nil,
+        keyboardEntropy: [Double]? = nil,
+        videoFrames: [String]? = nil
     ) async -> WebSearchResult {
 
         let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? query
         let searchURL = engine.searchURL(for: encodedQuery)
 
-        return await browse(url: searchURL, preferredSource: preferredSource, originalQuery: query)
+        return await browse(url: searchURL, preferredSource: preferredSource, originalQuery: query, entropy: entropy, keyboardEntropy: keyboardEntropy, videoFrames: videoFrames)
     }
 
     // MARK: - Main: browse URL
 
     func browse(
         url: String,
-        preferredSource: BrowseSource = .verantyxBrowser,
-        originalQuery: String? = nil
+        preferredSource: BrowseSource = .safari,
+        originalQuery: String? = nil,
+        entropy: [[Double]]? = nil,
+        keyboardEntropy: [Double]? = nil,
+        videoFrames: [String]? = nil
     ) async -> WebSearchResult {
+        
+        // ── COMPLETE VERSION: Qwen3.6-27B Video Analysis Pipeline ──
+        var finalEntropy = entropy
+        var finalTarget: [Double]? = nil
+        
+        if let frames = videoFrames, !frames.isEmpty {
+            // 1. Harvesting Phase via Video (Qwen3.6-27B)
+            if let extracted = await QwenVideoAnalyzer.shared.extractEntropyFromVideo(base64Frames: frames) {
+                finalEntropy = extracted
+            }
+            
+            // 2. Targeting Phase via Screenshot (Qwen3.6-27B)
+            // Using the last frame as the current browser state representation
+            if let target = await QwenVideoAnalyzer.shared.identifyTargetCoordinates(screenshotBase64: frames.last!) {
+                finalTarget = target
+            }
+        }
 
+        let result: WebSearchResult
         switch preferredSource {
         case .verantyxBrowser:
-            return await browseWithRustBrowser(url: url, query: originalQuery)
+            result = await browseWithRustBrowser(url: url, query: originalQuery, entropy: finalEntropy, keyboardEntropy: keyboardEntropy, target: finalTarget)
 
         case .safari:
-            return await browseWithAppleScript(url: url, browser: .safari, query: originalQuery)
+            result = await browseWithAppleScript(url: url, browser: .safari, query: originalQuery)
 
         case .chrome:
-            return await browseWithAppleScript(url: url, browser: .chrome, query: originalQuery)
+            result = await browseWithAppleScript(url: url, browser: .chrome, query: originalQuery)
 
         case .arc:
-            return await browseWithAppleScript(url: url, browser: .arc, query: originalQuery)
+            result = await browseWithAppleScript(url: url, browser: .arc, query: originalQuery)
+
+        case .firefoxBridge:
+            result = await browseWithFirefoxBridge(url: url, query: originalQuery)
 
         case .fetch:
-            return await browseWithFetch(url: url, query: originalQuery)
+            result = await browseWithFetch(url: url, query: originalQuery)
         }
+        
+        // Handle entropy invalidation and rate limits
+        if !result.isFailure {
+            print("Telemetry: Biometric entropy successfully consumed for search. [\(url)]")
+            await MainActor.run {
+                AppState.shared?.lastEntropy = nil
+                AppState.shared?.lastEntropyTimestamp = nil
+                AppState.shared?.lastVideoFrames = nil
+                AppState.shared?.lastKeyboardEntropy = nil
+            }
+        } else if result.httpStatus == 429 || result.markdown.contains("429") || result.markdown.contains("Rate limit") {
+            print("Telemetry: Search provider rate limit (429) detected. Triggering 60s cooldown.")
+            await MainActor.run {
+                AppState.shared?.searchCooldownUntil = Date().addingTimeInterval(60) // 1 min cooldown
+            }
+        }
+        
+        return result
     }
 
-    // MARK: - verantyx-browser (Rust/WKWebView stealth)
-
-    private func browseWithRustBrowser(url: String, query: String?) async -> WebSearchResult {
+    private func browseWithRustBrowser(url: String, query: String?, entropy: [[Double]]? = nil, keyboardEntropy: [Double]? = nil, target: [Double]? = nil) async -> WebSearchResult {
+        if let points = entropy, !points.isEmpty {
+            await MainActor.run { AppState.shared?.isAgentControllingMouse = true }
+            // Estimate duration: ~10ms per point + 100ms click
+            let estimatedDuration = Double(points.count) * 0.01 + 0.1
+            Task {
+                try? await Task.sleep(nanoseconds: UInt64(estimatedDuration * 1_000_000_000))
+                await MainActor.run { AppState.shared?.isAgentControllingMouse = false }
+            }
+        }
+        
         do {
-            let markdown = try await pool.fetch(url)
+            var markdown = ""
+            if let q = query, url.contains("duckduckgo.com") {
+                markdown = try await pool.interactiveSearch(query: q, searchURL: url, entropy: entropy, keyboardEntropy: keyboardEntropy, target: target)
+            } else {
+                markdown = try await pool.fetch(url, entropy: entropy, keyboardEntropy: keyboardEntropy, target: target)
+            }
+            
+            // Clean up heavy Markdown image tags and domain links that verantyx-browser produces
+            if let imgRegex = try? NSRegularExpression(pattern: "\\[<img.*?\\]\\([^)]+\\)", options: [.caseInsensitive, .dotMatchesLineSeparators]) {
+                markdown = imgRegex.stringByReplacingMatches(in: markdown, range: NSRange(markdown.startIndex..., in: markdown), withTemplate: "")
+            }
+            if let linkJunkRegex = try? NSRegularExpression(pattern: "\\[ www\\.[^]]+\\]\\([^)]+\\)", options: [.caseInsensitive]) {
+                markdown = linkJunkRegex.stringByReplacingMatches(in: markdown, range: NSRange(markdown.startIndex..., in: markdown), withTemplate: "")
+            }
+            
+            // Remove DDG UI clutter from markdown
+            if let ddgRegex = try? NSRegularExpression(pattern: "All Regions\\s+Argentina\\s+Australia.*?(Past Year)", options: [.dotMatchesLineSeparators, .caseInsensitive]) {
+                markdown = ddgRegex.stringByReplacingMatches(in: markdown, range: NSRange(markdown.startIndex..., in: markdown), withTemplate: "")
+            }
+            // Remove DDG long tracking URLs to save tokens
+            if let ddgUrlRegex = try? NSRegularExpression(pattern: "\\(https://duckduckgo\\.com/y\\.js\\?[^)]+\\)", options: [.caseInsensitive]) {
+                markdown = ddgUrlRegex.stringByReplacingMatches(in: markdown, range: NSRange(markdown.startIndex..., in: markdown), withTemplate: "()")
+            }
+            // Remove DDG Ad disclaimer
+            if let ddgAdRegex = try? NSRegularExpression(pattern: "Viewing ads is privacy protected.*?private-search\\)\\)\\.", options: [.dotMatchesLineSeparators, .caseInsensitive]) {
+                markdown = ddgAdRegex.stringByReplacingMatches(in: markdown, range: NSRange(markdown.startIndex..., in: markdown), withTemplate: "")
+            }
+            
             return WebSearchResult(
                 query: query ?? url,
                 url: url,
@@ -114,132 +195,17 @@ actor WebSearchEngine {
                 truncated: markdown.count > 6000
             )
         } catch {
-            // verantyx-browser 失敗 → ニュース系 URL なら RSS/JSON API を試みる
-            if let newsResult = await tryNewsAPIFallback(url: url, query: query) {
-                return newsResult
+            // verantyx-browser 失敗 → Firefox Bridge で再試行
+            let fbResult = await browseWithFirefoxBridge(url: url, query: query)
+            if !fbResult.isFailure {
+                return fbResult
             }
             // 最終フォールバック: URLSession
-            return await browseWithFetch(
-                url: url, query: query,
-                note: "⚠️ verantyx-browser unavailable (\(error.localizedDescription)). Using HTTP fallback."
-            )
+            return await browseWithFetch(url: url, query: query)
         }
     }
 
-    // MARK: - ニュース用 RSS/JSON API フォールバック
-    //
-    // NHK ニュース API や RSS を直接取得する。JS 不要で必ず取れる。
 
-    private func tryNewsAPIFallback(url: String, query: String?) async -> WebSearchResult? {
-        // NHK Web API (公開 JSON)
-        let nhkApiURL = "https://www3.nhk.or.jp/news/json16/top_news_lv2.json"
-        // NHK トップページ RSS
-        let nhkRssURL = "https://www3.nhk.or.jp/rss/news/cat0.xml"
-        // 検索クエリを DDG の JSON API (あれば) に送るのではなく、RSS を取得
-
-        // NHK JSON API を試みる
-        if let result = await fetchNewsJSON(url: nhkApiURL, query: query, sourceName: "NHK") {
-            return result
-        }
-        // NHK RSS を試みる
-        if let result = await fetchNewsRSS(url: nhkRssURL, query: query, sourceName: "NHK RSS") {
-            return result
-        }
-        // Livedoor ニュース RSS (総合)
-        let livedoorRSS = "https://news.livedoor.com/topics/rss/top.xml"
-        if let result = await fetchNewsRSS(url: livedoorRSS, query: query, sourceName: "Livedoor") {
-            return result
-        }
-        return nil
-    }
-
-    /// NHK の JSON API (トップニュース) を取得して Markdown 文字列に変換
-    private func fetchNewsJSON(url: String, query: String?, sourceName: String) async -> WebSearchResult? {
-        guard let reqURL = URL(string: url) else { return nil }
-        var req = URLRequest(url: reqURL)
-        req.setValue("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15", forHTTPHeaderField: "User-Agent")
-        req.setValue("application/json, text/javascript, */*", forHTTPHeaderField: "Accept")
-        req.setValue("ja,en;q=0.9", forHTTPHeaderField: "Accept-Language")
-        req.timeoutInterval = 10
-        do {
-            let (data, _) = try await URLSession.shared.data(for: req)
-            // JSON を文字列化してキーだけパース（载せる形式が不明なため raw 文字列で返す）
-            let raw = String(data: data, encoding: .utf8) ?? ""
-            guard !raw.isEmpty else { return nil }
-            // タイトルを抄出して箇所に返す
-            let md = "# \(sourceName) 最新ニュース\n\n" + extractTitlesFromJSON(raw)
-            return WebSearchResult(query: query ?? url, url: url, markdown: md, source: .fetch, truncated: false)
-        } catch { return nil }
-    }
-
-    /// RSS XML を取得して Markdown リストに変換
-    private func fetchNewsRSS(url: String, query: String?, sourceName: String) async -> WebSearchResult? {
-        guard let reqURL = URL(string: url) else { return nil }
-        var req = URLRequest(url: reqURL)
-        req.setValue("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15", forHTTPHeaderField: "User-Agent")
-        req.setValue("application/rss+xml, application/xml, text/xml", forHTTPHeaderField: "Accept")
-        req.setValue("ja,en;q=0.9", forHTTPHeaderField: "Accept-Language")
-        req.timeoutInterval = 10
-        do {
-            let (data, _) = try await URLSession.shared.data(for: req)
-            let xml = String(data: data, encoding: .utf8) ?? ""
-            guard !xml.isEmpty else { return nil }
-            let md = parseRSSToMarkdown(xml, source: sourceName)
-            guard !md.isEmpty else { return nil }
-            return WebSearchResult(query: query ?? url, url: url, markdown: md, source: .fetch, truncated: false)
-        } catch { return nil }
-    }
-
-    /// RSS XML から <title> / <pubDate> / <description> を抄出して Markdown リストに変換
-    private func parseRSSToMarkdown(_ xml: String, source: String) -> String {
-        var items: [(title: String, date: String, desc: String)] = []
-        // 簡易パーサ（NSXMLParser 不要）
-        let titlePattern   = try? NSRegularExpression(pattern: "<title><!\\[CDATA\\[(.+?)\\]\\]></title>|<title>(.+?)</title>", options: [.dotMatchesLineSeparators])
-        let pubPattern     = try? NSRegularExpression(pattern: "<pubDate>(.+?)</pubDate>", options: [])
-        let descPattern    = try? NSRegularExpression(pattern: "<description><!\\[CDATA\\[(.+?)\\]\\]></description>|<description>(.+?)</description>", options: [.dotMatchesLineSeparators])
-
-        let ns = NSRange(xml.startIndex..., in: xml)
-        let titles  = (titlePattern?.matches(in: xml, range: ns) ?? []).compactMap { m -> String? in
-            for g in 1...2 { if let r = Range(m.range(at: g), in: xml) { return String(xml[r]) } }
-            return nil
-        }.filter { !$0.hasPrefix("NHK") && !$0.isEmpty }.prefix(20)
-        let dates   = (pubPattern?.matches(in: xml, range: ns) ?? []).compactMap { m -> String? in
-            if let r = Range(m.range(at: 1), in: xml) { return String(xml[r].prefix(25)) }
-            return nil
-        }.prefix(20)
-        let descs   = (descPattern?.matches(in: xml, range: ns) ?? []).compactMap { m -> String? in
-            for g in 1...2 { if let r = Range(m.range(at: g), in: xml) { return stripHTML(String(xml[r])).prefix(120) + "" } }
-            return nil
-        }.prefix(20)
-
-        for i in 0..<min(titles.count, 15) {
-            let t = titles[i]
-            let d = i < dates.count ? dates[i] : ""
-            let s = i < descs.count ? descs[i] : ""
-            items.append((title: t, date: d, desc: String(s)))
-        }
-        guard !items.isEmpty else { return "" }
-
-        var md = "# \(source) 最新ニュース\n"
-        for item in items {
-            md += "\n## \(item.title)\n"
-            if !item.date.isEmpty { md += "*\(item.date)*\n" }
-            if !item.desc.isEmpty { md += "\(item.desc)\n" }
-        }
-        return md
-    }
-
-    /// JSON文字列から "title": "..." 形式の値を抽出しリスト化
-    private func extractTitlesFromJSON(_ json: String) -> String {
-        guard let regex = try? NSRegularExpression(pattern: "\"title\":\\s*\"([^\"]+)\"") else { return json.prefix(3000).description }
-        let ns = NSRange(json.startIndex..., in: json)
-        let matches = regex.matches(in: json, range: ns).prefix(20)
-        let titles = matches.compactMap { m -> String? in
-            guard let r = Range(m.range(at: 1), in: json) else { return nil }
-            return "- " + String(json[r])
-        }
-        return titles.isEmpty ? json.prefix(3000).description : titles.joined(separator: "\n")
-    }
 
     // MARK: - AppleScript (Safari / Chrome)
 
@@ -254,7 +220,7 @@ actor WebSearchEngine {
                 query: query ?? url,
                 url: currentURL,
                 markdown: text.isEmpty ? "(empty page)" : text,
-                source: browser == .safari ? .safari : .chrome,
+                source: browser == .safari ? .safari : .safari,
                 truncated: text.count > 6000
             )
         } catch {
@@ -262,9 +228,47 @@ actor WebSearchEngine {
                 query: query ?? url,
                 url: url,
                 markdown: "❌ \(browser.rawValue) error: \(error.localizedDescription)",
-                source: browser == .safari ? .safari : .chrome,
+                source: browser == .safari ? .safari : .safari,
                 truncated: false
             )
+        }
+    }
+
+    // MARK: - Firefox Bridge (Python)
+
+    private func browseWithFirefoxBridge(url: String, query: String?) async -> WebSearchResult {
+        let actualQuery = query ?? url
+        do {
+            let bridgePath = "/Users/motonishikoudai/verantyx-cli/firefox_agent_bridge.py"
+            guard FileManager.default.fileExists(atPath: bridgePath) else {
+                return WebSearchResult(query: actualQuery, url: url, markdown: "❌ firefox_agent_bridge.py not found at \(bridgePath)", source: .firefoxBridge, truncated: false)
+            }
+            
+            let proc = Process()
+            proc.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+            proc.arguments = ["python3", bridgePath, "--search", actualQuery]
+            proc.environment = [
+                "PATH": "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Frameworks/Python.framework/Versions/3.13/bin:/Library/Frameworks/Python.framework/Versions/3.12/bin"
+            ]
+            
+            let pipe = Pipe()
+            proc.standardOutput = pipe
+            proc.standardError = pipe
+            
+            try proc.run()
+            proc.waitUntilExit()
+            
+            let data = pipe.fileHandleForReading.readDataToEndOfFile()
+            let output = String(data: data, encoding: .utf8) ?? ""
+            
+            if proc.terminationStatus != 0 {
+                return WebSearchResult(query: actualQuery, url: url, markdown: "❌ Firefox Bridge Error: \(output)", source: .firefoxBridge, truncated: false)
+            }
+            
+            let text = stripHTML(output)
+            return WebSearchResult(query: actualQuery, url: url, markdown: text, source: .firefoxBridge, truncated: text.count > 6000)
+        } catch {
+            return WebSearchResult(query: actualQuery, url: url, markdown: "❌ Firefox Bridge Exception: \(error.localizedDescription)", source: .firefoxBridge, truncated: false)
         }
     }
 
@@ -299,7 +303,24 @@ actor WebSearchEngine {
             }
 
             let html = String(data: data, encoding: .utf8) ?? ""
-            let text = stripHTML(html)
+            
+            var text = ""
+            // Specific parsing for DuckDuckGo HTML to avoid massive country list clutter
+            if url.contains("duckduckgo.com/html"), let snippetRegex = try? NSRegularExpression(pattern: "class=\"result__snippet\"[^>]*>(.*?)</a>", options: [.dotMatchesLineSeparators, .caseInsensitive]) {
+                let ns = NSRange(html.startIndex..., in: html)
+                let snippets = snippetRegex.matches(in: html, range: ns).compactMap { m -> String? in
+                    guard let r = Range(m.range(at: 1), in: html) else { return nil }
+                    return String(html[r])
+                }
+                if !snippets.isEmpty {
+                    text = stripHTML(snippets.joined(separator: "\n\n"))
+                } else {
+                    text = stripHTML(html)
+                }
+            } else {
+                text = stripHTML(html)
+            }
+            
             var result = text
             if let note = note {
                 result = note + "\n\n" + text
@@ -341,6 +362,12 @@ actor WebSearchEngine {
                 text = regex.stringByReplacingMatches(in: text, range: NSRange(text.startIndex..., in: text), withTemplate: " ")
             }
         }
+        
+        // Remove DuckDuckGo UI clutter (country list, date filters) that takes up ~800 chars
+        if let ddgRegex = try? NSRegularExpression(pattern: "All Regions\\s+Argentina\\s+Australia.*?(Past Year)", options: [.dotMatchesLineSeparators, .caseInsensitive]) {
+            text = ddgRegex.stringByReplacingMatches(in: text, range: NSRange(text.startIndex..., in: text), withTemplate: "")
+        }
+        
         // Collapse whitespace
         text = text.components(separatedBy: .whitespacesAndNewlines)
             .filter { !$0.isEmpty }

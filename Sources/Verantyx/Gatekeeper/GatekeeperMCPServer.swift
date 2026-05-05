@@ -105,7 +105,7 @@ final class GatekeeperMCPServer {
     /// MCP ツール呼び出しを処理して結果を返す
     func dispatch(toolName: String, input: [String: Any]) async -> MCPToolResult {
         guard state.isEnabled else {
-            return .error("Gatekeeper Mode が無効です。Settings から有効化してください。")
+            return .error(AppLanguage.shared.t("Gatekeeper Mode is disabled. Please enable it from Settings.", "Gatekeeper Mode が無効です。Settings から有効化してください。"))
         }
 
         switch toolName {
@@ -133,7 +133,7 @@ final class GatekeeperMCPServer {
 
     private func toolReadFile(input: [String: Any]) async -> MCPToolResult {
         guard let path = input["path"] as? String else {
-            return .error("path パラメータが必要です")
+            return .error(AppLanguage.shared.t("path parameter is required", "path パラメータが必要です"))
         }
 
         guard let result = vault.read(relativePath: path) else {
@@ -173,7 +173,7 @@ final class GatekeeperMCPServer {
         let items = vault.listDirectory(relativePath: path == "." ? "" : path)
 
         if items.isEmpty {
-            return .text("(空のディレクトリ、またはパスが見つかりません: '\(path)')")
+            return .text(AppLanguage.shared.t("(Empty directory or path not found: '\\(path)')", "(空のディレクトリ、またはパスが見つかりません: '\\(path)')"))
         }
 
         var lines = ["📁 \(path.isEmpty ? "<workspace root>" : path)", ""]
@@ -195,12 +195,12 @@ final class GatekeeperMCPServer {
 
     private func toolSearchCode(input: [String: Any]) async -> MCPToolResult {
         guard let query = input["query"] as? String else {
-            return .error("query パラメータが必要です")
+            return .error(AppLanguage.shared.t("query parameter is required", "query パラメータが必要です"))
         }
 
         let results = vault.search(query: query)
         if results.isEmpty {
-            return .text("検索結果なし: '\(query)'")
+            return .text(AppLanguage.shared.t("No results found: '\\(query)'", "検索結果なし: '\\(query)'"))
         }
 
         var lines = ["🔍 검색: '\(query)' — \(results.count) ファイルでヒット", ""]
@@ -222,7 +222,7 @@ final class GatekeeperMCPServer {
         guard let path    = input["path"]    as? String,
               let content = input["content"] as? String
         else {
-            return .error("path と content パラメータが必要です")
+            return .error(AppLanguage.shared.t("path and content parameters are required", "path と content パラメータが必要です"))
         }
 
         let transpiler = PolymorphicJCrossTranspiler.shared
@@ -247,7 +247,7 @@ final class GatekeeperMCPServer {
             Vault が差分更新されました。
             """)
         } catch {
-            return .error("書き込み失敗: \(error.localizedDescription)")
+            return .error(AppLanguage.shared.t("Write failed: \\(error.localizedDescription)", "書き込み失敗: \\(error.localizedDescription)"))
         }
     }
 

@@ -12,7 +12,7 @@ import AppKit
 
 struct FileTreeView: View {
     @EnvironmentObject var app: AppState
-    @StateObject private var gatekeeper = GatekeeperModeState.shared
+    @ObservedObject private var gatekeeper = GatekeeperModeState.shared
     @State private var expandedFolders: Set<String> = []
     @State private var isScanning = false
 
@@ -26,6 +26,8 @@ struct FileTreeView: View {
     /// Cached line count for the preview header — avoids splitting on every render.
     @State private var previewLineCount: Int = 0
 
+    @State private var convertedFiles: Set<String> = []
+
     var body: some View {
         VStack(spacing: 0) {
             // ── Top: File hierarchy ───────────────────────────────────
@@ -35,8 +37,17 @@ struct FileTreeView: View {
 
                 if isScanning {
                     scanningIndicator
-                } else if app.workspaceFiles.isEmpty {
+                } else if app.workspaceURL == nil {
                     emptyState
+                } else if app.workspaceFiles.isEmpty {
+                    VStack {
+                        Spacer()
+                        Text(AppLanguage.shared.t("No supported files found", "サポートされているファイルが見つかりません"))
+                            .font(.system(size: 11, design: .monospaced))
+                            .foregroundStyle(.tertiary)
+                        Spacer()
+                    }
+                    .frame(maxWidth: .infinity)
                 } else {
                     treeList
                 }
@@ -66,6 +77,18 @@ struct FileTreeView: View {
         .onChange(of: app.selectedFileContent) { _, content in
             previewLineCount = content.isEmpty ? 0 : content.components(separatedBy: "\n").count
         }
+        .onReceive(gatekeeper.vault.$vaultStatus) { status in
+            if case .ready = status {
+                if let index = gatekeeper.vault.vaultIndex {
+                    self.convertedFiles = Set(index.entries.keys)
+                }
+            }
+        }
+        .onAppear {
+            if let index = gatekeeper.vault.vaultIndex {
+                self.convertedFiles = Set(index.entries.keys)
+            }
+        }
     }
 
     // MARK: - Tree Header
@@ -92,12 +115,14 @@ struct FileTreeView: View {
                 } label: {
                     Image(systemName: "arrow.clockwise").font(.system(size: 10))
                 }
+                .contentShape(Rectangle())
                 .buttonStyle(.plain).foregroundStyle(.secondary)
             }
 
             Button { app.openWorkspace() } label: {
                 Image(systemName: "folder.badge.plus").font(.system(size: 10))
             }
+            .contentShape(Rectangle())
             .buttonStyle(.plain).foregroundStyle(.secondary)
         }
         .padding(.horizontal, 10).padding(.vertical, 7)
@@ -111,7 +136,7 @@ struct FileTreeView: View {
             visibleNodes: visibleNodes,
             expandedFolders: expandedFolders,
             selectedFile: app.selectedFile,
-            vault: gatekeeper.vault,
+            convertedFiles: convertedFiles,
             onTap: handleTap
         )
     }
@@ -133,7 +158,7 @@ struct FileTreeView: View {
         VStack(spacing: 10) {
             Spacer()
             ProgressView().scaleEffect(0.8)
-            Text("Scanning…")
+            Text(AppLanguage.shared.t("Scanning…", "スキャン中…"))
                 .font(.system(size: 10, design: .monospaced)).foregroundStyle(.secondary)
 
             // Cancel button — forces scanning to stop
@@ -142,6 +167,7 @@ struct FileTreeView: View {
             }
             .font(.system(size: 10))
             .foregroundStyle(Color(red: 0.9, green: 0.4, blue: 0.4))
+            .contentShape(Rectangle())
             .buttonStyle(.plain)
             .padding(.top, 4)
 
@@ -160,8 +186,8 @@ struct FileTreeView: View {
         VStack(spacing: 10) {
             Spacer()
             Image(systemName: "folder.badge.questionmark").font(.title2).foregroundStyle(.tertiary)
-            Text("No workspace").font(.system(size: 11)).foregroundStyle(.secondary)
-            Button("Open Folder…") { app.openWorkspace() }
+            Text(AppLanguage.shared.t("No workspace", "ワークスペースなし")).font(.system(size: 11)).foregroundStyle(.secondary)
+            Button(AppLanguage.shared.t("Open Folder…", "フォルダーを開く…")) { app.openWorkspace() }
                 .buttonStyle(.borderedProminent).controlSize(.small)
             Spacer()
         }
@@ -188,7 +214,7 @@ struct FileTreeView: View {
                     }
                 } else {
                     Image(systemName: "doc.text").font(.system(size: 9)).foregroundStyle(.tertiary)
-                    Text("no file selected")
+                    Text(AppLanguage.shared.t("no file selected", "ファイルが選択されていません"))
                         .font(.system(size: 10, design: .monospaced)).foregroundStyle(.tertiary)
                     Spacer()
                 }
@@ -204,20 +230,16 @@ struct FileTreeView: View {
             } else if app.selectedFileContent.isEmpty {
                 VStack {
                     Spacer()
-                    Text("Select a file to preview")
+                    Text(AppLanguage.shared.t("Select a file to preview", "ファイルを選択してプレビュー"))
                         .font(.system(size: 10, design: .monospaced)).foregroundStyle(.tertiary)
                     Spacer()
                 }
                 .frame(maxWidth: .infinity)
             } else {
-                ScrollView([.horizontal, .vertical]) {
-                    Text(app.selectedFileContent)
-                        .font(.system(size: 10, design: .monospaced))
-                        .foregroundStyle(Color(red: 0.82, green: 0.82, blue: 0.88))
-                        .textSelection(.enabled).lineSpacing(2).padding(8)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .background(Color(red: 0.07, green: 0.07, blue: 0.10))
+                // RawTextView: AppKit NSScrollView ベース — fixedSize なし
+                // SwiftUI Text + fixedSize は大ファイルで swift_retain SIGTRAP を起こす
+                RawTextView(content: app.selectedFileContent)
+                    .transaction { t in t.animation = nil }
             }
         }
     }
@@ -460,6 +482,7 @@ struct TreeRowView: View, Equatable {
                 in: RoundedRectangle(cornerRadius: 3)
             )
         }
+        .contentShape(Rectangle())
         .buttonStyle(.plain)
         .padding(.horizontal, 4)
     }
@@ -472,14 +495,14 @@ struct TreeListView: View {
     let visibleNodes: [TreeNode]
     let expandedFolders: Set<String>
     let selectedFile: URL?
-    @ObservedObject var vault: JCrossVault
+    let convertedFiles: Set<String>
     let onTap: (TreeNode) -> Void
     
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 0) {
                 ForEach(visibleNodes) { node in
-                    let isConverted = !node.isDir && vault.vaultIndex?.entries[node.id] != nil
+                    let isConverted = !node.isDir && convertedFiles.contains(node.id)
                     // EquatableView: row body is skipped when node/isExpanded/isSelected/isConverted unchanged
                     EquatableView(content: TreeRowView(
                         node: node,

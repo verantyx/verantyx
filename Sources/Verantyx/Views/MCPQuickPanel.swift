@@ -268,6 +268,7 @@ struct MCPQuickPanel: View {
                         Image(systemName: "xmark.circle.fill")
                             .foregroundStyle(.secondary)
                     }
+                    .contentShape(Rectangle())
                     .buttonStyle(.plain)
                 }
 
@@ -279,6 +280,7 @@ struct MCPQuickPanel: View {
                         .padding(4)
                         .background(.quaternary, in: RoundedRectangle(cornerRadius: 4))
                 }
+                .contentShape(Rectangle())
                 .buttonStyle(.plain)
                 .keyboardShortcut(.escape, modifiers: [])
             }
@@ -344,6 +346,7 @@ struct MCPQuickPanel: View {
                         Button("KILL") { mcp.killActiveCall() }
                             .font(.system(size: 9, weight: .bold, design: .monospaced))
                             .foregroundStyle(.red)
+                            .contentShape(Rectangle())
                             .buttonStyle(.plain)
                     }
                 }
@@ -499,6 +502,7 @@ private struct AddCustomServerPanel: View {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 11, weight: .medium))
                 }
+                .contentShape(Rectangle())
                 .buttonStyle(.plain)
                 .foregroundStyle(.secondary)
                 Text("Add Custom MCP Server")
@@ -577,7 +581,9 @@ private struct AddCustomServerPanel: View {
                                     .font(.system(size: 10, design: .monospaced))
                                     Button { envVars.removeValue(forKey: k) } label: {
                                         Image(systemName: "minus.circle").foregroundStyle(.red)
-                                    }.buttonStyle(.plain)
+                                    }
+                                    .contentShape(Rectangle())
+                                    .buttonStyle(.plain)
                                 }
                             }
                         }
@@ -674,6 +680,7 @@ private struct TemplatePickerPanel: View {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 11, weight: .medium))
                 }
+                .contentShape(Rectangle())
                 .buttonStyle(.plain)
                 .foregroundStyle(.secondary)
                 Text("Add from Template")
@@ -742,6 +749,7 @@ private struct TemplatePickerPanel: View {
                             .padding(.horizontal, 14)
                             .padding(.vertical, 8)
                         }
+                        .contentShape(Rectangle())
                         .buttonStyle(.plain)
                         .background(Color.white.opacity(0.0))
                         .hoverEffect { isHovered in
@@ -785,6 +793,7 @@ private struct InvokeToolPanel: View {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 11, weight: .medium))
                 }
+                .contentShape(Rectangle())
                 .buttonStyle(.plain)
                 .foregroundStyle(.secondary)
 

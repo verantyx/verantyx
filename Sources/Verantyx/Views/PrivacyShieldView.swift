@@ -88,6 +88,7 @@ struct ModeSelectorView: View {
                     .strokeBorder(isActive ? color.opacity(0.35) : Color.clear, lineWidth: 0.5)
             )
         }
+        .contentShape(Rectangle())
         .buttonStyle(.plain)
         .help(mode.description)
     }
@@ -109,6 +110,7 @@ struct ModeSelectorView: View {
             .padding(.vertical, 4)
             .background(Color.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 5))
         }
+        .contentShape(Rectangle())
         .buttonStyle(.plain)
         .popover(isPresented: $showProviderPicker, arrowEdge: .bottom) {
             providerPopover
@@ -148,6 +150,7 @@ struct ModeSelectorView: View {
                         in: RoundedRectangle(cornerRadius: 6)
                     )
                 }
+                .contentShape(Rectangle())
                 .buttonStyle(.plain)
             }
         }

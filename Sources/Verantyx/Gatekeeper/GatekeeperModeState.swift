@@ -37,6 +37,27 @@ final class GatekeeperModeState: ObservableObject {
         didSet { userDefaults.set(workerProvider.rawValue, forKey: "gatekeeperWorkerProvider") }
     }
 
+    @Published var maxWorkerRetries: Int = 1 {
+        didSet { userDefaults.set(maxWorkerRetries, forKey: "gatekeeperMaxWorkerRetries") }
+    }
+
+    enum MemoryLayerMode: String, CaseIterable, Equatable {
+        case l1Only = "L1 Only"
+        case l1ToL3 = "L1-L3 Full"
+    }
+
+    @Published var allowExternalLLMForCommander: Bool = true {
+        didSet { userDefaults.set(allowExternalLLMForCommander, forKey: "gkAllowExternalLLM") }
+    }
+
+    @Published var bitnetMemoryLayerMode: MemoryLayerMode = .l1ToL3 {
+        didSet { userDefaults.set(bitnetMemoryLayerMode.rawValue, forKey: "gkBitnetMemoryMode") }
+    }
+
+    @Published var useOllamaNER: Bool = true {
+        didSet { userDefaults.set(useOllamaNER, forKey: "gkUseOllamaNER") }
+    }
+
     @Published var vault: JCrossVault
     @Published var accessLog: [GatekeeperAccessLogEntry] = []
     @Published var phase: GatekeeperPhase = .idle
@@ -66,11 +87,33 @@ final class GatekeeperModeState: ObservableObject {
         // ワークスペースが開かれると configure(workspaceURL:) で上書きされる。
         let workspaceURL = GatekeeperModeState.defaultVaultBaseURL()
         self.vault = JCrossVault(workspaceURL: workspaceURL)
-        self.isEnabled = UserDefaults.standard.bool(forKey: "gatekeeperModeEnabled")
-        self.commanderModel = UserDefaults.standard.string(forKey: "gatekeeperCommanderModel") ?? "qwen2.5:1.5b"
-        if let providerRaw = UserDefaults.standard.string(forKey: "gatekeeperWorkerProvider"),
-           let provider = CloudProvider(rawValue: providerRaw) {
-            self.workerProvider = provider
+        self.isEnabled = userDefaults.bool(forKey: "gatekeeperModeEnabled")
+        
+        if let savedModel = userDefaults.string(forKey: "gatekeeperCommanderModel") {
+            self.commanderModel = savedModel
+        }
+        
+        if let savedProviderStr = userDefaults.string(forKey: "gatekeeperWorkerProvider"),
+           let savedProvider = CloudProvider(rawValue: savedProviderStr) {
+            self.workerProvider = savedProvider
+        }
+        
+        let savedRetries = userDefaults.integer(forKey: "gatekeeperMaxWorkerRetries")
+        if savedRetries > 0 {
+            self.maxWorkerRetries = savedRetries
+        }
+
+        if userDefaults.object(forKey: "gkAllowExternalLLM") != nil {
+            self.allowExternalLLMForCommander = userDefaults.bool(forKey: "gkAllowExternalLLM")
+        }
+
+        if let savedModeStr = userDefaults.string(forKey: "gkBitnetMemoryMode"),
+           let savedMode = MemoryLayerMode(rawValue: savedModeStr) {
+            self.bitnetMemoryLayerMode = savedMode
+        }
+
+        if userDefaults.object(forKey: "gkUseOllamaNER") != nil {
+            self.useOllamaNER = userDefaults.bool(forKey: "gkUseOllamaNER")
         }
     }
 
@@ -87,10 +130,16 @@ final class GatekeeperModeState: ObservableObject {
 
     func configure(workspaceURL: URL) {
         vault = JCrossVault(workspaceURL: workspaceURL)
+        // ✅ Task { } は @MainActor を継承するが、vault.initialize() は async なので
+        // ディスクI/O中はサスペンドしてメインスレッドをブロックしない。
+        // Task.detached + MainActor.run { self } は @MainActor クラスでは SIGTERM の原因。
+        let v = vault
         Task {
-            await initializeVault()
+            await v.initialize()
+            self.phase = .idle
         }
     }
+
 
     // MARK: - Vault Initialization
 

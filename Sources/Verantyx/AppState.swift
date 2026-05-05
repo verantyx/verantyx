@@ -111,8 +111,25 @@ final class AppState: ObservableObject {
             UserDefaults.standard.set(anthropicApiKey, forKey: "anthropic_api_key")
         }
     }
-    @Published var activeAnthropicModel: String = "claude-sonnet-4-5" {
+    @Published var activeAnthropicModel: String = {
+        UserDefaults.standard.string(forKey: "anthropic_model") ?? "claude-sonnet-4-5"
+    }() {
         didSet { UserDefaults.standard.set(activeAnthropicModel, forKey: "anthropic_model") }
+    }
+    @Published var activeOpenAIModel: String = {
+        UserDefaults.standard.string(forKey: "openai_model") ?? "gpt-4o"
+    }() {
+        didSet { UserDefaults.standard.set(activeOpenAIModel, forKey: "openai_model") }
+    }
+    @Published var activeGeminiModel: String = {
+        UserDefaults.standard.string(forKey: "gemini_model") ?? "gemini-3.1-pro"
+    }() {
+        didSet { UserDefaults.standard.set(activeGeminiModel, forKey: "gemini_model") }
+    }
+    @Published var activeDeepSeekModel: String = {
+        UserDefaults.standard.string(forKey: "deepseek_model") ?? "deepseek-coder"
+    }() {
+        didSet { UserDefaults.standard.set(activeDeepSeekModel, forKey: "deepseek_model") }
     }
     @Published var customHFRepoId: String = "mlx-community/Qwen2.5-Coder-7B-Instruct-4bit"
     @Published var downloadProgress: Double = 0
@@ -127,6 +144,14 @@ final class AppState: ObservableObject {
     @Published var selfFixMode: Bool = false
     /// Set to true when the AI calls [RESTART_IDE] — triggers a restart alert in the UI.
     @Published var showRestartAlert: Bool = false
+    @Published var requiresHumanPuzzle: Bool = false
+    @Published var isAgentControllingMouse: Bool = false
+    @Published var lastEntropy: [CGPoint]? = nil
+    @Published var lastVideoFrames: [String]? = nil
+    @Published var lastKeyboardEntropy: [Double]? = nil
+    @Published var lastEntropyTimestamp: Date? = nil
+    @Published var searchCooldownUntil: Date? = nil
+    var lastKeystrokeTime: Date? = nil
 
     // Attachments (images + files for multimodal inference)
     @Published var attachedImages: [AttachedImage] = []
@@ -138,7 +163,7 @@ final class AppState: ObservableObject {
     // UUID of the assistant message bubble currently receiving streaming tokens.
     // Elevated to instance-level so restoreSession() can nil it on session switch,
     // preventing stale UUIDs from corrupting a newly-loaded session's first stream.
-    private var streamingMsgId: UUID? = nil
+    var streamingMsgId: UUID? = nil
 
     // ── Performance metrics (the "Apple Silicon violence" numbers) ──
     @Published var tokensPerSecond: Double = 0       // live tok/s display
@@ -147,7 +172,12 @@ final class AppState: ObservableObject {
     @Published var inferenceMs: Int = 0              // last response latency ms
 
     // ── Process log ("what is the AI thinking right now") ──
-    @Published var processLog: [ProcessLogEntry] = []   // raw live log
+    @MainActor
+    final class ProcessLogStore: ObservableObject {
+        @Published var entries: [ProcessLogEntry] = []
+    }
+    let logStore = ProcessLogStore()
+    
     @Published var showProcessLog: Bool = true
 
     struct ProcessLogEntry: Identifiable {
@@ -200,6 +230,35 @@ final class AppState: ObservableObject {
             // Sync MCPEngine execution mode
             let mcpMode: MCPServerConfig.ExecutionMode = operationMode == .aiPriority ? .ai : .human
             Task { MCPEngine.shared.setMode(mcpMode) }
+            
+            // Auto-toggle JCross view and Gatekeeper State
+            if operationMode == .gatekeeper {
+                GatekeeperModeState.shared.isEnabled = true
+                showGatekeeperRawCode = false
+            } else {
+                GatekeeperModeState.shared.isEnabled = false
+                showGatekeeperRawCode = true
+            }
+            
+            // Sync editing mode
+            if editingMode != operationMode {
+                editingMode = operationMode
+            }
+            
+            // L2.5 変換の制御 (人間優先モードでのみ有効にする)
+            if operationMode == .human {
+                if L25IndexEngine.shared.hasPausedMap || L25IndexEngine.shared.isStopped {
+                    L25IndexEngine.shared.resumeIndexing()
+                } else if let ws = workspaceURL, !L25IndexEngine.shared.isIndexing {
+                    Task { @MainActor in
+                        await L25IndexEngine.shared.loadAndIncrementalUpdate(workspaceURL: ws)
+                    }
+                }
+            } else {
+                if L25IndexEngine.shared.isIndexing {
+                    L25IndexEngine.shared.cancelIndexing()
+                }
+            }
         }
     }
 
@@ -442,13 +501,66 @@ final class AppState: ObservableObject {
     // nano/small モデル選択時に AI Priority を強制するフラグ
     @Published var isNanoSmallModelActive: Bool = false
 
+    // MARK: - Mode & Model Sync
+
+    @Published var editingMode: OperationMode = .human
+
+    func getOllamaModel(for mode: OperationMode) -> String {
+        if mode == .gatekeeper {
+            return GatekeeperPipelineState.shared.config.intentOllamaModel
+        }
+        return UserDefaults.standard.string(forKey: "model_for_\(mode.rawValue)") ?? UserDefaults.standard.string(forKey: "active_ollama_model") ?? "gemma4:26b"
+    }
+
+    func setOllamaModel(_ model: String, for mode: OperationMode) {
+        if mode == .gatekeeper {
+            var config = GatekeeperPipelineState.shared.config
+            config.intentOllamaModel = model
+            GatekeeperPipelineState.shared.config = config
+            config.save()
+        } else {
+            UserDefaults.standard.set(model, forKey: "model_for_\(mode.rawValue)")
+        }
+        
+        if mode == operationMode && activeOllamaModel != model {
+            activeOllamaModel = model
+        }
+    }
+
+    func switchModeAndEjectOldModel(to mode: OperationMode) {
+        Task {
+            let loaded = await OllamaClient.shared.loadedModels()
+            for m in loaded {
+                await OllamaClient.shared.unloadModel(m.name)
+            }
+            
+            await MainActor.run {
+                operationMode = mode
+                let targetModel = getOllamaModel(for: mode)
+                if activeOllamaModel != targetModel {
+                    activeOllamaModel = targetModel
+                }
+                connectOllama()
+            }
+        }
+    }
+
     // モデル変更時: nano/small → AI Priority 強制、large/giant → human に復帰
     @Published var activeOllamaModel: String = {
         UserDefaults.standard.string(forKey: "active_ollama_model") ?? "gemma4:26b"
     }() {
         didSet {
-            // UserDefaults に保存（再起動後も復元）
             UserDefaults.standard.set(activeOllamaModel, forKey: "active_ollama_model")
+            
+            // Sync current model back to the current operation mode configuration
+            if operationMode == .gatekeeper {
+                var config = GatekeeperPipelineState.shared.config
+                config.intentOllamaModel = activeOllamaModel
+                GatekeeperPipelineState.shared.config = config
+                config.save()
+            } else {
+                UserDefaults.standard.set(activeOllamaModel, forKey: "model_for_\(operationMode.rawValue)")
+            }
 
             let tier = ModelProfileDetector.detect(modelId: activeOllamaModel).tier
             let isSmall = (tier == .nano || tier == .small)
@@ -483,9 +595,17 @@ final class AppState: ObservableObject {
         UserDefaults.standard.set(url.path, forKey: "last_workspace_path")
         addSystemMessage("📂 Workspace: \(url.lastPathComponent)")
         SelfEvolutionEngine.shared.setWorkspaceHint(url)
-        // Gatekeeper Vault を実ワークスペースに再設定（読み取り専用バンドルを回避）
         GatekeeperModeState.shared.configure(workspaceURL: url)
         refreshFiles()
+        // ── ワークスペース追加時に L2.5 地図を自動生成 ───────────────────
+        // @MainActor な buildProjectMap を Task で安全に呼び出す
+        if operationMode == .human {
+            Task { @MainActor in
+                await L25IndexEngine.shared.buildProjectMap(workspaceURL: url)
+                let count = L25IndexEngine.shared.projectMap?.fileCount ?? 0
+                self.addSystemMessage(AppLanguage.shared.t("🗺️ L2.5 map generation complete: \(count) files", "🗺️ L2.5 地図生成完了: \(count) ファイル"))
+            }
+        }
     }
 
     /// Progressive directory scan — yields partial results as they arrive.
@@ -561,7 +681,11 @@ final class AppState: ObservableObject {
         return text
     }
 
-    @Published var showGatekeeperRawCode: Bool = false {
+    @Published var showGatekeeperRawCode: Bool = {
+        let raw = UserDefaults.standard.string(forKey: "operation_mode") ?? OperationMode.human.rawValue
+        let mode = OperationMode(rawValue: raw) ?? .human
+        return mode != .gatekeeper
+    }() {
         didSet {
             if let file = selectedFile { selectFile(file) }
         }
@@ -585,7 +709,7 @@ final class AppState: ObservableObject {
                 relativePath = url.lastPathComponent
             }
 
-            Task.detached(priority: .userInitiated) { [weak self] in
+            Task.detached { [weak self] in
                 guard let self else { return }
                 let vault = await MainActor.run { GatekeeperModeState.shared.vault }
                 let result = await MainActor.run { vault.read(relativePath: relativePath) }
@@ -623,7 +747,7 @@ final class AppState: ObservableObject {
         }
 
         // ── 通常モード: 実ファイルを読み込む ─────────────────────────
-        Task.detached(priority: .userInitiated) { [weak self] in
+        Task.detached { [weak self] in
             guard let self else { return }
             // Read on background thread — never blocks UI
             let content = self.safePreview(for: url)
@@ -768,23 +892,106 @@ final class AppState: ObservableObject {
         }
 
         inferenceTask = Task {
+            // ── BENCHMARK INTEGRATION ────────────────────────────────────────
+            if text.starts(with: "/benchmark") {
+                let parts = text.split(separator: " ")
+                
+                if parts.count >= 2 && parts[1] == "status" {
+                    await MainActor.run { self.addSystemMessage("📊 取得中: Benchmark Status...") }
+                    let result = await MCPEngine.shared.callTool(
+                        serverName: "verantyx-compiler",
+                        toolName: "benchmark_status",
+                        arguments: [:]
+                    )
+                    await MainActor.run {
+                        self.isGenerating = false
+                        self.messages.append(ChatMessage(role: .assistant, content: "📈 Benchmark Status:\n\n\(result)"))
+                        self.saveCurrentSession()
+                    }
+                    return
+                }
+                
+                await MainActor.run { self.addSystemMessage("🚀 起動中: LongMemEval Benchmark...") }
+                
+                // Parse arguments like "/benchmark batch=5 total=10"
+                var args: [String: Any] = [:]
+                for part in parts.dropFirst() {
+                    let kv = part.split(separator: "=")
+                    if kv.count == 2, let v = Int(String(kv[1])) {
+                        args[String(kv[0])] = v
+                    }
+                }
+                
+                let result = await MCPEngine.shared.callTool(
+                    serverName: "verantyx-compiler",
+                    toolName: "solve_all",
+                    arguments: args
+                )
+                
+                await MainActor.run {
+                    self.isGenerating = false
+                    self.messages.append(ChatMessage(role: .assistant, content: "📈 Benchmark Result:\n\n\(result)"))
+                    self.saveCurrentSession()
+                }
+                return
+            }
+
+            // ── PIPELINE INTENT DETECTION ───────────────────────────────────
+            // NOTE: Gatekeeper Mode ON の場合は CommanderOrchestrator が全処理を担うため
+            //       ここでの旧フロー (BitNetCommanderLoop) ルーティングは完全に廃止しました。
+
+            // ── SYSTEM STATUS INJECTION ──────────────────────────────────────
+            // 状態確認系の質問 or バックグラウンドプロセスが動いているとき、
+            // AI の systemPrompt にリアルタイムの状態ブロックを注入する。
+            // → AI は「L2.5 が今 45% 完了」などを自律的に答えられる。
+            let statusBlock = await MainActor.run {
+                SystemStatusProvider.shared.systemStatusBlock()
+            }
+            if let status = statusBlock {
+                await MainActor.run { self.systemPrompt += "\n\n" + status }
+                // 返答後にステータスブロックを除去 (永続汚染しない)
+                defer {
+                    Task { @MainActor in
+                        if let range = self.systemPrompt.range(of: "\n\n[SYSTEM STATUS") {
+                            self.systemPrompt = String(self.systemPrompt[..<range.lowerBound])
+                        }
+                    }
+                }
+            }
+            // 状態確認系の質問なら fullStatusReport を先にチャットに挿入
+            if SystemStatusProvider.isStatusQuery(text) {
+                let report = await MainActor.run {
+                    SystemStatusProvider.shared.fullStatusReport()
+                }
+                await MainActor.run {
+                    self.addSystemMessage(AppLanguage.shared.t("📊 System state snapshot:\n\(report)", "📊 システム状態スナップショット:\n\(report)"))
+                }
+            }
+            // ── END STATUS INJECTION ─────────────────────────────────────────
+
             // Compress context if needed (Cortex anti-Alzheimer's)
             let trimmed = cortex.compressIfNeeded(messages: messages)
             if trimmed.count < messages.count {
                 await MainActor.run { self.messages = trimmed }
             }
 
-            // Route: Privacy Shield / Cloud modes bypass agent loop
+            // Route: Gatekeeper Mode → 新フロー (6軸IR → GraphPatch JSON → Vault復元)
             if await MainActor.run(body: { GatekeeperModeState.shared.isEnabled }) {
-                await CommanderOrchestrator.shared.handleUserMessage(text)
-                await MainActor.run { self.isGenerating = false }
+                // GatekeeperChatBridge が isGenerating = false まで責任を持つ
+                await GatekeeperChatBridge.shared.run(instruction: text, appState: self)
             } else if inferenceMode == .cloudDirect || inferenceMode == .privacyShield || inferenceMode == .paranoiaMode {
                 await runHybrid(instruction: text)
             } else if agentLoopEnabled {
+                if editingMode == .human {
+                    await MainActor.run { self.requiresHumanPuzzle = true }
+                }
+                
                 // Pass images to agent loop so the model can see them
+                let history = Array(self.messages.dropLast())
                 await runAgentLoop(instruction: text,
                                    images: snapshotImages,
-                                   files: snapshotFiles)
+                                   files: snapshotFiles,
+                                   previousMessages: history)
             } else {
                 await runSinglePass(instruction: text,
                                     images: snapshotImages,
@@ -796,7 +1003,35 @@ final class AppState: ObservableObject {
         }
     }
 
-    /// Cancel the currently running inference.
+    // MARK: - Pipeline Intent Classifier
+
+    /// チャット入力がパイプラインタスク (変換・生成・ビルド系) かどうかを判定する。
+    /// BitNet が使える場合は1.58bモデルで高速分類。
+    /// BitNet 未インストールの場合はキーワードルールで判定。
+    private func isPipelineIntent(text: String) async -> Bool {
+        // LanguageDetector が言語非依存で判定 (BitNet 優先 → ルールベースフォールバック)
+        if LanguageDetector.isPipelineIntent(text) { return true }
+        // BitNet による追加分類
+        if BitNetConfig.load()?.isValid == true {
+            let classifyPrompt = """
+            ### Instruction:
+            Classify this user message. Reply ONLY with "pipeline" or "chat".
+            "pipeline" = code transpilation, conversion, build, generate/port files from one language to another
+            "chat" = question, explanation, review, discussion, anything else
+            Message: \(text.prefix(200))
+            ### Response:
+            """
+            if let result = await BitNetCommanderEngine.shared.generate(
+                prompt: classifyPrompt, systemPrompt: ""
+            ) {
+                return result.lowercased().contains("pipeline")
+            }
+        }
+        return false
+    }
+
+    // (sendMessage本体のクロージングブレースはここに続く)
+    // MARK: - Cancel generation
     func cancelGeneration() {
         inferenceTask?.cancel()
         inferenceTask = nil
@@ -941,7 +1176,8 @@ final class AppState: ObservableObject {
 
     private func runAgentLoop(instruction: String,
                               images: [AttachedImage] = [],
-                              files: [URL] = []) async {
+                              files: [URL] = [],
+                              previousMessages: [ChatMessage] = []) async {
         let context = selectedFileContent.isEmpty ? nil : selectedFileContent
         let contextFile = selectedFile
         let snap_workspace = workspaceURL
@@ -954,7 +1190,7 @@ final class AppState: ObservableObject {
 
         // nano/small モデルはユーザーが operationMode を手動変更していても
         // 常に AI Priority ループで動作させる（VX-Loop + ConfusionDetector が必須なため）
-        let snap_isAIPriority = (operationMode == .aiPriority) || isNanoSmallModelActive
+        let snap_operationMode = isNanoSmallModelActive ? .aiPriority : operationMode
 
         // Build image context suffix so models that read text still see the filename
         var imageContext = ""
@@ -978,9 +1214,10 @@ final class AppState: ObservableObject {
             activeModel: snap_model,
             cortex: cortex,
             selfFixMode: snap_selfFix,
-            isAIPriority: snap_isAIPriority,
+            operationMode: snap_operationMode,
             memoryLayer: sessions.activeSession?.activeLayer ?? .l2,
-            chatSessionId: vxChatSessionId
+            chatSessionId: vxChatSessionId,
+            previousMessages: previousMessages
         ) { [weak self] event in
             guard let self else { return }
             await MainActor.run {
@@ -1004,7 +1241,7 @@ final class AppState: ObservableObject {
                 case .thinking(let t):
                     if t > 1 {
                         self.messages.append(ChatMessage(role: .system,
-                            content: "🔄 Agent loop turn \(t)…"))
+                            content: "<think>\n🔄 Agent loop turn \(t)…\n</think>"))
                     }
 
                 case .aiMessage(let text):
@@ -1030,7 +1267,7 @@ final class AppState: ObservableObject {
                             // the streaming message ("last role" check would fail).
 
                             // Snapshot processLog → thinkingLog for post-completion display
-                            let logSnapshot = self.processLog.map { e in
+                            let logSnapshot = self.logStore.entries.map { e in
                                 ChatMessage.ThinkingLogEntry(
                                     timestamp: e.timestamp,
                                     text:      e.text,
@@ -1055,13 +1292,13 @@ final class AppState: ObservableObject {
                         }
                         // Notify if patches detected
                         if !patches.isEmpty {
-                            self.addSystemMessage(self.t("🧬 Detected \\(patches.count) patches — check Self-Evolution panel", "🧬 \\(patches.count) 個のパッチを検出 — Self-Evolution パネルで確認できます"))
+                            self.addSystemMessage(self.t("🧬 Detected \(patches.count) patches — check Self-Evolution panel", "🧬 \(patches.count) 個のパッチを検出 — Self-Evolution パネルで確認できます"))
                         }
                     }
 
                 case .toolCall(let call):
                     self.messages.append(ChatMessage(role: .system,
-                        content: "⚙️ \(call.displayLabel)"))
+                        content: "<think>\n⚙️ \(call.displayLabel)\n</think>"))
                     if case .runCommand(let cmd) = call.tool {
                         Task { await self.terminal.run(cmd, in: self.workspaceURL, initiatedByAI: true) }
                     }
@@ -1070,7 +1307,7 @@ final class AppState: ObservableObject {
                     if !call.result.isEmpty {
                         let icon = call.succeeded ? "✅" : "❌"
                         self.messages.append(ChatMessage(role: .system,
-                            content: "\(icon) \(call.result.prefix(120))"))
+                            content: "<think>\n\(icon) \(call.result.prefix(120))\n</think>"))
                     }
 
                 case .workspaceChanged(let url):
@@ -1320,13 +1557,13 @@ final class AppState: ObservableObject {
 
     func logProcess(_ text: String, kind: ProcessLogEntry.Kind) {
         let entry = ProcessLogEntry(timestamp: Date(), text: text, kind: kind)
-        DispatchQueue.main.async {
-            if self.processLog.count > 500 { self.processLog.removeFirst(100) }
-            self.processLog.append(entry)
+        Task { @MainActor in
+            if self.logStore.entries.count > 500 { self.logStore.entries.removeFirst(100) }
+            self.logStore.entries.append(entry)
         }
     }
 
-    func clearProcessLog() { processLog.removeAll() }
+    func clearProcessLog() { logStore.entries.removeAll() }
 
     func applyDiff() {
         guard let diff = pendingDiff else { return }
@@ -1413,7 +1650,7 @@ final class AppState: ObservableObject {
         switch snap {
         case .mlxReady(let m), .mlxDownloading(let m):
             modelStatus = .none
-            addSystemMessage(self.t("⏏ Ejected MLX Model: \\(m)", "⏏ MLX モデルをリジェクト: \\(m)"))
+            addSystemMessage(self.t("⏏ Ejected MLX Model: \(m)", "⏏ MLX モデルをリジェクト: \(m)"))
             Task.detached(priority: .userInitiated) {
                 await MLXRunner.shared.unloadModel()
                 // Write a topology alias into front/ for future reference
@@ -1427,7 +1664,7 @@ final class AppState: ObservableObject {
             }
         case .ollamaReady(let m):
             modelStatus = .none
-            addSystemMessage(self.t("⏏ Ejected Ollama Model: \\(m)", "⏏ Ollama モデルをリジェクト: \\(m)"))
+            addSystemMessage(self.t("⏏ Ejected Ollama Model: \(m)", "⏏ Ollama モデルをリジェクト: \(m)"))
             let endpoint = ollamaEndpoint   // capture on MainActor before detaching
             Task.detached(priority: .userInitiated) {
                 // Ollama: unload via generate API with keep_alive=0
@@ -1454,7 +1691,7 @@ final class AppState: ObservableObject {
         }
         // Toast notification
         ToastManager.shared.show(
-            "モデルをリジェクトしました",
+            self.t("Model ejected", "モデルをリジェクトしました"),
             icon: "eject.fill",
             color: Color(red: 1.0, green: 0.55, blue: 0.2)
         )
@@ -1486,10 +1723,12 @@ final class AppState: ObservableObject {
             if FileManager.default.fileExists(atPath: path, isDirectory: &isDir), isDir.boolValue {
                 workspaceURL = url
                 terminal.workingDirectory = url
-                // 起動時復元: Gatekeeper Vault も実ワークスペースに設定
                 GatekeeperModeState.shared.configure(workspaceURL: url)
                 refreshFiles()
+                // ⚠️ L2.5インデックスの起動は VerantyxApp.onAppear (0.3秒後) で一元管理。
+                // ここで呼ぶと onAppear 側と二重起動になり MainActor デッドロックが発生する。
             }
+
         }
 
         // ── Anthropic ──────────────────────────────────────────────────────
@@ -1525,7 +1764,10 @@ final class AppState: ObservableObject {
         if let raw = ud.string(forKey: "cloud_provider"),
            let p = CloudProvider(rawValue: raw) { cloudProvider = p }
         if let raw = ud.string(forKey: "operation_mode"),
-           let o = OperationMode(rawValue: raw) { operationMode = o }
+           let o = OperationMode(rawValue: raw) {
+            operationMode = o
+            editingMode = o
+        }
 
         // ── Notification ───────────────────────────────────────────────────
         if let v = ud.object(forKey: "notify_diff_apply") as? Bool { notifyOnDiffApply = v }

@@ -220,17 +220,17 @@ final class ParanoiaEngine {
         return await Task.detached(priority: .userInitiated) { [extractorBinary] in
             let process = Process()
             process.executableURL = extractorBinary
-            let stdin  = Pipe(); let stdout = Pipe(); let stderr = Pipe()
+            let stdin  = Pipe(); let stdout = Pipe()
             process.standardInput  = stdin
             process.standardOutput = stdout
-            process.standardError  = stderr
+            process.standardError  = FileHandle.nullDevice  // ⚠️ stderr は不要 — 未読パイプの deadlock 防止
 
             do { try process.run() } catch { return nil }
             stdin.fileHandleForWriting.write(inputData)
             stdin.fileHandleForWriting.closeFile()
-            process.waitUntilExit()
 
             let outData = stdout.fileHandleForReading.readDataToEndOfFile()
+            process.waitUntilExit()
             guard let output = try? JSONDecoder().decode(ExtractorOutput.self, from: outData) else {
                 return nil
             }
@@ -351,13 +351,14 @@ final class ParanoiaEngine {
             let stdin  = Pipe(); let stdout = Pipe()
             process.standardInput  = stdin
             process.standardOutput = stdout
+            process.standardError  = FileHandle.nullDevice  // ⚠️ stderr は不要 — deadlock 防止
 
             do { try process.run() } catch { return nil }
             stdin.fileHandleForWriting.write(inputData)
             stdin.fileHandleForWriting.closeFile()
-            process.waitUntilExit()
 
             let outData = stdout.fileHandleForReading.readDataToEndOfFile()
+            process.waitUntilExit()
             return try? JSONDecoder().decode(MaskerOutput.self, from: outData)
         }.value
     }

@@ -20,6 +20,19 @@ public enum CognitiveAnchorMode {
 public actor CognitiveAnchorEngine {
     public static let shared = CognitiveAnchorEngine()
     
+    // Store the last screenshot taken by VISION tools
+    public var lastVisionScreenshot: String? = nil
+    
+    public func setVisionScreenshot(_ base64: String) {
+        lastVisionScreenshot = base64
+    }
+    
+    public func consumeVisionScreenshot() -> String? {
+        let screenshot = lastVisionScreenshot
+        lastVisionScreenshot = nil
+        return screenshot
+    }
+    
     private init() {}
     
     // MARK: - Base64 Image Constants
@@ -41,7 +54,7 @@ public actor CognitiveAnchorEngine {
             return bluePixelBase64
         case .searchForce:
             return renderDynamicAnchor(
-                text: "⚠️ KNOWLEDGE BOUNDARY ⚠️\nYOU MUST SEARCH.\nOUTPUT: [SEARCH_MULTI: \"query\"]",
+                text: "[ SEARCH REQUIRED ]\nKNOWLEDGE BOUNDARY DETECTED",
                 backgroundColor: NSColor.systemYellow,
                 textColor: NSColor.black
             ) ?? redPixelBase64
@@ -50,7 +63,7 @@ public actor CognitiveAnchorEngine {
             formatter.dateFormat = "yyyy-MM-dd HH:mm"
             let nowStr = formatter.string(from: Date())
             return renderDynamicAnchor(
-                text: "TIME: \(nowStr)\nYOUR KNOWLEDGE IS OLD.\nOUTPUT: [SEARCH_MULTI: \"query\"]",
+                text: "CURRENT TIME:\n\(nowStr)\nKNOWLEDGE OUTDATED.\nYOU MUST USE WEB SEARCH.",
                 backgroundColor: NSColor.black,
                 textColor: NSColor.green
             ) ?? bluePixelBase64
@@ -67,17 +80,14 @@ public actor CognitiveAnchorEngine {
             return .temporal
         }
         
-        // 2. 未知の概念や検索が必要そうな文脈の場合はSearchForceモードを適用
-        if lower.contains("教えて") || lower.contains("について") || lower.contains("とは") {
-            return .searchForce
-        }
-        
-        // 3. バグ報告や「直して」などの文脈がある場合はDoubt（疑念）モードを適用
+        // 2. バグ報告や「直して」などの文脈がある場合はDoubt（疑念）モードを適用
         if lower.contains("バグ") || lower.contains("bug") || lower.contains("error") || lower.contains("エラー") || lower.contains("直して") {
             return .doubt
         }
         
-        return nil
+        // 3. それ以外のすべてのタスク（コーディング指示含む）では、
+        // 実装前の事実確認とハルシネーション防止のために常にSearchForceモードを適用する。
+        return .searchForce
     }
     
     // MARK: - Dynamic Image Generation

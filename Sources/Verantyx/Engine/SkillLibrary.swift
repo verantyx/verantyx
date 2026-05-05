@@ -596,30 +596,29 @@ actor SkillExecutor {
 
     private func runShellScript(path: String, workingDir: URL?) async -> String {
         await withCheckedContinuation { continuation in
-            let proc = Process()
-            proc.executableURL = URL(fileURLWithPath: "/bin/bash")
-            proc.arguments = [path]
-            if let wd = workingDir { proc.currentDirectoryURL = wd }
+            DispatchQueue.global(qos: .userInitiated).async {
+                let proc = Process()
+                proc.executableURL = URL(fileURLWithPath: "/bin/bash")
+                proc.arguments = [path]
+                if let wd = workingDir { proc.currentDirectoryURL = wd }
 
-            let outPipe = Pipe()
-            let errPipe = Pipe()
-            proc.standardOutput = outPipe
-            proc.standardError  = errPipe
+                let pipe = Pipe()
+                proc.standardOutput = pipe
+                proc.standardError  = pipe   // ⚠️ 同一パイプ — dual-pipe deadlock 防止
 
-            do {
-                try proc.run()
-                proc.waitUntilExit()
-                let outData = outPipe.fileHandleForReading.readDataToEndOfFile()
-                let errData = errPipe.fileHandleForReading.readDataToEndOfFile()
-                let out = String(data: outData, encoding: .utf8) ?? ""
-                let err = String(data: errData, encoding: .utf8) ?? ""
-                let combined = [out, err].filter { !$0.isEmpty }.joined(separator: "\n").prefix(2000)
-                continuation.resume(returning: proc.terminationStatus == 0
-                    ? String(combined)
-                    : "✗ exit \(proc.terminationStatus)\n\(combined)"
-                )
-            } catch {
-                continuation.resume(returning: "✗ Script launch failed: \(error.localizedDescription)")
+                do {
+                    try proc.run()
+                    let outData = pipe.fileHandleForReading.readDataToEndOfFile()
+                    proc.waitUntilExit()
+                    let out = String(data: outData, encoding: .utf8) ?? ""
+                    let combined = String(out.prefix(2000))
+                    continuation.resume(returning: proc.terminationStatus == 0
+                        ? combined
+                        : "✗ exit \(proc.terminationStatus)\n\(combined)"
+                    )
+                } catch {
+                    continuation.resume(returning: "✗ Script launch failed: \(error.localizedDescription)")
+                }
             }
         }
     }

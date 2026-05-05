@@ -128,18 +128,39 @@ final class TerminalRunner: ObservableObject {
                 )
             }
 
-            // Read output asynchronously while process runs
-            let stdoutData = stdoutPipe.fileHandleForReading.readDataToEndOfFile()
-            let stderrData = stderrPipe.fileHandleForReading.readDataToEndOfFile()
-            process.waitUntilExit()
+            // ⚠️ 両パイプを並行ドレインして dual-pipe deadlock を防止。
+            // 逐次読み取り (readDataToEndOfFile を stdout → stderr の順に呼ぶ) だと、
+            // stderr バッファ (64KB) が満杯になるとプロセスが stderr write でブロック →
+            // stdout EOF が来ない → readDataToEndOfFile(stdout) が永久にブロック → デッドロック。
+            let stdoutBox = _StringBox()
+            let stderrBox = _StringBox()
+            let group = DispatchGroup()
 
-            let stdout = String(data: stdoutData, encoding: .utf8) ?? ""
-            let stderr = String(data: stderrData, encoding: .utf8) ?? ""
+            group.enter()
+            DispatchQueue.global(qos: .userInitiated).async {
+                let data = stdoutPipe.fileHandleForReading.readDataToEndOfFile()
+                if let text = String(data: data, encoding: .utf8) {
+                    stdoutBox.append(text)
+                }
+                group.leave()
+            }
+
+            group.enter()
+            DispatchQueue.global(qos: .userInitiated).async {
+                let data = stderrPipe.fileHandleForReading.readDataToEndOfFile()
+                if let text = String(data: data, encoding: .utf8) {
+                    stderrBox.append(text)
+                }
+                group.leave()
+            }
+
+            group.wait()
+            process.waitUntilExit()
 
             return TerminalResult(
                 command: command,
-                stdout: stdout.trimmingCharacters(in: .whitespacesAndNewlines),
-                stderr: stderr.trimmingCharacters(in: .whitespacesAndNewlines),
+                stdout: stdoutBox.value.trimmingCharacters(in: .whitespacesAndNewlines),
+                stderr: stderrBox.value.trimmingCharacters(in: .whitespacesAndNewlines),
                 exitCode: process.terminationStatus
             )
         }.value

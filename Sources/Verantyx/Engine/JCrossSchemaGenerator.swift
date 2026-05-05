@@ -84,9 +84,13 @@ struct JCrossSchema: Codable {
 }
 
 // MARK: - JCrossSchemaGenerator
+//
+// Phase 1 安定化: @MainActor → actor 化
+// スキーマ生成は純粋計算（乱数シャッフル・文字列操作）のみ。
+// UIへの依存がないため MainActor を外し独立した actor アイランドに移動。
+// 呼び出し元は「await schemaGenerator.generate()」で透過的に使える。
 
-@MainActor
-final class JCrossSchemaGenerator {
+actor JCrossSchemaGenerator {
 
     // MARK: - Kanji Pool (2136 常用漢字 + 特殊記号から意味グループ別にサンプリング)
 
@@ -205,81 +209,56 @@ final class JCrossSchemaGenerator {
 
 // MARK: - PolymorphicJCrossTranspiler
 //
-// JCrossCodeTranspiler のポリモーフィック対応版。
-// セッションごとに異なるスキーマで変換する。
+// Phase 1 安定化: @MainActor ObservableObject を UIプロキシ + 処理actor に分離。
+//
+//   PolymorphicTranspilerActor  — 重い処理（NER・識別子抽出・文字列置換）
+//   PolymorphicJCrossTranspiler — @MainActor ObservableObject（UIバインディングのみ）
+//
+// UIは PolymorphicJCrossTranspiler 経由でアクセスし、
+// 実際の変換は PolymorphicTranspilerActor がバックグラウンドで実行する。
 
-@MainActor
-final class PolymorphicJCrossTranspiler: ObservableObject {
+actor PolymorphicTranspilerActor {
 
-    static let shared = PolymorphicJCrossTranspiler()
-
-    @Published var currentSchema: JCrossSchema?
-    @Published var isTranspiling = false
-
-    private let schemaGenerator = JCrossSchemaGenerator()
-    private let nerEngine: any BitNetTranspilerInterface
-
-    // Schema → Session mapping
+    // Schema → Session mapping (actor 内で排他アクセス)
     private var schemaSessions: [String: (schema: JCrossSchema, nodeMap: [String: String], reverseMap: [String: String])] = [:]
+    private let schemaGenerator = JCrossSchemaGenerator()
 
-    struct JCrossSchemaSessionData: Codable {
-        let schema: JCrossSchema
-        let nodeMap: [String: String]
-        let reverseMap: [String: String]
-    }
-
-    func getSessionData(for schemaID: String) -> JCrossSchemaSessionData? {
+    func getSessionData(for schemaID: String) -> PolymorphicJCrossTranspiler.JCrossSchemaSessionData? {
         guard let session = schemaSessions[schemaID] else { return nil }
-        return JCrossSchemaSessionData(schema: session.schema, nodeMap: session.nodeMap, reverseMap: session.reverseMap)
+        return .init(schema: session.schema, nodeMap: session.nodeMap, reverseMap: session.reverseMap)
     }
 
-    func restoreSession(from data: JCrossSchemaSessionData) {
+    func restoreSession(from data: PolymorphicJCrossTranspiler.JCrossSchemaSessionData) {
         schemaSessions[data.schema.sessionID] = (schema: data.schema, nodeMap: data.nodeMap, reverseMap: data.reverseMap)
     }
 
-    /// NER エンジンの優先順位:
-    ///   1. OllamaNEREngine (ローカル Ollama が起動中の場合)
-    ///   2. BitNetNEREngine (bitnet.cpp がインストール済みの場合)
-    ///   3. RuleBaseNEREngine (フォールバック)
-    private init(nerEngine: (any BitNetTranspilerInterface)? = nil) {
-        if let provided = nerEngine {
-            self.nerEngine = provided
-        } else if let config = BitNetConfig.load(), config.isValid {
-            self.nerEngine = BitNetNEREngine(config: config)
-        } else {
-            // Ollama は非同期で確認するため、起動時はルールベースを使い
-            // OllamaNEREngineManager が ready になったら差し替える
-            self.nerEngine = OllamaNEREngine()  // Ollama が落ちていれば内部でフォールバック
-        }
-    }
+    // MARK: - デッドロック修正ノート
+    // nerEngine (any BitNetTranspilerInterface) を @MainActor から actor に渡すと
+    // actor 内で await nerEngine.method() を呼ぶ際に MainActor への再入が発生しデッドロックする。
+    // 対策: Bool フラグのみを渡し、actor 内部で独立のエンジンインスタンスを生成する。
 
-    // MARK: - Transpile with Polymorphic Schema
-
-    /// ソースコード → ランダムスキーマ JCross 変換
-    /// Returns: (jcrossCode, schemaID, systemPromptSection)
     func transpile(
         _ source: String,
         language: JCrossCodeTranspiler.CodeLanguage,
-        noiseLevel: Int = 2
+        noiseLevel: Int,
+        useOllamaNER: Bool  // ← Bool のみ。@MainActor 依存のエンジンオブジェクトは渡さない。
     ) async -> (jcross: String, schemaID: String, schemaInstructions: String) {
+        // actor 内部で独立したエンジンを生成（@MainActor 経由で呼び出さない）
+        let ner: any BitNetTranspilerInterface = useOllamaNER
+            ? OllamaNEREngine()
+            : RuleBaseNEREngine()
 
-        isTranspiling = true
-        defer { isTranspiling = false }
+        let schema = await schemaGenerator.generate(noiseLevel: noiseLevel)
 
-        // 1. 新しいスキーマを生成
-        let schema = schemaGenerator.generate(noiseLevel: noiseLevel)
-        currentSchema = schema
+        // NER は actor 自身のスレッドで実行（MainActor へのコールバックなし）
+        let sensitiveTokens = Set(await ner.extractSensitiveIdentifiers(from: source))
 
-        // 2. NER でセンシティブ識別子を抽出
-        let sensitiveTokens = Set(await nerEngine.extractSensitiveIdentifiers(from: source))
-
-        let result = await Task.detached(priority: .userInitiated) {
-            // 3. 識別子抽出・マッピング構築
-            let identifiers = Self.extractAllIdentifiers(from: source)
-            var nodeMap: [String: String] = [:]      // realSymbol → nodeID
-            var reverseMap: [String: String] = [:]   // nodeID → realSymbol
-
+        let result = await Task.detached(priority: .userInitiated) { [schema] in
+            let identifiers = PolymorphicJCrossTranspiler.extractAllIdentifiers(from: source)
+            var nodeMap: [String: String] = [:]
+            var reverseMap: [String: String] = [:]
             var counters: [String: Int] = [:]
+
             func nextID(prefix: String) -> String {
                 let n = (counters[prefix] ?? 0) + 1
                 counters[prefix] = n
@@ -290,39 +269,248 @@ final class PolymorphicJCrossTranspiler: ObservableObject {
             for ident in identifiers {
                 if nodeMap[ident] != nil { continue }
                 let isSensitive = sensitiveTokens.contains(ident)
-                let prefix = isSensitive ? "S" : Self.inferPrefix(from: ident)
+                let prefix = isSensitive ? "S" : PolymorphicJCrossTranspiler.inferPrefix(from: ident)
                 let nodeID = nextID(prefix: prefix)
                 nodeMap[ident] = nodeID
-                if !isSensitive {
-                    reverseMap[nodeID] = ident
-                }
+                if !isSensitive { reverseMap[nodeID] = ident }
             }
 
-            // 4. 変換実行
-            let jcrossLines = Self.convertToJCross(
-                source: source,
-                schema: schema,
-                nodeMap: nodeMap,
-                sensitiveTokens: sensitiveTokens
+            let jcrossLines = PolymorphicJCrossTranspiler.convertToJCross(
+                source: source, schema: schema,
+                nodeMap: nodeMap, sensitiveTokens: sensitiveTokens
             )
-
-            // 5. ノイズノード注入
-            let noisyJCross = Self.injectNoise(into: jcrossLines, schema: schema)
-            let jcrossOutput = noisyJCross.joined(separator: "\n")
-            
-            return (jcrossOutput, nodeMap, reverseMap)
+            let noisyJCross = PolymorphicJCrossTranspiler.injectNoise(into: jcrossLines, schema: schema)
+            return (noisyJCross.joined(separator: "\n"), nodeMap, reverseMap)
         }.value
 
-        // 6. セッション保存
         schemaSessions[schema.sessionID] = (schema: schema, nodeMap: result.1, reverseMap: result.2)
-
         return (result.0, schema.sessionID, schema.schemaInstructions())
     }
 
-    // MARK: - Reverse Transpile
-
-    func reverseTranspile(_ jcross: String, schemaID: String) -> String? {
+    func reverseTranspile(jcross: String, originalContent: String, schemaID: String) async -> String? {
         guard let session = schemaSessions[schemaID] else { return nil }
+        return PolymorphicJCrossTranspiler.ruleBasedReverseTranspile(jcross, session: session)
+    }
+
+    func tryRestoreSession(schemaID: String, vault: JCrossVault?, vaultIndex: JCrossVault.VaultIndex?, vaultRootURL: URL?) async {
+        guard schemaSessions[schemaID] == nil,
+              let index = vaultIndex,
+              let vaultRootURL = vaultRootURL else { return }
+        for (_, entry) in index.entries where entry.schemaSessionID == schemaID {
+            let schemaURL = vaultRootURL.appendingPathComponent(entry.schemaPath)
+            guard let data = try? Data(contentsOf: schemaURL),
+                  let sessionData = try? JSONDecoder().decode(PolymorphicJCrossTranspiler.JCrossSchemaSessionData.self, from: data)
+            else { continue }
+            schemaSessions[sessionData.schema.sessionID] = (
+                schema: sessionData.schema,
+                nodeMap: sessionData.nodeMap,
+                reverseMap: sessionData.reverseMap
+            )
+            return
+        }
+    }
+}
+
+@MainActor
+final class PolymorphicJCrossTranspiler: ObservableObject {
+
+    static let shared = PolymorphicJCrossTranspiler()
+
+    @Published var currentSchema: JCrossSchema?
+    @Published var isTranspiling = false
+
+    // 重い処理は actor に委譲
+    private let processingActor = PolymorphicTranspilerActor()
+
+    struct JCrossSchemaSessionData: Codable {
+        let schema: JCrossSchema
+        let nodeMap: [String: String]
+        let reverseMap: [String: String]
+    }
+
+    func getSessionData(for schemaID: String) async -> JCrossSchemaSessionData? {
+        await processingActor.getSessionData(for: schemaID)
+    }
+
+    func restoreSession(from data: JCrossSchemaSessionData) {
+        Task { await processingActor.restoreSession(from: data) }
+    }
+
+    // nerEngine は actor 内で自律生成するため UIProxy 側には不要。
+    // init は引数なしのシンプルな設計に戻す。
+    private init() {}
+
+    // MARK: - Transpile with Polymorphic Schema
+
+    /// ソースコード → ランダムスキーマ JCross 変換 (Phase 1: actor に委譲)
+    func transpile(
+        _ source: String,
+        language: JCrossCodeTranspiler.CodeLanguage,
+        noiseLevel: Int = 2
+    ) async -> (jcross: String, schemaID: String, schemaInstructions: String) {
+        isTranspiling = true
+        defer { isTranspiling = false }
+
+        // デッドロック修正: nerEngine オブジェクトではなく Bool フラグのみ渡す
+        let useOllama = GatekeeperModeState.shared.useOllamaNER
+        let result = await processingActor.transpile(
+            source,
+            language: language,
+            noiseLevel: noiseLevel,
+            useOllamaNER: useOllama
+        )
+        return result
+    }
+
+    // MARK: - Reverse Transpile (Smart Ollama)
+
+    func reverseTranspile(jcross: String, originalContent: String, schemaID: String) async -> String? {
+        // actor からセッションを復元試行
+        if await processingActor.getSessionData(for: schemaID) == nil, !schemaID.isEmpty {
+            let vault = GatekeeperModeState.shared.vault
+            let vaultIndex   = vault.vaultIndex
+            let vaultRootURL = vault.vaultRootURL
+            await processingActor.tryRestoreSession(
+                schemaID: schemaID,
+                vault: vault,
+                vaultIndex: vaultIndex,
+                vaultRootURL: vaultRootURL
+            )
+        }
+
+        guard let ruleBasedRestored = await processingActor.reverseTranspile(
+            jcross: jcross, originalContent: originalContent, schemaID: schemaID
+        ) else {
+            return Self.ruleBasedFallbackWithoutSchema(jcross)
+        }
+
+        if !GatekeeperModeState.shared.useOllamaNER { return ruleBasedRestored }
+
+        let endpoint = GatekeeperModeState.shared.commanderModel.isEmpty
+            ? "http://127.0.0.1:11434"
+            : (AppState.shared?.ollamaEndpoint ?? "http://127.0.0.1:11434")
+        let endpointFixed = endpoint.replacingOccurrences(of: "localhost", with: "127.0.0.1")
+        let model = GatekeeperModeState.shared.commanderModel
+
+        let systemPrompt = """
+        You are a smart reverse transpiler.
+        You are given the ORIGINAL SOURCE CODE, and a PATCHED SOURCE CODE generated via naive string replacement from an obfuscated IR.
+        The PATCHED SOURCE CODE contains the correct logic changes but may have syntax errors or formatting issues caused by the naive replacement.
+        YOUR TASK: Apply the logical changes to the ORIGINAL SOURCE CODE. Fix syntax errors. 
+        Output ONLY the raw final compilable code. No explanations. Do NOT wrap your response in markdown code blocks like ```swift.
+        """
+        
+        let userPrompt = """
+        --- ORIGINAL SOURCE CODE ---
+        \(originalContent)
+        
+        --- PATCHED SOURCE CODE (MAY HAVE SYNTAX ERRORS) ---
+        \(ruleBasedRestored)
+        """
+        
+        guard let url = URL(string: "\(endpointFixed)/api/chat") else { return ruleBasedRestored }
+        
+        struct Msg: Encodable { let role: String; let content: String }
+        struct Request: Encodable {
+            let model: String; let messages: [Msg]
+            let stream: Bool; let options: Options
+            struct Options: Encodable { let temperature: Double; let num_predict: Int }
+        }
+        struct Response: Decodable {
+            struct MsgD: Decodable { let role: String; let content: String }
+            let message: MsgD
+        }
+        
+        let body = Request(
+            model: model,
+            messages: [
+                Msg(role: "system", content: systemPrompt),
+                Msg(role: "user", content: userPrompt)
+            ],
+            stream: false,
+            options: .init(temperature: 0.1, num_predict: 8192)
+        )
+        
+        guard let data = try? JSONEncoder().encode(body) else { return ruleBasedRestored }
+        
+        var req = URLRequest(url: url)
+        req.httpMethod = "POST"
+        req.httpBody = data
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.timeoutInterval = 120
+        
+        do {
+            let (respData, _) = try await URLSession.shared.data(for: req)
+            let decoded = try JSONDecoder().decode(Response.self, from: respData)
+            var finalCode = decoded.message.content.trimmingCharacters(in: .whitespacesAndNewlines)
+            if finalCode.hasPrefix("```") {
+                let lines = finalCode.components(separatedBy: "\n")
+                if lines.count > 2 {
+                    finalCode = lines.dropFirst().dropLast().joined(separator: "\n")
+                }
+            }
+            return finalCode
+        } catch {
+            print("⚠️ Ollama Smart Reverse Transpile Error: \(error.localizedDescription)")
+            // BitNet フォールバック
+            if let bitnetOutput = await BitNetCommanderEngine.shared.generate(prompt: userPrompt, systemPrompt: systemPrompt) {
+                var finalCode = bitnetOutput.trimmingCharacters(in: .whitespacesAndNewlines)
+                if finalCode.hasPrefix("```") {
+                    let lines = finalCode.components(separatedBy: "\n")
+                    if lines.count > 2 {
+                        finalCode = lines.dropFirst().dropLast().joined(separator: "\n")
+                    }
+                }
+                print("✅ BitNet Smart Reverse Transpile Success")
+                return finalCode
+            }
+            return ruleBasedRestored
+        }
+    }
+
+
+    // MARK: - Session Restore from Vault Disk (actor に委譲)
+
+    private func tryRestoreSessionFromVault(schemaID: String) async {
+        let vault = GatekeeperModeState.shared.vault
+        let vaultIndex   = vault.vaultIndex
+        let vaultRootURL = vault.vaultRootURL
+        await processingActor.tryRestoreSession(
+            schemaID: schemaID,
+            vault: vault,
+            vaultIndex: vaultIndex,
+            vaultRootURL: vaultRootURL
+        )
+    }
+
+    /// スキーマが復元できなかった場合の最終フォールバック。JCrossトークンを除去して返す。
+    nonisolated static func ruleBasedFallbackWithoutSchema(_ jcross: String) -> String {
+        var result = jcross
+        result = result.components(separatedBy: "\n")
+            .filter {
+                !$0.hasPrefix("// POLYMORPHIC_JCROSS") &&
+                !$0.hasPrefix("// schema:") &&
+                !$0.hasPrefix("// ⚠️ One-time") &&
+                !$0.contains("[metadata-stripped]") &&
+                !$0.contains("[decoy-metadata]")
+            }
+            .joined(separator: "\n")
+        if let jcrossRegex = try? NSRegularExpression(
+            pattern: #"_JCROSS_[^\s:]+:[0-9.]+___node_[^\s_]+__"#
+        ) {
+            result = jcrossRegex.stringByReplacingMatches(
+                in: result,
+                range: NSRange(result.startIndex..., in: result),
+                withTemplate: "__UNKNOWN__"
+            )
+        }
+        return result.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    nonisolated static func ruleBasedReverseTranspile(
+        _ jcross: String,
+        session: (schema: JCrossSchema, nodeMap: [String: String], reverseMap: [String: String])
+    ) -> String {
         let schema = session.schema
         let reverseMap = session.reverseMap
 
@@ -373,7 +561,7 @@ final class PolymorphicJCrossTranspiler: ObservableObject {
 
     // MARK: - Conversion Core
 
-    nonisolated private static func convertToJCross(
+    nonisolated static func convertToJCross(
         source: String,
         schema: JCrossSchema,
         nodeMap: [String: String],
@@ -442,7 +630,7 @@ final class PolymorphicJCrossTranspiler: ObservableObject {
 
     // MARK: - Noise Injection
 
-    nonisolated private static func injectNoise(into lines: [String], schema: JCrossSchema) -> [String] {
+    nonisolated static func injectNoise(into lines: [String], schema: JCrossSchema) -> [String] {
         guard schema.noiseLevel > 0, !schema.noiseNodeIDs.isEmpty else { return lines }
 
         var result = lines
@@ -465,7 +653,7 @@ final class PolymorphicJCrossTranspiler: ObservableObject {
 
     // MARK: - Identifier Extraction & Analysis
 
-    nonisolated private static func extractAllIdentifiers(from source: String) -> [String] {
+    nonisolated static func extractAllIdentifiers(from source: String) -> [String] {
         guard let regex = try? NSRegularExpression(pattern: #"\b[a-zA-Z_][a-zA-Z0-9_]{2,}\b"#) else { return [] }
         let ns = source as NSString
         return Array(Set(
@@ -475,7 +663,7 @@ final class PolymorphicJCrossTranspiler: ObservableObject {
         ))
     }
 
-    nonisolated private static func inferPrefix(from symbol: String) -> String {
+    nonisolated static func inferPrefix(from symbol: String) -> String {
         let lower = symbol.lowercased()
         if lower.hasPrefix("get") || lower.hasPrefix("set") || lower.hasPrefix("fetch") ||
            lower.hasSuffix("Handler") || lower.hasSuffix("Manager") { return "F" }

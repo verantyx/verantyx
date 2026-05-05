@@ -15,7 +15,7 @@ import SwiftUI
 
 struct AIModeLayoutView: View {
     @EnvironmentObject var app: AppState
-    @State private var showModelPicker = false
+
 
     var body: some View {
         VStack(spacing: 0) {
@@ -28,7 +28,7 @@ struct AIModeLayoutView: View {
 
             // ── 2-pane: Chat | Artifact (always visible) ──────────────
             ResizableHSplit(
-                minLeft: 340, maxLeft: 900, minRight: 300, initialLeft: 520
+                minLeft: 340, maxLeft: 99999, minRight: 300, initialLeft: 520
             ) {
                 // Left: Full-screen chat
                 fullChatPanel
@@ -87,21 +87,7 @@ struct AIModeLayoutView: View {
 
             Spacer()
 
-            // Model chip
-            Button {
-                showModelPicker.toggle()
-            } label: {
-                HStack(spacing: 5) {
-                    Circle().fill(app.statusColor).frame(width: 6, height: 6)
-                    Text(shortModel)
-                        .font(.system(size: 10, design: .monospaced))
-                        .foregroundStyle(Color(red: 0.75, green: 0.75, blue: 0.88))
-                }
-            }
-            .buttonStyle(.plain)
-            .popover(isPresented: $showModelPicker, arrowEdge: .bottom) {
-                ModelPickerView().environmentObject(app).frame(width: 380)
-            }
+
 
             // Switch to Human mode
             Button {
@@ -127,6 +113,7 @@ struct AIModeLayoutView: View {
                         )
                 )
             }
+            .contentShape(Rectangle())
             .buttonStyle(.plain)
         }
         .padding(.horizontal, 16)
@@ -167,6 +154,7 @@ struct AIModeLayoutView: View {
                                          ? Color(red: 0.3, green: 1.0, blue: 0.5)
                                          : .secondary)
                 }
+                .contentShape(Rectangle())
                 .buttonStyle(.plain)
                 .help(AppLanguage.shared.t("Terminal", "ターミナル"))
             }

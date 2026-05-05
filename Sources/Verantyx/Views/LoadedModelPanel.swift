@@ -214,6 +214,7 @@ struct LoadedModelPanel: View {
             .scaleEffect(isHoveringEject ? 1.04 : 1.0)
             .animation(.easeOut(duration: 0.12), value: isHoveringEject)
         }
+        .contentShape(Rectangle())
         .buttonStyle(.plain)
         .onHover { isHoveringEject = $0 }
         .help(app.t("Unload model from memory (frees GPU/ANE resources)",

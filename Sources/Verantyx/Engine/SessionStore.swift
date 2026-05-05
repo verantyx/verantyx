@@ -103,7 +103,31 @@ final class SessionStore: ObservableObject {
         return dir
     }()
 
-    init() { loadAll() }
+    init() {
+        // ⚠️ loadAll() は起動時にディスクI/Oを実行するためメインスレッドをブロックする。
+        // Task.detached でバックグラウンドに逃がし、完了後に MainActor へ反映する。
+        // ⚠️ [weak self] を Task.detached で直接キャプチャすると ObservableObject の
+        // 型チェッククラッシュ(SIGTERM)を誘発するため、値返しの Task.detached を使用する。
+        let dir = storageDir
+        Task { [weak self] in
+            let decoded = await Task.detached(priority: .utility) { () -> [ChatSession] in
+                guard let files = try? FileManager.default.contentsOfDirectory(
+                    at: dir, includingPropertiesForKeys: [.creationDateKey]
+                ) else { return [] }
+                
+                return files
+                    .filter { $0.pathExtension == "json" }
+                    .compactMap { url -> ChatSession? in
+                        guard let data = try? Data(contentsOf: url) else { return nil }
+                        return try? JSONDecoder().decode(ChatSession.self, from: data)
+                    }
+                    .sorted { $0.updatedAt > $1.updatedAt }
+            }.value
+            
+            self?.sessions = decoded
+            self?.activeSessionId = decoded.first?.id
+        }
+    }
 
     // MARK: - CRUD
 

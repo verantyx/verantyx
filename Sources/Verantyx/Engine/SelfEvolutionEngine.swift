@@ -411,13 +411,12 @@ final class SelfEvolutionEngine: ObservableObject {
                 p.arguments = args
                 p.currentDirectoryURL = directory
                 let pipe = Pipe()
-                let errPipe = Pipe()
                 p.standardOutput = pipe
-                p.standardError  = errPipe
-                try? p.run(); p.waitUntilExit()
+                p.standardError  = pipe   // ⚠️ 同一パイプ — dual-pipe deadlock 防止
+                try? p.run()
                 let out = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
-                let err = String(data: errPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
-                cont.resume(returning: (out + err).trimmingCharacters(in: .whitespacesAndNewlines))
+                p.waitUntilExit()
+                cont.resume(returning: out.trimmingCharacters(in: .whitespacesAndNewlines))
             }
         }
     }

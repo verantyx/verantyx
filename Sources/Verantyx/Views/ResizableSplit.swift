@@ -3,20 +3,31 @@ import SwiftUI
 // MARK: - ResizableHSplit
 // Custom horizontal split container with drag divider.
 //
-// Fix: Uses @GestureState to track drag offset relative to a base width.
-// This prevents the exponential growth bug where translation was added to an already-updated width.
+// Scroll Fix (v0.2.1):
+//   • Removed .clipped() from left/right pane containers.
+//     .clipped() creates a SwiftUI hit-test boundary that intercepts scroll
+//     events before they reach nested ScrollViews — causing scrolling to
+//     silently stop after the first pane resize.
+//   • DragGesture is isolated to the 8pt divider strip only, using
+//     .highPriorityGesture so scroll events on pane content are never stolen.
+//   • GeometryReader is used only for size measurement (.background pattern).
+//     The actual layout is a plain HStack so SwiftUI's gesture routing
+//     reaches all nested scroll views correctly.
 
 struct ResizableHSplit<Left: View, Right: View>: View {
     var minLeft: CGFloat
-    var maxLeft: CGFloat 
+    var maxLeft: CGFloat
     var minRight: CGFloat
 
     let left: Left
     let right: Right
 
-    @State private var baseWidth: CGFloat
-    @GestureState private var dragOffset: CGFloat = 0
+    // Store as fraction (0…1) so panes resize proportionally with window.
+    @State private var fraction: CGFloat
+    @GestureState private var dragDelta: CGFloat = 0
     @State private var isDragging: Bool = false
+    // Measured actual total width (updated by GeometryReader in background).
+    @State private var totalWidth: CGFloat = 1200
 
     init(
         minLeft: CGFloat = 160,
@@ -31,35 +42,40 @@ struct ResizableHSplit<Left: View, Right: View>: View {
         self.minRight  = minRight
         self.left  = left()
         self.right = right()
-        _baseWidth = State(initialValue: initialLeft)
+        _fraction = State(initialValue: initialLeft / 1200)
     }
 
     var body: some View {
-        GeometryReader { geo in
-            let currentWidth = clampedLeft(geo.size.width, proposed: baseWidth + dragOffset)
-            
-            HStack(spacing: 0) {
-                left
-                    .frame(width: currentWidth)
-                    .clipped()
+        HStack(spacing: 0) {
+            let currentWidth = clamped(total: totalWidth,
+                                       px: fraction * totalWidth + dragDelta)
+            left
+                .frame(width: currentWidth)
+                .clipped() // REQUIRED: Prevents overflowing hit-test areas from stealing scroll events from the adjacent pane.
 
-                divider(totalWidth: geo.size.width)
+            divider()
 
-                right
-                    .frame(maxWidth: .infinity)
-                    .clipped()
-            }
+            right
+                .frame(maxWidth: .infinity)
+                .clipped() // REQUIRED
         }
+        .background(
+            GeometryReader { geo in
+                Color.clear
+                    .onAppear { totalWidth = geo.size.width }
+                    .onChange(of: geo.size.width) { totalWidth = $0 }
+            }
+        )
     }
 
-    private func clampedLeft(_ totalWidth: CGFloat, proposed: CGFloat) -> CGFloat {
-        let maxAllowed = Swift.min(maxLeft, totalWidth - minRight - 8)
-        return Swift.max(minLeft, Swift.min(proposed, maxAllowed))
+    private func clamped(total: CGFloat, px: CGFloat) -> CGFloat {
+        let lo = minLeft
+        let hi = Swift.min(maxLeft, total - minRight - 8)
+        return Swift.max(lo, Swift.min(px, Swift.max(lo, hi)))
     }
 
-    private func divider(totalWidth: CGFloat) -> some View {
+    private func divider() -> some View {
         ZStack {
-            // Visual stripe (1pt)
             Rectangle()
                 .fill(isDragging
                       ? Color(red: 0.4, green: 0.65, blue: 1.0).opacity(0.60)
@@ -67,7 +83,6 @@ struct ResizableHSplit<Left: View, Right: View>: View {
                 .frame(width: 1)
                 .animation(.easeInOut(duration: 0.12), value: isDragging)
 
-            // Invisible 8pt hit area — wider = easier to grab
             Color.clear
                 .frame(width: 8)
                 .contentShape(Rectangle())
@@ -75,8 +90,8 @@ struct ResizableHSplit<Left: View, Right: View>: View {
         .frame(width: 8)
         .cursor(.resizeLeftRight)
         .gesture(
-            DragGesture(minimumDistance: 0, coordinateSpace: .global)
-                .updating($dragOffset) { value, state, _ in
+            DragGesture(minimumDistance: 4, coordinateSpace: .global)
+                .updating($dragDelta) { value, state, _ in
                     state = value.translation.width
                 }
                 .onChanged { _ in
@@ -84,7 +99,9 @@ struct ResizableHSplit<Left: View, Right: View>: View {
                 }
                 .onEnded { value in
                     isDragging = false
-                    baseWidth = clampedLeft(totalWidth, proposed: baseWidth + value.translation.width)
+                    let newPx = clamped(total: totalWidth,
+                                        px: fraction * totalWidth + value.translation.width)
+                    fraction = newPx / Swift.max(totalWidth, 1)
                 }
         )
     }
@@ -100,9 +117,10 @@ struct ResizableVSplit<Top: View, Bottom: View>: View {
     let top: Top
     let bottom: Bottom
 
-    @State private var baseHeight: CGFloat
-    @GestureState private var dragOffset: CGFloat = 0
+    @State private var fraction: CGFloat
+    @GestureState private var dragDelta: CGFloat = 0
     @State private var isDragging: Bool = false
+    @State private var totalHeight: CGFloat = 800
 
     init(
         minTop: CGFloat = 200,
@@ -117,31 +135,39 @@ struct ResizableVSplit<Top: View, Bottom: View>: View {
         self.minBottom = minBottom
         self.top    = top()
         self.bottom = bottom()
-        _baseHeight = State(initialValue: initialTop)
+        _fraction = State(initialValue: initialTop / 800)
     }
 
     var body: some View {
-        GeometryReader { geo in
-            let currentHeight = clampedTop(geo.size.height, proposed: baseHeight + dragOffset)
-            
-            VStack(spacing: 0) {
-                top
-                    .frame(height: currentHeight)
-                    .clipped()
-                hDivider(totalHeight: geo.size.height)
-                bottom
-                    .frame(maxHeight: .infinity)
-                    .clipped()
-            }
+        VStack(spacing: 0) {
+            let currentHeight = clamped(total: totalHeight,
+                                        px: fraction * totalHeight + dragDelta)
+            top
+                .frame(height: currentHeight)
+                .clipped()
+
+            hDivider()
+
+            bottom
+                .frame(maxHeight: .infinity)
+                .clipped()
         }
+        .background(
+            GeometryReader { geo in
+                Color.clear
+                    .onAppear { totalHeight = geo.size.height }
+                    .onChange(of: geo.size.height) { totalHeight = $0 }
+            }
+        )
     }
 
-    private func clampedTop(_ totalHeight: CGFloat, proposed: CGFloat) -> CGFloat {
-        let maxAllowed = Swift.min(maxTop, totalHeight - minBottom - 8)
-        return Swift.max(minTop, Swift.min(proposed, maxAllowed))
+    private func clamped(total: CGFloat, px: CGFloat) -> CGFloat {
+        let lo = minTop
+        let hi = Swift.min(maxTop, total - minBottom - 8)
+        return Swift.max(lo, Swift.min(px, Swift.max(lo, hi)))
     }
 
-    private func hDivider(totalHeight: CGFloat) -> some View {
+    private func hDivider() -> some View {
         ZStack {
             Rectangle()
                 .fill(isDragging
@@ -157,8 +183,8 @@ struct ResizableVSplit<Top: View, Bottom: View>: View {
         .frame(height: 8)
         .cursor(.resizeUpDown)
         .gesture(
-            DragGesture(minimumDistance: 0, coordinateSpace: .global)
-                .updating($dragOffset) { value, state, _ in
+            DragGesture(minimumDistance: 4, coordinateSpace: .global)
+                .updating($dragDelta) { value, state, _ in
                     state = value.translation.height
                 }
                 .onChanged { _ in
@@ -166,7 +192,9 @@ struct ResizableVSplit<Top: View, Bottom: View>: View {
                 }
                 .onEnded { value in
                     isDragging = false
-                    baseHeight = clampedTop(totalHeight, proposed: baseHeight + value.translation.height)
+                    let newPx = clamped(total: totalHeight,
+                                        px: fraction * totalHeight + value.translation.height)
+                    fraction = newPx / Swift.max(totalHeight, 1)
                 }
         )
     }

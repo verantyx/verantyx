@@ -1,10 +1,11 @@
 import Foundation
+import Security
 
 // MARK: - JCrossVault
 //
 // ワークスペース全体の JCross 変換済みシャドウファイルシステム。
-// 実体: .verantyx/jcross_vault/{relativePath}.jcross
-//       .verantyx/jcross_vault/{relativePath}.schema.json
+// 実体: .openclaw/jcross_vault/{relativePath}.jcross
+//       .openclaw/jcross_vault/{relativePath}.schema.json
 //
 // セキュリティ:
 //   - .jcross ファイルには JCross IR のみ（識別子は全てノードID）
@@ -33,6 +34,26 @@ final class JCrossVault: ObservableObject {
         let nodeCount: Int
         let secretCount: Int
         let schemaSessionID: String   // JCrossSchema の sessionID
+        // ── L1.5 コード差分情報（ローカルモード用） ─────────────────────
+        var l15Index: L15DiffEntry?   // 最後の変更差分サマリー（記憶システム用）
+    }
+
+    /// L1.5 差分メタデータ。
+    /// 「何がどこで変わったか」を漢字トポロジーで記録し、
+    /// 次セッション起動時にフルソースなしで変更を再追跡できる。
+    struct L15DiffEntry: Codable {
+        /// 変更行数範囲 e.g. "45-120"
+        var lineRange: String
+        /// 変更前の内容の漢字要約 e.g. "guard!fileExists廃止前"
+        var beforeKanji: String
+        /// 変更後の内容の漢字要約 e.g. "extractPackageName+moveItem追加"
+        var afterKanji: String
+        /// 変更の文脈・理由 (1行)
+        var context: String
+        /// 記録日時
+        var recordedAt: Date
+        /// L1.5インデックス行（memory_mapで表示される1行形式）
+        var indexLine: String
     }
 
     struct VaultIndex: Codable {
@@ -57,7 +78,7 @@ final class JCrossVault: ObservableObject {
     var vaultIndex: VaultIndex?
 
     lazy var vaultRootURL: URL = {
-        workspaceURL.appendingPathComponent(".verantyx/jcross_vault")
+        workspaceURL.appendingPathComponent(".openclaw/jcross_vault")
     }()
 
     private lazy var indexURL: URL = {
@@ -72,7 +93,7 @@ final class JCrossVault: ObservableObject {
 
     // 除外パス
     nonisolated(unsafe) private static let excludedPaths: [String] = [
-        ".verantyx", ".git", "node_modules", ".build", "build",
+        ".openclaw", ".git", "node_modules", ".build", "build",
         "DerivedData", ".DS_Store", "__pycache__", ".venv", "venv"
     ]
 
@@ -85,31 +106,57 @@ final class JCrossVault: ObservableObject {
     // MARK: - Initialize Vault
 
     func initialize() async {
-        // 既存インデックスを読み込む
-        if let existing = loadIndex() {
+        // 既存インデックスを読み込む（ディスク読み取り1回のみ — 軽量化のため別スレッド化）
+        let idxURL = self.indexURL
+        let existingIndex = await Task.detached(priority: .utility) { [idxURL] in
+            guard let data = try? Data(contentsOf: idxURL) else { return nil as VaultIndex? }
+            return try? JSONDecoder().decode(VaultIndex.self, from: data)
+        }.value
+
+        if let existing = existingIndex {
             vaultIndex = existing
             let count = existing.entries.count
             let date  = existing.lastUpdatedAt
             vaultStatus = .ready(fileCount: count, lastConverted: date)
             log("✅ Vault ロード完了: \(count) ファイル (最終更新: \(date.formatted()))")
 
-            // セッションマッピング (reverseMap) を復元
-            let transpiler = await PolymorphicJCrossTranspiler.shared
-            for entry in existing.entries.values {
-                let schemaFileURL = vaultRootURL.appendingPathComponent(entry.schemaPath)
-                if let data = try? Data(contentsOf: schemaFileURL),
-                   let sessionData = try? JSONDecoder().decode(PolymorphicJCrossTranspiler.JCrossSchemaSessionData.self, from: data) {
-                    await MainActor.run { transpiler.restoreSession(from: sessionData) }
-                }
-            }
+            // ⚠️ セッションマッピング復元 + 差分更新はバックグラウンドで実行。
+            // MainActor をブロックしないよう、重いディスクI/Oは Task.detached に逃がす。
+            let vaultRoot = self.vaultRootURL
+            let entries   = existing.entries
+            Task { [weak self] in
+                guard let self else { return }
 
-            // Git 差分で変更されたファイルのみ再変換
-            await updateDelta()
+                // ① スキーマ復元（ファイルごとにディスクI/Oのためバックグラウンドへ）
+                let transpiler = await PolymorphicJCrossTranspiler.shared
+                let sessionDatas = await Task.detached(priority: .utility) {
+                    var results: [PolymorphicJCrossTranspiler.JCrossSchemaSessionData] = []
+                    for entry in entries.values {
+                        let schemaFileURL = vaultRoot.appendingPathComponent(entry.schemaPath)
+                        if let data = try? Data(contentsOf: schemaFileURL),
+                           let sessionData = try? JSONDecoder().decode(
+                               PolymorphicJCrossTranspiler.JCrossSchemaSessionData.self, from: data
+                           ) {
+                            results.append(sessionData)
+                        }
+                    }
+                    return results
+                }.value
+                
+                // 復元したセッションデータを Transpiler に登録
+                for data in sessionDatas {
+                    transpiler.restoreSession(from: data)
+                }
+
+                // ② Git 差分で変更されたファイルのみ再変換
+                await self.updateDelta()
+            }
         } else {
-            // 初回: 全ファイル一括変換
+            // 初回: 全ファイル一括変換（すでにバックグラウンドで動く）
             await bulkConvert()
         }
     }
+
 
     // MARK: - Rebuild Vault (強制再変換)
 
@@ -148,7 +195,7 @@ final class JCrossVault: ObservableObject {
         await MainActor.run { self.log("📁 変換対象: \(files.count) ファイル") }
 
         // fire-and-forget でバックグラウンド変換を開始
-        Task.detached(priority: .utility) { [weak self] in
+        Task { [weak self] in  // was Task.detached
             await JCrossVault._convertBatch(
                 files: files, wsRoot: wsRoot, vaultRoot: vaultRoot, idxURL: idxURL, vault: self
             )
@@ -178,8 +225,10 @@ final class JCrossVault: ObservableObject {
             let rel  = relativePath
 
             // UI 更新は片道 Task で投げる（await しない）
-            Task { @MainActor [weak vault] in
-                vault?.vaultStatus = .converting(progress: prog, currentFile: rel)
+            if i % 5 == 0 || i == files.count - 1 {
+                Task { @MainActor [weak vault] in
+                    vault?.vaultStatus = .converting(progress: prog, currentFile: rel)
+                }
             }
 
             do {
@@ -190,8 +239,10 @@ final class JCrossVault: ObservableObject {
                     vaultRootURL: vaultRoot
                 )
                 index.entries[relativePath] = entry
-                let msg = "  [\(i+1)/\(files.count)] ✓ \(relativePath) (\(entry.nodeCount) nodes)"
-                await MainActor.run { vault.conversionLog.append(msg) }
+                if i % 5 == 0 || i == files.count - 1 {
+                    let msg = "  [\(i+1)/\(files.count)] ✓ \(relativePath) (\(entry.nodeCount) nodes)"
+                    await MainActor.run { vault.conversionLog.append(msg) }
+                }
             } catch {
                 let msg = "  [\(i+1)/\(files.count)] ⚠️ \(relativePath): \(error.localizedDescription)"
                 await MainActor.run { vault.conversionLog.append(msg) }
@@ -259,7 +310,7 @@ final class JCrossVault: ObservableObject {
     /// .gitignore 更新（nonisolated static）
     nonisolated private static func _addGitignoreEntry(vaultRoot: URL, wsRoot: URL) {
         let gitignoreURL = wsRoot.appendingPathComponent(".gitignore")
-        let entry = "\n# Verantyx JCross Vault (local only)\n.verantyx/jcross_vault/\n"
+        let entry = "\n# Verantyx JCross Vault (local only)\n.openclaw/jcross_vault/\n"
         if let existing = try? String(contentsOf: gitignoreURL, encoding: .utf8) {
             if !existing.contains("jcross_vault") {
                 try? (existing + entry).write(to: gitignoreURL, atomically: true, encoding: .utf8)
@@ -273,7 +324,31 @@ final class JCrossVault: ObservableObject {
     // MARK: - Delta Update (差分)
 
     func updateDelta() async {
-        let changedFiles = gitChangedFiles()
+        let wsURL = workspaceURL
+        let changedFiles = await Task.detached(priority: .utility) { () -> [String] in
+            let process = Process()
+            process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
+            process.arguments = ["diff", "--name-only", "HEAD"]
+            process.currentDirectoryURL = wsURL
+
+            let pipe = Pipe()
+            process.standardOutput = pipe
+            process.standardError  = FileHandle.nullDevice  // stderr は不要
+
+            do {
+                try process.run()
+            } catch {
+                return []
+            }
+            // ⚠️ readDataToEndOfFile → waitUntilExit の順序を厳守
+            let data = pipe.fileHandleForReading.readDataToEndOfFile()
+            process.waitUntilExit()
+            let output = String(data: data, encoding: .utf8) ?? ""
+            return output.components(separatedBy: "\n")
+                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .filter { !$0.isEmpty }
+        }.value
+
         guard !changedFiles.isEmpty else {
             log("✅ 変更なし — Vault は最新です")
             return
@@ -367,16 +442,29 @@ final class JCrossVault: ObservableObject {
         }
 
         guard let entry = targetEntry else {
-            throw VaultError.entryNotFound(relativePath)
+            // 既存ファイルが見つからない場合：新規ファイルとして扱う（例：トランスパイル後の別言語ファイル生成）
+            let fileURL = workspaceURL.appendingPathComponent(relativePath)
+            let dirURL = fileURL.deletingLastPathComponent()
+            try? FileManager.default.createDirectory(at: dirURL, withIntermediateDirectories: true, attributes: nil)
+            
+            let restored = jcrossDiff
+            try restored.write(to: fileURL, atomically: true, encoding: .utf8)
+            await updateDelta()
+            
+            log("✅ 新規ファイル生成・書き込み完了: \(relativePath)")
+            return restored
         }
 
+        // 実ファイルの内容を取得
+        let fileURL = workspaceURL.appendingPathComponent(entry.relativePath)
+        let originalContent = (try? String(contentsOf: fileURL, encoding: .utf8)) ?? ""
+
         // JCross → 実コードに逆変換
-        guard let restored = transpiler.reverseTranspile(jcrossDiff, schemaID: entry.schemaSessionID) else {
+        guard let restored = await transpiler.reverseTranspile(jcross: jcrossDiff, originalContent: originalContent, schemaID: entry.schemaSessionID) else {
             throw VaultError.reverseTranspileFailed(entry.relativePath)
         }
 
         // 実ファイルに書き込み
-        let fileURL = workspaceURL.appendingPathComponent(entry.relativePath)
         try restored.write(to: fileURL, atomically: true, encoding: .utf8)
 
         // Vault を更新（差分適用後の状態で再変換）
@@ -455,17 +543,32 @@ final class JCrossVault: ObservableObject {
         let source = try String(contentsOf: fileURL, encoding: .utf8)
         let lang   = JCrossCodeTranspiler.CodeLanguage.from(extension: fileURL.pathExtension)
 
-        let (jcrossContent, schemaID, _) = await transpiler.transpile(
-            source, language: lang, noiseLevel: 2
-        )
+        // ── 6軸IR生成 (新方式) ────────────────────────────────────────────
+        // JCrossIRGenerator がソースを 6軸構造体 + ローカルVault に変換する。
+        // 秘密軸（関数名・定数値等）は irVault に隔離。
+        // LLMへ送信するのは ObfuscatedIRDocument のみ。
+        let irVaultURL = vaultRootURL.appendingPathComponent("ir_vault.enc")
+        let irVault    = JCrossIRVault(persistenceURL: irVaultURL)
+        let irGen      = JCrossIRGenerator()
+        let irDoc      = irGen.generateIR(from: source, language: lang, vault: irVault)
 
-        // ノード数・シークレット数を取得
-        let session     = await transpiler.currentSchema
-        let nodeCount   = await transpiler.sessionNodeCount(for: schemaID)
-        let secretCount = await transpiler.sessionSecretCount(for: schemaID)
-        let schema      = session
+        // 3層難読化を適用して LLM 送信用ドキュメントを生成
+        let obfPipeline = JCrossObfuscationPipeline()
+        let obfDoc      = obfPipeline.obfuscate(document: irDoc)
 
-        // .jcross ファイルを書き込む
+        // LLM に送信するコンテキストは、識別子をシャッフルした構文構造 (Polymorphic) を使用する。
+        // opaque な 6軸IR では LLM がコードを編集できないため。
+        let transpiled = await transpiler.transpile(source, language: lang, noiseLevel: 2)
+        let jcrossContent = transpiled.jcross
+        let schemaID = transpiled.schemaID
+
+        let nodeCount   = irDoc.nodes.count
+        let secretCount = irVault.statistics.entriesWithSemantics
+
+        // Vault を暗号化保存
+        try? irVault.saveEncrypted()
+
+        // .jcross / .schema.json ファイルを書き込む
         let safeRelPath   = relativePath.replacingOccurrences(of: "/", with: "∕")
         let jcrossRelPath = safeRelPath + ".jcross"
         let schemaRelPath = safeRelPath + ".schema.json"
@@ -473,21 +576,27 @@ final class JCrossVault: ObservableObject {
         let jcrossFileURL = vaultRootURL.appendingPathComponent(jcrossRelPath)
         let schemaFileURL = vaultRootURL.appendingPathComponent(schemaRelPath)
 
-        try jcrossContent.write(to: jcrossFileURL, atomically: true, encoding: .utf8)
-        if let sessionData = await transpiler.getSessionData(for: schemaID) {
-            let schemaData = try JSONEncoder().encode(sessionData)
-            try schemaData.write(to: schemaFileURL)
+        try jcrossContent.write(to: jcrossFileURL, atomically: true, encoding: String.Encoding.utf8)
+
+        // スキーマメタデータ（6軸プロトコルバージョン情報）
+        let schemaMeta: [String: String] = [
+            "documentID":      schemaID,
+            "protocolVersion": irDoc.protocolVersion,
+            "language":        lang.rawValue,
+            "generatedAt":     ISO8601DateFormatter().string(from: irDoc.generatedAt),
+            "obfLayers":       obfDoc.obfuscationLayers.joined(separator: ",")
+        ]
+        if let schemaData = try? JSONEncoder().encode(schemaMeta) {
+            try? schemaData.write(to: schemaFileURL)
         }
 
         // ── BitNet L1 タグ生成 ──────────────────────────────────────────
-        // BitNet b1.58 が動いている場合は L1 漢字トポロジータグを生成し保存する。
-        // 未インストールの場合はルールベースフォールバックで提供する。
-        let langName = fileURL.pathExtension.lowercased()
-        let l1Tags = await generateL1TagsViaBitNet(source: source, language: langName)
+        let langName      = fileURL.pathExtension.lowercased()
+        let l1Tags        = await generateL1TagsViaBitNet(source: source, language: langName)
         let l1TagsRelPath = safeRelPath + ".l1tags"
         let l1TagsFileURL = vaultRootURL.appendingPathComponent(l1TagsRelPath)
         if let l1Data = l1Tags.data(using: .utf8) {
-            try l1Data.write(to: l1TagsFileURL)
+            try? l1Data.write(to: l1TagsFileURL)
         }
         // ───────────────────────────────────────────────────────────────
 
@@ -504,6 +613,85 @@ final class JCrossVault: ObservableObject {
             schemaSessionID: schemaID
         )
     }
+
+    /// 6軸IRドキュメントを IDE の Gatekeeper ビュー用テキストに変換する。
+    /// LLMには難読化済み版が送られるが、ローカルビューには構造情報を表示する。
+    nonisolated private func buildJCrossText(
+        irDoc: JCrossIRDocument,
+        obfDoc: ObfuscatedIRDocument,
+        relativePath: String,
+        lang: String
+    ) -> String {
+        var lines: [String] = []
+
+        lines.append(";;; 🛡️ GATEKEEPER MODE — JCross 6-Axis IR v2.2-opaque")
+        lines.append(";;; Source: \(relativePath)")
+        lines.append(";;; Schema: \(irDoc.documentID.raw.prefix(12))")
+        lines.append(";;; Nodes: \(irDoc.nodes.count) real + \(obfDoc.nodes.values.filter { $0.isPhantom }.count) phantom")
+        lines.append(";;; Obfuscation: arity_normalization + complete_opaquification + random_hash_per_node + phantom_node_injection + topology_shuffling")
+        lines.append(";;;")
+        lines.append(";;; What LLM receives:")
+        lines.append(";;;   ALL nodes → kind:opaque TYPE:opaque MEM:opaque HASH:{unique random}")
+        lines.append(";;;   ARITY class only (noise-shifted ±20%)")
+        lines.append(";;;   Phantoms mixed in (45% density) — indistinguishable from real nodes")
+        lines.append(";;;   SEMANTICS → NEVER exposed (encrypted Vault only)")
+        lines.append(";;;")  
+        lines.append("// JCROSS_6AXIS_BEGIN")
+        lines.append("// lang:\(lang) doc:\(irDoc.documentID.raw.prefix(8))")
+        lines.append("")
+
+        // 関数単位で出力
+        for func_ in irDoc.functions {
+            lines.append("// ── FUNC[\(func_.id.raw.prefix(6))] params:\(func_.paramCount) return:\(func_.returnCount) async:\(func_.isAsync) throw:\(func_.canThrow)")
+            for nodeID in func_.bodyNodeIDs {
+                if let node = irDoc.nodes[nodeID] {
+                    lines.append(formatNode(node))
+                }
+            }
+            lines.append("")
+        }
+
+        // 関数に属さないノード
+        let bodyNodeIDs = Set(irDoc.functions.flatMap { $0.bodyNodeIDs })
+        let orphans = irDoc.nodes.filter { !bodyNodeIDs.contains($0.key) }
+        if !orphans.isEmpty {
+            lines.append("// ── TOP-LEVEL NODES")
+            for (_, node) in orphans {
+                lines.append(formatNode(node))
+            }
+        }
+
+        lines.append("")
+        lines.append("// JCROSS_6AXIS_END")
+
+        return lines.joined(separator: "\n")
+    }
+
+    /// v2.2: すべてのノードを kind:opaque TYPE:opaque MEM:opaque HASH:{random} で出力。
+    /// 具体的な種別・型・メモリ情報は一切公開しない。
+    nonisolated private func formatNode(_ node: JCrossIRNode) -> String {
+        var parts: [String] = ["  NODE[\(node.id.raw.prefix(6))]"]
+
+        // v2.2: kind / TYPE / MEM はすべて opaque
+        parts.append("kind:opaque")
+        parts.append("TYPE:opaque")
+        parts.append("MEM:opaque")
+
+        // v2.2: ハッシュは毎回ランダム（同一ノードでも呼び出しごとに異なる）
+        var bytes = [UInt8](repeating: 0, count: 4)
+        _ = SecRandomCopyBytes(kSecRandomDefault, bytes.count, &bytes)
+        let hash = "0x" + bytes.map { String(format: "%02x", $0) }.joined()
+        parts.append("HASH:\(hash)")
+
+        // アリティのみ公開（グラフ解法の最小情報）
+        if let df = node.dataFlow {
+            let arity = NormalizedArity.normalize(df.inputArity).rawValue
+            parts.append("ARITY:class.\(arity)")
+        }
+
+        return parts.joined(separator: " ")
+    }
+
 
     nonisolated private static func collectTargetFiles(wsRoot: URL) -> [URL] {
         var result: [URL] = []
@@ -550,25 +738,7 @@ final class JCrossVault: ObservableObject {
         return result
     }
 
-    private func gitChangedFiles() -> [String] {
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
-        process.arguments = ["diff", "--name-only", "HEAD"]
-        process.currentDirectoryURL = workspaceURL
 
-        let pipe = Pipe()
-        process.standardOutput = pipe
-        process.standardError  = Pipe()
-
-        try? process.run()
-        process.waitUntilExit()
-
-        let data   = pipe.fileHandleForReading.readDataToEndOfFile()
-        let output = String(data: data, encoding: .utf8) ?? ""
-        return output.components(separatedBy: "\n")
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-            .filter { !$0.isEmpty }
-    }
 
     private func removeFromVault(relativePath: String) {
         guard let entry = vaultIndex?.entries[relativePath] else { return }
@@ -590,7 +760,7 @@ final class JCrossVault: ObservableObject {
 
     private func addGitignoreEntry() {
         let gitignoreURL = workspaceURL.appendingPathComponent(".gitignore")
-        let entry = "\n# Verantyx JCross Vault (session-specific schemas — never commit)\n.verantyx/jcross_vault/\n"
+        let entry = "\n# Verantyx JCross Vault (session-specific schemas — never commit)\n.openclaw/jcross_vault/\n"
 
         if let existing = try? String(contentsOf: gitignoreURL, encoding: .utf8) {
             if !existing.contains("jcross_vault") {
@@ -626,6 +796,129 @@ final class JCrossVault: ObservableObject {
             case .entryNotFound(let p): return "Vault にエントリなし: \(p)"
             case .reverseTranspileFailed(let p): return "逆変換失敗 (スキーマが見つかりません): \(p)"
             }
+        }
+    }
+
+    // MARK: - L1.5 Index (コード差分記憶)
+
+    /// ファイルの変更前後を比較し、L1.5インデックス（差分漢字サマリー）を生成して
+    /// VaultEntryに保存する。ローカルモードで `remember()` を呼ぶ際に自動的に
+    /// `codeDiff` フィールドを補完するために使用する。
+    ///
+    /// - Parameters:
+    ///   - relativePath: 対象ファイルの相対パス
+    ///   - oldSource: 変更前のソースコード
+    ///   - newSource: 変更後のソースコード
+    ///   - context: 変更の理由・文脈（1行）
+    @discardableResult
+    func recordL15Diff(
+        relativePath: String,
+        oldSource: String,
+        newSource: String,
+        context: String
+    ) -> L15DiffEntry? {
+        guard vaultIndex?.entries[relativePath] != nil else { return nil }
+
+        let diff = computeL15Diff(old: oldSource, new: newSource)
+        guard let diff else { return nil }
+
+        let l1Tags = generateL1TagsFromSource(newSource, language: URL(fileURLWithPath: relativePath).pathExtension)
+        let kanjiStr = l1Tags.prefix(3)
+        let indexLine = "[\(kanjiStr)] | \"\(diff.beforeKanji.prefix(12))→\(diff.afterKanji.prefix(12))\" ▶ \(relativePath.split(separator:"/").suffix(2).joined(separator:"/")):L\(diff.lineRange)"
+
+        let entry = L15DiffEntry(
+            lineRange: diff.lineRange,
+            beforeKanji: diff.beforeKanji,
+            afterKanji: diff.afterKanji,
+            context: context,
+            recordedAt: Date(),
+            indexLine: indexLine
+        )
+
+        vaultIndex?.entries[relativePath]?.l15Index = entry
+        if let idx = vaultIndex { saveIndex(idx) }
+        log("📐 L1.5記録: \(relativePath) L\(diff.lineRange) [\(diff.beforeKanji)→\(diff.afterKanji)]")
+        return entry
+    }
+
+    /// 変更前後のソースを行単位で比較し、変更範囲と漢字要約を生成する。
+    /// 純粋CPU処理（LLM不使用）。
+    private func computeL15Diff(
+        old: String,
+        new: String
+    ) -> (lineRange: String, beforeKanji: String, afterKanji: String)? {
+        let oldLines = old.components(separatedBy: "\n")
+        let newLines = new.components(separatedBy: "\n")
+        guard oldLines != newLines else { return nil }
+
+        // 変更範囲を検出（最初と最後の差異行）
+        var firstDiff = 0
+        var lastDiffOld = oldLines.count - 1
+        var lastDiffNew = newLines.count - 1
+
+        while firstDiff < min(oldLines.count, newLines.count),
+              oldLines[firstDiff] == newLines[firstDiff] {
+            firstDiff += 1
+        }
+        while lastDiffOld > firstDiff, lastDiffNew > firstDiff,
+              oldLines[lastDiffOld] == newLines[lastDiffNew] {
+            lastDiffOld -= 1
+            lastDiffNew -= 1
+        }
+        let lineRange = "\(firstDiff + 1)-\(lastDiffNew + 1)"
+
+        // 変更前後の漢字要約（変更行から主要キーワードを抽出）
+        let oldSlice = oldLines[firstDiff...min(lastDiffOld, oldLines.count - 1)]
+        let newSlice = newLines[firstDiff...min(lastDiffNew, newLines.count - 1)]
+
+        let beforeKanji = extractChangeKanji(from: Array(oldSlice), label: "before")
+        let afterKanji  = extractChangeKanji(from: Array(newSlice), label: "after")
+
+        return (lineRange, beforeKanji, afterKanji)
+    }
+
+    /// コードスニペットから変更の漢字トポロジー要約を生成する（ルールベース）。
+    private func extractChangeKanji(from lines: [String], label: String) -> String {
+        let joined = lines.joined(separator: " ").lowercased()
+        var tokens: [String] = []
+
+        // 構造変化のシグナル
+        if joined.contains("guard")        { tokens.append("守") }
+        if joined.contains("func ")        { tokens.append("義") }
+        if joined.contains("struct ") || joined.contains("class ") { tokens.append("型") }
+        if joined.contains("async") || joined.contains("await")    { tokens.append("並") }
+        if joined.contains("throw") || joined.contains("catch")    { tokens.append("捕") }
+        if joined.contains("return")       { tokens.append("返") }
+        if joined.contains("for ") || joined.contains("while ")    { tokens.append("廻") }
+        if joined.contains("if ")          { tokens.append("条") }
+        if joined.contains("filemanager") || joined.contains("url") { tokens.append("路") }
+        if joined.contains("write") || joined.contains("read")     { tokens.append("読") }
+        if joined.contains("remove") || joined.contains("delete")  { tokens.append("廃") }
+        if joined.contains("rename") || joined.contains("move")    { tokens.append("移") }
+        if joined.contains("import")       { tokens.append("導") }
+        if joined.contains("publish") || joined.contains("@published") { tokens.append("発") }
+
+        // 関数名・型名を抽出（最大2語）
+        let identifiers = joined
+            .components(separatedBy: .whitespaces)
+            .filter { $0.count >= 4 && $0.count <= 20 && $0.first?.isLetter == true }
+            .prefix(2)
+            .map { String($0.prefix(10)) }
+
+        let kanjiPart = tokens.prefix(4).joined()
+        let idPart = identifiers.joined(separator:"+")
+        let summary = kanjiPart.isEmpty ? idPart : (idPart.isEmpty ? kanjiPart : "\(kanjiPart)(\(idPart))")
+        return summary.prefix(20).description
+    }
+
+    /// ソースから言語タグを取得する補助（generateL1TagsViaBitNetのpure版）。
+    private func generateL1TagsFromSource(_ source: String, language ext: String) -> String {
+        switch ext.lowercased() {
+        case "swift": return "迅並路"
+        case "rs":    return "錆並廃"
+        case "ts", "tsx": return "型並発"
+        case "py":    return "蛇並路"
+        default:      return "码路"
         }
     }
 

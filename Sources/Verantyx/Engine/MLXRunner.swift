@@ -240,7 +240,7 @@ actor MLXRunner {
                 let patchedName = modelId.replacingOccurrences(of: "/", with: "--")
                 let markerPath  = MLXRunner.patchedCacheDir
                     .appendingPathComponent(patchedName)
-                    .appendingPathComponent(".verantyx_snapshot")
+                    .appendingPathComponent(".openclaw_snapshot")
                 try? FileManager.default.removeItem(at: markerPath)
 
                 // Stop retrying on non-schema errors (network, OOM, etc.)
@@ -379,7 +379,7 @@ actor MLXRunner {
     //   • Patched plain-file config.json (Hub can't overwrite this)
     //   • Symlinks → all model files (no storage duplication)
     //
-    // A .verantyx_snapshot marker file tracks which source was used;
+    // A .openclaw_snapshot marker file tracks which source was used;
     // if the source changes (model updated), the dir is rebuilt.
 
     private func buildPatchedDirectory(
@@ -394,7 +394,7 @@ actor MLXRunner {
 
         let patchedName  = modelId.replacingOccurrences(of: "/", with: "--")
         let patchedDir   = MLXRunner.patchedCacheDir.appendingPathComponent(patchedName)
-        let markerURL    = patchedDir.appendingPathComponent(".verantyx_snapshot")
+        let markerURL    = patchedDir.appendingPathComponent(".openclaw_snapshot")
 
         // ── Cache hit: already built for this snapshot ─────────────────────
         if let existing = try? String(contentsOf: markerURL, encoding: .utf8),

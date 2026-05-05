@@ -288,7 +288,7 @@ final class VXTimeline {
         for dir in searchDirs {
             let files = (try? fm.contentsOfDirectory(
                 at: dir,
-                includingPropertiesForKeys: [.creationDateKey]
+                includingPropertiesForKeys: nil
             )) ?? []
             let matched = files.filter {
                 $0.pathExtension == "jcross"

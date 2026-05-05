@@ -213,6 +213,7 @@ struct CortexOnboardingSheet: View {
                     .font(.system(size: 11))
                     .foregroundStyle(Color.white.opacity(0.45))
             }
+            .contentShape(Rectangle())
             .buttonStyle(.plain)
             .help(AppLanguage.shared.t("Copy to clipboard", "クリップボードにコピー"))
         }
@@ -260,6 +261,7 @@ struct CortexOnboardingSheet: View {
                                 .fill(Color.white.opacity(0.07))
                         )
                 }
+                .contentShape(Rectangle())
                 .buttonStyle(.plain)
 
                 // GitHub
@@ -290,6 +292,7 @@ struct CortexOnboardingSheet: View {
                             )
                     )
                 }
+                .contentShape(Rectangle())
                 .buttonStyle(.plain)
             }
         }

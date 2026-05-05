@@ -197,7 +197,7 @@ final class ProjectSearchEngine: ObservableObject {
             args += ["-e", query]
             process.arguments = args
             process.standardOutput = pipe
-            process.standardError = Pipe()
+            process.standardError = FileHandle.nullDevice  // ⚠️ stderr は不要 — 未読パイプの deadlock 防止
 
             guard (try? process.run()) != nil else { continuation.finish(); return }
 

@@ -13,14 +13,24 @@ struct HumanPriorityModeView: View {
     @State private var activitySection: ActivityBarView.ActivitySection = .explorer
     @State private var showSettings     = false
     @State private var showMCPQuick     = false
+    @State private var showL25ConversionAlert = false
+    @State private var targetWorkspaceForL25: URL? = nil
 
     // Editor state
     @State private var editorContent: String = ""
     @State private var editorLanguage: String = "swift"
     @State private var hasUnsavedChanges = false
     @State private var saveStatus: SaveStatus = .saved
+    @State private var showPipelineSheet = false
+    @State private var pipelineTask: String = ""
 
     enum SaveStatus { case saved, unsaved, saving }
+    enum CenterDisplayTab: String, CaseIterable {
+        case diff = "Diff"
+        case code = "Code"
+        case artifact = "Artifact"
+    }
+    @State private var activeCenterTab: CenterDisplayTab = .code
 
     var body: some View {
         ZStack {
@@ -120,6 +130,36 @@ struct HumanPriorityModeView: View {
         }
         .onAppear {
             loadFileIntoEditor(url: app.selectedFile)
+            // ProcessMonitor 起動 (CPU 監視開始)
+            ProcessMonitor.shared.start()
+        }
+        // ── ワークスペースが変わったら L2.5 変換の確認ダイアログを出す ──────────────────────
+        .onChange(of: app.workspaceURL) { _, newWS in
+            guard let ws = newWS else { return }
+            targetWorkspaceForL25 = ws
+            showL25ConversionAlert = true
+        }
+        .alert(app.t("L2.5 Semantic Conversion", "L2.5 セマンティック変換"), isPresented: $showL25ConversionAlert) {
+            Button(app.t("Cancel", "キャンセル"), role: .cancel) { }
+            Button(app.t("Start Conversion", "変換を開始する")) {
+                if let ws = targetWorkspaceForL25 {
+                    Task { @MainActor in
+                        await L25IndexEngine.shared.buildProjectMap(workspaceURL: ws)
+                    }
+                }
+            }
+        } message: {
+            Text(app.t("Do you want to start BitNet L2.5 conversion for this workspace? This may take some time.", "このワークスペースの BitNet による L2.5 変換を開始しますか？（規模により時間がかかります）"))
+        }
+        .onChange(of: app.pendingDiff) { _, newDiff in
+            if newDiff != nil {
+                withAnimation { activeCenterTab = .diff }
+            }
+        }
+        .onChange(of: app.currentArtifact?.id) { _, newId in
+            if newId != nil {
+                withAnimation { activeCenterTab = .artifact }
+            }
         }
     }
 
@@ -130,27 +170,46 @@ struct HumanPriorityModeView: View {
             // Tab bar
             editorTabBar
 
+            // L2.5 / BitNet ステータスバー (ゲートキーパーバーと同スタイル)
+            L25StatusBar()
+                .environmentObject(app)
+
             Divider().opacity(0.3)
 
             // Editor body
-            if let url = app.selectedFile {
-                let isJCrossMode = GatekeeperModeState.shared.isEnabled && !app.showGatekeeperRawCode
-                CodeEditorView(
-                    content: $editorContent,
-                    language: editorLanguage,
-                    isEditable: !isJCrossMode,
-                    onEdit: {
-                        if !isJCrossMode {
-                            hasUnsavedChanges = true
-                            saveStatus = .unsaved
+            switch activeCenterTab {
+            case .code:
+                if let url = app.selectedFile {
+                    let isJCrossMode = GatekeeperModeState.shared.isEnabled && !app.showGatekeeperRawCode
+                    CodeEditorView(
+                        content: $editorContent,
+                        language: editorLanguage,
+                        isEditable: !isJCrossMode,
+                        onEdit: {
+                            if !isJCrossMode {
+                                hasUnsavedChanges = true
+                                saveStatus = .unsaved
+                            }
                         }
-                    }
-                )
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-                // Empty state
-                emptyEditorState
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    emptyEditorState
+                }
+            case .diff:
+                SideBySideDiffView()
+                    .environmentObject(app)
+            case .artifact:
+                if let art = app.currentArtifact {
+                    ArtifactWebView(artifact: art)
+                        .id(art.id)
+                } else {
+                    emptyEditorState
+                }
             }
+
+            // CPU Activity Panel (PROCESS LOG より上、常時表示)
+            IsolatedCPUActivityPanel()
 
             // Terminal (collapsible)
             if app.showProcessLog {
@@ -173,7 +232,39 @@ struct HumanPriorityModeView: View {
 
     private var editorTabBar: some View {
         HStack(spacing: 0) {
-            if let url = app.selectedFile {
+            // Tab switcher
+            HStack(spacing: 0) {
+                ForEach(CenterDisplayTab.allCases, id: \.rawValue) { tab in
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.12)) { activeCenterTab = tab }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Text(tab.rawValue)
+                                .font(.system(size: 11, weight: activeCenterTab == tab ? .semibold : .regular))
+                                .foregroundStyle(activeCenterTab == tab ? .white : Color(red: 0.5, green: 0.5, blue: 0.62))
+                            if tab == .diff, let diff = app.pendingDiff, diff.hasChanges {
+                                Circle().fill(Color(red: 1.0, green: 0.65, blue: 0.2)).frame(width: 6, height: 6)
+                            }
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(activeCenterTab == tab ? Color.white.opacity(0.08) : Color.clear)
+                        .overlay(
+                            Rectangle()
+                                .fill(activeCenterTab == tab ? Color(red: 0.4, green: 0.75, blue: 1.0) : Color.clear)
+                                .frame(height: 1.5),
+                            alignment: .bottom
+                        )
+                    }
+                    .contentShape(Rectangle())
+                    .buttonStyle(.plain)
+                }
+            }
+            .background(Color(red: 0.16, green: 0.16, blue: 0.20))
+            .clipShape(RoundedRectangle(cornerRadius: 6))
+            .padding(.leading, 10)
+
+            if let url = app.selectedFile, activeCenterTab == .code {
                 HStack(spacing: 6) {
                     // File icon
                     Image(systemName: fileIcon(for: url))
@@ -235,29 +326,11 @@ struct HumanPriorityModeView: View {
                                 .fill(Color(red: 0.15, green: 0.32, blue: 0.20).opacity(0.8))
                         )
                     }
+                    .contentShape(Rectangle())
                     .buttonStyle(.plain)
                     .keyboardShortcut("s", modifiers: .command)
                     .transition(.scale.combined(with: .opacity))
                 }
-
-                // Ask AI button
-                Button(action: askAIAboutCurrentFile) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "sparkles")
-                            .font(.system(size: 11))
-                        Text("Ask AI")
-                            .font(.system(size: 11, weight: .medium))
-                    }
-                    .foregroundStyle(Color(red: 0.7, green: 0.5, blue: 1.0))
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
-                    .contentShape(Rectangle())
-                    .background(
-                        RoundedRectangle(cornerRadius: 5)
-                            .fill(Color(red: 0.22, green: 0.16, blue: 0.35).opacity(0.8))
-                    )
-                }
-                .buttonStyle(.plain)
             }
             .padding(.horizontal, 10)
             .animation(.easeInOut(duration: 0.15), value: hasUnsavedChanges)
@@ -303,6 +376,7 @@ struct HumanPriorityModeView: View {
                 )
                 .contentShape(Rectangle())
             }
+            .contentShape(Rectangle())
             .buttonStyle(.plain)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -324,6 +398,16 @@ struct HumanPriorityModeView: View {
                     .foregroundStyle(Color(red: 0.80, green: 0.80, blue: 0.92))
 
                 Spacer()
+
+                // ── L2.5 地図生成ボタン ────────────────────────
+                IsolatedL25HeaderButton()
+
+                Divider().frame(height: 14).opacity(0.3)
+
+                // ── ▶ Run Pipeline ボタン ───────────────────────────
+                IsolatedPipelineHeaderButton(showPipelineSheet: $showPipelineSheet)
+
+                Divider().frame(height: 14).opacity(0.3)
 
                 // Mode badge
                 Text("Human Priority")
@@ -356,6 +440,10 @@ struct HumanPriorityModeView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .background(Color(red: 0.10, green: 0.10, blue: 0.14))
+        .sheet(isPresented: $showPipelineSheet) {
+            PipelineLaunchSheet(isPresented: $showPipelineSheet, taskText: $pipelineTask)
+                .environmentObject(app)
+        }
     }
 
     // MARK: - Status Bar
@@ -398,6 +486,9 @@ struct HumanPriorityModeView: View {
 
             Spacer()
 
+            // CPU インジケーター (負荷が高いとき赤で点滅)
+            IsolatedCPUPill()
+
             // Model status (reuse from StatusBarView)
             StatusBarView(terminal: app.terminal)
                 .frame(maxHeight: .infinity)
@@ -406,6 +497,8 @@ struct HumanPriorityModeView: View {
         .frame(height: 24)
         .background(Color(red: 0.09, green: 0.09, blue: 0.12))
     }
+
+
 
     // MARK: - Actions
 
@@ -496,14 +589,6 @@ struct HumanPriorityModeView: View {
         }
     }
 
-    private func askAIAboutCurrentFile() {
-        guard let url = app.selectedFile else { return }
-        let filename = url.lastPathComponent
-        // Pre-fill chat with context about the current file
-        app.addSystemMessage("📄 Now editing: **\(filename)**\n```\(editorLanguage)\n\(editorContent.prefix(2000))\n```")
-        ToastManager.shared.show("File context sent to AI", icon: "sparkles", color: Color(red: 0.7, green: 0.5, blue: 1.0))
-    }
-
     // MARK: - Helpers
 
     private func fileIcon(for url: URL) -> String {
@@ -550,6 +635,328 @@ struct HumanPriorityModeView: View {
         default:             return ext.isEmpty ? "text" : ext
         }
     }
+
+}
+
+// MARK: - L25StatusBar
+// タブバー直下に常時表示される L2.5 / BitNet ステータスバー。
+// ゲートキーパーバーと同スタイル。状態に応じて色・内容が変化する。
+//
+//  ⚫ 未生成   → グレー  「⬡ L2.5 — 未初期化」
+//  🟡 全体変換 → オレンジ「⬡ BitNet 変換中 ██░░░ 45%」(アニメーション)
+//  🔵 差分更新 → シアン  「⬡ 差分更新中 ██░░░ 3/8 files」
+//  🟢 準備完了 → 緑      「⬡ L2.5 準備完了 · 124 files · 3分前」
+
+struct L25StatusBar: View {
+    @EnvironmentObject var app: AppState
+    @ObservedObject private var engine = L25IndexEngine.shared
+    @State private var animPhase: CGFloat = 0
+    @State private var showCancelConfirm = false
+
+    private var barColor: Color {
+        if engine.isStopped {
+            return Color(red: 0.90, green: 0.22, blue: 0.22)  // 赤 (停止済み)
+        }
+        switch engine.indexingMode {
+        case .full:        return Color(red: 1.0, green: 0.65, blue: 0.15)
+        case .incremental: return Color(red: 0.25, green: 0.85, blue: 1.0)
+        case .none:
+            if engine.projectMap != nil { return Color(red: 0.25, green: 0.80, blue: 0.45) }
+            return Color(red: 0.40, green: 0.40, blue: 0.52)
+        }
+    }
+
+    private var bgColor: Color { barColor.opacity(0.10) }
+
+    private var statusText: String {
+        // 停止済み: 最優先で表示
+        if engine.isStopped {
+            let pct  = Int(engine.indexingProgress * 100)
+            let done = engine.projectMap?.fileCount ?? 0
+            return "⏹ 変換停止済み — \(pct)% / \(done) files 保存済・再開可能"
+        }
+        switch engine.indexingMode {
+        case .full:
+            let pct = Int(engine.indexingProgress * 100)
+            let file = engine.currentFile.isEmpty ? "" : " · \(engine.currentFile)"
+            return "⬡ BitNet L2.5 変換中 \(pct)%\(file)"
+        case .incremental:
+            let total = engine.projectMap?.fileCount ?? 0
+            let done  = Int(engine.indexingProgress * Double(max(total, 1)))
+            let file  = engine.currentFile.isEmpty ? "" : " · \(engine.currentFile)"
+            return "⬡ 差分更新中 \(done)/\(total) files\(file)"
+        case .none:
+            if let map = engine.projectMap {
+                let mins = Int(-map.generatedAt.timeIntervalSinceNow / 60)
+                let timeStr = mins < 1 ? "たった今" : "\(mins)分前"
+                return "⬡ L2.5 準備完了 · \(map.fileCount) files · \(timeStr)"
+            }
+            return "⬡ L2.5 — 未初期化 (ワークスペースを開いてください)"
+        }
+    }
+
+    private var isIndexing: Bool { engine.indexingMode != .none }
+
+    var body: some View {
+        ZStack(alignment: .leading) {
+            // ── 背景 ──────────────────────────────────────────────────
+            barColor.opacity(0.06)
+
+            // ── 進捗フィル ────────────────────────────────────────────
+            if isIndexing {
+                GeometryReader { geo in
+                    barColor.opacity(0.18)
+                        .frame(width: geo.size.width * engine.indexingProgress)
+                        .animation(.linear(duration: 0.3), value: engine.indexingProgress)
+                }
+            }
+
+            // ── コンテンツ ────────────────────────────────────────────
+            HStack(spacing: 8) {
+                // アイコン (インデックス中はパルス)
+                ZStack {
+                    Circle()
+                        .fill(barColor)
+                        .frame(width: 6, height: 6)
+                    if isIndexing {
+                        Circle()
+                            .stroke(barColor.opacity(0.4), lineWidth: 1)
+                            .frame(width: 6 + animPhase * 6, height: 6 + animPhase * 6)
+                            .opacity(1 - animPhase)
+                    }
+                }
+
+                // ステータステキスト
+                Text(statusText)
+                    .font(.system(size: 11, weight: .medium, design: .monospaced))
+                    .foregroundStyle(barColor)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+
+                Spacer()
+
+                // 変換中: 進捗バー + 停止ボタン
+                if isIndexing {
+                    ProgressView(value: engine.indexingProgress)
+                        .progressViewStyle(.linear)
+                        .frame(width: 80)
+                        .tint(barColor)
+                        .scaleEffect(x: 1, y: 0.5)
+
+                    // ── 停止ボタン ───────────────────────────────────────
+                    Button {
+                        showCancelConfirm = true
+                    } label: {
+                        HStack(spacing: 3) {
+                            Image(systemName: "stop.fill")
+                                .font(.system(size: 8, weight: .bold))
+                            Text(AppLanguage.shared.t("Stop", "停止"))
+                                .font(.system(size: 10, weight: .bold))
+                        }
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(
+                            Capsule()
+                                .fill(Color(red: 0.80, green: 0.18, blue: 0.18))
+                                .shadow(color: Color.red.opacity(0.5), radius: 4)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .transition(.scale.combined(with: .opacity))
+                    .confirmationDialog(
+                        "L2.5 変換を停止しますか？",
+                        isPresented: $showCancelConfirm,
+                        titleVisibility: .visible
+                    ) {
+                        Button("停止する", role: .destructive) {
+                            L25IndexEngine.shared.cancelIndexing()
+                        }
+                        Button("続ける", role: .cancel) { }
+                    } message: {
+                        Text(AppLanguage.shared.t("Converted files will be kept.\nYou can resume from where you left off.", "変換済みのファイルは保持されます。\n再開ボタンで続きから再開できます。"))
+                    }
+
+                // 停止済みバナー + 再開ボタン
+                } else if engine.isStopped {
+                    HStack(spacing: 4) {
+                        Image(systemName: "exclamationmark.octagon.fill")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundStyle(.white)
+                        Text(AppLanguage.shared.t("Stopped", "停止済み"))
+                            .font(.system(size: 9, weight: .heavy))
+                            .foregroundStyle(.white)
+                    }
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 3)
+                    .background(Capsule().fill(Color(red: 0.85, green: 0.15, blue: 0.15)))
+                    .transition(.scale.combined(with: .opacity))
+
+                    Button { engine.resumeIndexing() } label: {
+                        HStack(spacing: 3) {
+                            Image(systemName: "play.fill")
+                                .font(.system(size: 8, weight: .bold))
+                            Text(AppLanguage.shared.t("Resume", "再開"))
+                                .font(.system(size: 10, weight: .bold))
+                        }
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(
+                            Capsule()
+                                .fill(Color(red: 0.20, green: 0.55, blue: 0.90))
+                                .shadow(color: Color.blue.opacity(0.4), radius: 4)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .transition(.scale.combined(with: .opacity))
+
+                // 完了後の再インデックスボタン
+                } else if engine.hasPausedMap {
+                    Button { engine.resumeIndexing() } label: {
+                        HStack(spacing: 3) {
+                            Image(systemName: "play.fill")
+                                .font(.system(size: 8, weight: .bold))
+                            Text(AppLanguage.shared.t("Resume", "再開"))
+                                .font(.system(size: 10, weight: .bold))
+                        }
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(
+                            Capsule()
+                                .fill(Color(red: 0.20, green: 0.55, blue: 0.90))
+                                .shadow(color: Color.blue.opacity(0.4), radius: 4)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .transition(.scale.combined(with: .opacity))
+                }
+
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 5)
+        }
+        .frame(height: 26)
+        .overlay(
+            Rectangle()
+                .fill(barColor.opacity(0.35))
+                .frame(height: 1),
+            alignment: .bottom
+        )
+        .onAppear {
+            withAnimation(.easeInOut(duration: 1.2).repeatForever(autoreverses: false)) {
+                animPhase = 1
+            }
+        }
+        .animation(.easeInOut(duration: 0.3), value: engine.indexingMode)
+    }
+}
+
+// MARK: - CPUActivityPanel
+// PROCESS LOG の上部に常時表示されるリアルタイム CPU 監視パネル。
+// 何のプロセスが CPU を消費しているかを即座に把握できる。
+
+struct CPUActivityPanel: View {
+    @ObservedObject var monitor: ProcessMonitor
+
+    var body: some View {
+        VStack(spacing: 0) {
+            // ── ヘッダー ──────────────────────────────────────────────
+            HStack(spacing: 6) {
+                // CPU 合計ゲージ
+                let totalCPU = monitor.totalCPU
+                let gaugeColor: Color = totalCPU > 80 ? Color(red: 1.0, green: 0.3, blue: 0.3)
+                                      : totalCPU > 40 ? Color(red: 1.0, green: 0.75, blue: 0.2)
+                                      :                  Color(red: 0.4, green: 0.85, blue: 0.55)
+
+                Image(systemName: "cpu")
+                    .font(.system(size: 9))
+                    .foregroundStyle(gaugeColor)
+
+                Text("CPU ACTIVITY")
+                    .font(.system(size: 9, weight: .bold, design: .monospaced))
+                    .foregroundStyle(Color(red: 0.5, green: 0.5, blue: 0.65))
+
+                Text("·")
+                    .foregroundStyle(Color(red: 0.3, green: 0.3, blue: 0.42))
+
+                Text("TOP \(String(format: "%.0f", totalCPU))%")
+                    .font(.system(size: 9, weight: .semibold, design: .monospaced))
+                    .foregroundStyle(gaugeColor)
+
+                // 高負荷警告
+                if totalCPU > 80 {
+                    Text("⚡ HIGH LOAD")
+                        .font(.system(size: 8, weight: .bold, design: .monospaced))
+                        .foregroundStyle(Color(red: 1.0, green: 0.3, blue: 0.3))
+                }
+
+                Spacer()
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(Color(red: 0.09, green: 0.09, blue: 0.13))
+
+            // ── プロセスリスト ─────────────────────────────────────────
+            VStack(spacing: 2) {
+                ForEach(monitor.topProcesses.prefix(6)) { proc in
+                    CPUProcessRow(info: proc, maxCPU: monitor.topProcesses.first?.cpuPercent ?? 1)
+                }
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 5)
+            .background(Color(red: 0.08, green: 0.08, blue: 0.11))
+        }
+    }
+}
+
+struct CPUProcessRow: View {
+    let info: ProcessMonitor.ProcessInfo
+    let maxCPU: Double
+
+    private var barColor: Color {
+        if info.isVerantyxRelated {
+            return info.cpuPercent > 80
+                ? Color(red: 1.0, green: 0.3, blue: 0.3)
+                : Color(red: 0.3, green: 0.85, blue: 1.0)  // Verantyx 関連 = シアン
+        }
+        return info.cpuPercent > 50
+            ? Color(red: 0.9, green: 0.5, blue: 0.2)
+            : Color(red: 0.4, green: 0.4, blue: 0.55)
+    }
+
+    var body: some View {
+        HStack(spacing: 6) {
+            // プロセス名
+            Text(info.label)
+                .font(.system(size: 9, weight: info.isVerantyxRelated ? .semibold : .regular, design: .monospaced))
+                .foregroundStyle(info.isVerantyxRelated
+                    ? Color(red: 0.85, green: 0.92, blue: 1.0)
+                    : Color(red: 0.55, green: 0.55, blue: 0.68))
+                .frame(width: 180, alignment: .leading)
+                .lineLimit(1)
+
+            // CPU バー
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(Color(red: 0.15, green: 0.15, blue: 0.20))
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(barColor.opacity(0.85))
+                        .frame(width: max(2, geo.size.width * CGFloat(info.cpuPercent / max(maxCPU, 1))))
+                        .animation(.linear(duration: 0.4), value: info.cpuPercent)
+                }
+            }
+            .frame(height: 5)
+
+            // メモリ
+            Text("\(String(format: "%.0f", info.memMB))%")
+                .font(.system(size: 8, design: .monospaced))
+                .foregroundStyle(Color(red: 0.35, green: 0.35, blue: 0.48))
+                .frame(width: 28, alignment: .trailing)
+        }
+    }
 }
 
 // MARK: - CodeEditorView
@@ -582,7 +989,6 @@ struct CodeEditorView: NSViewRepresentable {
         // Padding
         textView.textContainerInset = NSSize(width: 16, height: 10)
 
-        // Line wrap off for code
         textView.textContainer?.widthTracksTextView = false
         textView.textContainer?.containerSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
         textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
@@ -594,6 +1000,12 @@ struct CodeEditorView: NSViewRepresentable {
         scrollView.hasHorizontalScroller = true
         scrollView.autohidesScrollers = true
         scrollView.backgroundColor = NSColor(red: 0.09, green: 0.09, blue: 0.12, alpha: 1.0)
+        
+        // Add line number ruler
+        let rulerView = LineNumberRulerView(textView: textView)
+        scrollView.verticalRulerView = rulerView
+        scrollView.hasVerticalRuler = true
+        scrollView.rulersVisible = true
 
         return scrollView
     }
@@ -628,6 +1040,12 @@ struct CodeEditorView: NSViewRepresentable {
                 parent.onEdit()
             }
             applyHighlighting(to: textView)
+            
+            // Redraw line numbers
+            if let scrollView = textView.enclosingScrollView,
+               let ruler = scrollView.verticalRulerView {
+                ruler.needsDisplay = true
+            }
         }
 
         func applyHighlighting(to textView: NSTextView) {
@@ -661,6 +1079,104 @@ struct CodeEditorView: NSViewRepresentable {
                 currentIndex += tokenLength
             }
             textStorage.endEditing()
+        }
+    }
+}
+
+// MARK: - Isolated Components
+
+struct IsolatedCPUActivityPanel: View {
+    @ObservedObject private var processMonitor = ProcessMonitor.shared
+    var body: some View {
+        if processMonitor.isHighLoad || !processMonitor.topProcesses.isEmpty {
+            Divider().opacity(0.2)
+            CPUActivityPanel(monitor: processMonitor)
+        }
+    }
+}
+
+struct IsolatedCPUPill: View {
+    @ObservedObject private var processMonitor = ProcessMonitor.shared
+    var body: some View {
+        if !processMonitor.topProcesses.isEmpty {
+            let topProc = processMonitor.topProcesses.first
+            let cpu = topProc?.cpuPercent ?? 0
+            let color: Color = cpu > 80 ? Color(red: 1.0, green: 0.35, blue: 0.35)
+                             : cpu > 40 ? Color(red: 1.0, green: 0.75, blue: 0.2)
+                             :             Color(red: 0.4, green: 0.9, blue: 0.55)
+            HStack(spacing: 4) {
+                Circle().fill(color).frame(width: 5, height: 5)
+                Text(topProc?.label ?? "CPU \(Int(cpu))%")
+                    .font(.system(size: 9, weight: .medium, design: .monospaced))
+                    .foregroundStyle(color)
+            }
+            .padding(.horizontal, 6)
+            .padding(.vertical, 2)
+            .background(color.opacity(0.1), in: RoundedRectangle(cornerRadius: 4))
+        }
+    }
+}
+
+struct IsolatedL25HeaderButton: View {
+    @EnvironmentObject var app: AppState
+    @ObservedObject private var l25Engine = L25IndexEngine.shared
+    
+    var body: some View {
+        if l25Engine.isIndexing {
+            HStack(spacing: 4) {
+                ProgressView().scaleEffect(0.6)
+                Text("L2.5 \(Int(l25Engine.indexingProgress * 100))%")
+                    .font(.system(size: 9, design: .monospaced))
+                    .foregroundStyle(Color(red: 0.6, green: 0.85, blue: 1.0))
+            }
+        } else if l25Engine.projectMap != nil {
+            Label("\(l25Engine.projectMap?.fileCount ?? 0) files mapped", systemImage: "map.fill")
+                .font(.system(size: 9, weight: .medium))
+                .foregroundStyle(Color(red: 0.4, green: 0.85, blue: 0.6))
+        } else {
+            Button {
+                if let ws = app.workspaceURL {
+                    Task { await L25IndexEngine.shared.buildProjectMap(workspaceURL: ws) }
+                }
+            } label: {
+                Label("Map", systemImage: "map")
+                    .font(.system(size: 9, weight: .medium))
+                    .foregroundStyle(Color(red: 0.6, green: 0.85, blue: 1.0))
+            }
+            .buttonStyle(.plain)
+        }
+    }
+}
+
+struct IsolatedPipelineHeaderButton: View {
+    @ObservedObject private var pipeline = TranspilationPipeline.shared
+    @Binding var showPipelineSheet: Bool
+    
+    var body: some View {
+        if pipeline.isRunning {
+            HStack(spacing: 4) {
+                ProgressView().scaleEffect(0.6)
+                Text("Pipeline \(pipeline.todos.filter{$0.status == .succeeded}.count)/\(pipeline.todos.count)")
+                    .font(.system(size: 9, design: .monospaced))
+                    .foregroundStyle(Color(red: 1.0, green: 0.75, blue: 0.3))
+            }
+        } else {
+            Button {
+                showPipelineSheet = true
+            } label: {
+                HStack(spacing: 3) {
+                    Image(systemName: "play.fill")
+                        .font(.system(size: 8))
+                    Text("Pipeline")
+                        .font(.system(size: 9, weight: .bold))
+                }
+                .foregroundStyle(.black)
+                .padding(.horizontal, 7).padding(.vertical, 3)
+                .background(
+                    Capsule().fill(Color(red: 0.55, green: 1.0, blue: 0.65))
+                )
+            }
+            .buttonStyle(.plain)
         }
     }
 }

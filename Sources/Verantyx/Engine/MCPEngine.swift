@@ -713,6 +713,20 @@ final class MCPEngine: ObservableObject {
            let decoded = try? JSONDecoder().decode([MCPServerConfig].self, from: data) {
             servers = decoded
         }
+        
+        // ── Auto-inject verantyx-compiler if missing ──
+        if !servers.contains(where: { $0.name == "verantyx-compiler" }) {
+            let config = MCPServerConfig(
+                name: "verantyx-compiler",
+                transport: .stdio,
+                command: "sh -c \"cd /Users/motonishikoudai/verantyx-cli && /usr/local/bin/node --import tsx _verantyx-cortex/src/mcp/server.ts\"",
+                mode: .ai
+            )
+            servers.append(config)
+            saveServers()
+            
+            Task { await self.connect(server: config) }
+        }
     }
 }
 

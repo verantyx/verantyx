@@ -11,10 +11,11 @@ import UniformTypeIdentifiers
 struct MainSplitView: View {
     @EnvironmentObject var app: AppState
     @State private var activitySection: ActivityBarView.ActivitySection = .explorer
-    @State private var showModelPicker  = false
+
     @State private var showSettings     = false
     @State private var showMCPQuick     = false
     @State private var showExtensionStore = false
+    @State private var showModeSelector = false
 
     /// True once any non-system message exists — locks the mode toggle
     private var chatStarted: Bool {
@@ -123,6 +124,22 @@ struct MainSplitView: View {
             // ── VS Code Extension UI Overlay ──────────────────────────────
             ExtensionUIPanelView()
                 .zIndex(105)
+                
+            // ── Mode Selector Overlay ─────────────────────────────────────
+            if showModeSelector {
+                Color.black.opacity(0.55)
+                    .ignoresSafeArea()
+                    .onTapGesture { withAnimation(.easeOut(duration: 0.18)) { showModeSelector = false } }
+                    .transition(.opacity)
+                    .zIndex(110)
+                
+                ModeSelectorOverlay(onDismiss: {
+                    withAnimation(.easeOut(duration: 0.18)) { showModeSelector = false }
+                })
+                .environmentObject(app)
+                .transition(.scale(scale: 0.96).combined(with: .opacity))
+                .zIndex(111)
+            }
         }
         .toolbar { toolbarContent }
         .onAppear { app.connectOllama() }
@@ -265,6 +282,7 @@ struct MainSplitView: View {
                     .overlay(RoundedRectangle(cornerRadius: 8)
                         .stroke(Color(red: 0.9, green: 0.4, blue: 0.4).opacity(0.5), lineWidth: 1))
                 }
+                .contentShape(Rectangle())
                 .buttonStyle(.plain)
                 .keyboardShortcut(.escape)
 
@@ -286,6 +304,7 @@ struct MainSplitView: View {
                     .overlay(RoundedRectangle(cornerRadius: 8)
                         .stroke(Color(red: 0.3, green: 0.92, blue: 0.5).opacity(0.5), lineWidth: 1))
                 }
+                .contentShape(Rectangle())
                 .buttonStyle(.plain)
                 .keyboardShortcut(.return, modifiers: .command)
             }
@@ -370,7 +389,7 @@ struct MainSplitView: View {
 
                 // ② Left + Center + Right
                 ResizableHSplit(
-                    minLeft: 160, maxLeft: 480, minRight: 600, initialLeft: 240
+                    minLeft: 160, maxLeft: 99999, minRight: 600, initialLeft: 240
                 ) {
                     // ── Left pane ─────────────────────────────────────
                     Group {
@@ -385,7 +404,7 @@ struct MainSplitView: View {
                     .frame(maxHeight: .infinity)
                 } right: {
                     ResizableHSplit(
-                        minLeft: 300, maxLeft: 700, minRight: 300, initialLeft: 420
+                        minLeft: 300, maxLeft: 99999, minRight: 300, initialLeft: 420
                     ) {
                         // ── Center: Chat ───────────────────────────────
                         VStack(spacing: 0) {
@@ -483,6 +502,7 @@ struct MainSplitView: View {
                     .overlay(RoundedRectangle(cornerRadius: 6)
                         .stroke(Color(red: 0.9, green: 0.4, blue: 0.4).opacity(0.5), lineWidth: 1))
             }
+            .contentShape(Rectangle())
             .buttonStyle(.plain)
 
             // Quick Approve
@@ -506,6 +526,7 @@ struct MainSplitView: View {
                     .overlay(RoundedRectangle(cornerRadius: 6)
                         .stroke(Color(red: 0.3, green: 0.9, blue: 0.45).opacity(0.5), lineWidth: 1))
             }
+            .contentShape(Rectangle())
             .buttonStyle(.plain)
         }
         .padding(.horizontal, 16)
@@ -523,7 +544,7 @@ struct MainSplitView: View {
     private var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .navigation) {
             Button { app.openWorkspace() } label: {
-                Image(systemName: "folder.badge.plus").help("Open Folder")
+                Image(systemName: "folder.badge.plus").help(app.t("Open Folder", "フォルダーを開く"))
             }
         }
 
@@ -536,19 +557,12 @@ struct MainSplitView: View {
             }
         }
 
-        // ── Operation Mode chip — cycles: HM → HP → AI → GK → HM ──
+        // ── Operation Mode chip ──
         ToolbarItem(placement: .automatic) {
             Button {
                 guard !chatStarted else { return }
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    // sync GatekeeperModeState when entering/leaving Gatekeeper
-                    let next = app.operationMode.next
-                    if next == .gatekeeper {
-                        GatekeeperModeState.shared.isEnabled = true
-                    } else if app.operationMode == .gatekeeper {
-                        GatekeeperModeState.shared.isEnabled = false
-                    }
-                    app.operationMode = next
+                withAnimation(.easeOut(duration: 0.18)) {
+                    showModeSelector = true
                 }
             } label: {
                 HStack(spacing: 4) {
@@ -561,29 +575,16 @@ struct MainSplitView: View {
                                  ? app.operationMode.accentColor.opacity(0.35)
                                  : app.operationMode.accentColor)
             }
+            .contentShape(Rectangle())
             .buttonStyle(.plain)
             .disabled(chatStarted)
             .help(chatStarted
                   ? app.t("Mode cannot be changed after chat has started", "モードはチャット開始後に変更できません")
-                  : app.t("Current: " + app.operationMode.displayName + " (click to cycle)",
-                          "現在: " + app.operationMode.displayName + " (クリックで切替)"))
+                  : app.t("Current: " + app.operationMode.displayName + " (click to change)",
+                          "現在: " + app.operationMode.displayName + " (クリックで変更)"))
         }
 
-        // ── Model picker ────────────────────────────────────────────────────
-        ToolbarItem(placement: .automatic) {
-            Button { showModelPicker.toggle() } label: {
-                HStack(spacing: 4) {
-                    Circle().fill(app.statusColor).frame(width: 7, height: 7)
-                    Text(shortModelLabel)
-                        .font(.system(size: 11, design: .monospaced))
-                }
-                .foregroundStyle(Color(red: 0.75, green: 0.75, blue: 0.88))
-            }
-            .popover(isPresented: $showModelPicker, arrowEdge: .bottom) {
-                ModelPickerView().environmentObject(app).frame(width: 380)
-            }
-            .help("Model Picker")
-        }
+
 
         // ── MCP Quick Panel toggle (⌘⇧M) ───────────────────────────────────
         ToolbarItem(placement: .primaryAction) {
@@ -607,7 +608,7 @@ struct MainSplitView: View {
                 }
             }
             .keyboardShortcut("m", modifiers: [.command, .shift])
-            .help("MCP Quick Panel (⌘⇧M)")
+            .help(app.t("MCP Quick Panel (⌘⇧M)", "MCP クイックパネル (⌘⇧M)"))
         }
 
         // ── Terminal toggle ─────────────────────────────────────────────────
@@ -621,16 +622,16 @@ struct MainSplitView: View {
                                      ? Color(red: 0.3, green: 1.0, blue: 0.5)
                                      : .secondary)
             }
-            .help("Toggle Terminal (⌘⇧L)")
+            .help(app.t("Toggle Terminal (⌘⇧L)", "ターミナル切替 (⌘⇧L)"))
         }
 
         // ── Load VS Code Extension ──────────────────────────────────────────
         ToolbarItem(placement: .primaryAction) {
             Menu {
-                Button("Extension Store (Open VSX)") {
+                Button(app.t("Extension Store (Open VSX)", "拡張機能ストア (Open VSX)")) {
                     withAnimation(.easeOut(duration: 0.18)) { showExtensionStore = true }
                 }
-                Button("Install from VSIX...") {
+                Button(app.t("Install from VSIX...", "VSIXからインストール...")) {
                     let panel = NSOpenPanel()
                     panel.allowedContentTypes = [UTType(filenameExtension: "vsix")].compactMap { $0 }
                     panel.allowsMultipleSelection = false
@@ -639,9 +640,9 @@ struct MainSplitView: View {
                         Task {
                             do {
                                 try await VSIXPackageManager.shared.installExtension(from: url)
-                                app.addSystemMessage("✅ Loaded VS Code Extension: \(url.lastPathComponent)")
+                                app.addSystemMessage(app.t("✅ Loaded VS Code Extension: ", "✅ VS Code 拡張をロード: ") + url.lastPathComponent)
                             } catch {
-                                app.addSystemMessage("❌ Failed to load extension: \(error.localizedDescription)")
+                                app.addSystemMessage(app.t("❌ Failed to load extension: ", "❌ 拡張機能のロードに失敗: ") + error.localizedDescription)
                             }
                         }
                     }
@@ -650,7 +651,7 @@ struct MainSplitView: View {
                 Image(systemName: "shippingbox")
                     .foregroundStyle(.secondary)
             }
-            .help("VS Code Extensions")
+            .help(app.t("VS Code Extensions", "VS Code 拡張機能"))
         }
 
         // ── Settings ────────────────────────────────────────────────────────
@@ -661,7 +662,7 @@ struct MainSplitView: View {
                 Image(systemName: "gearshape")
                     .foregroundStyle(.secondary)
             }
-            .help("Settings")
+            .help(app.t("Settings", "設定"))
         }
     }
 
@@ -674,5 +675,71 @@ struct MainSplitView: View {
         case .error:                 return "error"
         default:                     return "no model"
         }
+    }
+}
+
+// MARK: - ModeSelectorOverlay
+struct ModeSelectorOverlay: View {
+    @EnvironmentObject var app: AppState
+    let onDismiss: () -> Void
+
+    let modes: [OperationMode] = [.human, .humanPriority, .aiPriority, .gatekeeper]
+
+    var body: some View {
+        VStack(spacing: 16) {
+            Text(app.t("Select Operation Mode", "オペレーションモードを選択"))
+                .font(.system(size: 16, weight: .bold))
+                .foregroundStyle(.white)
+            
+            VStack(spacing: 8) {
+                ForEach(modes, id: \.self) { mode in
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            app.switchModeAndEjectOldModel(to: mode)
+                        }
+                        onDismiss()
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: mode.icon)
+                                .font(.system(size: 18))
+                                .foregroundStyle(mode.accentColor)
+                                .frame(width: 24)
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(mode.displayName)
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundStyle(.white)
+                                Text(mode.description)
+                                    .font(.system(size: 11))
+                                    .foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.7))
+                            }
+                            Spacer()
+                            if app.operationMode == mode {
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 14, weight: .bold))
+                                    .foregroundStyle(Color(red: 0.4, green: 0.8, blue: 1.0))
+                            }
+                        }
+                        .padding(12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(app.operationMode == mode ? Color.white.opacity(0.1) : Color.white.opacity(0.04))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(app.operationMode == mode ? mode.accentColor.opacity(0.5) : Color.clear, lineWidth: 1)
+                        )
+                    }
+                    .contentShape(Rectangle())
+                    .buttonStyle(.plain)
+                    .contentShape(Rectangle())
+                }
+            }
+        }
+        .padding(24)
+        .frame(width: 440)
+        .background(Color(red: 0.12, green: 0.12, blue: 0.15))
+        .cornerRadius(12)
+        .shadow(color: .black.opacity(0.5), radius: 20, y: 10)
     }
 }

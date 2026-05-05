@@ -25,6 +25,9 @@ enum AgentTool {
     case evalJS(script: String)
     case openSafari(url: String)
     case openChrome(url: String)
+    case visionBrowse(url: String)                // NEW: vision based navigation
+    case visionSnapshot                           // NEW: manual screenshot update
+    case visionAct(action: String)                // NEW: vision UI interaction
     // ── JCross Memory ────────────────────────────────────────────────────────
     case jcrossQuery(String)                      // NEW: recall from CortexEngine
     case jcrossStore(key: String, value: String)  // NEW: remember to CortexEngine
@@ -73,6 +76,9 @@ struct AgentToolCall: Identifiable {
         case .evalJS(let s):               return "⚡ eval_js: \(s.prefix(40))"
         case .openSafari(let url):         return "🧡 safari: \(url)"
         case .openChrome(let url):         return "🟢 chrome: \(url)"
+        case .visionBrowse(let url):       return "👁️ vision_browse: \(url)"
+        case .visionSnapshot:              return "👁️ vision_snapshot"
+        case .visionAct(let action):       return "👁️ vision_act: \(action)"
         case .jcrossQuery(let q):          return "🧠 jcross_query: \(q)"
         case .jcrossStore(let k, _):       return "🧠 jcross_store: \(k)"
         case .gitCommit(let m):            return "git commit: \(m.prefix(40))"
@@ -137,6 +143,9 @@ struct AgentToolParser {
     [BROWSE: url]             覧: URLをMarkdownで取得
     [EVAL_JS: script]         JS実: ブラウザでJS実行
     [SAFARI: url] [CHROME: url]    ブラウザで開く（Cookie利用可）
+    [VISION_BROWSE: url]      視覧: ブラウザでURLを開きスクショ撮影
+    [VISION_SNAPSHOT]         視撮: 現在の画面を再スクショして更新
+    [VISION_ACT: action]      視動: "click x y" や "type text" を実行しスクショ
     [JCROSS_QUERY: terms]     脳召: 過去記憶を検索
     [JCROSS_STORE: key=val]   脳記: 重要事実を長期記憶に保存
     [GIT_COMMIT: msg]         版保: git add -A && commit
@@ -408,6 +417,12 @@ struct AgentToolParser {
                 tools.append(.openSafari(url: m))
             } else if let m = match(trimmed, pattern: #"^\[CHROME:\s*([^\]]+)\]$"#) {
                 tools.append(.openChrome(url: m))
+            } else if let m = match(trimmed, pattern: #"^\[VISION_BROWSE:\s*([^\]]+)\]$"#) {
+                tools.append(.visionBrowse(url: m))
+            } else if trimmed == "[VISION_SNAPSHOT]" {
+                tools.append(.visionSnapshot)
+            } else if let m = match(trimmed, pattern: #"^\[VISION_ACT:\s*([^\]]+)\]$"#) {
+                tools.append(.visionAct(action: m))
             // ── JCross ──────────────────────────────────────────────────
             } else if let m = match(trimmed, pattern: #"^\[JCROSS_QUERY:\s*([^\]]+)\]$"#) {
                 tools.append(.jcrossQuery(m))
@@ -624,6 +639,17 @@ actor AgentToolExecutor {
 
     private let fileManager = FileManager.default
 
+    private func relativePath(of url: URL, workspace: URL?) -> String {
+        guard let ws = workspace else { return url.lastPathComponent }
+        let urlStr = url.standardizedFileURL.path
+        let wsStr = ws.standardizedFileURL.path
+        if urlStr.hasPrefix(wsStr) {
+            let rel = String(urlStr.dropFirst(wsStr.count))
+            return rel.hasPrefix("/") ? String(rel.dropFirst()) : rel
+        }
+        return url.lastPathComponent
+    }
+
     func execute(_ tool: AgentTool, workspaceURL: URL?) async -> String {
         switch tool {
 
@@ -637,7 +663,21 @@ actor AgentToolExecutor {
             } catch { return "✗ mkdir failed: \(error.localizedDescription)" }
 
         case .writeFile(let path, let content):
+            let isGatekeeper = await MainActor.run { GatekeeperModeState.shared.isEnabled }
             let url = resolve(path, workspace: workspaceURL)
+            
+            if isGatekeeper {
+                let vault = await MainActor.run { GatekeeperModeState.shared.vault }
+                let transpiler = await PolymorphicJCrossTranspiler.shared
+                let rel = relativePath(of: url, workspace: workspaceURL)
+                do {
+                    let _ = try await vault.writeDiff(jcrossDiff: content, relativePath: rel, transpiler: transpiler)
+                    return "✓ [Gatekeeper] Wrote \(rel) (decoded from JCross IR)"
+                } catch {
+                    return "✗ Gatekeeper write failed: \(error.localizedDescription)"
+                }
+            }
+
             try? fileManager.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
             let original = (try? String(contentsOf: url, encoding: .utf8)) ?? ""
             let lineCount = content.components(separatedBy: "\n").count
@@ -708,7 +748,18 @@ actor AgentToolExecutor {
             return "✓ \(msg)"
 
         case .readFile(let path):
+            let isGatekeeper = await MainActor.run { GatekeeperModeState.shared.isEnabled }
             let url = resolve(path, workspace: workspaceURL)
+            
+            if isGatekeeper {
+                let vault = await MainActor.run { GatekeeperModeState.shared.vault }
+                let rel = relativePath(of: url, workspace: workspaceURL)
+                if let readResult = await MainActor.run(body: { vault.read(relativePath: rel) }) {
+                    return "FILE CONTENT (JCross IR: \(rel)):\n\(readResult.jcrossContent.prefix(6000))"
+                }
+                return "✗ ファイルが見つかりません (Vault): \(rel)"
+            }
+
             if let content = try? String(contentsOf: url, encoding: .utf8) {
                 // ── Auto-publish as Artifact for renderable file types ────────────
                 let ext = url.pathExtension.lowercased()
@@ -732,11 +783,52 @@ actor AgentToolExecutor {
             return "✗ ファイルが見つかりません: \(url.path)\nヒント: ワークスペースのフォルダを先に [LIST_DIR:.] で確認してから、正確なパスで [READ:] を呼び出してください。"
 
         case .listDir(let path):
+            let isGatekeeper = await MainActor.run { GatekeeperModeState.shared.isEnabled }
             let url = resolve(path, workspace: workspaceURL)
+            
+            if isGatekeeper {
+                let vault = await MainActor.run { GatekeeperModeState.shared.vault }
+                let rel = relativePath(of: url, workspace: workspaceURL)
+                let items = await MainActor.run { vault.listDirectory(relativePath: rel) }
+                var lines = ["📁 \(path) (JCross Vault):"]
+                for item in items {
+                    let icon = item.isDirectory ? "📁" : "📄"
+                    lines.append("  \(icon) \(item.name)")
+                }
+                if items.isEmpty { lines.append("  (empty or not found)") }
+                return lines.joined(separator: "\n")
+            }
             return buildDirectoryTree(url: url, depth: 0, maxDepth: 3)
 
         case .editLines(let path, let startLine, let endLine, let newContent):
+            let isGatekeeper = await MainActor.run { GatekeeperModeState.shared.isEnabled }
             let url = resolve(path, workspace: workspaceURL)
+            
+            if isGatekeeper {
+                let vault = await MainActor.run { GatekeeperModeState.shared.vault }
+                let transpiler = await PolymorphicJCrossTranspiler.shared
+                let rel = relativePath(of: url, workspace: workspaceURL)
+                
+                guard let readResult = await MainActor.run(body: { vault.read(relativePath: rel) }) else {
+                    return "✗ Could not read file from Vault for editing: \(path)"
+                }
+                let original = readResult.jcrossContent
+                var lines = original.components(separatedBy: "\n")
+                guard startLine >= 1, endLine <= lines.count, startLine <= endLine else {
+                    return "✗ Invalid line range \(startLine)-\(endLine) (file has \(lines.count) lines)"
+                }
+                let replacement = newContent.components(separatedBy: "\n")
+                lines.replaceSubrange((startLine-1)...(endLine-1), with: replacement)
+                let patched = lines.joined(separator: "\n")
+                
+                do {
+                    let _ = try await vault.writeDiff(jcrossDiff: patched, relativePath: rel, transpiler: transpiler)
+                    return "✓ [Gatekeeper] Edited JCross IR lines \(startLine)-\(endLine) and applied to source"
+                } catch {
+                    return "✗ Gatekeeper edit failed: \(error.localizedDescription)"
+                }
+            }
+
             guard let original = try? String(contentsOf: url, encoding: .utf8) else {
                 return "✗ Could not read file for editing: \(path)"
             }
@@ -836,6 +928,41 @@ actor AgentToolExecutor {
         case .openChrome(let url):
             let result = await WebSearchEngine.shared.browse(url: url, preferredSource: .chrome)
             return "[CHROME: \(result.url)]\n\(result.contextSnippet)\n[END CHROME]"
+
+        case .visionBrowse(let url):
+            do {
+                try await SafariVisionBridge.shared.navigate(url)
+                let base64 = try await SafariVisionBridge.shared.takeScreenshot()
+                await CognitiveAnchorEngine.shared.setVisionScreenshot(base64)
+                return "[VISION_BROWSE: \(url)]\nScreenshot taken and injected to context. Use [VISION_ACT] to interact."
+            } catch { return "[VISION ERROR] \(error.localizedDescription)" }
+
+        case .visionSnapshot:
+            do {
+                let base64 = try await SafariVisionBridge.shared.takeScreenshot()
+                await CognitiveAnchorEngine.shared.setVisionScreenshot(base64)
+                return "[VISION_SNAPSHOT]\nScreenshot updated and injected to context."
+            } catch { return "[VISION ERROR] \(error.localizedDescription)" }
+
+        case .visionAct(let action):
+            do {
+                let parts = action.split(separator: " ")
+                guard let cmd = parts.first else { return "[VISION ERROR] Empty action" }
+                
+                if cmd == "click" && parts.count >= 3 {
+                    let x = Double(parts[1]) ?? 0.0
+                    let y = Double(parts[2]) ?? 0.0
+                    try await SafariVisionBridge.shared.hidClick(x: x, y: y)
+                } else if cmd == "type" && parts.count >= 2 {
+                    let text = action.dropFirst(5).trimmingCharacters(in: .whitespaces)
+                    try await SafariVisionBridge.shared.typeText(text)
+                }
+                
+                try await Task.sleep(nanoseconds: 1_000_000_000) // Delay for UI reaction
+                let base64 = try await SafariVisionBridge.shared.takeScreenshot()
+                await CognitiveAnchorEngine.shared.setVisionScreenshot(base64)
+                return "[VISION_ACT: \(action)]\nAction performed. New screenshot injected."
+            } catch { return "[VISION ERROR] \(error.localizedDescription)" }
 
         // ── JCross Memory ─────────────────────────────────────────────────
 

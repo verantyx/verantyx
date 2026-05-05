@@ -6,7 +6,7 @@ import SwiftUI
 // クリックで GatekeeperModeView をシート表示。
 
 struct GatekeeperStatusPill: View {
-    @StateObject private var gk = GatekeeperModeState.shared
+    @ObservedObject private var gk = GatekeeperModeState.shared
     @State private var showDetail = false
     @State private var pulse = false
 

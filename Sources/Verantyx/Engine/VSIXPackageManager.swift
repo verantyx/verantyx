@@ -68,17 +68,27 @@ final class VSIXPackageManager: ObservableObject {
         // This is a placeholder for the actual extraction logic, which would require Process() with `unzip`
         // or a Swift ZIP library.
         
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/unzip")
+        // ⚠️ @MainActor 上で waitUntilExit() を呼ぶとメインスレッドがブロックされるため
+        //    バックグラウンドスレッドで実行する
         let tempDir = fileManager.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         try fileManager.createDirectory(at: tempDir, withIntermediateDirectories: true)
-        
-        process.arguments = ["-q", vsixURL.path, "-d", tempDir.path]
-        try process.run()
-        process.waitUntilExit()
-        
-        guard process.terminationStatus == 0 else {
-            throw NSError(domain: "VSIXPackageManager", code: Int(process.terminationStatus), userInfo: [NSLocalizedDescriptionKey: "Failed to unzip VSIX"])
+        let vsixPath = vsixURL.path
+        let tempPath = tempDir.path
+        let exitCode = await Task.detached(priority: .userInitiated) { () -> Int32 in
+            let process = Process()
+            process.executableURL = URL(fileURLWithPath: "/usr/bin/unzip")
+            process.arguments = ["-q", vsixPath, "-d", tempPath]
+            do {
+                try process.run()
+                process.waitUntilExit()
+                return process.terminationStatus
+            } catch {
+                return -1
+            }
+        }.value
+
+        guard exitCode == 0 else {
+            throw NSError(domain: "VSIXPackageManager", code: Int(exitCode), userInfo: [NSLocalizedDescriptionKey: "Failed to unzip VSIX"])
         }
         
         let extensionContentDir = tempDir.appendingPathComponent("extension")

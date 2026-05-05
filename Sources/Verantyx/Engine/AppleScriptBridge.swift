@@ -38,12 +38,13 @@ actor AppleScriptBridge {
     // MARK: - Open URL
 
     func open(_ url: String, in browser: SystemBrowser = .safari) async throws -> String {
+        let tabSpecifier = (browser == .safari) ? "current tab" : "active tab"
         let script = """
         tell application "\(browser.rawValue)"
             activate
             open location "\(url.escapedForAppleScript)"
             delay 2
-            return URL of current tab of front window
+            return URL of \(tabSpecifier) of front window
         end tell
         """
         return try await runAppleScript(script)
@@ -105,7 +106,7 @@ actor AppleScriptBridge {
 
     // MARK: - Search via browser
 
-    func search(_ query: String, engine: SearchEngine = .duckduckgo, in browser: SystemBrowser = .safari) async throws -> String {
+    func search(_ query: String, engine: SearchEngine = .google, in browser: SystemBrowser = .safari) async throws -> String {
         let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? query
         let searchURL = engine.searchURL(for: encodedQuery)
         _ = try await open(searchURL, in: browser)
@@ -162,19 +163,18 @@ actor AppleScriptBridge {
                 process.arguments = ["-e", script]
 
                 let outPipe = Pipe()
-                let errPipe = Pipe()
                 process.standardOutput = outPipe
-                process.standardError  = errPipe
+                process.standardError  = outPipe   // ⚠️ 同一パイプ — dual-pipe deadlock 防止
 
                 do {
                     try process.run()
-                    process.waitUntilExit()
 
                     let outData = outPipe.fileHandleForReading.readDataToEndOfFile()
-                    let errData = errPipe.fileHandleForReading.readDataToEndOfFile()
+
+                    process.waitUntilExit()
 
                     if process.terminationStatus != 0 {
-                        let errMsg = String(data: errData, encoding: .utf8) ?? "unknown error"
+                        let errMsg = String(data: outData, encoding: .utf8) ?? "unknown error"
                         continuation.resume(throwing: AppleScriptError.scriptFailed(errMsg))
                     } else {
                         let result = (String(data: outData, encoding: .utf8) ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
@@ -191,15 +191,17 @@ actor AppleScriptBridge {
 // MARK: - SearchEngine
 
 enum SearchEngine: String, CaseIterable {
-    case duckduckgo = "DuckDuckGo"
-    case google     = "Google"
-    case bing       = "Bing"
+    case duckduckgo     = "DuckDuckGo"
+    case duckduckgoHTML = "DuckDuckGoHTML"
+    case google         = "Google"
+    case bing           = "Bing"
 
     func searchURL(for query: String) -> String {
         switch self {
-        case .duckduckgo: return "https://duckduckgo.com/?q=\(query)"
-        case .google:     return "https://www.google.com/search?q=\(query)"
-        case .bing:       return "https://www.bing.com/search?q=\(query)"
+        case .duckduckgo:     return "https://duckduckgo.com/?q=\(query)"
+        case .duckduckgoHTML: return "https://html.duckduckgo.com/html/?q=\(query)"
+        case .google:         return "https://www.google.com/search?q=\(query)"
+        case .bing:           return "https://www.bing.com/search?q=\(query)"
         }
     }
 }

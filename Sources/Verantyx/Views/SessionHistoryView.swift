@@ -29,6 +29,7 @@ struct SessionHistoryView: View {
                         .font(.system(size: 14))
                         .foregroundStyle(Color(red: 0.4, green: 0.7, blue: 1.0))
                 }
+                .contentShape(Rectangle())
                 .buttonStyle(.plain)
                 .help(app.t("New session", "新しいセッション"))
             }
@@ -186,6 +187,7 @@ struct SessionRowView: View {
                         Image(systemName: "pencil")
                             .font(.system(size: 10))
                     }
+                    .contentShape(Rectangle())
                     .buttonStyle(.plain)
                     .foregroundStyle(Color(red: 0.5, green: 0.5, blue: 0.65))
                     .help(app.t("Rename", "名前を変更"))
@@ -197,6 +199,7 @@ struct SessionRowView: View {
                         Image(systemName: "trash")
                             .font(.system(size: 10))
                     }
+                    .contentShape(Rectangle())
                     .buttonStyle(.plain)
                     .foregroundStyle(Color(red: 0.7, green: 0.35, blue: 0.35))
                     .help(app.t("Delete", "削除"))
@@ -249,6 +252,7 @@ struct SessionRowView: View {
                         )
                 )
         }
+        .contentShape(Rectangle())
         .buttonStyle(.plain)
         .help(app.t("Memory layer: \(session.activeLayer.description)",
                     "記憶レイヤー: \(session.activeLayer.description)"))
@@ -298,6 +302,7 @@ struct SessionRowView: View {
                                       : Color.white.opacity(0.04))
                         )
                     }
+                    .contentShape(Rectangle())
                     .buttonStyle(.plain)
                     .help(layer.description)
                 }

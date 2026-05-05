@@ -24,10 +24,10 @@ enum CloudProvider: String, CaseIterable, Codable {
 
     var defaultModel: String {
         switch self {
-        case .claude:   return "claude-sonnet-4-5"
-        case .openai:   return "gpt-4o"
-        case .gemini:   return "gemini-2.5-pro-preview-03-25"
-        case .deepseek: return "deepseek-coder"
+        case .claude:   return UserDefaults.standard.string(forKey: "anthropic_model") ?? "claude-sonnet-4-5"
+        case .openai:   return UserDefaults.standard.string(forKey: "openai_model") ?? "gpt-4o"
+        case .gemini:   return UserDefaults.standard.string(forKey: "gemini_model") ?? "gemini-3.1-pro"
+        case .deepseek: return UserDefaults.standard.string(forKey: "deepseek_model") ?? "deepseek-coder"
         }
     }
 
@@ -50,11 +50,22 @@ actor CloudAPIClient {
     // MARK: - Retrieve API key
 
     func apiKey(for provider: CloudProvider) -> String? {
-        UserDefaults.standard.string(forKey: "api_key_\(provider.rawValue)")
+        switch provider {
+        case .claude:   return UserDefaults.standard.string(forKey: "anthropic_api_key")
+        case .openai:   return UserDefaults.standard.string(forKey: "openai_api_key")
+        case .gemini:   return UserDefaults.standard.string(forKey: "gemini_api_key")
+        case .deepseek: return UserDefaults.standard.string(forKey: "api_key_DeepSeek")
+        }
     }
 
     func setAPIKey(_ key: String, for provider: CloudProvider) {
-        UserDefaults.standard.set(key.trimmingCharacters(in: .whitespaces), forKey: "api_key_\(provider.rawValue)")
+        let trimmed = key.trimmingCharacters(in: .whitespaces)
+        switch provider {
+        case .claude:   UserDefaults.standard.set(trimmed, forKey: "anthropic_api_key")
+        case .openai:   UserDefaults.standard.set(trimmed, forKey: "openai_api_key")
+        case .gemini:   UserDefaults.standard.set(trimmed, forKey: "gemini_api_key")
+        case .deepseek: UserDefaults.standard.set(trimmed, forKey: "api_key_DeepSeek")
+        }
     }
 
     func hasAPIKey(for provider: CloudProvider) -> Bool {

@@ -46,7 +46,7 @@ actor AgentLoop {
         activeModel: String,
         cortex: CortexEngine?,
         selfFixMode: Bool = false,
-        isAIPriority: Bool = false,   // ←← drives turn policy
+        operationMode: OperationMode = .human,
         memoryLayer: JCrossLayer = .l2,   // ➤ cross-session injection depth
         isFirstSession: Bool = false,         // ➤ inject self-awareness task on first turn
         chatSessionId: String? = nil,         // ➤ セッション間で維持するVXTimeline ID
@@ -62,8 +62,8 @@ actor AgentLoop {
         let profile = ModelProfileDetector.detect(modelId: activeModel)
         let compressThreshold = profile.tier.compressThreshold
         await onProgress(.aiMessage(
-            "🤖 モデルプロファイル: \(activeModel) → \(profile.tier.displayName) | " +
-            "Max tokens: \(profile.tier.maxTokens) | Temp: \(profile.tier.temperature)"
+            AppLanguage.shared.t("🤖 Model Profile: \(activeModel) → \(profile.tier.displayName) | Max tokens: \(profile.tier.maxTokens) | Temp: \(profile.tier.temperature)", "🤖 モデルプロファイル: \(activeModel) → \(profile.tier.displayName) | Max tokens: \(profile.tier.maxTokens) | Temp: \(profile.tier.temperature)"
+            )
         ))
 
         // ── Safety state ──────────────────────────────────────────────────
@@ -98,7 +98,7 @@ actor AgentLoop {
         if selfFixMode {
             let nodesEmpty = await MainActor.run { SelfEvolutionEngine.shared.sourceNodes.isEmpty }
             if nodesEmpty {
-                await onProgress(.aiMessage("🔍 IDE ソースを自動インデックス中…"))
+                await onProgress(.aiMessage(AppLanguage.shared.t("🔍 Auto-indexing IDE source...", "🔍 IDE ソースを自動インデックス中…")))
                 await SelfEvolutionEngine.shared.indexSourceTree()
             }
 
@@ -155,6 +155,8 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
         // written by compressConversation() are immediately visible on the next turn.
         // See archiveSection rebuild inside the while loop below.
 
+        let isAIPriority = (operationMode == .aiPriority) || (profile.tier == .nano || profile.tier == .small)
+        
         // ── Mode-specific loop rules (injected into system prompt) ────────
         let loopRules: String
         if isAIPriority {
@@ -170,10 +172,19 @@ OP.AXIOM("user_reports_may_be_false")
 SYS.ENFORCE("logical_verification_before_acceptance")
 - CONFUSION DETECTOR PROTOCOL: ユーザーからのバグ報告を鵜呑みにせず、本当にそのバグが起き得るか自身のコードの論理パスを検証すること。If your code is logically correct and the reported bug is impossible, confidently state that the bug cannot occur. Do not hallucinate failures just to agree with the user.
 """
+        } else if operationMode == .human {
+            loopRules = """
+
+## LOOP POLICY — Human Mode (Stealth Browser Mode)
+- In this mode, you act as the user's personal stealth agent.
+- If the user asks you to search the web or look something up (e.g., "Claudeについて教えて"), you MUST use the SEARCH_GATE type="web" to search.
+- You have NO turn limit. Keep working until [DONE].
+- If you have called tools 5 times in a row without resolving the issue, emit a Yield status report.
+"""
         } else {
             loopRules = """
 
-## LOOP POLICY — Human Mode (Unlimited + Yield)
+## LOOP POLICY — Standard Mode (Unlimited + Yield)
 - You have NO turn limit. Keep working until [DONE].
 - However, if you have called tools 5 times in a row without resolving the issue,
   you MUST emit a Yield: stop tool calls and write a brief status report to the user
@@ -338,7 +349,7 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                     instruction: instruction
                 )
                 totalConversationChars = conversation.reduce(0) { $0 + $1.content.count }
-                await onProgress(.aiMessage("🧠 [Memory] 会話履歴を圧縮してコンテキストをオフロードしました"))
+                await onProgress(.aiMessage(AppLanguage.shared.t("🧠 [Memory] Compressed conversation history and offloaded context", "🧠 [Memory] 会話履歴を圧縮してコンテキストをオフロードしました")))
 
                 // ── 圧縮直後: CONV_*.jcross が front/ に書かれた →即座に再注入 ──
                 // 双子ストア切り替え: nano tier は nano/、それ以外は full/ を参照
@@ -400,7 +411,7 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                     let recapText = "[前セッションの記録]\n" + priorTurns.joined(separator: "\n---\n") + "\n[/前セッションの記録]"
                     conversation.insert((role: "user",      content: recapText),                      at: 1)
                     conversation.insert((role: "assistant", content: "前セッションの記録を確認しました。"), at: 2)
-                    await onProgress(.aiMessage("🕐 [VX-Loop] 前セッション記憶を復元 (session: \(vxSessionId), \(priorTurns.count)ターン)"))
+                    await onProgress(.aiMessage(AppLanguage.shared.t("🕐 [VX-Loop] Restored previous session memory (session: \(vxSessionId), \(priorTurns.count) turns)", "🕐 [VX-Loop] 前セッション記憶を復元 (session: \(vxSessionId), \(priorTurns.count)ターン)")))
                 }
                 // SearchGate 前回結果を system prompt に注入（毎ターン、既存タグを置換）
                 // これにより SearchGate web 結果がツールループ中の turn 2+ にも届く
@@ -465,7 +476,7 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                 if !searchResult.isEmpty {
                     let hitLine = searchResult.components(separatedBy: "\n")
                         .first(where: { $0.contains("hit") }) ?? ""
-                    await onProgress(.aiMessage("🔍 [MemSearch] \(hitLine)"))
+                    await onProgress(.aiMessage("<think>\n🔍 [MemSearch] \(hitLine)\n</think>"))
                 }
             }
 
@@ -546,7 +557,7 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                     )
 
                     let summary = await IRVerificationEngine.shared.debugSummary(verifyResults)
-                    await onProgress(.aiMessage("🔬 [IR検証] \(summary)"))
+                    await onProgress(.aiMessage(AppLanguage.shared.t("🔬 [IR Verify] \(summary)", "🔬 [IR検証] \(summary)")))
 
                     if await IRVerificationEngine.shared.allVerified(verifyResults) {
                         // ✅ 全照合成功 → [出:X] を最終回答として採用、IR ブロックを除去
@@ -561,7 +572,7 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                         let failedClaims = await IRVerificationEngine.shared.failedClaims(verifyResults)
                         let recoveryQuery = failedClaims.joined(separator: " ")
                         await onProgress(.aiMessage(
-                            "🔄 [IR復元] 照合失敗: \(failedClaims.joined(separator: ", ")) → 記憶補完"
+                            AppLanguage.shared.t("🔄 [IR Restore] Verification failed: \(failedClaims.joined(separator: ", ")) → Memory supplementation", "🔄 [IR復元] 照合失敗: \(failedClaims.joined(separator: ", ")) → 記憶補完")
                         ))
 
                         let recoveryMemory = SessionMemoryArchiver.shared.semanticSearch(
@@ -613,31 +624,27 @@ SYS.ENFORCE("logical_verification_before_acceptance")
             if vxLoopEnabled && !didConfusionRetry && !irWasVerified && ConfusionDetector.isConfused(rawResponse) {
                 didConfusionRetry = true
                 let matched = ConfusionDetector.matchedPatterns(in: rawResponse)
-                // 混乱した応答バブルを「再考中...」で置換（aiMessage は streamingMsgId を上書きしてリセット）
-                await onProgress(.aiMessage("🔄 [記憶補完] \(matched.first ?? "context") を検知。文脈を確認します..."))
-                let confusionQuery = ConfusionDetector.buildSearchQuery(
-                    userInput: instruction,
-                    confusedResponse: rawResponse
-                )
-                let confusionMemory = SessionMemoryArchiver.shared.semanticSearch(
-                    query: confusionQuery,
-                    topK: 3,
-                    layer: memoryLayer,
-                    budget: 500
-                )
-                if !confusionMemory.isEmpty, var sysMsg = conversation.first, sysMsg.role == "system" {
-                    sysMsg.content += "\n\n[CONFUSION RECOVERY — 追加文脈]\n\(confusionMemory)\n[/CONFUSION RECOVERY]"
-                    conversation[0] = sysMsg
-                }
-                // 再実行: このストリームが最終的なユーザー表示になる
+                await onProgress(.aiMessage(AppLanguage.shared.t("🔄 [Autonomous] Detected '\(matched.first ?? "context")'. Instructing information search...", "🔄 [自律思考] 「\(matched.first ?? "context")」を検知。情報探索を指示します...")))
+                
+                var pushConversation = conversation
+                pushConversation.append((role: "assistant", content: rawResponse))
+                let pushPrompt = """
+                あなたは「情報がない」「わからない」と回答しましたが、あなたは自律エージェントです。諦めないでください。
+                わからない場合は [SEARCH_GATE: {"type": "web", "query": "検索ワード"}] を使ってWebを検索するか、MCPツールやその他の利用可能なツールを使用して外部から情報を取得し、ユーザーに回答を提供してください。
+                今すぐツールを使用して情報を探索してください。
+                """
+                pushConversation.append((role: "user", content: pushPrompt))
+                
+                // 再実行: ツールを使用するよう促す
                 if let retryResponse = await callModel(
-                    conversation: conversation,
+                    conversation: pushConversation,
                     modelStatus: modelStatus,
                     activeModel: activeModel,
                     profile: profile,
                     onProgress: onProgress
                 ) {
                     rawResponse = retryResponse
+                    conversation = pushConversation
                 }
             }
 
@@ -650,7 +657,7 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                 }
                 if recentResponseHashes.count == circuitBreakerWindow
                     && Set(recentResponseHashes).count == 1 {
-                    let msg = "⚡ [Circuit Breaker] AIが同じ出力を\(circuitBreakerWindow)回繰り返しました。無限ループを検知して停止します。"
+                    let msg = AppLanguage.shared.t("⚡ [Circuit Breaker] AI repeated the same output \(circuitBreakerWindow) times. Detected infinite loop and stopping.", "⚡ [Circuit Breaker] AIが同じ出力を\(circuitBreakerWindow)回繰り返しました。無限ループを検知して停止します。")
                     await onProgress(.error(msg))
                     await cortex?.remember(
                         key: "circuit_break_\(turn)",
@@ -677,14 +684,63 @@ SYS.ENFORCE("logical_verification_before_acceptance")
 
                 if gateDecision.needsSearch {
                     let searchLabel = gateDecision.searchType == .web
-                        ? "🌐 [VX-Loop] Web検索 → \"\(String(gateDecision.query.prefix(40)))\""
-                        : "🔎 [VX-Loop] SearchGate: 記憶検索 → \"\(String(gateDecision.query.prefix(40)))\""
+                        ? "<think>\n🌐 [VX-Loop] " + AppLanguage.shared.t("Web Search", "Web検索") + " → \"\(String(gateDecision.query.prefix(40)))\"\n</think>"
+                        : "<think>\n🔎 [VX-Loop] SearchGate: " + AppLanguage.shared.t("Memory Search", "記憶検索") + " → \"\(String(gateDecision.query.prefix(40)))\"\n</think>"
                     await onProgress(.aiMessage(searchLabel))
+                    var entropyPoints: [[Double]]? = nil
+                    if gateDecision.searchType == .web {
+                        var cooldownLeft = await MainActor.run { () -> TimeInterval in
+                            guard let cooldown = AppState.shared?.searchCooldownUntil else { return 0 }
+                            return max(0, cooldown.timeIntervalSinceNow)
+                        }
+                        while cooldownLeft > 0 {
+                            try? await Task.sleep(nanoseconds: 5_000_000_000)
+                            cooldownLeft = await MainActor.run {
+                                guard let cooldown = AppState.shared?.searchCooldownUntil else { return 0 }
+                                return max(0, cooldown.timeIntervalSinceNow)
+                            }
+                        }
+                        
+                        let isEntropyStale = await MainActor.run { () -> Bool in
+                            guard let ts = AppState.shared?.lastEntropyTimestamp else { return true }
+                            let stale = Date().timeIntervalSince(ts) > 300 // 5 minutes TTL
+                            if stale {
+                                print("Telemetry: Biometric entropy stale in SearchGate. Re-puzzling triggered.")
+                            }
+                            return stale
+                        }
+                        
+                        if isEntropyStale {
+                            await MainActor.run { AppState.shared?.requiresHumanPuzzle = true }
+                            
+                            var waitingForPuzzle = await MainActor.run { AppState.shared?.requiresHumanPuzzle == true }
+                            while waitingForPuzzle {
+                                try? await Task.sleep(nanoseconds: 200_000_000)
+                                waitingForPuzzle = await MainActor.run { AppState.shared?.requiresHumanPuzzle == true }
+                            }
+                        }
+                        
+                        let cgPoints = await MainActor.run { AppState.shared?.lastEntropy }
+                        await MainActor.run { AppState.shared?.lastEntropy = nil } // Consume and clear
+                        
+                        if let points = cgPoints {
+                            let mapped = points.map { [Double($0.x), Double($0.y)] }
+                            if mapped.count > 100 {
+                                let step = max(1, mapped.count / 100)
+                                entropyPoints = stride(from: 0, to: mapped.count, by: step).prefix(100).map { mapped[$0] }
+                            } else {
+                                entropyPoints = mapped
+                            }
+                        }
+                    }
+                    
                     let sgResult = await SearchGate.shared.executeSearch(
                         decision: gateDecision,
                         sessionId: vxSessionId,
                         turnNumber: turn,
-                        tier: profile.tier
+                        tier: profile.tier,
+                        preferredSource: .verantyxBrowser,
+                        entropy: entropyPoints
                     )
                     vxLastSearchResult = sgResult
                 } else {
@@ -758,6 +814,13 @@ SYS.ENFORCE("logical_verification_before_acceptance")
 
             // If no tools → conversational answer → done
             if tools.isEmpty {
+                // VX-Loop: If SearchGate executed successfully, inject the result and continue the loop
+                if vxLoopEnabled, !vxLastSearchResult.isEmpty {
+                    conversation.append((role: "assistant", content: vxCleanResponse))
+                    conversation.append((role: "user", content: "検索結果が取得されました。この情報を基に、先ほどの回答を修正・補足して最終的な答えを出力してください：\n\n\(vxLastSearchResult)"))
+                    continue
+                }
+                
                 consecutiveToolOnlyTurns = 0
                 // Pass cleanText for the .done handler's duplicate-guard check
                 await onProgress(.done(message: cleanText, workspace: currentWorkspace))
@@ -790,30 +853,40 @@ SYS.ENFORCE("logical_verification_before_acceptance")
 
                     if consecutiveBlockedCalls >= 3 {
                         // Hard-stop: model is definitively stuck
-                        await onProgress(.aiMessage("""
-                        ⚠️ **IDE Fix モード: ループを検知して停止しました**
-
-                        禁止ツールを\(consecutiveBlockedCalls)回連続で呼び出したため安全に停止しました。
-                        [READ: Sources/…/File.swift] でファイルを読み、[APPLY_PATCH] でパッチを当ててください。
-                        """))
-                        await onProgress(.done(message: "IDE Fix sandbox ループ防止", workspace: currentWorkspace))
+                        let msg = AppLanguage.shared.t("⚠️ **IDE Fix Mode: Stopped due to loop detection**\n\nSafely stopped after calling forbidden tools \(consecutiveBlockedCalls) times in a row.\nPlease read the file with [READ: Sources/…/File.swift] and apply patches with [APPLY_PATCH].", "⚠️ **IDE Fix モード: ループを検知して停止しました**\n\n禁止ツールを\(consecutiveBlockedCalls)回連続で呼び出したため安全に停止しました。\n[READ: Sources/…/File.swift] でファイルを読み、[APPLY_PATCH] でパッチを当ててください。"
+                        )
+                        await onProgress(.aiMessage(msg))
+                        await onProgress(.done(message: AppLanguage.shared.t("IDE Fix sandbox loop prevention", "IDE Fix sandbox ループ防止"), workspace: currentWorkspace))
                         return
                     }
                     // Inject correction DIRECTLY into conversation so the model
                     // sees it as context in the very next turn — not just a tool result.
-                    let correction = """
-                    [IDE Fix Sandbox] 禁止ツールを呼び出しました (通算 \(consecutiveBlockedCalls)回): \(call.displayLabel)
+                    let correction = AppLanguage.shared.t("""
+                        [IDE Fix Sandbox] Called a forbidden tool (total \(consecutiveBlockedCalls) times): \(call.displayLabel)
 
-                    IDE Fix モードで許可されているツール:
-                      [READ: Sources/.../File.swift]       ← ファイル内容を読む
-                      [GIT_COMMIT: msg]                    ← 変更前にバックアップ
-                      [APPLY_PATCH: Sources/.../File.swift] ← 修正を適用
-                      [BUILD_IDE]                          ← ビルド検証
-                      [DONE: msg]                          ← 完了
+                        Allowed tools in IDE Fix Mode:
+                          [READ: Sources/.../File.swift]       <- Read file content
+                          [GIT_COMMIT: msg]                    <- Backup before changes
+                          [APPLY_PATCH: Sources/.../File.swift] <- Apply fixes
+                          [BUILD_IDE]                          <- Verify build
+                          [DONE: msg]                          <- Complete
 
-                    [LIST_DIR], [RUN], [SEARCH], [BROWSE], [WORKSPACE] は使用不可です。
-                    今すぐ [READ: 対象ファイルパス] で始めてください。
-                    """
+                        [LIST_DIR], [RUN], [SEARCH], [BROWSE], [WORKSPACE] are NOT allowed.
+                        Please start with [READ: Target File Path] right now.
+                        """, """
+                        [IDE Fix Sandbox] 禁止ツールを呼び出しました (通算 \(consecutiveBlockedCalls)回): \(call.displayLabel)
+
+                        IDE Fix モードで許可されているツール:
+                          [READ: Sources/.../File.swift]       ← ファイル内容を読む
+                          [GIT_COMMIT: msg]                    ← 変更前にバックアップ
+                          [APPLY_PATCH: Sources/.../File.swift] ← 修正を適用
+                          [BUILD_IDE]                          ← ビルド検証
+                          [DONE: msg]                          ← 完了
+
+                        [LIST_DIR], [RUN], [SEARCH], [BROWSE], [WORKSPACE] は使用不可です。
+                        今すぐ [READ: 対象ファイルパス] で始めてください。
+                        """
+                    )
 
                     conversation.append((role: "assistant", content: rawResponse))
                     conversation.append((role: "user", content: correction))
@@ -886,12 +959,55 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                         },
                         executeSearch: { newQuery async -> String in
                             // 新クエリで検索を再実行— SEARCH_MULTI を優先使用
+                            var cooldownLeft = await MainActor.run { () -> TimeInterval in
+                                guard let cooldown = AppState.shared?.searchCooldownUntil else { return 0 }
+                                return max(0, cooldown.timeIntervalSinceNow)
+                            }
+                            while cooldownLeft > 0 {
+                                try? await Task.sleep(nanoseconds: 5_000_000_000)
+                                cooldownLeft = await MainActor.run {
+                                    guard let cooldown = AppState.shared?.searchCooldownUntil else { return 0 }
+                                    return max(0, cooldown.timeIntervalSinceNow)
+                                }
+                            }
+                            
+                            let isEntropyStale = await MainActor.run { () -> Bool in
+                                guard let ts = AppState.shared?.lastEntropyTimestamp else { return true }
+                                let stale = Date().timeIntervalSince(ts) > 300
+                                if stale {
+                                    print("Telemetry: Biometric entropy stale in ReAct Loop. Re-puzzling triggered.")
+                                }
+                                return stale
+                            }
+                            if isEntropyStale {
+                                await MainActor.run { AppState.shared?.requiresHumanPuzzle = true }
+                                var waitingForPuzzle = await MainActor.run { AppState.shared?.requiresHumanPuzzle == true }
+                                while waitingForPuzzle {
+                                    try? await Task.sleep(nanoseconds: 200_000_000)
+                                    waitingForPuzzle = await MainActor.run { AppState.shared?.requiresHumanPuzzle == true }
+                                }
+                            }
+                            var entropyPoints: [[Double]]? = nil
+                            let cgPoints = await MainActor.run { AppState.shared?.lastEntropy }
+                            await MainActor.run { AppState.shared?.lastEntropy = nil } // Consume and clear
+                            
+                            if let points = cgPoints {
+                                let mapped = points.map { [Double($0.x), Double($0.y)] }
+                                if mapped.count > 100 {
+                                    let step = max(1, mapped.count / 100)
+                                    entropyPoints = stride(from: 0, to: mapped.count, by: step).prefix(100).map { mapped[$0] }
+                                } else {
+                                    entropyPoints = mapped
+                                }
+                            }
+
                             let searchResult = await WebSearchEngine.shared.search(
                                 query: newQuery,
-                                engine: .google
+                                engine: .google,
+                                entropy: entropyPoints
                             )
                             if searchResult.isFailure {
-                                return "❌ 再検索失敗: \(newQuery) [理由: \(searchResult.failureReason)]"
+                                return AppLanguage.shared.t("❌ Retry Search Failed: \(newQuery) [Reason: \(searchResult.failureReason)]", "❌ 再検索失敗: \(newQuery) [理由: \(searchResult.failureReason)]")
                             }
                             return "[SEARCH RESULTS for: \(newQuery)]\n" +
                                    "Source: \(searchResult.url)\n" +
@@ -908,17 +1024,17 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                         // 成功: 元の result をリトライ結果で上書き
                         result = retryResult
                         reactContext.retriesThisTurn += 1
-                        await onProgress(.aiMessage("✅ [ReAct] 再検索成功 (試行\(reactContext.retriesThisTurn))"))
+                        await onProgress(.aiMessage(AppLanguage.shared.t("✅ [ReAct] Retry Search Succeeded (Attempt \(reactContext.retriesThisTurn))", "✅ [ReAct] 再検索成功 (試行\(reactContext.retriesThisTurn))")))
 
                     case .retry(let newQuery, let reason):
                         // 通常は発生しない（run()内部でループしているため）
-                        result += "\n\n⚠️ [ReAct] 再試行中: \(reason) → 新クエリ: \(newQuery)"
+                        result += "\n\n" + AppLanguage.shared.t("⚠️ [ReAct] Retrying: \(reason) → New Query: \(newQuery)", "⚠️ [ReAct] 再試行中: \(reason) → 新クエリ: \(newQuery)")
 
                     case .exhausted(let report):
                         // 上限超過: フェイルセーフ報告を result に挿入
                         result = report
                         reactContext.retriesThisTurn = ReActRetryEngine.shared.maxRetries
-                        await onProgress(.aiMessage("🔍 [ReAct] 最大試行回数(\(ReActRetryEngine.shared.maxRetries))を超過。フェイルセーフ報告を送信します。"))
+                        await onProgress(.aiMessage(AppLanguage.shared.t("🔍 [ReAct] Max retries (\(ReActRetryEngine.shared.maxRetries)) exceeded. Sending fail-safe report.", "🔍 [ReAct] 最大試行回数(\(ReActRetryEngine.shared.maxRetries))を超過。フェイルセーフ報告を送信します。")))
                     }
                 }
 
@@ -936,14 +1052,22 @@ SYS.ENFORCE("logical_verification_before_acceptance")
             consecutiveToolOnlyTurns += 1
             if !isAIPriority && consecutiveToolOnlyTurns >= yieldAfterToolTurns {
                 consecutiveToolOnlyTurns = 0
-                let yieldMsg = """
-                ⏸ [Yield — ターン\(turn)] \(yieldAfterToolTurns)回連続でツールを呼び出しましたが、\
-                まだ完了していません。現状を報告します：
+                let yieldMsg = AppLanguage.shared.t("""
+                    ⏸ [Yield — Turn \(turn)] Called tools \(yieldAfterToolTurns) times consecutively, \
+                    but the task is not yet complete. Here is the current status:
 
-                \(toolResults.suffix(3).joined(separator: "\n"))
+                    \(toolResults.suffix(3).joined(separator: "\n"))
 
-                次のステップについて確認してください。続行しますか？または別のアプローチを指定してください。
-                """
+                    Please review the next steps. Should I continue, or would you like to specify a different approach?
+                    """, """
+                    ⏸ [Yield — ターン\(turn)] \(yieldAfterToolTurns)回連続でツールを呼び出しましたが、\
+                    まだ完了していません。現状を報告します：
+
+                    \(toolResults.suffix(3).joined(separator: "\n"))
+
+                    次のステップについて確認してください。続行しますか？または別のアプローチを指定してください。
+                    """
+                )
                 await onProgress(.aiMessage(yieldMsg))
                 // Pause — wait for user's next message via the normal chat flow
                 return
@@ -974,7 +1098,7 @@ SYS.ENFORCE("logical_verification_before_acceptance")
         case .gitCommit:                                     return false
         // Memory / human-loop / completion
         case .jcrossQuery, .jcrossStore, .askHuman, .done:  return false
-        // Skill library: safe — only writes to ~/.verantyx/skills/
+        // Skill library: safe — only writes to ~/.openclaw/skills/
         case .forgeSkill, .useSkill:                        return false
         // Everything else: blocked
         default: return true
@@ -1089,20 +1213,45 @@ SYS.ENFORCE("logical_verification_before_acceptance")
         switch modelStatus {
 
         case .ollamaReady(let model):
-            // ── Modality Hacking: Inject Cognitive Anchor into the last user message ──
+            var mutableConversation = conversation
+
+            // ── Modality Hacking: Inject Cognitive Anchor or Vision Screenshot ──
             var anchorImages: [String]? = nil
-            if let lastUserMsg = conversation.last(where: { $0.role == "user" }) {
-                if let mode = await CognitiveAnchorEngine.shared.evaluateAnchorMode(instruction: lastUserMsg.content) {
+            if let lastUserIndex = mutableConversation.lastIndex(where: { $0.role == "user" }) {
+                let lastUserMsg = mutableConversation[lastUserIndex]
+                
+                if let screenshot = await CognitiveAnchorEngine.shared.consumeVisionScreenshot() {
+                    anchorImages = [screenshot]
+                    let visionInstructions = """
+
+                    [VISION SYSTEM] The attached image is the current screenshot of the verantyx-browser window. Analyze it visually to decide your next action using [VISION_ACT: x, y] or [VISION_TYPE: text].
+                    
+                    CRITICAL RULE (WAF EVASION): NEVER guess and directly navigate to deep links (e.g., login pages like slack.com/login or zenn.dev/login) using your internal knowledge. Accessing deep links without a search engine referer is unnatural and triggers Botguards/WAFs. You MUST use [SEARCH: "Service Name login"] first, then navigate from the search results. NEVER use [BROWSE: guessed-url] directly.
+                    """
+                    mutableConversation[lastUserIndex].content = lastUserMsg.content + visionInstructions
+                    await onProgress(.aiMessage(AppLanguage.shared.t("<think>\n👁️ [Vision System] Injected live browser screenshot for analysis.\n</think>", "<think>\n👁️ [Vision System] ブラウザのライブスクリーンショットを解析用に注入しました。\n</think>")))
+                } else if let mode = await CognitiveAnchorEngine.shared.evaluateAnchorMode(instruction: lastUserMsg.content) {
                     let base64Image = await CognitiveAnchorEngine.shared.getAnchor(for: mode)
                     anchorImages = [base64Image]
-                    Task { await onProgress(.aiMessage("🧿 [Visual Anchor] 視覚的アンカー（\(mode) モード）を注入し、Sycophancyを抑制します。")) }
+                    
+                    // Commander Orchestrator Intervention: Anti-Hallucination & WAF Evasion Override
+                    let antiHallucinationWarning = """
+
+                    [COMMANDER INTERVENTION]
+                    CRITICAL RULE 1: NEVER hallucinate or fabricate tool execution results. When you use a tool (e.g., [RUN], [SEARCH], [WRITE]), STOP generation immediately and wait for the system to return the real output. Do NOT simulate the output yourself.
+                    
+                    CRITICAL RULE 2 (WAF EVASION): NEVER guess and directly navigate to deep links (e.g., login pages like slack.com/login or zenn.dev/login) using your internal knowledge. Accessing deep links without a search engine referer is unnatural and triggers Botguards/WAFs. You MUST use [SEARCH: "Service Name login"] first, then navigate from the search results. NEVER use [BROWSE: guessed-url] directly.
+                    """
+                    mutableConversation[lastUserIndex].content = lastUserMsg.content + antiHallucinationWarning
+                    
+                    await onProgress(.aiMessage(AppLanguage.shared.t("<think>\n🧿 [Visual Anchor] Injected visual cognitive anchor (\(mode) mode) + Anti-Hallucination Override.\n</think>", "<think>\n🧿 [Visual Anchor] 視覚的アンカー（\(mode) モード）と Commander 介入を注入しました。ツールの結果捏造を強く禁止します。\n</think>")))
                 }
             }
 
             // multi-turn 会話配列を直接渡す（prompt string に変換不要）
             return await OllamaClient.shared.generateConversation(
                 model: model,
-                messages: conversation,
+                messages: mutableConversation,
                 imagesForLastUserMessage: anchorImages,
                 maxTokens: profile.tier.maxTokens,
                 temperature: profile.tier.temperature,
@@ -1191,16 +1340,14 @@ SYS.ENFORCE("logical_verification_before_acceptance")
             let rawUserPrompt  = historySnippet + userPrompt
             let fullUserPrompt = String(rawUserPrompt.prefix(600))  // ← ユーザー側キャップ
 
-            await onProgress(.aiMessage("⚡ [BitNet] \(model) — 推論中..."))
+            await onProgress(.aiMessage(AppLanguage.shared.t("⚡ [BitNet] \(model) — Inferencing...", "⚡ [BitNet] \(model) — 推論中...")))
             guard let result = await BitNetCommanderEngine.shared.generate(
                 prompt: fullUserPrompt,
                 systemPrompt: sysContent
             ) else {
                 // BitNet が nil → 設定エラーをユーザーに伝える
-                await onProgress(.aiMessage(
-                    "⚠️ [BitNet] 推論失敗。bitnet_config.json を確認してください。" +
-                    "Settings → BitNet でセットアップを再実行できます。"
-                ))
+                await onProgress(.aiMessage(AppLanguage.shared.t("⚠️ [BitNet] Inference failed. Please check bitnet_config.json. You can re-run the setup via Settings → BitNet.", "⚠️ [BitNet] 推論失敗。bitnet_config.json を確認してください。Settings → BitNet でセットアップを再実行できます。"
+                )))
                 return nil
             }
             return result
@@ -1397,6 +1544,7 @@ struct ModelProfile: Sendable {
         - Follow the full ReAct 4-phase loop: OBSERVE → ACT → EVOLVE → CONSOLIDATE
         - You can handle complex multi-session, multi-file tasks autonomously
         - KNOWLEDGE CUTOFF: Assume your internal knowledge ends around early 2024-2025. For any queries regarding events, tools, or news after your cutoff, you MUST aggressively use web search tools instead of relying on internal memory.
+        - LOGIN TASKS: If the user asks to login to a service, you MUST use [BROWSE: url] to open the login page. The browser is interactive and the HUMAN user will type their credentials. Do NOT refuse login requests.
         """ }
 
     // MARK: - Tier prompts

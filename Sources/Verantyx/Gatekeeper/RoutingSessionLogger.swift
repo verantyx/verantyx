@@ -174,12 +174,26 @@ final class RoutingSessionLogger: ObservableObject {
     }
 
     private func setup() async {
-        let fm = FileManager.default
-        for dir in [frontDir, nearDir, midDir, deepDir] {
-            try? fm.createDirectory(at: dir, withIntermediateDirectories: true)
-        }
-        loadActiveSessions()
-        sessionCounter = activeSessions.count
+        let front = frontDir
+        let near = nearDir
+        let mid = midDir
+        let deep = deepDir
+        
+        let loadedSessions = await Task.detached(priority: .utility) { () -> [RoutingSession] in
+            let fm = FileManager.default
+            for dir in [front, near, mid, deep] {
+                try? fm.createDirectory(at: dir, withIntermediateDirectories: true)
+            }
+            guard let files = try? fm.contentsOfDirectory(at: front, includingPropertiesForKeys: nil) else { return [] }
+
+            return files
+                .filter { $0.pathExtension == "json" }
+                .compactMap { try? JSONDecoder().decode(RoutingSession.self, from: Data(contentsOf: $0)) }
+                .sorted { $0.createdAtEpoch < $1.createdAtEpoch }
+        }.value
+
+        self.activeSessions = loadedSessions
+        self.sessionCounter = activeSessions.count
     }
 
     // MARK: - Session Creation
@@ -618,13 +632,7 @@ final class RoutingSessionLogger: ObservableObject {
     }
 
     private func loadActiveSessions() {
-        let fm = FileManager.default
-        guard let files = try? fm.contentsOfDirectory(at: frontDir, includingPropertiesForKeys: nil) else { return }
-
-        activeSessions = files
-            .filter { $0.pathExtension == "json" }
-            .compactMap { try? JSONDecoder().decode(RoutingSession.self, from: Data(contentsOf: $0)) }
-            .sorted { $0.createdAtEpoch < $1.createdAtEpoch }
+        // Replaced by inline async loading in setup()
     }
 
     // MARK: - Utility

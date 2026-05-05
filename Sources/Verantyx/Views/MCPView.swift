@@ -169,6 +169,7 @@ struct MCPView: View {
                             .strokeBorder(Color.red.opacity(0.6), lineWidth: 1)
                     )
                 }
+                .contentShape(Rectangle())
                 .buttonStyle(.plain)
                 .keyboardShortcut(.escape, modifiers: [.command, .shift])
                 .help("Force cancel the running MCP tool call (⌘⇧Esc)")
@@ -198,8 +199,9 @@ struct MCPView: View {
                     .font(.system(size: 10))
                     .foregroundStyle(Color(red: 0.4, green: 0.75, blue: 1.0))
             }
+            .contentShape(Rectangle())
             .buttonStyle(.plain)
-            .help("全 MCP サーバーを再接続（途中で追加したものも認識）")
+            .help(AppLanguage.shared.t("Reconnect all MCP servers (includes newly added)", "全 MCP サーバーを再接続（途中で追加したものも認識）"))
 
             Button {
                 Task { await mcp.connectAll() }
@@ -208,8 +210,9 @@ struct MCPView: View {
                     .font(.system(size: 10))
                     .foregroundStyle(Color(red: 0.4, green: 0.9, blue: 0.5))
             }
+            .contentShape(Rectangle())
             .buttonStyle(.plain)
-            .help("全有効サーバーに接続")
+            .help(AppLanguage.shared.t("Connect all enabled servers", "全有効サーバーに接続"))
 
             // カタログから追加
             Button { showCatalogPicker = true } label: {
@@ -217,13 +220,15 @@ struct MCPView: View {
                     .font(.system(size: 10))
                     .foregroundStyle(.secondary)
             }
+            .contentShape(Rectangle())
             .buttonStyle(.plain)
-            .help("既知 MCP カタログから追加")
+            .help(AppLanguage.shared.t("Add from MCP catalog", "既知 MCP カタログから追加"))
 
             Button { showAddSheet = true } label: {
                 Image(systemName: "plus")
                     .font(.system(size: 11))
             }
+            .contentShape(Rectangle())
             .buttonStyle(.plain)
             .foregroundStyle(.secondary)
         }
@@ -269,7 +274,7 @@ struct MCPView: View {
                 Button {
                     Task { await mcp.restartServer(id: server.id) }
                 } label: {
-                    Label("再起動", systemImage: "arrow.clockwise")
+                    Label(AppLanguage.shared.t("Restart", "再起動"), systemImage: "arrow.clockwise")
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.mini)
@@ -299,10 +304,11 @@ struct MCPView: View {
                     Button {
                         apiKeyTargetServer = server
                     } label: {
-                        Label("⚠️ API キーを設定…", systemImage: "key.fill")
+                        Label(AppLanguage.shared.t("⚠️ Set API Key...", "⚠️ API キーを設定…"), systemImage: "key.fill")
                             .font(.system(size: 10))
                             .foregroundStyle(Color(red: 1.0, green: 0.75, blue: 0.2))
                     }
+                    .contentShape(Rectangle())
                     .buttonStyle(.plain)
                 }
             }
@@ -639,6 +645,7 @@ struct MCPServerEditSheet: View {
                                 Image(systemName: "minus.circle")
                                     .foregroundStyle(.red)
                             }
+                            .contentShape(Rectangle())
                             .buttonStyle(.plain)
                         }
                     }
@@ -721,10 +728,10 @@ struct MCPCatalogPickerSheet: View {
             HStack {
                 Image(systemName: "square.grid.2x2.fill")
                     .foregroundStyle(Color(red: 0.4, green: 0.75, blue: 1.0))
-                Text("MCP カタログから追加")
+                Text(AppLanguage.shared.t("Add from MCP Catalog", "MCP カタログから追加"))
                     .font(.system(size: 14, weight: .bold))
                 Spacer()
-                Button("閉じる") { dismiss() }
+                Button(AppLanguage.shared.t("Close", "閉じる")) { dismiss() }
                     .buttonStyle(.bordered)
                     .controlSize(.small)
             }
@@ -762,7 +769,7 @@ struct MCPCatalogPickerSheet: View {
 
                             Spacer()
 
-                            Button("追加") { onSelect(entry) }
+                            Button(AppLanguage.shared.t("Add", "追加")) { onSelect(entry) }
                                 .buttonStyle(.borderedProminent)
                                 .controlSize(.small)
                         }
@@ -798,9 +805,9 @@ struct MCPApiKeySheet: View {
                 Image(systemName: "key.fill")
                     .foregroundStyle(Color(red: 1.0, green: 0.75, blue: 0.2))
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("\(server.name) — API キーを設定")
+                    Text(AppLanguage.shared.t("\(server.name) — Set API Key", "\(server.name) — API キーを設定"))
                         .font(.system(size: 13, weight: .bold))
-                    Text("入力値は macOS Keychain に暗号化保存されます")
+                    Text(AppLanguage.shared.t("Input values are securely saved in macOS Keychain", "入力値は macOS Keychain に暗号化保存されます"))
                         .font(.system(size: 10))
                         .foregroundStyle(.secondary)
                 }
@@ -818,7 +825,7 @@ struct MCPApiKeySheet: View {
                                 HStack(spacing: 6) {
                                     Text(spec.key)
                                         .font(.system(size: 11, weight: .semibold, design: .monospaced))
-                                    Text("必須")
+                                    Text(AppLanguage.shared.t("Required", "必須"))
                                         .font(.system(size: 9, weight: .bold))
                                         .foregroundStyle(.white)
                                         .padding(.horizontal, 5).padding(.vertical, 2)
@@ -826,7 +833,7 @@ struct MCPApiKeySheet: View {
                                                     in: RoundedRectangle(cornerRadius: 3))
                                     Spacer()
                                     if !spec.helpURL.isEmpty {
-                                        Link("取得する →", destination: URL(string: spec.helpURL)!)
+                                        Link(AppLanguage.shared.t("Get Key →", "取得する →"), destination: URL(string: spec.helpURL)!)
                                             .font(.system(size: 9))
                                     }
                                 }
@@ -847,7 +854,7 @@ struct MCPApiKeySheet: View {
                                 HStack(spacing: 6) {
                                     Text(spec.key)
                                         .font(.system(size: 11, weight: .semibold, design: .monospaced))
-                                    Text("任意")
+                                    Text(AppLanguage.shared.t("Optional", "任意"))
                                         .font(.system(size: 9))
                                         .foregroundStyle(.secondary)
                                         .padding(.horizontal, 4).padding(.vertical, 2)
@@ -870,7 +877,7 @@ struct MCPApiKeySheet: View {
                     .padding(16)
                 }
             } else {
-                Text("このサーバーはカタログに未登録です。Edit から手動で設定してください。")
+                Text(AppLanguage.shared.t("This server is not in the catalog. Configure manually via Edit.", "このサーバーはカタログに未登録です。Edit から手動で設定してください。"))
                     .font(.system(size: 11))
                     .foregroundStyle(.secondary)
                     .padding(16)
@@ -879,10 +886,10 @@ struct MCPApiKeySheet: View {
             Divider().opacity(0.3)
 
             HStack {
-                Button("キャンセル") { dismiss() }
+                Button(AppLanguage.shared.t("Cancel", "キャンセル")) { dismiss() }
                     .buttonStyle(.bordered)
                 Spacer()
-                Button("Keychain に保存して再接続") {
+                Button(AppLanguage.shared.t("Save to Keychain & Reconnect", "Keychain に保存して再接続")) {
                     // 入力値を Keychain に書き込む
                     for (key, val) in values where !val.isEmpty {
                         MCPKeychainStore.save(key: "\(server.id).\(key)", value: val)

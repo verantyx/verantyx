@@ -6,9 +6,9 @@ import SwiftUI
 
 struct SelfEvolutionView: View {
     @EnvironmentObject var app: AppState
-    @StateObject private var evo = SelfEvolutionEngine.shared
-    @StateObject private var pr  = GitHubPREngine.shared
-    @StateObject private var ci  = CIValidationEngine.shared
+    @ObservedObject private var evo = SelfEvolutionEngine.shared
+    @ObservedObject private var pr  = GitHubPREngine.shared
+    @ObservedObject private var ci  = CIValidationEngine.shared
 
     @State private var activeSection: Section = .index
     @State private var featureName: String = ""
@@ -82,6 +82,7 @@ struct SelfEvolutionView: View {
                                      ? Color.orange
                                      : Color(red: 0.3, green: 0.85, blue: 0.5))
             }
+            .contentShape(Rectangle())
             .buttonStyle(.plain)
             .help(app.t("GitHub Settings", "GitHub 設定"))
             .popover(isPresented: $showGitHubSetup, arrowEdge: .trailing) {
@@ -117,6 +118,7 @@ struct SelfEvolutionView: View {
                         .padding(.horizontal, 10).padding(.vertical, 6)
                         .background(activeSection == sec ? Color.white.opacity(0.07) : Color.clear)
                     }
+                    .contentShape(Rectangle())
                     .buttonStyle(.plain)
                 }
             }
@@ -163,6 +165,7 @@ struct SelfEvolutionView: View {
                         .fill(Color(red: 0.25, green: 0.50, blue: 0.90))
                 )
             }
+            .contentShape(Rectangle())
             .buttonStyle(.plain)
             .disabled(evo.isIndexing)
             .padding(.horizontal, 12)
@@ -411,6 +414,7 @@ struct SelfEvolutionView: View {
             )
             .shadow(color: Color(red: 0.5, green: 0.1, blue: 0.8).opacity(0.5), radius: 8)
         }
+        .contentShape(Rectangle())
         .buttonStyle(.plain)
         .padding(.horizontal, 12)
         .disabled(featureName.isEmpty)
@@ -446,6 +450,7 @@ struct SelfEvolutionView: View {
                         in: RoundedRectangle(cornerRadius: 8)
                     )
                 }
+                .contentShape(Rectangle())
                 .buttonStyle(.plain)
                 .padding(.horizontal, 12)
 
@@ -468,6 +473,7 @@ struct SelfEvolutionView: View {
                         .font(.system(size: 11))
                         .foregroundStyle(Color(red: 0.4, green: 0.7, blue: 1.0))
                 }
+                .contentShape(Rectangle())
                 .buttonStyle(.plain)
                 .padding(.horizontal, 12)
             }
@@ -640,6 +646,7 @@ struct SelfEvolutionView: View {
                                       : Color(red: 0.15, green: 0.35, blue: 0.65))
                         )
                     }
+                    .contentShape(Rectangle())
                     .buttonStyle(.plain)
                     .disabled(prTitle.isEmpty || pr.isSubmitting)
 

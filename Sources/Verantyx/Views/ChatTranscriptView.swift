@@ -25,10 +25,15 @@ struct ChatTranscriptView: NSViewRepresentable {
         tv.textContainerInset   = NSSize(width: 14, height: 14)
         tv.textContainer?.lineFragmentPadding   = 0
         tv.textContainer?.widthTracksTextView   = true
+        tv.minSize                              = NSSize(width: 0, height: 0)
+        tv.maxSize                              = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
         tv.isVerticallyResizable                = true
         tv.isHorizontallyResizable              = false
         tv.autoresizingMask                     = [.width]
         // macOS: cmd+a/cmd+c のデフォルト動作はそのまま使える
+        
+        // 添付ビュープロバイダの登録 (動画スピナー用)
+        NSTextAttachment.registerViewProviderClass(SpinnerAttachmentViewProvider.self, forFileType: "public.data")
 
         let sv = NSScrollView()
         sv.documentView        = tv
@@ -142,13 +147,7 @@ private enum Transcript {
             case .system:    appendSystem(result, msg.content)
             }
         }
-        if isGenerating {
-            result.append(str("\n\n"))
-            result.append(NSAttributedString(
-                string: "⊙  生成中…",
-                attributes: [.font: NSFont.systemFont(ofSize: 11),
-                             .foregroundColor: Palette.genText]))
-        }
+        // 生成中のUIはSwiftUI側でフローティング表示するため、ここでのテキスト追加は行わない
         return result
     }
 
@@ -273,5 +272,37 @@ private enum Transcript {
         p.paragraphSpacing = spacing
         p.lineSpacing      = lineSpacing
         return p
+    }
+}
+
+// MARK: - Video Spinner Text Attachment (macOS 12+)
+final class SpinnerAttachment: NSTextAttachment {
+    override init(data contentData: Data?, ofType uti: String?) {
+        super.init(data: contentData, ofType: uti)
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+}
+
+@available(macOS 12.0, *)
+final class SpinnerAttachmentViewProvider: NSTextAttachmentViewProvider {
+    // Shared view to ensure continuous playback across NSAttributedString rebuilds
+    static let sharedSpinnerView: NSHostingView<AnyView>? = {
+        guard let url = URL(string: "file:///Users/motonishikoudai/verantyx-cli/VerantyxIDE/Sources/Verantyx/Views/mp_.mp4") else { return nil }
+        let spinner = VideoSpinnerView(videoURL: url, speed: 2.7)
+            .frame(width: 16, height: 16)
+        let hostingView = NSHostingView(rootView: AnyView(spinner))
+        hostingView.frame = NSRect(x: 0, y: 0, width: 16, height: 16)
+        return hostingView
+    }()
+
+    override func loadView() {
+        if let shared = Self.sharedSpinnerView {
+            self.view = shared
+        } else {
+            self.view = NSView(frame: NSRect(x: 0, y: 0, width: 16, height: 16))
+        }
     }
 }

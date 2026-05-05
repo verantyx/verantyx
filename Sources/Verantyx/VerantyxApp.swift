@@ -45,40 +45,80 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         window.makeKeyAndOrderFront(nil)
         safeModeWindowController = wc
     }
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        // Request Accessibility (for CGEvent HID clicks)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            if !AXIsProcessTrusted() {
+                let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
+                _ = AXIsProcessTrustedWithOptions(options)
+            }
+            
+            // Request Screen Recording (for CGWindowListCreateImage)
+            if #available(macOS 10.15, *) {
+                if !CGPreflightScreenCaptureAccess() {
+                    CGRequestScreenCaptureAccess()
+                }
+            }
+        }
+    }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
-        // MCP Bridge (port 5420) と verantyx-browser を先に終了
-        MCPBridgeLauncher.shared.stop()
-        ExtensionHostManager.shared.stop()
-        Task.detached(priority: .utility) {
-            await BrowserBridgePool.shared.shutdown()
+        // ── ダーティ状態がなければ即座に非同期シャットダウンを開始 ──
+        guard let state = appState, state.isDirty else {
+            performAsyncShutdown(state: appState, shouldSave: false)
+            return .terminateLater
         }
 
-        guard let state = appState, state.isDirty else { return .terminateNow }
-
-        // Show confirmation on main thread synchronously (legacy Modal)
+        // ── ダーティ状態があればダイアログを表示 ──
         let alert             = NSAlert()
-        alert.messageText     = "このセッションを保存しますか？"
-        alert.informativeText = "作業中のプロジェクトがあります。終了前にセッションを保存することを推奨します。"
-        alert.addButton(withTitle: "保存して終了")
-        alert.addButton(withTitle: "保存せずに終了")
-        alert.addButton(withTitle: "キャンセル")
+        alert.messageText     = AppLanguage.shared.t("Save this session?", "このセッションを保存しますか？")
+        alert.informativeText = AppLanguage.shared.t("You have an active project. We recommend saving before quitting.", "作業中のプロジェクトがあります。終了前にセッションを保存することを推奨します。")
+        alert.addButton(withTitle: AppLanguage.shared.t("Save & Quit", "保存して終了"))
+        alert.addButton(withTitle: AppLanguage.shared.t("Quit without saving", "保存せずに終了"))
+        alert.addButton(withTitle: AppLanguage.shared.t("Cancel", "キャンセル"))
         alert.alertStyle      = .warning
 
         let response = alert.runModal()
         switch response {
-        case .alertFirstButtonReturn:   // 保存して終了
-            // ⚠️ IMPORTANT: ここは同期コンテキスト (applicationShouldTerminate) 。
-            // updateActiveSession → save() → Task.detached { archiveProgressively() } は
-            // 非同期 MCP ネットワーク呼び出しを起動しメインスレッドをブロックしてしまう。
-            // 代わりに「JSON ディスク書き込みのみ」の同期パスを直接呼ぶ。
-            state.sessions.saveForQuit(messages: state.messages,
-                                       workspacePath: state.workspaceURL?.path)
-            return .terminateNow
-        case .alertSecondButtonReturn:  // 保存せずに終了
-            return .terminateNow
-        default:                        // キャンセル
+        case .alertFirstButtonReturn:
+            performAsyncShutdown(state: state, shouldSave: true)
+            return .terminateLater
+        case .alertSecondButtonReturn:
+            performAsyncShutdown(state: state, shouldSave: false)
+            return .terminateLater
+        default:
             return .terminateCancel
+        }
+    }
+
+    /// メインスレッドをブロックせずに非同期で安全にシャットダウンを行う
+    private func performAsyncShutdown(state: AppState?, shouldSave: Bool) {
+        Task {
+            if shouldSave, let state = state {
+                // ⚠️ ここは UI が固まらないようにバックグラウンドで保存するのもありだが、
+                // 終了処理中なので安全のため確実に待つ
+                await MainActor.run {
+                    state.sessions.saveForQuit(messages: state.messages,
+                                               workspacePath: state.workspaceURL?.path)
+                }
+            }
+
+            // フェーズ1: @MainActor を持つマネージャーを停止
+            await MainActor.run {
+                MCPBridgeLauncher.shared.stop()
+                ExtensionHostManager.shared.stop()
+            }
+
+            // フェーズ2: GlobalTaskSupervisor 経由で BrowserBridge などを停止
+            GlobalTaskSupervisor.shared.register(priority: .userInitiated) {
+                await BrowserBridgePool.shared.shutdown()
+            }
+            await GlobalTaskSupervisor.shared.shutdown(timeout: 2.0)
+
+            // 完了したらシステムに終了許可を出す
+            await MainActor.run {
+                NSApp.reply(toApplicationShouldTerminate: true)
+            }
         }
     }
 
@@ -114,22 +154,35 @@ struct VerantyxApp: App {
 
                     appState.registerCIErrorHook()
                     appState.registerRestartHook()
-                    // ── MCP Bridge 自動起動（port 5420）──────────────────
-                    // MCPSkillSync のポーリング開始前に Bridge を起動しておく。
-                    // MCPBridgeLauncher が /health 疎通確認後に isRunning = true にする。
                     MCPBridgeLauncher.shared.start()
                     MCPSkillSync.shared.startPolling()
-                    
-                    // ── VS Code Extension Host 自動起動 ──────────────────
                     ExtensionHostManager.shared.start()
 
-                    Task.detached(priority: .utility) {
-                        await BrowserBridgePool.shared.warmUp()
-                    }
+                    // ── WHY Hook + Agent Payload バンドルインストール ─────────
+                    // DMG に同梱済み。ダウンロード不要。バージョン更新時のみ実行。
+                    WHYHookInstaller.shared.installIfNeeded(workspaceURL: appState.workspaceURL)
 
                     let wsURL = appState.workspaceURL
                     Task.detached(priority: .utility) {
                         SessionMemoryArchiver.shared.indexSkills(workspaceRoot: wsURL)
+                    }
+
+                    // ── L2.5 インデックス起動 (0.3秒後: UIが描画された後) ──────
+                    // MainActor をブロックしないよう Task.detached(priority: .utility) で実行する。
+                    // loadAndIncrementalUpdate 内部の await をバックグラウンドで完結させ、
+                    // 完了通知のみ MainActor で受け取る。
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        Task.detached(priority: .utility) {
+                            guard await appState.operationMode == .human else { return }
+                            guard let ws = await appState.workspaceURL else { return }
+                            await L25IndexEngine.shared.loadAndIncrementalUpdate(workspaceURL: ws)
+                            let count = await L25IndexEngine.shared.projectMap?.fileCount ?? 0
+                            if count > 0 {
+                                await MainActor.run {
+                                    appState.addSystemMessage(AppLanguage.shared.t("🗺️ L2.5 ready: \(count) files", "🗺️ L2.5 準備完了: \(count) ファイル"))
+                                }
+                            }
+                        }
                     }
 
                     if !cortexDismissed {
@@ -144,16 +197,16 @@ struct VerantyxApp: App {
                         .preferredColorScheme(.dark)
                 }
                 // ── AI-triggered restart dialog ──────────────────────
-                .alert("🔨 ビルド完了 — 再起動しますか？",
+                .alert(appState.t("🔨 Build Complete — Restart?", "🔨 ビルド完了 — 再起動しますか？"),
                        isPresented: $appState.showRestartAlert) {
-                    Button("再起動する", role: .destructive) {
+                    Button(appState.t("Restart", "再起動する"), role: .destructive) {
                         appState.performRestart()
                     }
-                    Button("後で", role: .cancel) {
+                    Button(appState.t("Later", "後で"), role: .cancel) {
                         appState.showRestartAlert = false
                     }
                 } message: {
-                    Text("AI がパッチを適用してビルドに成功しました。\nアプリを終了してリビルドすると変更が有効になります。")
+                    Text(appState.t("AI has successfully applied a patch and built it.\nQuit and rebuild the app to apply changes.", "AI がパッチを適用してビルドに成功しました。\nアプリを終了してリビルドすると変更が有効になります。"))
                 }
                 // CloseButton guard via SwiftUI scene lifecycle
                 .onReceive(
@@ -175,12 +228,12 @@ struct VerantyxApp: App {
             CommandGroup(replacing: .newItem) {}
 
             CommandMenu("Session") {
-                Button("新しいセッション") {
+                Button(appState.t("New Session", "新しいセッション")) {
                     appState.newChatSession()
                 }
                 .keyboardShortcut("n", modifiers: [.command, .shift])
 
-                Button("セッションを保存") {
+                Button(appState.t("Save Session", "セッションを保存")) {
                     appState.saveCurrentSession()
                 }
                 .keyboardShortcut("s", modifiers: [.command, .shift])
@@ -229,11 +282,11 @@ struct VerantyxApp: App {
 
     private func showCloseGuard(window: NSWindow, state: AppState) {
         let alert           = NSAlert()
-        alert.messageText   = "このセッションを保存しますか？"
-        alert.informativeText = "作業中のプロジェクトがあります。終了前に保存することを推奨します。"
-        alert.addButton(withTitle: "保存して閉じる")
-        alert.addButton(withTitle: "保存せずに閉じる")
-        alert.addButton(withTitle: "キャンセル")
+        alert.messageText   = AppLanguage.shared.t("Save this session?", "このセッションを保存しますか？")
+        alert.informativeText = AppLanguage.shared.t("You have an active project. We recommend saving before closing.", "作業中のプロジェクトがあります。終了前に保存することを推奨します。")
+        alert.addButton(withTitle: AppLanguage.shared.t("Save & Close", "保存して閉じる"))
+        alert.addButton(withTitle: AppLanguage.shared.t("Close without saving", "保存せずに閉じる"))
+        alert.addButton(withTitle: AppLanguage.shared.t("Cancel", "キャンセル"))
         alert.alertStyle  = .warning
 
         alert.beginSheetModal(for: window) { response in

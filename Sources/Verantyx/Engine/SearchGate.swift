@@ -61,6 +61,7 @@ actor SearchGate {
             [SEARCH_GATE: {"needs": true, "type": "memory"|"web", "query": "キーワード"}]
             または [SEARCH_GATE: {"needs": false}]
             type="web" は GitHub/最新情報/外部URLが必要なとき。
+            【重要】あなたの知識カットオフ（2024〜2025年）以降の話題については、推測で回答せず必ず type="web" で検索を実行してください。
             """
         }
     }
@@ -111,7 +112,9 @@ actor SearchGate {
         decision: SearchGateDecision,
         sessionId: String,
         turnNumber: Int,
-        tier: ModelTier
+        tier: ModelTier,
+        preferredSource: BrowseSource = .verantyxBrowser,
+        entropy: [[Double]]? = nil
     ) async -> String {
         guard decision.needsSearch, !decision.query.isEmpty else { return "" }
 
@@ -124,7 +127,9 @@ actor SearchGate {
         case .web:
             return await executeWebSearch(
                 decision: decision, sessionId: sessionId,
-                turnNumber: turnNumber, tier: tier
+                turnNumber: turnNumber, tier: tier,
+                preferredSource: preferredSource,
+                entropy: entropy
             )
         }
     }
@@ -171,26 +176,29 @@ actor SearchGate {
         decision: SearchGateDecision,
         sessionId: String,
         turnNumber: Int,
-        tier: ModelTier
+        tier: ModelTier,
+        preferredSource: BrowseSource,
+        entropy: [[Double]]? = nil
     ) async -> String {
         let query = decision.query
 
         let budget: Int
         switch tier {
-        case .nano:          budget = 400
-        case .small:         budget = 700
-        case .mid:           budget = 1000
-        case .large, .giant: budget = 2000
+        case .nano:          budget = 2000
+        case .small:         budget = 2500
+        case .mid:           budget = 3000
+        case .large, .giant: budget = 4000
         }
 
         let result = await WebSearchEngine.shared.search(
             query: query,
-            engine: .duckduckgo,
-            preferredSource: .verantyxBrowser
+            engine: .duckduckgoHTML,
+            preferredSource: preferredSource,
+            entropy: entropy
         )
 
         let bodyText = String(result.contextSnippet.prefix(budget))
-        guard !bodyText.isEmpty, !bodyText.hasPrefix("❌") else { return "" }
+        guard !bodyText.isEmpty else { return "" }
 
         let resultBlock = "[WEB SEARCH: \"\(String(query.prefix(60)))\"\n\(bodyText)\n[/WEB SEARCH]"
 

@@ -60,7 +60,11 @@ final class OllamaNEREngine: BitNetTranspilerInterface, @unchecked Sendable {
     func extractSensitiveIdentifiers(from code: String) async -> [String] {
         // 最初に利用可能なモデルを選択
         guard let model = await resolveModel() else {
-            // Ollama 応答なし → ルールベースフォールバック
+            // Ollama 応答なし → BitNetフォールバック → ルールベースフォールバック
+            if let bitnetConfig = BitNetConfig.load(), bitnetConfig.isValid {
+                print("⚠️ Ollama not available, falling back to BitNet for NER")
+                return await BitNetNEREngine(config: bitnetConfig).extractSensitiveIdentifiers(from: code)
+            }
             return await RuleBaseNEREngine().extractSensitiveIdentifiers(from: code)
         }
 
@@ -91,6 +95,10 @@ final class OllamaNEREngine: BitNetTranspilerInterface, @unchecked Sendable {
             return Array(Set(parsed + ruleBase))
 
         } catch {
+            if let bitnetConfig = BitNetConfig.load(), bitnetConfig.isValid {
+                print("⚠️ Ollama error, falling back to BitNet for NER")
+                return await BitNetNEREngine(config: bitnetConfig).extractSensitiveIdentifiers(from: code)
+            }
             return await RuleBaseNEREngine().extractSensitiveIdentifiers(from: code)
         }
     }
@@ -371,7 +379,7 @@ final class OllamaNEREngineManager: ObservableObject {
 // MARK: - OllamaNERStatusView
 
 struct OllamaNERStatusView: View {
-    @StateObject private var mgr = OllamaNEREngineManager.shared
+    @ObservedObject private var mgr = OllamaNEREngineManager.shared
     @State private var showModelPicker = false
 
     var body: some View {
@@ -380,20 +388,27 @@ struct OllamaNERStatusView: View {
             // Header
             HStack {
                 Image(systemName: "brain.head.profile")
-                    .foregroundStyle(.blue)
-                Text("Ollama NER エンジン")
+                    .foregroundStyle(GatekeeperModeState.shared.useOllamaNER ? .blue : .secondary)
+                Text(AppLanguage.shared.t("Ollama NER Engine", "Ollama NER エンジン"))
                     .font(.headline)
                 Spacer()
-                Button { Task { await mgr.refresh() } } label: {
-                    Image(systemName: "arrow.clockwise")
-                }.buttonStyle(.borderless)
+                if GatekeeperModeState.shared.useOllamaNER {
+                    Button { Task { await mgr.refresh() } } label: {
+                        Image(systemName: "arrow.clockwise")
+                    }.buttonStyle(.borderless)
+                }
             }
 
             Divider()
 
-            switch mgr.status {
+            if !GatekeeperModeState.shared.useOllamaNER {
+                Label(AppLanguage.shared.t("Ollama NER is disabled in Privacy settings.", "プライバシー設定で Ollama NER が無効化されています。"), systemImage: "bolt.slash.fill")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            } else {
+                switch mgr.status {
             case .checking:
-                HStack { ProgressView().scaleEffect(0.7); Text("接続確認中...").font(.caption) }
+                HStack { ProgressView().scaleEffect(0.7); Text(AppLanguage.shared.t("Checking connection...", "接続確認中...")).font(.caption) }
 
             case .ready(let model, let allModels):
                 readyView(model: model, allModels: allModels)
@@ -407,6 +422,7 @@ struct OllamaNERStatusView: View {
             case .unknown:
                 EmptyView()
             }
+            } // end else
         }
         .padding()
         .background(.ultraThinMaterial)
@@ -418,7 +434,7 @@ struct OllamaNERStatusView: View {
     private func readyView(model: String, allModels: [String]) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Label("Ollama 稼働中", systemImage: "checkmark.circle.fill")
+                Label(AppLanguage.shared.t("Ollama Running", "Ollama 稼働中"), systemImage: "checkmark.circle.fill")
                     .foregroundStyle(.green)
                     .font(.subheadline.bold())
                 Spacer()
@@ -426,7 +442,7 @@ struct OllamaNERStatusView: View {
 
             // モデル選択
             HStack {
-                Text("NER モデル")
+                Text(AppLanguage.shared.t("NER Model", "NER モデル"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Picker("", selection: $mgr.selectedModel) {
@@ -481,7 +497,7 @@ struct OllamaNERStatusView: View {
                         Button {
                             Task { await mgr.downloadBonsai8B() }
                         } label: {
-                            Label("Bonsai-8B をダウンロード", systemImage: "arrow.down.circle.fill")
+                            Label(AppLanguage.shared.t("Download Bonsai-8B", "Bonsai-8B をダウンロード"), systemImage: "arrow.down.circle.fill")
                         }
                         .buttonStyle(.borderedProminent)
                         .controlSize(.small)
@@ -500,10 +516,10 @@ struct OllamaNERStatusView: View {
                     if mgr.isTesting {
                         HStack(spacing: 4) {
                             ProgressView().scaleEffect(0.6)
-                            Text("NER 実行中...")
+                            Text(AppLanguage.shared.t("Testing NER...", "NER 実行中..."))
                         }
                     } else {
-                        Label("NER テスト", systemImage: "play.fill")
+                        Label(AppLanguage.shared.t("Test NER", "NER テスト"), systemImage: "play.fill")
                     }
                 }
                 .buttonStyle(.bordered)
@@ -518,7 +534,7 @@ struct OllamaNERStatusView: View {
 
             if !mgr.testResult.isEmpty {
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("検出した感度識別子:").font(.caption.bold())
+                    Text(AppLanguage.shared.t("Detected Sensitive Identifiers:", "検出した感度識別子:")).font(.caption.bold())
                     ForEach(mgr.testResult.prefix(10), id: \.self) { token in
                         Label(token, systemImage: "lock.fill")
                             .font(.caption.monospaced())
@@ -536,13 +552,13 @@ struct OllamaNERStatusView: View {
 
     private var notRunningView: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label("Ollama が起動していません", systemImage: "exclamationmark.triangle")
+            Label(AppLanguage.shared.t("Ollama is not running", "Ollama が起動していません"), systemImage: "exclamationmark.triangle")
                 .foregroundStyle(.orange)
                 .font(.subheadline)
-            Text("ターミナルで `ollama serve` を実行してください。")
+            Text(AppLanguage.shared.t("Run `ollama serve` in the terminal.", "ターミナルで `ollama serve` を実行してください。"))
                 .font(.caption)
                 .foregroundStyle(.secondary)
-            Button("再確認") {
+            Button(AppLanguage.shared.t("Retry", "再確認")) {
                 Task { await mgr.refresh() }
             }.buttonStyle(.bordered)
         }
@@ -558,15 +574,15 @@ struct OllamaNERStatusView: View {
 
     private func modelDetail(_ name: String) -> String? {
         let map: [String: String] = [
-            "bitnet_b1_58-large":      "⚡️ BitNet: 1-bit LLM 推奨 — 超高速 JCross 変換",
-            "bonsai:8b":               "🌳 Bonsai 8B: 最適化された NER 推論とパターン認識",
-            "qwen2.5:1.5b":            "⚡️ 1.5B — 最速・NER に最適",
-            "qwen2.5:7b-instruct":     "🎯 7.6B — 高精度 instruction tuning",
-            "gemma4:e2b":              "🔥 5.1B — Google Gemma4 バランス型",
-            "gemma4:26b":              "🧠 25.8B — 最高精度（低速）",
-            "verantyx-gemma:latest":   "🔮 Verantyx カスタム Gemma4",
-            "nemotron-orchestrator:latest": "🎮 8.2B Qwen3 ベース",
-            "gpt-oss:20b":             "🏢 20.9B OpenAI OSS",
+            "bitnet_b1_58-large":      AppLanguage.shared.t("⚡️ BitNet: 1-bit LLM Recommended — Ultra-fast JCross conversion", "⚡️ BitNet: 1-bit LLM 推奨 — 超高速 JCross 変換"),
+            "bonsai:8b":               AppLanguage.shared.t("🌳 Bonsai 8B: Optimized NER inference and pattern recognition", "🌳 Bonsai 8B: 最適化された NER 推論とパターン認識"),
+            "qwen2.5:1.5b":            AppLanguage.shared.t("⚡️ 1.5B — Fastest・Ideal for NER", "⚡️ 1.5B — 最速・NER に最適"),
+            "qwen2.5:7b-instruct":     AppLanguage.shared.t("🎯 7.6B — High precision instruction tuning", "🎯 7.6B — 高精度 instruction tuning"),
+            "gemma4:e2b":              AppLanguage.shared.t("🔥 5.1B — Google Gemma4 Balanced", "🔥 5.1B — Google Gemma4 バランス型"),
+            "gemma4:26b":              AppLanguage.shared.t("🧠 25.8B — Highest precision (Slow)", "🧠 25.8B — 最高精度（低速）"),
+            "verantyx-gemma:latest":   AppLanguage.shared.t("🔮 Verantyx Custom Gemma4", "🔮 Verantyx カスタム Gemma4"),
+            "nemotron-orchestrator:latest": AppLanguage.shared.t("🎮 8.2B Qwen3 Base", "🎮 8.2B Qwen3 ベース"),
+            "gpt-oss:20b":             AppLanguage.shared.t("🏢 20.9B OpenAI OSS", "🏢 20.9B OpenAI OSS"),
         ]
         return map[name]
     }

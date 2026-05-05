@@ -485,7 +485,7 @@ actor IgnoranceRouter {
 
         let prompt = "User Query: \(instruction)"
 
-        print("🧠 [IgnoranceRouter] 2Bモデル (\(nanoModel)) に無知判定を依頼中...")
+        print(AppLanguage.shared.t("🧠 [IgnoranceRouter] Requesting ignorance check from 2B model (\\(nanoModel))...", "🧠 [IgnoranceRouter] 2Bモデル (\\(nanoModel)) に無知判定を依頼中..."))
         let response = await OllamaClient.shared.generate(
             model: nanoModel,
             prompt: "\(systemPrompt)\n\n\(prompt)",
@@ -509,7 +509,7 @@ actor IgnoranceRouter {
 
         let needsSearch = json["needs_search"] as? Bool ?? false
         if needsSearch, let query = json["query"] as? String, !query.isEmpty {
-            print("🧠 [IgnoranceRouter] 2Bモデルが未知の概念を検出。26Bに検索を指示します。")
+            print(AppLanguage.shared.t("🧠 [IgnoranceRouter] 2B model detected unknown concept. Instructing 26B to search.", "🧠 [IgnoranceRouter] 2Bモデルが未知の概念を検出。26Bに検索を指示します。"))
             // 26Bモデルに検索を強制する文章を付加する
             let mcpTools = await MainActor.run { MCPEngine.shared.connectedTools }
             var overrideText = """
@@ -531,7 +531,7 @@ actor IgnoranceRouter {
             \(instruction)
             """
         } else {
-            print("🧠 [IgnoranceRouter] 2Bモデル: 検索不要と判定。")
+            print(AppLanguage.shared.t("🧠 [IgnoranceRouter] 2B model: Search not required.", "🧠 [IgnoranceRouter] 2Bモデル: 検索不要と判定。"))
             return nil
         }
     }

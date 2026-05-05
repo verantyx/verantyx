@@ -248,26 +248,29 @@ final class GitEngine: ObservableObject {
     @discardableResult
     private func run(_ args: [String], in directory: URL) async throws -> String? {
         try await withCheckedThrowingContinuation { cont in
-            do {
-                let proc = Process()
-                let pipe = Pipe()
-                proc.executableURL = URL(fileURLWithPath: "/usr/bin/git")
-                proc.arguments = args
-                proc.currentDirectoryURL = directory
-                proc.standardOutput = pipe
-                proc.standardError = pipe
-                proc.terminationHandler = { p in
+            DispatchQueue.global(qos: .userInitiated).async {
+                do {
+                    let proc = Process()
+                    let pipe = Pipe()
+                    proc.executableURL = URL(fileURLWithPath: "/usr/bin/git")
+                    proc.arguments = args
+                    proc.currentDirectoryURL = directory
+                    proc.standardOutput = pipe
+                    proc.standardError = pipe
+                    try proc.run()
+                    // ⚠️ readDataToEndOfFile → waitUntilExit の順序厳守。
+                    // terminationHandler 内で読むと race condition が起きる。
                     let data = pipe.fileHandleForReading.readDataToEndOfFile()
+                    proc.waitUntilExit()
                     let output = String(data: data, encoding: .utf8) ?? ""
-                    if p.terminationStatus == 0 {
+                    if proc.terminationStatus == 0 {
                         cont.resume(returning: output)
                     } else {
                         cont.resume(throwing: GitError.processError(output))
                     }
+                } catch {
+                    cont.resume(throwing: error)
                 }
-                try proc.run()
-            } catch {
-                cont.resume(throwing: error)
             }
         }
     }

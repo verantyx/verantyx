@@ -76,6 +76,7 @@ struct TerminalPanelView: View {
                 Image(systemName: "trash")
                     .font(.caption2)
             }
+            .contentShape(Rectangle())
             .buttonStyle(.plain)
             .foregroundStyle(Color.secondary)
             .help("Clear terminal")
@@ -87,6 +88,7 @@ struct TerminalPanelView: View {
                 Image(systemName: isExpanded ? "chevron.down" : "chevron.up")
                     .font(.caption2)
             }
+            .contentShape(Rectangle())
             .buttonStyle(.plain)
             .foregroundStyle(Color.secondary)
         }

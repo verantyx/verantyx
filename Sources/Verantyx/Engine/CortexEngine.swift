@@ -4,7 +4,7 @@ import SwiftUI
 // MARK: - MemoryNode
 
 struct MemoryNode: Identifiable, Codable {
-    let id: UUID
+    var id: UUID
     let timestamp: Date
     var key: String
     var value: String
@@ -105,7 +105,8 @@ final class CortexEngine: ObservableObject {
         return dir.appendingPathComponent("memory.json")
     }()
 
-    // MARK: - Init
+    // MARK: - Directory Watchers
+    private var watchers: [DispatchSourceFileSystemObject] = []
 
     init() {
         self.isEnabled        = UserDefaults.standard.object(forKey: "cortex_enabled")  as? Bool ?? true
@@ -116,7 +117,72 @@ final class CortexEngine: ObservableObject {
         // Task で即座にバックグラウンドへ逃がす。
         // Phase 1: front + near (高優先度、すぐに使う)
         // Phase 2: mid + deep   (低優先度、遅延ロード)
-        Task { await loadFromZonesAsync() }
+        Task {
+            await loadFromZonesAsync()
+            startWatchingZones()
+        }
+    }
+
+    // MARK: - Hot Reload (File Watcher)
+    
+    private func startWatchingZones() {
+        // Watch front and near zones for external changes (e.g. from MCP)
+        let zonesToWatch: [MemoryNode.Zone] = [.front, .near]
+        
+        for zone in zonesToWatch {
+            let dirURL = mcpMemoryRoot.appendingPathComponent(zone.rawValue)
+            let fd = open(dirURL.path, O_EVTONLY)
+            guard fd >= 0 else { continue }
+            
+            let source = DispatchSource.makeFileSystemObjectSource(fileDescriptor: fd, eventMask: .write, queue: .global(qos: .background))
+            
+            // We use a debounce flag to prevent multiple rapid reloads
+            var isReloading = false
+            
+            source.setEventHandler { [weak self] in
+                guard let self = self, !isReloading else { return }
+                isReloading = true
+                Task {
+                    // Slight debounce delay to allow batch writes to finish
+                    try? await Task.sleep(nanoseconds: 500_000_000)
+                    await self.syncExternalChanges(for: zone)
+                    isReloading = false
+                }
+            }
+            
+            source.setCancelHandler {
+                close(fd)
+            }
+            
+            source.resume()
+            watchers.append(source)
+        }
+    }
+    
+    private func syncExternalChanges(for zone: MemoryNode.Zone) async {
+        // Run file IO in background
+        let freshNodes = await Task.detached(priority: .userInitiated) { [mcpMemoryRoot] in
+            Self.readZones([zone], root: mcpMemoryRoot)
+        }.value
+        
+        // Merge fresh nodes into the existing `nodes` array on MainActor
+        var existingNodesMap = [String: MemoryNode]()
+        for node in nodes {
+            existingNodesMap[node.key] = node
+        }
+        
+        // Remove old nodes from this zone
+        nodes.removeAll(where: { $0.zone == zone })
+        
+        // Add fresh nodes, preserving UUID and state if they already existed
+        for var fresh in freshNodes {
+            if let existing = existingNodesMap[fresh.key] {
+                fresh.id = existing.id
+                fresh.accessCount = existing.accessCount
+                fresh.importance = existing.importance
+            }
+            nodes.append(fresh)
+        }
     }
 
     // MARK: - Public API
@@ -179,7 +245,16 @@ final class CortexEngine: ObservableObject {
 
         let facts = relevant.map { node in
             let zoneIcon = node.zone == .front ? "⚡" : node.zone == .near ? "🔵" : "💾"
-            return "  \(zoneIcon) \(node.key): \(node.value)"
+            
+            // BitNet L1 Only Mode Check
+            let gk = GatekeeperModeState.shared
+            if !gk.allowExternalLLMForCommander && gk.bitnetMemoryLayerMode == .l1Only {
+                let kanji = node.kanjiTags.isEmpty ? "技標" : node.kanjiTags.prefix(3).joined()
+                return "  \(zoneIcon) [\(kanji)] \(node.key.prefix(40))"
+            } else {
+                let kanji = node.kanjiTags.isEmpty ? "技標" : node.kanjiTags.prefix(2).joined()
+                return "  \(zoneIcon) [\(kanji)] \(node.key): \(node.value)"
+            }
         }.joined(separator: "\n")
 
         return """

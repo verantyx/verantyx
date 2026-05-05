@@ -143,7 +143,7 @@ enum MCPCatalog {
 
 enum MCPKeychainStore {
 
-    private static let service = "jp.verantyx.mcp"
+    private static let service = "jp.openclaw.mcp"
 
     // MARK: Save (add or update)
     @discardableResult

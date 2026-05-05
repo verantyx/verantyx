@@ -73,7 +73,7 @@ final class GatekeeperDashboardViewModel: ObservableObject {
             // Try near/ zone for completed sessions
             await loadMostRecentCompletedSession()
         }
-        loadSessionHistory()
+        await loadSessionHistory()
     }
 
     func refresh() async {
@@ -205,59 +205,69 @@ final class GatekeeperDashboardViewModel: ObservableObject {
 
     private func loadMostRecentCompletedSession() async {
         let nearDir = vaultRootURL.appendingPathComponent("routing/near")
-        let fm = FileManager.default
-        guard let files = try? fm.contentsOfDirectory(
-            at: nearDir,
-            includingPropertiesForKeys: [.creationDateKey],
-            options: .skipsHiddenFiles
-        ) else { return }
+        let session = await Task.detached(priority: .utility) { () -> RoutingSessionLogger.RoutingSession? in
+            let fm = FileManager.default
+            guard let files = try? fm.contentsOfDirectory(
+                at: nearDir,
+                includingPropertiesForKeys: [.creationDateKey],
+                options: .skipsHiddenFiles
+            ) else { return nil }
 
-        let jsonFiles = files.filter { $0.pathExtension == "json" }
-        let sorted = jsonFiles.compactMap { url -> (URL, Date)? in
-            let attrs = try? fm.attributesOfItem(atPath: url.path)
-            let date  = attrs?[.creationDate] as? Date ?? .distantPast
-            return (url, date)
-        }
-        .sorted { $0.1 > $1.1 }
+            let jsonFiles = files.filter { $0.pathExtension == "json" }
+            let sorted = jsonFiles.compactMap { url -> (URL, Date)? in
+                let attrs = try? fm.attributesOfItem(atPath: url.path)
+                let date  = attrs?[.creationDate] as? Date ?? .distantPast
+                return (url, date)
+            }
+            .sorted { $0.1 > $1.1 }
 
-        guard let (latestURL, _) = sorted.first,
-              let data = try? Data(contentsOf: latestURL),
-              let session = try? JSONDecoder().decode(RoutingSessionLogger.RoutingSession.self, from: data)
-        else { return }
+            guard let (latestURL, _) = sorted.first,
+                  let data = try? Data(contentsOf: latestURL),
+                  let session = try? JSONDecoder().decode(RoutingSessionLogger.RoutingSession.self, from: data)
+            else { return nil }
 
+            return session
+        }.value
+
+        guard let session = session else { return }
         applySession(session)
         currentSessionID = session.sessionID
     }
 
-    private func loadSessionHistory() {
+    private func loadSessionHistory() async {
         // Gather completed sessions from near/ zone
         let nearDir = vaultRootURL.appendingPathComponent("routing/near")
-        let fm = FileManager.default
-        guard let files = try? fm.contentsOfDirectory(
-            at: nearDir,
-            includingPropertiesForKeys: [.creationDateKey],
-            options: .skipsHiddenFiles
-        ) else { return }
+        
+        let newHistory = await Task.detached(priority: .utility) { () -> [SessionHistoryEntry] in
+            let fm = FileManager.default
+            guard let files = try? fm.contentsOfDirectory(
+                at: nearDir,
+                includingPropertiesForKeys: [.creationDateKey],
+                options: .skipsHiddenFiles
+            ) else { return [] }
 
-        let decoded = files
-            .filter { $0.pathExtension == "json" }
-            .compactMap { url -> RoutingSessionLogger.RoutingSession? in
-                guard let data = try? Data(contentsOf: url) else { return nil }
-                return try? JSONDecoder().decode(RoutingSessionLogger.RoutingSession.self, from: data)
+            let decoded = files
+                .filter { $0.pathExtension == "json" }
+                .compactMap { url -> RoutingSessionLogger.RoutingSession? in
+                    guard let data = try? Data(contentsOf: url) else { return nil }
+                    return try? JSONDecoder().decode(RoutingSessionLogger.RoutingSession.self, from: data)
+                }
+                .sorted { $0.updatedAtEpoch > $1.updatedAtEpoch }
+
+            return decoded.prefix(10).map { s in
+                return SessionHistoryEntry(
+                    id: s.sessionID,
+                    sourcePath: s.sourceRelativePath,
+                    fragmentCount: s.realNodeCount + s.dummyNodeCount,
+                    acceptanceRate: 1.0,  // accurate value comes from filteredPatchContent metrics
+                    domain: s.camouflageDomain.rawValue,
+                    completedAt: Date(timeIntervalSince1970: s.updatedAtEpoch),
+                    wasSuccessful: s.status == .applied
+                )
             }
-            .sorted { $0.updatedAtEpoch > $1.updatedAtEpoch }
-
-        self.sessionHistory = decoded.prefix(10).map { s in
-            return SessionHistoryEntry(
-                id: s.sessionID,
-                sourcePath: s.sourceRelativePath,
-                fragmentCount: s.realNodeCount + s.dummyNodeCount,
-                acceptanceRate: 1.0,  // accurate value comes from filteredPatchContent metrics
-                domain: s.camouflageDomain.rawValue,
-                completedAt: Date(timeIntervalSince1970: s.updatedAtEpoch),
-                wasSuccessful: s.status == .applied
-            )
-        }
+        }.value
+        
+        self.sessionHistory = newHistory
     }
 
     // MARK: - Types

@@ -71,71 +71,78 @@ final class BitNetL1Tagger: @unchecked Sendable {
 
     private func runBitNet(config: BitNetConfig, prompt: String, maxTokens: Int) async throws -> String {
         return try await withCheckedThrowingContinuation { continuation in
-            semaphore.wait()
-            defer { semaphore.signal() }
-
-            let process = Process()
-            process.executableURL = URL(fileURLWithPath: config.binaryPath)
-            process.arguments = [
-                "-m", config.modelPath,
-                "-p", prompt,
-                "-n", String(maxTokens),
-                "--temp", "0.05",       // 低温: 決定論的な出力（漢字タグは創造性不要）
-                "-c", "2048",
-                "--threads", String(max(2, ProcessInfo.processInfo.processorCount / 2)),
-                "--no-perf",
-            ]
-
-            let stdoutPipe = Pipe()
-            let stderrPipe = Pipe()
-            process.standardOutput = stdoutPipe
-            process.standardError  = stderrPipe
-
-            let outputBox = _StringBox()
-            stdoutPipe.fileHandleForReading.readabilityHandler = { handle in
-                let chunk = handle.availableData
-                guard !chunk.isEmpty, let text = String(data: chunk, encoding: .utf8) else { return }
-                outputBox.append(text)
-            }
-
-            let resumed = _AtomicFlag()
-
-            // タイムアウト: 30秒（L1タグは短いので高速）
-            let timeout = DispatchWorkItem {
-                if process.isRunning { process.terminate() }
-                stdoutPipe.fileHandleForReading.readabilityHandler = nil
-                if resumed.trySet() {
+            // ⚠️ semaphore.wait() を GCD スレッド上に移動。
+            // continuation 内でセマフォを待つと Swift Concurrency の協調スレッドプールが
+            // ブロックされ、システム全体がデッドロックする。
+            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+                guard let self else {
                     continuation.resume(throwing: L1TaggerError.timeout)
+                    return
                 }
-            }
-            DispatchQueue.global().asyncAfter(deadline: .now() + 30, execute: timeout)
+                self.semaphore.wait()
 
-            process.terminationHandler = { proc in
-                timeout.cancel()
-                stdoutPipe.fileHandleForReading.readabilityHandler = nil
-                if let remainder = try? stdoutPipe.fileHandleForReading.readToEnd(),
-                   let text = String(data: remainder, encoding: .utf8) {
+                let process = Process()
+                process.executableURL = URL(fileURLWithPath: config.binaryPath)
+                process.arguments = [
+                    "-m", config.modelPath,
+                    "-p", prompt,
+                    "-n", String(maxTokens),
+                    "--temp", "0.05",
+                    "-c", "2048",
+                    "--threads", String(max(2, ProcessInfo.processInfo.processorCount / 2)),
+                    "--no-perf",
+                ]
+
+                let stdoutPipe = Pipe()
+                process.standardOutput = stdoutPipe
+                process.standardError  = FileHandle.nullDevice  // ⚠️ stderr → nullDevice — terminationHandler 内の readDataToEndOfFile deadlock 防止
+
+                let outputBox = _StringBox()
+                stdoutPipe.fileHandleForReading.readabilityHandler = { handle in
+                    let chunk = handle.availableData
+                    guard !chunk.isEmpty, let text = String(data: chunk, encoding: .utf8) else { return }
                     outputBox.append(text)
                 }
 
-                let output = outputBox.value.trimmingCharacters(in: .whitespacesAndNewlines)
-                guard resumed.trySet() else { return }
+                let resumed = _AtomicFlag()
 
-                if proc.terminationStatus == 0 || !output.isEmpty {
-                    continuation.resume(returning: output)
-                } else {
-                    let errData = stderrPipe.fileHandleForReading.readDataToEndOfFile()
-                    let errMsg  = String(data: errData, encoding: .utf8) ?? "unknown"
-                    continuation.resume(throwing: L1TaggerError.processError(errMsg))
+                let timeout = DispatchWorkItem {
+                    if process.isRunning { process.terminate() }
+                    stdoutPipe.fileHandleForReading.readabilityHandler = nil
+                    self.semaphore.signal()
+                    if resumed.trySet() {
+                        continuation.resume(throwing: L1TaggerError.timeout)
+                    }
                 }
-            }
+                DispatchQueue.global().asyncAfter(deadline: .now() + 30, execute: timeout)
 
-            do {
-                try process.run()
-            } catch {
-                timeout.cancel()
-                if resumed.trySet() {
-                    continuation.resume(throwing: L1TaggerError.launchFailed(error))
+                process.terminationHandler = { [weak self] proc in
+                    timeout.cancel()
+                    stdoutPipe.fileHandleForReading.readabilityHandler = nil
+                    if let remainder = try? stdoutPipe.fileHandleForReading.readToEnd(),
+                       let text = String(data: remainder, encoding: .utf8) {
+                        outputBox.append(text)
+                    }
+
+                    let output = outputBox.value.trimmingCharacters(in: .whitespacesAndNewlines)
+                    self?.semaphore.signal()
+
+                    guard resumed.trySet() else { return }
+                    if proc.terminationStatus == 0 || !output.isEmpty {
+                        continuation.resume(returning: output)
+                    } else {
+                        continuation.resume(throwing: L1TaggerError.processError("exit code \(proc.terminationStatus)"))
+                    }
+                }
+
+                do {
+                    try process.run()
+                } catch {
+                    timeout.cancel()
+                    self.semaphore.signal()
+                    if resumed.trySet() {
+                        continuation.resume(throwing: L1TaggerError.launchFailed(error))
+                    }
                 }
             }
         }

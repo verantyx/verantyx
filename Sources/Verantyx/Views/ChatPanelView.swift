@@ -25,29 +25,25 @@ struct ChatPanelView: View {
                                 .id(msg.id)
                         }
                         if app.isGenerating {
-                            LiveThinkingBubble()
+                            LiveThinkingBubble(logStore: app.logStore)
                                 .id("generating")
                         }
                     }
                     .padding(16)
+                    // 注意: frame(maxWidth: .infinity) は LazyVStack の Lazy 性菽を無効化する
+                    // 全メッセージを一括レイアウトするため大話履歴で retain storm が発生する
                 }
+                // アニメーションなしでスクロール: テキスト震えを防ぐ
                 .onChange(of: app.messages.count) { _, _ in
-                    withAnimation {
-                        if app.isGenerating {
-                            proxy.scrollTo("generating")
-                        } else if let lastId = app.messages.last?.id {
-                            proxy.scrollTo(lastId)
-                        }
+                    if app.isGenerating {
+                        proxy.scrollTo("generating", anchor: .bottom)
+                    } else if let lastId = app.messages.last?.id {
+                        proxy.scrollTo(lastId, anchor: .bottom)
                     }
                 }
                 .onChange(of: app.isGenerating) { _, generating in
                     if generating {
-                        withAnimation { proxy.scrollTo("generating") }
-                    }
-                }
-                .onChange(of: app.processLog.count) { _, _ in
-                    if app.isGenerating {
-                        withAnimation { proxy.scrollTo("generating") }
+                        proxy.scrollTo("generating", anchor: .bottom)
                     }
                 }
             }
@@ -75,6 +71,7 @@ struct ChatPanelView: View {
                 Image(systemName: "xmark.circle.fill")
                     .font(.caption)
             }
+            .contentShape(Rectangle())
             .buttonStyle(.plain)
             .foregroundStyle(.secondary)
         }
@@ -120,6 +117,7 @@ struct ChatPanelView: View {
                     .font(.title2)
                     .foregroundStyle(canSend ? Color.accentColor : Color.secondary)
             }
+            .contentShape(Rectangle())
             .buttonStyle(.plain)
             .disabled(!canSend)
         }
@@ -195,8 +193,8 @@ struct MessageBubble: View {
 
 struct LiveThinkingBubble: View {
     @EnvironmentObject var app: AppState
+    @ObservedObject var logStore: AppState.ProcessLogStore
     @State private var isExpanded = true
-    @State private var dotPhase   = 0
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
@@ -218,15 +216,10 @@ struct LiveThinkingBubble: View {
                     }
                 } label: {
                     HStack(spacing: 8) {
-                        // 生成中ドットアニメーション
-                        HStack(spacing: 3) {
-                            ForEach(0..<3) { i in
-                                Circle()
-                                    .fill(Color.accentColor)
-                                    .frame(width: 5, height: 5)
-                                    .scaleEffect(dotPhase == i ? 1.3 : 0.7)
-                                    .opacity(dotPhase == i ? 1.0 : 0.35)
-                            }
+                        // 新しい動画スピナー（2.7倍速でピンポンループ再生・青い部分を丸く切り出し）
+                        if let url = URL(string: "file:///Users/motonishikoudai/verantyx-cli/VerantyxIDE/Sources/Verantyx/Views/mp_.mp4") {
+                            VideoSpinnerView(videoURL: url, speed: 2.7)
+                                .frame(width: 20, height: 20)
                         }
 
                         Text("Thinking…")
@@ -234,8 +227,8 @@ struct LiveThinkingBubble: View {
                             .fontWeight(.semibold)
                             .foregroundStyle(Color.accentColor)
 
-                        if !app.processLog.isEmpty {
-                            Text("(\(app.processLog.count) steps)")
+                        if !logStore.entries.isEmpty {
+                            Text("(\(logStore.entries.count) steps)")
                                 .font(.caption2)
                                 .foregroundStyle(.secondary)
                         }
@@ -247,12 +240,13 @@ struct LiveThinkingBubble: View {
                             .foregroundStyle(.secondary)
                     }
                 }
+                .contentShape(Rectangle())
                 .buttonStyle(.plain)
 
                 // ── ログ本体（折りたたみ可能） ─────────────────────────
                 if isExpanded {
                     VStack(alignment: .leading, spacing: 3) {
-                        ForEach(app.processLog.suffix(50)) { entry in
+                        ForEach(logStore.entries.suffix(50)) { entry in
                             LogEntryRow(entry: entry)
                         }
                     }
@@ -282,14 +276,6 @@ struct LiveThinkingBubble: View {
             )
 
             Spacer(minLength: 40)
-        }
-        .onAppear {
-            // ドットアニメーションタイマー
-            Timer.scheduledTimer(withTimeInterval: 0.4, repeats: true) { _ in
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    dotPhase = (dotPhase + 1) % 3
-                }
-            }
         }
     }
 }
@@ -396,6 +382,7 @@ struct CompletedThinkingBlock: View {
                         .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
                 }
             }
+            .contentShape(Rectangle())
             .buttonStyle(.plain)
 
             // ── ログ本体 ────────────────────────────────────────────────
@@ -430,7 +417,6 @@ struct CompletedThinkingBlock: View {
 
 // MARK: - ThinkingBubble (後方互換 — 未使用だが残す)
 struct ThinkingBubble: View {
-    @State private var dotPhase = 0
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
             Image(systemName: "brain.head.profile")
@@ -438,21 +424,11 @@ struct ThinkingBubble: View {
                 .foregroundStyle(Color.accentColor)
                 .frame(width: 28, height: 28)
                 .background(Color.accentColor.opacity(0.12), in: Circle())
-            HStack(spacing: 4) {
-                ForEach(0..<3) { i in
-                    Circle()
-                        .fill(Color.accentColor)
-                        .frame(width: 6, height: 6)
-                        .scaleEffect(dotPhase == i ? 1.2 : 0.8)
-                        .opacity(dotPhase == i ? 1.0 : 0.4)
-                }
-            }
-            .padding(.horizontal, 14).padding(.vertical, 12)
-            .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 16))
-        }
-        .onAppear {
-            Timer.scheduledTimer(withTimeInterval: 0.4, repeats: true) { _ in
-                withAnimation(.easeInOut(duration: 0.3)) { dotPhase = (dotPhase + 1) % 3 }
+            if let url = URL(string: "file:///Users/motonishikoudai/verantyx-cli/VerantyxIDE/Sources/Verantyx/Views/mp_.mp4") {
+                VideoSpinnerView(videoURL: url, speed: 2.7)
+                    .frame(width: 24, height: 24)
+                    .padding(.horizontal, 14).padding(.vertical, 12)
+                    .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 16))
             }
         }
     }

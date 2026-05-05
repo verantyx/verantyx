@@ -338,6 +338,7 @@ struct SideBySideDiffView: View {
                         .strokeBorder(Color(red: 0.9, green: 0.38, blue: 0.38).opacity(0.4),
                                       lineWidth: 1))
             }
+            .contentShape(Rectangle())
             .buttonStyle(.plain)
             .keyboardShortcut(.escape)
 
@@ -356,6 +357,7 @@ struct SideBySideDiffView: View {
                         .strokeBorder(Color(red: 0.3, green: 0.92, blue: 0.48).opacity(0.4),
                                       lineWidth: 1))
             }
+            .contentShape(Rectangle())
             .buttonStyle(.plain)
             .keyboardShortcut(.return, modifiers: .command)
         }

@@ -54,6 +54,8 @@ final class GatekeeperPipelineOrchestrator: ObservableObject {
     private let noiseEngine   = AdversarialNoiseEngine()
     private let validator     = JCrossPatchValidator()
     private let state         = GatekeeperModeState.shared
+    /// 3層難読化パイプライン（全フラグメントに適用）
+    private let obfuscator    = JCrossObfuscationPipeline()
 
     private var routingLogger: RoutingSessionLogger?
 
@@ -83,19 +85,19 @@ final class GatekeeperPipelineOrchestrator: ObservableObject {
         isRunning = true
         defer { isRunning = false }
 
-        log("🚀 パイプライン開始: \(sourceRelativePath)")
+        log(AppLanguage.shared.t("🚀 Pipeline started: \(sourceRelativePath)", "🚀 パイプライン開始: \(sourceRelativePath)"))
 
         // ── Step 1: JCross IR 取得 ────────────────────────────────
         phase = .fragmenting(file: sourceRelativePath)
         guard let vaultResult = vault.read(relativePath: sourceRelativePath) else {
-            fail("Vault にファイルが見つかりません: \(sourceRelativePath)")
+            fail(AppLanguage.shared.t("File not found in Vault: \(sourceRelativePath)", "Vault にファイルが見つかりません: \(sourceRelativePath)"))
             return
         }
 
         let jcrossIR = vaultResult.jcrossContent
         let schema   = vaultResult.schema
         let nodeIDs  = extractNodeIDs(from: jcrossIR)
-        log("📦 ノード数: \(nodeIDs.count) (schema: \(schema.sessionID.prefix(8)))")
+        log(AppLanguage.shared.t("📦 Nodes: \(nodeIDs.count) (schema: \(schema.sessionID.prefix(8)))", "📦 ノード数: \(nodeIDs.count) (schema: \(schema.sessionID.prefix(8)))"))
 
         // ── Step 2: フラグメント計画 ────────────────────────────────
         let plan = await noiseEngine.planFragmentation(
@@ -111,7 +113,7 @@ final class GatekeeperPipelineOrchestrator: ObservableObject {
         // ── Step 3: セッション登録 → front/ に永続化 ────────────────
         phase = .registeringSession
         guard let logger = routingLogger else {
-            fail("RoutingSessionLogger が未初期化です")
+            fail(AppLanguage.shared.t("RoutingSessionLogger is uninitialized", "RoutingSessionLogger が未初期化です"))
             return
         }
 
@@ -122,7 +124,7 @@ final class GatekeeperPipelineOrchestrator: ObservableObject {
             camouflageDomain: camouflageDomain
         )
         let sessionID = routingSession.sessionID
-        log("📝 セッション登録: \(sessionID)")
+        log(AppLanguage.shared.t("📝 Session registered: \(sessionID)", "📝 セッション登録: \(sessionID)"))
 
         // フラグメントを logger に記録
         for fragment in plan.fragments {
@@ -158,7 +160,7 @@ final class GatekeeperPipelineOrchestrator: ObservableObject {
             logger.updateBonsaiBudget(sessionID, used: estimatedTokens)
 
             if logger.isBudgetCritical {
-                log("⚠️ Bonsai バジェット残量僅少 — フラグメント送信を打ち切ります")
+                log(AppLanguage.shared.t("⚠️ Bonsai budget low — aborting fragment transmission", "⚠️ Bonsai バジェット残量僅少 — フラグメント送信を打ち切ります"))
                 break
             }
         }
@@ -169,18 +171,18 @@ final class GatekeeperPipelineOrchestrator: ObservableObject {
             baseInstructions: buildBaseWorkerInstructions(userInstructions: userInstructions)
         )
 
-        log("📡 Claudeへ送信中 (\(combinedIR.count)文字)...")
+        log(AppLanguage.shared.t("📡 Sending to Claude (\(combinedIR.count) chars)...", "📡 Claudeへ送信中 (\(combinedIR.count)文字)..."))
         logger.transitionStatus(sessionID, to: .awaitingPatch)
         logger.completeTodo(sessionID, todo: .receivePatch)
 
         let claudeResponse = await callExternalWorker(systemPrompt: systemPrompt, userContent: combinedIR)
         logger.recordReceivedPatch(sessionID, raw: claudeResponse)
         logger.updateTokenCount(sessionID, sent: combinedIR.count / 4, received: claudeResponse.count / 4)
-        log("📥 Claudeからパッチを受信 (\(claudeResponse.count)文字)")
+        log(AppLanguage.shared.t("📥 Received patch from Claude (\(claudeResponse.count) chars)", "📥 Claudeからパッチを受信 (\(claudeResponse.count)文字)"))
 
         // セッションを再取得 (logger更新後)
         guard let updatedSession = logger.session(id: sessionID) else {
-            fail("セッションが見つかりません")
+            fail(AppLanguage.shared.t("Session not found", "セッションが見つかりません"))
             return
         }
         routingSession = updatedSession
@@ -189,7 +191,7 @@ final class GatekeeperPipelineOrchestrator: ObservableObject {
         phase = .validatingPatch
         let parsedPatches = validator.parsePatches(from: claudeResponse, session: routingSession)
         logger.completeTodo(sessionID, todo: .parsePatchFormat)
-        log("🔍 パース結果: \(parsedPatches.count)件のパッチ候補")
+        log(AppLanguage.shared.t("🔍 Parse result: \(parsedPatches.count) patch candidates", "🔍 パース結果: \(parsedPatches.count)件のパッチ候補"))
 
         // ── Step 6: バリデーション (ダミーフィルタ + 構造チェック) ─────
         let summary = validator.validate(patches: parsedPatches, session: routingSession)
@@ -210,10 +212,10 @@ final class GatekeeperPipelineOrchestrator: ObservableObject {
         let bonsaiPrompt = validator.buildBonsaiValidationPrompt(summary: summary, session: routingSession)
         let bonsaiVerdict = await runBonsaiValidation(prompt: bonsaiPrompt)
         logger.completeTodo(sessionID, todo: .validateRealPatches)
-        log("🤖 Bonsai-8B 判定: \(bonsaiVerdict.prefix(80))")
+        log(AppLanguage.shared.t("🤖 Bonsai-8B verdict: \(bonsaiVerdict.prefix(80))", "🤖 Bonsai-8B 判定: \(bonsaiVerdict.prefix(80))"))
 
         guard bonsaiVerdict.uppercased().contains("YES") else {
-            fail("Bonsai-8Bが安全性を確認できませんでした: \(bonsaiVerdict.prefix(200))")
+            fail(AppLanguage.shared.t("Bonsai-8B could not verify safety: \(bonsaiVerdict.prefix(200))", "Bonsai-8Bが安全性を確認できませんでした: \(bonsaiVerdict.prefix(200))"))
             logger.transitionStatus(sessionID, to: .failed)
             return
         }
@@ -223,7 +225,7 @@ final class GatekeeperPipelineOrchestrator: ObservableObject {
         let reverseMap = plan.reverseShuffleMap
         let resolvedPatches = validator.applyReverseShuffleMap(to: summary, reverseMap: reverseMap)
         logger.completeTodo(sessionID, todo: .reverseTransform)
-        log("🔄 逆変換完了: \(resolvedPatches.count)件のパッチをnodeIDに解決")
+        log(AppLanguage.shared.t("🔄 De-transpilation complete: resolved \(resolvedPatches.count) patches to nodeIDs", "🔄 逆変換完了: \(resolvedPatches.count)件のパッチをnodeIDに解決"))
 
         // ── Step 9: 実ファイルへ適用 ────────────────────────────────
         phase = .applyingToSource(file: sourceRelativePath)
@@ -234,9 +236,9 @@ final class GatekeeperPipelineOrchestrator: ObservableObject {
                 schema: schema
             )
             logger.completeTodo(sessionID, todo: .applyToSource)
-            log("✅ ソースに\(appliedCount)件の変更を適用しました")
+            log(AppLanguage.shared.t("✅ Applied \(appliedCount) changes to source", "✅ ソースに\(appliedCount)件の変更を適用しました"))
         } catch {
-            fail("ソース適用失敗: \(error.localizedDescription)")
+            fail(AppLanguage.shared.t("Source application failed: \(error.localizedDescription)", "ソース適用失敗: \(error.localizedDescription)"))
             logger.transitionStatus(sessionID, to: .failed)
             return
         }
@@ -244,13 +246,13 @@ final class GatekeeperPipelineOrchestrator: ObservableObject {
         // ── Step 10: アーカイブ ────────────────────────────────────
         phase = .archiving
         logger.completeTodo(sessionID, todo: .archiveSession)
-        log("📦 セッションをnear/にアーカイブ")
+        log(AppLanguage.shared.t("📦 Archived session to near/", "📦 セッションをnear/にアーカイブ"))
 
         noiseEngine.clearShuffleHistory(for: schema.sessionID)
 
         let stats = buildPipelineStats(plan: plan, summary: summary)
         phase = .done(stats: stats)
-        log("🎉 パイプライン完了!\n\(stats)")
+        log(AppLanguage.shared.t("🎉 Pipeline completed!\n\(stats)", "🎉 パイプライン完了!\n\(stats)"))
     }
 
     // MARK: - Worker Call
@@ -299,7 +301,7 @@ final class GatekeeperPipelineOrchestrator: ObservableObject {
               let decoded = try? JSONDecoder().decode(Response.self, from: respData)
         else {
             // Bonsai未インストール時はデフォルト承認
-            log("⚠️ Bonsai-8B 未応答 — ルールベースで承認")
+            log(AppLanguage.shared.t("⚠️ Bonsai-8B unresponsive — approved by rule-base", "⚠️ Bonsai-8B 未応答 — ルールベースで承認"))
             return "YES (bonsai unavailable, rule-based approval)"
         }
 
@@ -333,11 +335,13 @@ final class GatekeeperPipelineOrchestrator: ObservableObject {
     // MARK: - Helpers
 
     private func buildFragmentMessage(fragment: AdversarialNoiseEngine.Fragment, seq: Int, total: Int) -> String {
+        // ✅ Layer A+B+C 難読化をフラグメント内容に適用してから送信
+        let obfuscatedContent = obfuscator.obfuscateTextFragment(fragment.irContent)
         return """
         // ── Fragment \(seq)/\(total) ──────────────────────────────────────
         // alias: \(fragment.claudeAlias) | role: \(fragment.role)
         // kind: \(fragment.kind == .real ? "TASK" : "CONTEXT")
-        \(fragment.irContent)
+        \(obfuscatedContent)
         """
     }
 

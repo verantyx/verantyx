@@ -44,6 +44,7 @@ struct GlobalSearchView: View {
                                     .font(.system(size: 12))
                                     .foregroundStyle(Color(red: 0.5, green: 0.5, blue: 0.65))
                             }
+                            .contentShape(Rectangle())
                             .buttonStyle(.plain)
                         }
                     }
@@ -188,6 +189,7 @@ struct GlobalSearchView: View {
                                     lineWidth: 0.8))
                 )
         }
+        .contentShape(Rectangle())
         .buttonStyle(.plain)
     }
 }
@@ -237,6 +239,7 @@ struct SearchFileSection: View {
                 .contentShape(Rectangle())
                 .background(Color(red: 0.11, green: 0.11, blue: 0.16))
             }
+            .contentShape(Rectangle())
             .buttonStyle(.plain)
 
             // Result rows

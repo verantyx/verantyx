@@ -107,60 +107,80 @@ final class BitNetNEREngine: BitNetTranspilerInterface, @unchecked Sendable {
 
     private func runBitNet(prompt: String) async throws -> String {
         return try await withCheckedThrowingContinuation { continuation in
-            processSemaphore.wait()
-            defer { processSemaphore.signal() }
-
-            let process = Process()
-            process.executableURL = URL(fileURLWithPath: config.binaryPath)
-            process.arguments = [
-                "-m", config.modelPath,
-                "-p", prompt,
-                "-n", String(config.maxTokens),
-                "--temp", String(config.temperature),
-                // --no-display-prompt と --log-disable はこのバイナリで stdout を完全抑制するため除去
-                "-c", "2048",
-                "--threads", String(max(1, ProcessInfo.processInfo.processorCount / 2)),
-                "--no-perf",  // perf 統計だけ stderr に出す（stdout には影響しない）
-            ]
-
-            let stdoutPipe = Pipe()
-            let stderrPipe = Pipe()
-            process.standardOutput = stdoutPipe
-            process.standardError  = stderrPipe
-
-            // resume() が2回呼ばれないよう one-shot フラグで保護
-            let resumed = _AtomicFlag()
-
-            // タイムアウト: 30秒
-            let timeout = DispatchWorkItem {
-                if process.isRunning { process.terminate() }
-                if resumed.trySet() {
+            // ⚠️ semaphore.wait() を GCD スレッド上に移動。
+            // continuation 内でセマフォを待つと Swift Concurrency の協調スレッドプールが
+            // ブロックされ、システム全体がデッドロックする。
+            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+                guard let self else {
                     continuation.resume(throwing: BitNetError.timeout)
+                    return
                 }
-            }
-            DispatchQueue.global().asyncAfter(deadline: .now() + 30, execute: timeout)
+                self.processSemaphore.wait()
 
-            process.terminationHandler = { proc in
-                timeout.cancel()
-                let outputData = stdoutPipe.fileHandleForReading.readDataToEndOfFile()
-                let output = String(data: outputData, encoding: .utf8) ?? ""
+                let process = Process()
+                process.executableURL = URL(fileURLWithPath: self.config.binaryPath)
+                process.arguments = [
+                    "-m", self.config.modelPath,
+                    "-p", prompt,
+                    "-n", String(self.config.maxTokens),
+                    "--temp", String(self.config.temperature),
+                    "-c", "2048",
+                    "--threads", String(max(1, ProcessInfo.processInfo.processorCount / 2)),
+                    "--no-perf",
+                ]
 
-                guard resumed.trySet() else { return }
-                if proc.terminationStatus == 0 || !output.isEmpty {
-                    continuation.resume(returning: output)
-                } else {
-                    let errData = stderrPipe.fileHandleForReading.readDataToEndOfFile()
-                    let errMsg  = String(data: errData, encoding: .utf8) ?? "unknown"
-                    continuation.resume(throwing: BitNetError.processError(errMsg))
+                let stdoutPipe = Pipe()
+                process.standardOutput = stdoutPipe
+                process.standardError  = FileHandle.nullDevice  // ⚠️ stderr → nullDevice — terminationHandler 内の readToEnd deadlock 防止
+
+                // readabilityHandler でストリーム読み取り（terminationHandler 内の readDataToEndOfFile デッドロック防止）
+                let outputBox = _StringBox()
+                stdoutPipe.fileHandleForReading.readabilityHandler = { handle in
+                    let chunk = handle.availableData
+                    guard !chunk.isEmpty, let text = String(data: chunk, encoding: .utf8) else { return }
+                    outputBox.append(text)
                 }
-            }
 
-            do {
-                try process.run()
-            } catch {
-                timeout.cancel()
-                if resumed.trySet() {
-                    continuation.resume(throwing: BitNetError.launchFailed(error))
+                let resumed = _AtomicFlag()
+
+                let timeout = DispatchWorkItem {
+                    if process.isRunning { process.terminate() }
+                    stdoutPipe.fileHandleForReading.readabilityHandler = nil
+                    self.processSemaphore.signal()
+                    if resumed.trySet() {
+                        continuation.resume(throwing: BitNetError.timeout)
+                    }
+                }
+                DispatchQueue.global().asyncAfter(deadline: .now() + 30, execute: timeout)
+
+                process.terminationHandler = { [weak self] proc in
+                    timeout.cancel()
+                    stdoutPipe.fileHandleForReading.readabilityHandler = nil
+                    if let remainder = try? stdoutPipe.fileHandleForReading.readToEnd(),
+                       let text = String(data: remainder, encoding: .utf8) {
+                        outputBox.append(text)
+                    }
+
+                    let output = outputBox.value.trimmingCharacters(in: .whitespacesAndNewlines)
+                    self?.processSemaphore.signal()
+
+                    guard resumed.trySet() else { return }
+                    if proc.terminationStatus == 0 || !output.isEmpty {
+                        continuation.resume(returning: output)
+                    } else {
+                        continuation.resume(throwing: BitNetError.processError("exit code \(proc.terminationStatus)"))
+                    }
+                }
+
+                do {
+                    try process.run()
+                } catch {
+                    timeout.cancel()
+                    stdoutPipe.fileHandleForReading.readabilityHandler = nil
+                    self.processSemaphore.signal()
+                    if resumed.trySet() {
+                        continuation.resume(throwing: BitNetError.launchFailed(error))
+                    }
                 }
             }
         }
@@ -276,7 +296,7 @@ final class BitNetEngineManager: ObservableObject {
             status = .checking  // 一時的に .checking へ（UI上は確認中スピナー）
             await checkInstallation()
             if case .ready = status {
-                addLog("✅ BitNet b1.58 セットアップ完了!")
+                addLog(AppLanguage.shared.t("✅ BitNet b1.58 setup complete!", "✅ BitNet b1.58 セットアップ完了!"))
                 downloadProgress = 1.0
             } else {
                 status = .error("インストール後の確認に失敗しました。再試行してください。")
@@ -383,7 +403,7 @@ struct BitNetSetupView: View {
                 Image(systemName: "cpu.fill")
                     .foregroundStyle(.purple)
                     .font(.title2)
-                Text("BitNet b1.58 — ローカル 1-bit LLM")
+                Text(AppLanguage.shared.t("BitNet b1.58 — Local 1-bit LLM", "BitNet b1.58 — ローカル 1-bit LLM"))
                     .font(.headline)
                 Spacer()
                 statusBadge
@@ -435,19 +455,19 @@ struct BitNetSetupView: View {
     private var statusBadge: some View {
         switch manager.status {
         case .ready:
-            Label("稼働中", systemImage: "circle.fill")
+            Label(AppLanguage.shared.t("Running", "稼働中"), systemImage: "circle.fill")
                 .foregroundStyle(.green)
                 .font(.caption)
         case .installing:
-            Label("インストール中", systemImage: "arrow.down.circle.fill")
+            Label(AppLanguage.shared.t("Installing", "インストール中"), systemImage: "arrow.down.circle.fill")
                 .foregroundStyle(.orange)
                 .font(.caption)
         case .notInstalled:
-            Label("未インストール", systemImage: "circle")
+            Label(AppLanguage.shared.t("Not Installed", "未インストール"), systemImage: "circle")
                 .foregroundStyle(.secondary)
                 .font(.caption)
         default:
-            Label("確認中", systemImage: "ellipsis.circle.fill")
+            Label(AppLanguage.shared.t("Checking", "確認中"), systemImage: "ellipsis.circle.fill")
                 .foregroundStyle(.blue)
                 .font(.caption)
         }
@@ -455,18 +475,18 @@ struct BitNetSetupView: View {
 
     private var architectureCard: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label("アーキテクチャ", systemImage: "square.3.layers.3d")
+            Label(AppLanguage.shared.t("Architecture", "アーキテクチャ"), systemImage: "square.3.layers.3d")
                 .font(.subheadline.bold())
                 .foregroundStyle(.purple)
 
             Text("""
-            IDE ──→ [BitNetEngine] ──→ llama-cli サブプロセス
+            IDE ──→ [BitNetEngine] ──→ llama-cli subprocess
                          │                      │
                     stdin/stdout pipe      BitNet b1.58 weights (.gguf)
-                         │                 (重みが 1.58-bit = 超軽量)
-                    [NER JSON 出力]              │
-                         │                 CPU 余剰スレッドのみ使用
-                    [JCross Transpiler]    GPU/NPU 不要
+                         │                 (weights are 1.58-bit = ultra light)
+                    [NER JSON Output]            │
+                         │                 Uses CPU idle threads only
+                    [JCross Transpiler]    No GPU/NPU required
             """)
             .font(.system(.caption, design: .monospaced))
             .padding(10)
@@ -480,22 +500,22 @@ struct BitNetSetupView: View {
 
     private var notInstalledCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Label("BitNet b1.58 が未インストールです", systemImage: "exclamationmark.triangle")
+            Label(AppLanguage.shared.t("BitNet b1.58 is not installed", "BitNet b1.58 が未インストールです"), systemImage: "exclamationmark.triangle")
                 .foregroundStyle(.orange)
                 .font(.subheadline.bold())
 
-            Text("セットアップスクリプトが Homebrew・cmake・bitnet.cpp を自動インストールし、2B モデル (~800MB) をダウンロードします。")
+            Text(AppLanguage.shared.t("Setup script will auto-install Homebrew, cmake, bitnet.cpp, and download 2B model (~800MB).", "セットアップスクリプトが Homebrew・cmake・bitnet.cpp を自動インストールし、2B モデル (~800MB) をダウンロードします。"))
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
-            Text("所要時間: 初回約 10〜30分（ビルドとダウンロード）")
+            Text(AppLanguage.shared.t("Estimated time: 10-30 min for the first time (build & download)", "所要時間: 初回約 10〜30分（ビルドとダウンロード）"))
                 .font(.caption2)
                 .foregroundStyle(.secondary)
 
             Button {
                 Task { await manager.runSetup() }
             } label: {
-                Label("BitNet b1.58 をセットアップ", systemImage: "arrow.down.circle.fill")
+                Label(AppLanguage.shared.t("Setup BitNet b1.58", "BitNet b1.58 をセットアップ"), systemImage: "arrow.down.circle.fill")
                     .frame(maxWidth: .infinity)
             }
             .controlSize(.large)
@@ -510,7 +530,7 @@ struct BitNetSetupView: View {
     private var loadingCard: some View {
         HStack {
             ProgressView().scaleEffect(0.8)
-            Text("インストール状態を確認中...")
+            Text(AppLanguage.shared.t("Checking installation status...", "インストール状態を確認中..."))
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -519,26 +539,26 @@ struct BitNetSetupView: View {
 
     private func readyCard(model: String, size: Int) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label("BitNet b1.58 — 使用可能", systemImage: "checkmark.circle.fill")
+            Label(AppLanguage.shared.t("BitNet b1.58 — Ready", "BitNet b1.58 — 使用可能"), systemImage: "checkmark.circle.fill")
                 .foregroundStyle(.green)
                 .font(.subheadline.bold())
 
             Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 4) {
                 GridRow {
-                    Text("モデル").font(.caption).foregroundStyle(.secondary)
+                    Text(AppLanguage.shared.t("Model", "モデル")).font(.caption).foregroundStyle(.secondary)
                     Text(model).font(.caption.monospaced())
                 }
                 GridRow {
-                    Text("サイズ").font(.caption).foregroundStyle(.secondary)
+                    Text(AppLanguage.shared.t("Size", "サイズ")).font(.caption).foregroundStyle(.secondary)
                     Text("\(size) MB").font(.caption.monospaced())
                 }
                 GridRow {
-                    Text("精度").font(.caption).foregroundStyle(.secondary)
-                    Text("1.58-bit (三値 -1/0/+1)").font(.caption.monospaced())
+                    Text(AppLanguage.shared.t("Precision", "精度")).font(.caption).foregroundStyle(.secondary)
+                    Text(AppLanguage.shared.t("1.58-bit (Ternary -1/0/+1)", "1.58-bit (三値 -1/0/+1)")).font(.caption.monospaced())
                 }
                 GridRow {
-                    Text("タスク").font(.caption).foregroundStyle(.secondary)
-                    Text("NER → JCross トランスパイル").font(.caption.monospaced())
+                    Text(AppLanguage.shared.t("Task", "タスク")).font(.caption).foregroundStyle(.secondary)
+                    Text(AppLanguage.shared.t("NER → JCross Transpile", "NER → JCross トランスパイル")).font(.caption.monospaced())
                 }
             }
         }
@@ -555,7 +575,7 @@ struct BitNetSetupView: View {
                     .scaleEffect(0.75)
                     .frame(width: 14, height: 14)
                 Text(manager.setupProgress.isEmpty
-                        ? "セットアップ中..."
+                        ? AppLanguage.shared.t("Setting up...", "セットアップ中...")
                         : String(manager.setupProgress.prefix(80)))
                     .font(.system(size: 11))
                     .foregroundStyle(.secondary)
@@ -618,13 +638,13 @@ struct BitNetSetupView: View {
 
     private func errorCard(_ msg: String) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label("エラー", systemImage: "xmark.circle.fill")
+            Label(AppLanguage.shared.t("Error", "エラー"), systemImage: "xmark.circle.fill")
                 .foregroundStyle(.red)
                 .font(.subheadline.bold())
             Text(msg)
                 .font(.caption.monospaced())
                 .foregroundStyle(.secondary)
-            Button("再試行") {
+            Button(AppLanguage.shared.t("Retry", "再試行")) {
                 Task { await manager.runSetup() }
             }
             .buttonStyle(.borderedProminent)
@@ -637,11 +657,11 @@ struct BitNetSetupView: View {
 
     private var nerTestCard: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label("NER テスト", systemImage: "magnifyingglass")
+            Label(AppLanguage.shared.t("NER Test", "NER テスト"), systemImage: "magnifyingglass")
                 .font(.subheadline.bold())
                 .foregroundStyle(.purple)
 
-            Text("テスト入力: let stripeKey = \"sk_live_ABC123\"; let serverIP = \"192.168.1.45\"")
+            Text(AppLanguage.shared.t("Test input: let stripeKey = \"sk_live_ABC123\"; let serverIP = \"192.168.1.45\"", "テスト入力: let stripeKey = \"sk_live_ABC123\"; let serverIP = \"192.168.1.45\""))
                 .font(.caption.monospaced())
                 .foregroundStyle(.secondary)
 
@@ -655,7 +675,7 @@ struct BitNetSetupView: View {
                 if isTesting {
                     ProgressView().scaleEffect(0.7)
                 } else {
-                    Label("BitNet NER を実行", systemImage: "play.fill")
+                    Label(AppLanguage.shared.t("Run BitNet NER", "BitNet NER を実行"), systemImage: "play.fill")
                 }
             }
             .buttonStyle(.bordered)
@@ -663,7 +683,7 @@ struct BitNetSetupView: View {
 
             if !testResult.isEmpty {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("検出結果:").font(.caption.bold())
+                    Text(AppLanguage.shared.t("Detection result:", "検出結果:")).font(.caption.bold())
                     ForEach(testResult, id: \.self) { token in
                         Label(token, systemImage: "lock.fill")
                             .font(.caption.monospaced())
@@ -699,6 +719,14 @@ final class BitNetCommanderEngine: @unchecked Sendable {
 
     private init() {}
 
+    // MARK: - Availability Check
+
+    /// BitNet \u304c\u30a4\u30f3\u30b9\u30c8\u30fc\u30eb\u6e08\u307f\u304b\u3069\u3046\u304b\u3092\u8fd4\u3059\u3002
+    /// AppState.sendMessage \u304c BitNetCommanderLoop \u306b\u30eb\u30fc\u30c6\u30a3\u30f3\u30b0\u3059\u308b\u524d\u306b\u547c\u3073\u51fa\u3059\u3002
+    func isAvailable() async -> Bool {
+        BitNetConfig.load()?.isValid == true
+    }
+
     // MARK: - Generate
 
     /// BitNet を使って Commander 用の自由形式テキストを生成する。
@@ -713,12 +741,12 @@ final class BitNetCommanderEngine: @unchecked Sendable {
         if systemPrompt.isEmpty {
             fullPrompt = prompt
         } else {
-            fullPrompt = "### System\n\(systemPrompt)\n\n### User\n\(prompt)\n\n### Assistant\n"
+            fullPrompt = "### Instruction:\n\(systemPrompt)\n\n\(prompt)\n\n### Response:\n"
         }
 
         do {
             let response = try await runBitNetGenerate(config: config, prompt: fullPrompt)
-            return response.isEmpty ? nil : response
+            return response
         } catch {
             print("⚠️ BitNetCommanderEngine: \(error.localizedDescription) — falling back to Ollama")
             return nil
@@ -740,82 +768,91 @@ final class BitNetCommanderEngine: @unchecked Sendable {
         try prompt.write(to: tmpFile, atomically: true, encoding: .utf8)
         defer { try? FileManager.default.removeItem(at: tmpFile) }
 
+        // ⚠️ semaphore.wait() を continuation の外（GCDスレッド上）に移動。
+        // withCheckedThrowingContinuation 内でセマフォを待つと Swift Concurrency の
+        // 協調スレッドプールがブロックされ、システム全体がデッドロックする。
         return try await withCheckedThrowingContinuation { continuation in
-            semaphore.wait()
-            defer { semaphore.signal() }
-
-            let process = Process()
-            process.executableURL = URL(fileURLWithPath: config.binaryPath)
-            process.arguments = [
-                "-m", config.modelPath,
-                "-p", prompt,                  // -f は stdout を抑制するため -p に戻す
-                "-n", "512",                   // Commander 用: 512 tokens で十分
-                "--temp", String(config.temperature),
-                // --no-display-prompt / --log-disable はこのバイナリで stdout 全体を抑制するため除去
-                "-c", "2048",                  // BitNet b1.58 の実効コンテキスト
-                "--threads", String(max(2, ProcessInfo.processInfo.processorCount / 2)),
-                "--no-perf",                   // perf 統計は stderr 側に隔離（stdout 不変）
-            ]
-
-            let stdoutPipe = Pipe()
-            let stderrPipe = Pipe()
-            process.standardOutput = stdoutPipe
-            process.standardError  = stderrPipe
-
-            // ── stdout をストリーム読み取り（デッドロック防止）──────────────
-            let outputBox = _StringBox()
-            stdoutPipe.fileHandleForReading.readabilityHandler = { handle in
-                let chunk = handle.availableData
-                guard !chunk.isEmpty,
-                      let text = String(data: chunk, encoding: .utf8)
-                else { return }
-                outputBox.append(text)
-            }
-
-            // resume() が2回呼ばれないよう one-shot フラグで保護
-            let resumed = _AtomicFlag()
-
-            // タイムアウト: 90秒（初回モデルロードが遅い場合に備える）
-            let timeout = DispatchWorkItem {
-                if process.isRunning { process.terminate() }
-                stdoutPipe.fileHandleForReading.readabilityHandler = nil
-                if resumed.trySet() {
+            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+                guard let self else {
                     continuation.resume(throwing: BitNetCommanderError.timeout)
+                    return
                 }
-            }
-            DispatchQueue.global().asyncAfter(deadline: .now() + 90, execute: timeout)
+                self.semaphore.wait()
 
-            process.terminationHandler = { proc in
-                timeout.cancel()
-                // readabilityHandler を止めてから残りのバッファを読む
-                stdoutPipe.fileHandleForReading.readabilityHandler = nil
-                if let remainder = try? stdoutPipe.fileHandleForReading.readToEnd(),
-                   let text = String(data: remainder, encoding: .utf8) {
+                let process = Process()
+                process.executableURL = URL(fileURLWithPath: config.binaryPath)
+                process.arguments = [
+                    "-m", config.modelPath,
+                    "-p", prompt,
+                    "-n", "512",
+                    "--temp", String(config.temperature),
+                    "-c", "2048",
+                    "--threads", String(max(2, ProcessInfo.processInfo.processorCount / 2)),
+                    "--repeat-penalty", "1.15",
+                    "--no-perf",
+                    "-r", "###",
+                    "-r", "### Instruction:",
+                    "-r", "User:"
+                ]
+
+                let stdinPipe = Pipe()
+                let stdoutPipe = Pipe()
+                process.standardInput = stdinPipe
+                process.standardOutput = stdoutPipe
+                process.standardError  = FileHandle.nullDevice  // ⚠️ stderr → nullDevice — terminationHandler 内の readToEnd deadlock 防止
+
+                try? stdinPipe.fileHandleForWriting.close()
+
+                let outputBox = _StringBox()
+                stdoutPipe.fileHandleForReading.readabilityHandler = { handle in
+                    let chunk = handle.availableData
+                    guard !chunk.isEmpty,
+                          let text = String(data: chunk, encoding: .utf8)
+                    else { return }
                     outputBox.append(text)
                 }
 
-                let output = outputBox.value.trimmingCharacters(in: .whitespacesAndNewlines)
+                let resumed = _AtomicFlag()
 
-                guard resumed.trySet() else { return }
-                if proc.terminationStatus == 0 || !output.isEmpty {
-                    // プロンプト自体も出力に含まれる場合は除去する
-                    // llama-cli はデフォルトで prompt も stdout に出す
-                    let cleaned = Self.stripEchoedPrompt(output: output, prompt: prompt)
-                    continuation.resume(returning: cleaned)
-                } else {
-                    let errData = (try? stderrPipe.fileHandleForReading.readToEnd()) ?? Data()
-                    let errMsg  = String(data: errData, encoding: .utf8) ?? "unknown"
-                    continuation.resume(throwing: BitNetCommanderError.processError(errMsg))
+                let timeout = DispatchWorkItem {
+                    if process.isRunning { process.terminate() }
+                    stdoutPipe.fileHandleForReading.readabilityHandler = nil
+                    self.semaphore.signal()
+                    if resumed.trySet() {
+                        continuation.resume(throwing: BitNetCommanderError.timeout)
+                    }
                 }
-            }
+                DispatchQueue.global().asyncAfter(deadline: .now() + 90, execute: timeout)
 
-            do {
-                try process.run()
-            } catch {
-                timeout.cancel()
-                stdoutPipe.fileHandleForReading.readabilityHandler = nil
-                if resumed.trySet() {
-                    continuation.resume(throwing: BitNetCommanderError.launchFailed(error))
+                process.terminationHandler = { [weak self] proc in
+                    timeout.cancel()
+                    stdoutPipe.fileHandleForReading.readabilityHandler = nil
+                    if let remainder = try? stdoutPipe.fileHandleForReading.readToEnd(),
+                       let text = String(data: remainder, encoding: .utf8) {
+                        outputBox.append(text)
+                    }
+
+                    let output = outputBox.value.trimmingCharacters(in: .whitespacesAndNewlines)
+                    self?.semaphore.signal()
+
+                    guard resumed.trySet() else { return }
+                    if proc.terminationStatus == 0 || !output.isEmpty {
+                        let cleaned = Self.stripEchoedPrompt(output: output, prompt: prompt)
+                        continuation.resume(returning: cleaned)
+                    } else {
+                        continuation.resume(throwing: BitNetCommanderError.processError("exit code \(proc.terminationStatus)"))
+                    }
+                }
+
+                do {
+                    try process.run()
+                } catch {
+                    timeout.cancel()
+                    stdoutPipe.fileHandleForReading.readabilityHandler = nil
+                    self.semaphore.signal()
+                    if resumed.trySet() {
+                        continuation.resume(throwing: BitNetCommanderError.launchFailed(error))
+                    }
                 }
             }
         }
@@ -839,20 +876,20 @@ final class BitNetCommanderEngine: @unchecked Sendable {
             .replacingOccurrences(of: "\u{FEFF}", with: "")
             .replacingOccurrences(of: "\u{0000}", with: "")
 
-        // ── Step 2: ### Assistant マーカーで分割（Commander モードのプロンプト形式）──
-        // 形式: ### System\n...\n\n### User\n...\n\n### Assistant\n<生成部分>
-        let assistantMarker = "### Assistant\n"
+        // ── Step 2: マーカーで分割（Commander モードのプロンプト形式）──
+        // 形式: ### Instruction:\n...\n\n### Response:\n<生成部分>
+        let assistantMarker = "### Response:"
         if let range = cleaned.range(of: assistantMarker) {
-            let result = String(cleaned[range.upperBound...])
-                .trimmingCharacters(in: .whitespacesAndNewlines)
-            if !result.isEmpty { return result }
+            var result = String(cleaned[range.upperBound...]).trimmingCharacters(in: .whitespacesAndNewlines)
+            while result.hasSuffix("#") { result.removeLast() }
+            return result.trimmingCharacters(in: .whitespacesAndNewlines)
         }
-        // 別形式: ### Response\n や <|assistant|>\n も試みる
-        for marker in ["### Response\n", "<|assistant|>\n", "[/INST]"] {
+        // 別形式: ### Assistant や <|assistant|> も試みる
+        for marker in ["### Assistant:", "### Response:", "<|assistant|>", "[/INST]"] {
             if let range = cleaned.range(of: marker) {
-                let result = String(cleaned[range.upperBound...])
-                    .trimmingCharacters(in: .whitespacesAndNewlines)
-                if !result.isEmpty { return result }
+                var result = String(cleaned[range.upperBound...]).trimmingCharacters(in: .whitespacesAndNewlines)
+                while result.hasSuffix("#") { result.removeLast() }
+                return result.trimmingCharacters(in: .whitespacesAndNewlines)
             }
         }
 
@@ -899,6 +936,6 @@ final class _StringBox: @unchecked Sendable {
     var value: String { queue.sync { _value } }
 
     func append(_ text: String) {
-        queue.async { self._value += text }
+        queue.sync { self._value += text }
     }
 }

@@ -43,9 +43,9 @@ final class SafeModeGuard: ObservableObject {
 
         if shiftHeld || ProcessInfo.processInfo.environment["VERANTYX_SAFE_MODE"] == "1" {
             isSafeModeActive = true
-            appendLog("⚠️ SAFE MODE 起動を検知")
-            appendLog("  Shift キーが押された状態でアプリが起動されました")
-            appendLog("  リカバリー操作を選択してください")
+            appendLog(AppLanguage.shared.t("⚠️ SAFE MODE triggered", "⚠️ SAFE MODE 起動を検知"))
+            appendLog(AppLanguage.shared.t("  Shift key was held during application launch", "  Shift キーが押された状態でアプリが起動されました"))
+            appendLog(AppLanguage.shared.t("  Please select a recovery action", "  リカバリー操作を選択してください"))
             Task { await loadCommitHistory() }
             return true
         }
@@ -67,11 +67,11 @@ final class SafeModeGuard: ObservableObject {
     /// git reset --hard <latest stable tag>
     func rollbackToLatestTag() async -> Bool {
         guard let root = SelfEvolutionEngine.shared.repoRoot else {
-            appendLog("❌ リポジトリが見つかりません"); return false
+            appendLog(AppLanguage.shared.t("❌ Repository not found", "❌ リポジトリが見つかりません")); return false
         }
         let tag = await runGit(["describe", "--tags", "--abbrev=0"], in: root)
         if tag.isEmpty || tag.contains("fatal") {
-            appendLog("⚠️ タグが見つかりません。HEAD~1 にロールバックします")
+            appendLog(AppLanguage.shared.t("⚠️ Tag not found. Rolling back to HEAD~1", "⚠️ タグが見つかりません。HEAD~1 にロールバックします"))
             return await rollbackOneCommit()
         }
         return await performReset(to: tag)
@@ -79,9 +79,9 @@ final class SafeModeGuard: ObservableObject {
 
     private func performReset(to ref: String) async -> Bool {
         guard let root = SelfEvolutionEngine.shared.repoRoot else {
-            appendLog("❌ リポジトリが見つかりません"); return false
+            appendLog(AppLanguage.shared.t("❌ Repository not found", "❌ リポジトリが見つかりません")); return false
         }
-        appendLog("🔄 git reset --hard \(ref) を実行中…")
+        appendLog(AppLanguage.shared.t("🔄 Running git reset --hard \(ref)...", "🔄 git reset --hard \(ref) を実行中…"))
 
         // Safety: stash any untracked changes first so git reset can proceed
         _ = await runGit(["stash", "--include-untracked"], in: root)
@@ -90,10 +90,10 @@ final class SafeModeGuard: ObservableObject {
         appendLog(result)
 
         if result.contains("HEAD is now at") || result.contains("Updating files") {
-            appendLog("✅ ロールバック完了: \(ref)")
+            appendLog(AppLanguage.shared.t("✅ Rollback complete: \(ref)", "✅ ロールバック完了: \(ref)"))
             return true
         } else {
-            appendLog("❌ ロールバック失敗: \(result)")
+            appendLog(AppLanguage.shared.t("❌ Rollback failed: \(result)", "❌ ロールバック失敗: \(result)"))
             return false
         }
     }
@@ -127,12 +127,13 @@ final class SafeModeGuard: ObservableObject {
                 p.executableURL = URL(fileURLWithPath: "/usr/bin/git")
                 p.arguments = args
                 p.currentDirectoryURL = directory
-                let pipe = Pipe(); let errPipe = Pipe()
-                p.standardOutput = pipe; p.standardError = errPipe
-                try? p.run(); p.waitUntilExit()
+                let pipe = Pipe()
+                p.standardOutput = pipe
+                p.standardError  = pipe   // ⚠️ 同一パイプ — dual-pipe deadlock 防止
+                try? p.run()
                 let out = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
-                let err = String(data: errPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
-                cont.resume(returning: (out + err).trimmingCharacters(in: .whitespacesAndNewlines))
+                p.waitUntilExit()
+                cont.resume(returning: out.trimmingCharacters(in: .whitespacesAndNewlines))
             }
         }
     }
@@ -146,7 +147,7 @@ final class SafeModeGuard: ObservableObject {
 // 全画面を覆うリカバリー画面。通常UIより前面に表示。
 
 struct SafeModeWindow: View {
-    @StateObject private var guard_ = SafeModeGuard.shared
+    @ObservedObject private var guard_ = SafeModeGuard.shared
     @State private var isProcessing = false
     @State private var done = false
     @State private var selectedHash: String? = nil
@@ -189,7 +190,7 @@ struct SafeModeWindow: View {
                             Text("VERANTYX SAFE MODE")
                                 .font(.system(size: 22, weight: .black, design: .monospaced))
                                 .foregroundStyle(Color(red: 1.0, green: 0.45, blue: 0.15))
-                            Text("Shift キーが検知されました — リカバリー操作を選択してください")
+                            Text(AppLanguage.shared.t("Shift key detected — please select a recovery action", "Shift キーが検知されました — リカバリー操作を選択してください"))
                                 .font(.system(size: 12))
                                 .foregroundStyle(Color(red: 0.80, green: 0.65, blue: 0.55))
                         }
@@ -214,7 +215,7 @@ struct SafeModeWindow: View {
                     VStack(spacing: 12) {
                         recoveryButton(
                             icon: "arrow.uturn.backward.circle.fill",
-                            title: "1コミット前にロールバック",
+                            title: AppLanguage.shared.t("Rollback 1 commit", "1コミット前にロールバック"),
                             subtitle: "git reset --hard HEAD~1",
                             color: Color(red: 0.9, green: 0.35, blue: 0.15)
                         ) {
@@ -225,7 +226,7 @@ struct SafeModeWindow: View {
 
                         recoveryButton(
                             icon: "tag.circle.fill",
-                            title: "最新の安定タグに戻す",
+                            title: AppLanguage.shared.t("Rollback to latest stable tag", "最新の安定タグに戻す"),
                             subtitle: "git reset --hard <latest-tag>",
                             color: Color(red: 0.55, green: 0.35, blue: 0.90)
                         ) {
@@ -236,8 +237,8 @@ struct SafeModeWindow: View {
 
                         recoveryButton(
                             icon: "arrow.right.circle.fill",
-                            title: "このまま起動する",
-                            subtitle: "安全ではない可能性",
+                            title: AppLanguage.shared.t("Continue booting", "このまま起動する"),
+                            subtitle: AppLanguage.shared.t("May not be safe", "安全ではない可能性"),
                             color: Color(red: 0.35, green: 0.65, blue: 0.40)
                         ) {
                             done = true
@@ -245,7 +246,7 @@ struct SafeModeWindow: View {
 
                         recoveryButton(
                             icon: "xmark.circle.fill",
-                            title: "終了する",
+                            title: AppLanguage.shared.t("Exit", "終了する"),
                             subtitle: "NSApp.terminate",
                             color: Color(red: 0.55, green: 0.55, blue: 0.65)
                         ) {
@@ -256,12 +257,12 @@ struct SafeModeWindow: View {
 
                     // Right: Commit history picker
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("コミット履歴から選択")
+                        Text(AppLanguage.shared.t("Select from commit history", "コミット履歴から選択"))
                             .font(.system(size: 11, weight: .semibold, design: .monospaced))
                             .foregroundStyle(Color(red: 0.7, green: 0.65, blue: 0.6))
 
                         if guard_.stableCommitList.isEmpty {
-                            ProgressView("履歴を読み込み中…")
+                            ProgressView(AppLanguage.shared.t("Loading history...", "履歴を読み込み中…"))
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity, alignment: .center)
                                 .padding(.top, 20)
@@ -284,7 +285,7 @@ struct SafeModeWindow: View {
                                         if ok { done = true } else { isProcessing = false }
                                     }
                                 } label: {
-                                    Label("このコミットに git reset --hard", systemImage: "arrow.uturn.backward")
+                                    Label(AppLanguage.shared.t("git reset --hard to this commit", "このコミットに git reset --hard"), systemImage: "arrow.uturn.backward")
                                         .font(.system(size: 11, weight: .bold))
                                         .foregroundStyle(.white)
                                         .frame(maxWidth: .infinity)
@@ -305,7 +306,7 @@ struct SafeModeWindow: View {
 
                 ScrollView {
                     Text(guard_.safeModeLog.isEmpty
-                         ? "git コマンドのログがここに表示されます…"
+                         ? AppLanguage.shared.t("git command logs will appear here...", "git コマンドのログがここに表示されます…")
                          : guard_.safeModeLog)
                         .font(.system(size: 9, design: .monospaced))
                         .foregroundStyle(Color(red: 0.5, green: 0.85, blue: 0.5))
@@ -319,7 +320,7 @@ struct SafeModeWindow: View {
 
                 // ── Done state ────────────────────────────────────────────
                 if done {
-                    Text("✅ リカバリー完了 — 通常起動を続行します")
+                    Text(AppLanguage.shared.t("✅ Recovery complete — continuing normal boot", "✅ リカバリー完了 — 通常起動を続行します"))
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundStyle(Color(red: 0.4, green: 0.9, blue: 0.5))
                         .padding(.bottom, 16)
@@ -331,7 +332,7 @@ struct SafeModeWindow: View {
                 Color.black.opacity(0.6).ignoresSafeArea()
                 VStack(spacing: 14) {
                     ProgressView().scaleEffect(1.2)
-                    Text("git reset を実行中…")
+                    Text(AppLanguage.shared.t("Running git reset...", "git reset を実行中…"))
                         .font(.system(size: 13, design: .monospaced))
                         .foregroundStyle(.secondary)
                 }

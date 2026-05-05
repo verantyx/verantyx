@@ -9,8 +9,8 @@ import SwiftUI
 // • リアルタイムアクセスログ（外部APIに何を見せたか）
 
 struct GatekeeperModeView: View {
-    @StateObject private var state       = GatekeeperModeState.shared
-    @StateObject private var orchestrator = CommanderOrchestrator.shared
+    @ObservedObject private var state       = GatekeeperModeState.shared
+    @ObservedObject private var orchestrator = CommanderOrchestrator.shared
     @State private var availableModels: [String] = []
     @State private var showAccessLog = false
 
@@ -30,19 +30,11 @@ struct GatekeeperModeView: View {
                     // ─── Architecture Diagram ─────────────────────────────────
                     architectureCard
 
-                    // ─── Master Switch ────────────────────────────────────────
-                    masterSwitchCard
+                    // ─── Vault Status ─────────────────────────────────────
+                    GatekeeperVaultCard(state: state, vault: state.vault)
 
-                    if state.isEnabled {
-                        // ─── Commander Settings ───────────────────────────────
-                        commanderSettingsCard
-
-                        // ─── Vault Status ─────────────────────────────────────
-                        GatekeeperVaultCard(state: state, vault: state.vault)
-
-                        // ─── Access Log ───────────────────────────────────────
-                        accessLogCard
-                    }
+                    // ─── Access Log ───────────────────────────────────────
+                    accessLogCard
                 }
                 .padding()
             }
@@ -184,6 +176,19 @@ struct GatekeeperModeView: View {
             .padding(12)
             .background(Color.primary.opacity(0.04))
             .clipShape(RoundedRectangle(cornerRadius: 10))
+
+            HStack {
+                Text("Worker Provider:").font(.caption).foregroundStyle(.secondary)
+                Picker("", selection: $state.workerProvider) {
+                    Text("Claude").tag(CloudProvider.claude)
+                    Text("OpenAI").tag(CloudProvider.openai)
+                    Text("Gemini").tag(CloudProvider.gemini)
+                    Text("DeepSeek").tag(CloudProvider.deepseek)
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+            }
+            .padding(.top, 4)
         }
         .cardStyle()
     }
@@ -221,79 +226,7 @@ struct GatekeeperModeView: View {
             .animation(.easeInOut(duration: 0.2), value: isActive)
     }
 
-    // MARK: - Master Switch
 
-    private var masterSwitchCard: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Gatekeeper Mode")
-                    .font(.subheadline.bold())
-                Text(state.isEnabled
-                     ? "✅ 有効 — 外部 API へのファイル直接アクセスをブロック中"
-                     : "無効 — 通常モードで動作中")
-                    .font(.caption)
-                    .foregroundStyle(state.isEnabled ? .green : .secondary)
-            }
-            Spacer()
-            Toggle("", isOn: $state.isEnabled)
-                .labelsHidden()
-                .tint(.green)
-        }
-        .cardStyle()
-    }
-
-    // MARK: - Commander Settings
-
-    private var commanderSettingsCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Label("Commander 設定", systemImage: "cpu.fill")
-                .font(.subheadline.bold())
-                .foregroundStyle(.green)
-
-            // モデル選択
-            HStack {
-                Text("Commander モデル")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Spacer()
-                Picker("", selection: $state.commanderModel) {
-                    ForEach(availableModels, id: \.self) { model in
-                        Text(model).tag(model)
-                    }
-                }
-                .pickerStyle(.menu)
-                .frame(width: 200)
-            }
-
-            // モデル説明
-            if !state.commanderModel.isEmpty {
-                Text(modelTip(state.commanderModel))
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-                    .padding(6)
-                    .background(Color.green.opacity(0.08))
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
-            }
-
-            Divider()
-
-            // Worker 選択
-            HStack {
-                Text("Worker (外部 API)")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Spacer()
-                Picker("", selection: $state.workerProvider) {
-                    ForEach(CloudProvider.allCases, id: \.self) { p in
-                        Text(p.rawValue).tag(p)
-                    }
-                }
-                .pickerStyle(.menu)
-                .frame(width: 150)
-            }
-        }
-        .cardStyle()
-    }
 
     // MARK: - Access Log
 
@@ -304,13 +237,13 @@ struct GatekeeperModeView: View {
                     .font(.subheadline.bold())
                     .foregroundStyle(.red)
                 Spacer()
-                Text("外部 API に公開した JCross 情報")
+                Text(AppLanguage.shared.t("JCross Info Exposed to External APIs", "外部 API に公開した JCross 情報"))
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
 
             if state.accessLog.isEmpty {
-                Text("まだアクセスなし")
+                Text(AppLanguage.shared.t("No access yet", "まだアクセスなし"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .padding(8)
@@ -415,7 +348,7 @@ struct GatekeeperVaultCard: View {
             switch vault.vaultStatus {
             case .notInitialized:
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Vault が未初期化です — ワークスペースの全ファイルを JCross 変換します")
+                    Text(AppLanguage.shared.t("Vault uninitialized — Converting all workspace files to JCross", "Vault が未初期化です — ワークスペースの全ファイルを JCross 変換します"))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     Button {
@@ -465,7 +398,7 @@ struct GatekeeperVaultCard: View {
                         Label("\(fileCount) ファイル変換済み", systemImage: "checkmark.circle.fill")
                             .foregroundStyle(.green)
                             .font(.caption.bold())
-                        Text("最終更新: \(lastConverted.formatted(.relative(presentation: .named)))")
+                        Text(AppLanguage.shared.t("Last Updated: \(lastConverted.formatted(.relative(presentation: .named)))", "最終更新: \(lastConverted.formatted(.relative(presentation: .named)))"))
                             .font(.caption2)
                             .foregroundStyle(.secondary)
                     }

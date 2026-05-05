@@ -139,12 +139,25 @@ final class WorkspaceManager {
                 continue
             }
 
-            // ── Resource values (uses pre-fetched cache — no I/O) ──────────────
-            guard let vals = try? url.resourceValues(forKeys: [.isRegularFileKey, .isDirectoryKey])
-            else { continue }
+            // ── Directory / File Check ─────────────────────────────────────────
+            // `try? url.resourceValues` can throw obscure errors on macOS 14+ (e.g. for symlinks or cloud files).
+            // Fall back to a robust check if it fails.
+            var isDir = false
+            var isRegularFile = false
 
-            if vals.isDirectory == true { continue }   // skip dir entries, we already handled above
-            guard vals.isRegularFile == true else { continue }
+            if let vals = try? url.resourceValues(forKeys: [.isRegularFileKey, .isDirectoryKey]) {
+                isDir = vals.isDirectory == true
+                isRegularFile = vals.isRegularFile == true
+            } else {
+                var objcIsDir: ObjCBool = false
+                if fm.fileExists(atPath: url.path, isDirectory: &objcIsDir) {
+                    isDir = objcIsDir.boolValue
+                    isRegularFile = !isDir
+                }
+            }
+
+            if isDir { continue }   // skip dir entries, we already handled skipDescendants above
+            guard isRegularFile else { continue }
 
             // ── Extension filter ───────────────────────────────────────────────
             let ext = url.pathExtension.lowercased()

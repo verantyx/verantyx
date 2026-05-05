@@ -95,6 +95,7 @@ struct ParanoiaModeView: View {
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
         }
+        .contentShape(Rectangle())
         .buttonStyle(.plain)
         .background(Color(red: 0.06, green: 0.04, blue: 0.05))
     }

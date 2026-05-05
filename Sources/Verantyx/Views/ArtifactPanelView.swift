@@ -97,6 +97,7 @@ struct ArtifactPanelView: View {
                                          ? Color(red: 0.3, green: 0.9, blue: 0.5)
                                          : Color(red: 0.55, green: 0.55, blue: 0.65))
                 }
+                .contentShape(Rectangle())
                 .buttonStyle(.plain)
                 .padding(.trailing, 6)
             }
@@ -136,6 +137,7 @@ struct ArtifactPanelView: View {
                         alignment: .bottom
                     )
                 }
+                .contentShape(Rectangle())
                 .buttonStyle(.plain)
             }
         }
@@ -200,7 +202,7 @@ struct ArtifactPanelView: View {
                 Text("Artifact Preview")
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(Color(red: 0.60, green: 0.65, blue: 0.80))
-                Text("AIがコードや画面を生成すると\nここに自動表示されます")
+                Text(AppLanguage.shared.t("When AI generates code or UI,\nit will be automatically displayed here.", "AIがコードや画面を生成すると\nここに自動表示されます"))
                     .font(.system(size: 11))
                     .foregroundStyle(Color(red: 0.40, green: 0.40, blue: 0.55))
                     .multilineTextAlignment(.center)
@@ -209,16 +211,16 @@ struct ArtifactPanelView: View {
             VStack(spacing: 8) {
                 hintRow(icon: "chevron.left.forwardslash.chevron.right",
                         color: Color(red: 0.6, green: 0.4, blue: 1.0),
-                        text: "コードブロック (```swift ...) → 自動表示")
+                        text: AppLanguage.shared.t("Code block (```swift ...) → Auto display", "コードブロック (```swift ...) → 自動表示"))
                 hintRow(icon: "globe",
                         color: Color(red: 0.9, green: 0.5, blue: 0.2),
-                        text: "HTMLを生成して → ライブプレビュー")
+                        text: AppLanguage.shared.t("Generate HTML → Live preview", "HTMLを生成して → ライブプレビュー"))
                 hintRow(icon: "arrow.triangle.branch",
                         color: Color(red: 0.3, green: 0.8, blue: 1.0),
-                        text: "Mermaid図を描いて → グラフ表示")
+                        text: AppLanguage.shared.t("Draw Mermaid diagram → Graph display", "Mermaid図を描いて → グラフ表示"))
                 hintRow(icon: "arrow.left.arrow.right.square",
                         color: Color(red: 0.4, green: 0.85, blue: 0.5),
-                        text: "ファイル変更 → Diffタブに表示")
+                        text: AppLanguage.shared.t("File changes → Show in Diff tab", "ファイル変更 → Diffタブに表示"))
             }
             .padding(.horizontal, 24)
             Spacer()
@@ -261,7 +263,7 @@ struct ArtifactPanelView: View {
                 }
             }
             if app.artifactHistory.isEmpty {
-                Text("履歴なし").foregroundStyle(.secondary)
+                Text(AppLanguage.shared.t("No History", "履歴なし")).foregroundStyle(.secondary)
             }
         } label: {
             Image(systemName: "clock.arrow.circlepath")
@@ -269,7 +271,7 @@ struct ArtifactPanelView: View {
                 .foregroundStyle(Color(red: 0.5, green: 0.5, blue: 0.62))
         }
         .menuStyle(.borderlessButton)
-        .help("Artifact履歴")
+        .help(AppLanguage.shared.t("Artifact History", "Artifact履歴"))
     }
 
     // MARK: - Helpers

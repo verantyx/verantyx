@@ -120,7 +120,7 @@ struct GitPanelView: View {
             // Message editor
             ZStack(alignment: .topLeading) {
                 if commitMessage.isEmpty {
-                    Text("Message (⌘↩ to commit)")
+                    Text(app.t("Message (⌘↩ to commit)", "メッセージ (⌘↩ でコミット)"))
                         .font(.system(size: 11, design: .monospaced))
                         .foregroundStyle(Color(red: 0.4, green: 0.4, blue: 0.55))
                         .padding(.horizontal, 8)
@@ -163,6 +163,7 @@ struct GitPanelView: View {
                             .stroke(Color(red: 0.3, green: 0.85, blue: 0.45).opacity(0.35), lineWidth: 1))
                 )
             }
+            .contentShape(Rectangle())
             .buttonStyle(.plain)
             .disabled(isCommitting || commitMessage.trimmingCharacters(in: .whitespaces).isEmpty)
             .keyboardShortcut(.return, modifiers: .command)
@@ -193,6 +194,7 @@ struct GitPanelView: View {
                         Task { try? await git.stageAll(); await git.refresh() }
                     }
                     .font(.system(size: 9)).foregroundStyle(color.opacity(0.8))
+                    .contentShape(Rectangle())
                     .buttonStyle(.plain)
                 }
             }
@@ -280,6 +282,7 @@ struct GitPanelView: View {
             Button { if isError { errorBanner = nil } else { successBanner = nil } } label: {
                 Image(systemName: "xmark").font(.system(size: 9))
             }
+            .contentShape(Rectangle())
             .buttonStyle(.plain)
         }
         .foregroundStyle(isError ? Color(red: 1.0, green: 0.4, blue: 0.4) : Color(red: 0.3, green: 0.9, blue: 0.5))
@@ -334,6 +337,7 @@ struct GitPanelView: View {
                 .font(.system(size: 11))
                 .foregroundStyle(Color(red: 0.55, green: 0.55, blue: 0.70))
         }
+        .contentShape(Rectangle())
         .buttonStyle(.plain)
         .help(tooltip)
     }
@@ -414,6 +418,7 @@ struct GitFileRow: View {
                                          ? Color(red: 0.9, green: 0.4, blue: 0.4)
                                          : Color(red: 0.3, green: 0.85, blue: 0.45))
                 }
+                .contentShape(Rectangle())
                 .buttonStyle(.plain)
                 .transition(.opacity)
             }

@@ -101,19 +101,20 @@ struct ActivityBarView: View {
             }
             .contentShape(Rectangle())
         }
+        .contentShape(Rectangle())
         .buttonStyle(.plain)
         .help(helpLabel(section))
     }
 
     private func helpLabel(_ section: ActivitySection) -> String {
         switch section {
-        case .mcp:       return "MCP Servers"
-        case .explorer:  return "Explorer"
-        case .search:    return "Search"
-        case .git:       return "Source Control"
-        case .evolution: return "Self-Evolution"
-        case .extensions: return "Extensions"
-        case .settings:  return "Settings"
+        case .mcp:       return app.t("MCP Servers", "MCP サーバー")
+        case .explorer:  return app.t("Explorer", "エクスプローラー")
+        case .search:    return app.t("Search", "検索")
+        case .git:       return app.t("Source Control", "ソース管理")
+        case .evolution: return app.t("Self-Evolution", "自己進化")
+        case .extensions: return app.t("Extensions", "拡張機能")
+        case .settings:  return app.t("Settings", "設定")
         }
     }
 }

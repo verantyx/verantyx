@@ -216,7 +216,18 @@ final class CIValidationEngine: ObservableObject {
         let errorList = errors.prefix(20).map { "• \($0.displayString)" }.joined(separator: "\n")
         let fileList  = Set(errors.map { $0.file }).joined(separator: ", ")
 
-        return """
+        return AppLanguage.shared.t("""
+        ## ⚠️ Compilation Errors Detected
+
+        Errors occurred in the following files: \(fileList)
+
+        Error list:
+        \(errorList)
+
+        Please fix the patches you generated.
+        Output the fixed files using the same [PATCH_FILE: ...] format.
+        Review each error and resolve all of them.
+        """, """
         ## ⚠️ コンパイルエラーが検出されました
 
         以下のファイルでエラーが発生しています: \(fileList)
@@ -227,19 +238,19 @@ final class CIValidationEngine: ObservableObject {
         あなたが生成したパッチを修正してください。
         同じ [PATCH_FILE: ...] 形式で修正済みファイルを出力してください。
         エラーを一つずつ確認し、すべてのエラーを解消してください。
-        """
+        """)
     }
 
     // MARK: - CI Status View (embeddable)
 
     var statusSummary: String {
         switch currentPhase {
-        case .idle:                       return "待機中"
-        case .preparingBranch:            return "🌿 検証ブランチ準備中…"
-        case .compiling(let n):           return "🔨 コンパイル中 (試行 \(n)/\(MAX_RETRIES))…"
-        case .fixingErrors(let n):        return "🤖 AI がエラーを修正中 (試行 \(n))…"
-        case .passed:                     return "✅ CI 通過 — メインビルドを許可"
-        case .failed(let msg):            return "❌ CI 失敗: \(msg)"
+        case .idle:                       return AppLanguage.shared.t("Idle", "待機中")
+        case .preparingBranch:            return AppLanguage.shared.t("🌿 Preparing validation branch…", "🌿 検証ブランチ準備中…")
+        case .compiling(let n):           return AppLanguage.shared.t("🔨 Compiling (Attempt \(n)/\(MAX_RETRIES))…", "🔨 コンパイル中 (試行 \(n)/\(MAX_RETRIES))…")
+        case .fixingErrors(let n):        return AppLanguage.shared.t("🤖 AI fixing errors (Attempt \(n))…", "🤖 AI がエラーを修正中 (試行 \(n))…")
+        case .passed:                     return AppLanguage.shared.t("✅ CI Passed — Main build permitted", "✅ CI 通過 — メインビルドを許可")
+        case .failed(let msg):            return AppLanguage.shared.t("❌ CI Failed: \(msg)", "❌ CI 失敗: \(msg)")
         }
     }
 
@@ -274,8 +285,9 @@ final class CIValidationEngine: ObservableObject {
                     p.environment = env
                     let pipe = Pipe()
                     p.standardOutput = pipe; p.standardError = pipe
-                    try? p.run(); p.waitUntilExit()
+                    try? p.run()
                     let out = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+                    p.waitUntilExit()
                     cont.resume(returning: out)
                     return
                 }
@@ -287,8 +299,9 @@ final class CIValidationEngine: ObservableObject {
                 p.environment = env
                 let pipe = Pipe()
                 p.standardOutput = pipe; p.standardError = pipe
-                try? p.run(); p.waitUntilExit()
+                try? p.run()
                 let out = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+                p.waitUntilExit()
                 cont.resume(returning: out)
             }
         }

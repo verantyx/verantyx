@@ -51,6 +51,7 @@ struct ThinkingLogView: View {
                         .font(.system(size: 10))
                         .foregroundStyle(autoScroll ? .green : .secondary)
                 }
+                .contentShape(Rectangle())
                 .buttonStyle(.plain)
 
                 Button {
@@ -60,6 +61,7 @@ struct ThinkingLogView: View {
                         .font(.system(size: 10))
                         .foregroundStyle(.secondary)
                 }
+                .contentShape(Rectangle())
                 .buttonStyle(.plain)
             }
             .padding(.horizontal, 8)
@@ -69,7 +71,7 @@ struct ThinkingLogView: View {
             Divider().opacity(0.3)
 
             // ── Log body (NSTextView — 行をまたいだドラッグ選択が可能) ──
-            ProcessLogTranscriptView(entries: app.processLog, autoScroll: autoScroll)
+            ProcessLogTranscriptView(entries: app.logStore.entries, autoScroll: autoScroll)
         }
         .background(Color(red: 0.06, green: 0.08, blue: 0.10))
     }

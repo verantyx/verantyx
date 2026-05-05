@@ -15,6 +15,7 @@ import Foundation
 
 private let kDefaultPoolSize = 3          // 並列ブラウザプロセス数（Pre-flight の 3クエリと一致）
 private let kCheckoutTimeoutSec: Double = 25.0  // checkout タイムアウト
+private let kMaxSlotRestarts = 3          // スロットごとの最大再起動回数（ゾンビ振れ止まり）
 
 // MARK: - BrowserBridgePool
 
@@ -36,11 +37,18 @@ actor BrowserBridgePool {
     /// バックグラウンドで並列起動するため呼び出し元はブロックしない。
     func warmUp() {
         Task.detached(priority: .utility) {
+            // Kill any orphaned verantyx-browser processes from previous crashed sessions
+            let killTask = Process()
+            killTask.executableURL = URL(fileURLWithPath: "/usr/bin/killall")
+            killTask.arguments = ["-9", "verantyx-browser"]
+            try? killTask.run()
+            killTask.waitUntilExit()
+
             await withTaskGroup(of: Void.self) { group in
                 for slot in await self.slots {
                     group.addTask {
                         do {
-                            try await slot.bridge.launch(visible: false)
+                            try await slot.bridge.launch(visible: true)
                         } catch {
                             // ウォームアップ失敗は警告のみ（最初の fetch 時にリトライされる）
                             print("[BrowserPool] warmUp slot \(slot.id) failed: \(error.localizedDescription)")
@@ -55,10 +63,32 @@ actor BrowserBridgePool {
 
     /// URL を fetch して Markdown で返す。
     /// 空きスロットがなければ待機。タイムアウト時は .fetch フォールバック。
-    func fetch(_ url: String) async throws -> String {
+    func fetch(_ url: String, entropy: [[Double]]? = nil, keyboardEntropy: [Double]? = nil, target: [Double]? = nil) async throws -> String {
         let slot = try await checkout()
         defer { Task { await self.returnSlot(slot) } }
-        return try await slot.bridge.fetch(url)
+        return try await slot.bridge.fetch(url, entropy: entropy, keyboardEntropy: keyboardEntropy, target: target)
+    }
+
+    /// 検索エンジンでの人間らしいタイピングとナビゲーションをシミュレートする
+    func interactiveSearch(query: String, searchURL: String, entropy: [[Double]]? = nil, keyboardEntropy: [Double]? = nil, target: [Double]? = nil) async throws -> String {
+        let slot = try await checkout()
+        defer { Task { await self.returnSlot(slot) } }
+        
+        // 1. トップページを開く
+        _ = try await slot.bridge.fetch("https://html.duckduckgo.com/html/", entropy: nil, keyboardEntropy: nil, target: nil)
+        
+        // 2. 検索ボックスにフォーカス
+        _ = try await slot.bridge.evalJS("document.getElementById('search_form_input_homepage').focus();")
+        
+        // 3. タイピングシミュレーション
+        try await slot.bridge.typeText(query, keyboardEntropy: keyboardEntropy)
+        
+        // 入力が終わるまで待機
+        let typingDuration = Double(query.count) * 0.15 + 0.5
+        try await Task.sleep(nanoseconds: UInt64(typingDuration * 1_000_000_000))
+        
+        // 4. 検索結果ページへ遷移（Submitイベントの代わりに直接URL遷移してHITL_DONEを待つ）
+        return try await slot.bridge.fetch(searchURL, entropy: entropy, keyboardEntropy: keyboardEntropy, target: target)
     }
 
     /// スロット数だけ並列 URL フェッチを実行して結果を返す。
@@ -127,15 +157,27 @@ actor BrowserBridgePool {
 
     // MARK: - Health & Status
 
-    /// 全スロットの生存確認。クラッシュしたプロセスを再起動する。
+    /// 全スロットの生存確認。クラッシュしたプロセスを再起動する（上限付き）。
     func healthCheck() async {
         for slot in slots where !slot.inUse {
             let alive = await slot.bridge.ping()
             if !alive {
-                print("[BrowserPool] slot \(slot.id) dead — restarting")
-                Task.detached(priority: .utility) {
-                    try? await slot.bridge.launch(visible: false)
+                guard slot.restartCount < kMaxSlotRestarts else {
+                    if !slot.isDegraded {
+                        slot.isDegraded = true
+                        print("[BrowserPool] slot \(slot.id) degraded after \(kMaxSlotRestarts) restarts — no longer restarting")
+                    }
+                    continue
                 }
+                slot.restartCount += 1
+                print("[BrowserPool] slot \(slot.id) dead (restart \(slot.restartCount)/\(kMaxSlotRestarts)) — restarting")
+                Task.detached(priority: .utility) {
+                    try? await slot.bridge.launch(visible: true)
+                }
+            } else {
+                // 元気なら degraded フラグとカウンターをリセット
+                slot.restartCount = 0
+                slot.isDegraded   = false
             }
         }
     }
@@ -160,7 +202,9 @@ actor BrowserBridgePool {
 class PoolSlot {
     let id:     Int
     let bridge: BrowserBridge
-    var inUse:  Bool = false
+    var inUse:       Bool = false
+    var restartCount: Int = 0       // クラッシュ後の再起動回数
+    var isDegraded:  Bool = false   // 上限到達フラグ
 
     init(id: Int) {
         self.id     = id

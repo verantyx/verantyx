@@ -63,8 +63,12 @@ final class JCrossTranspileSession {
     var expiresAt: Date
 
     // Bidirectional lookup tables (in-memory only, never persisted externally)
-    private(set) var nodesByID: [String: JCrossCodeNode] = [:]    // "A1" → node
-    private(set) var nodesBySymbol: [String: JCrossCodeNode] = [:] // "processX" → node
+    private(set) var nodesByID:     [String: JCrossCodeNode] = [:]
+    private(set) var nodesBySymbol: [String: JCrossCodeNode] = [:]
+
+    // ── Z軸 Evidence Vault ──────────────────────────────
+    // リテラル値はここに随離される。外部LLMには絶対に送信しない。
+    let zAxisVault: JCrossZAxisVault
 
     // Restore mapping: "<jcross_id>" → original symbol
     var restoreMap: [String: String] {
@@ -72,27 +76,44 @@ final class JCrossTranspileSession {
             .compactMapValues { $0 }
     }
 
-    private var counter: [String: Int] = [:] // prefix → counter for ID generation
+    private var counter: [String: Int] = [:]
+    private let lock = NSLock()
 
     init() {
         self.sessionID = UUID().uuidString
         self.createdAt = Date()
         self.expiresAt = Date().addingTimeInterval(24 * 3600)
+        self.zAxisVault = JCrossZAxisVault(
+            sessionPrefix: String(UUID().uuidString.prefix(4).lowercased())
+        )
     }
 
     func nextID(prefix: String) -> String {
-        let n = (counter[prefix] ?? 0) + 1
-        counter[prefix] = n
-        return "\(prefix)\(n)"
+        lock.withLock {
+            let n = (counter[prefix] ?? 0) + 1
+            counter[prefix] = n
+            return "\(prefix)\(n)"
+        }
     }
 
     func register(_ node: JCrossCodeNode) {
-        nodesByID[node.id] = node
-        nodesBySymbol[node.originalSymbol] = node
+        lock.withLock {
+            nodesByID[node.id] = node
+            nodesBySymbol[node.originalSymbol] = node
+        }
+    }
+
+    func node(forSymbol symbol: String) -> JCrossCodeNode? {
+        lock.withLock { nodesBySymbol[symbol] }
+    }
+
+    func node(forID id: String) -> JCrossCodeNode? {
+        lock.withLock { nodesByID[id] }
     }
 
     var isExpired: Bool { Date() > expiresAt }
 }
+
 
 // MARK: - BitNet Transpiler Interface (未来の差し替えポイント)
 
@@ -144,17 +165,21 @@ struct RuleBaseNEREngine: BitNetTranspilerInterface {
 }
 
 // MARK: - JCrossCodeTranspiler
+//
+// Phase 1 安定化: @MainActor final class → actor + @MainActor UIProxy に分離。
+//
+//   JCrossCodeTranspiler (actor) — 処理系: トークナイズ・識別子置換など重いCPU処理
+//   JCrossCodeTranspilerUI (@MainActor ObservableObject) — SwiftUIバインディング用UI状態
+//
+// 呼び出し元は JCrossCodeTranspilerUI.shared 経由で長期互換。
 
-@MainActor
-final class JCrossCodeTranspiler: ObservableObject {
+actor JCrossCodeTranspiler {
 
-    // MARK: - State
-
-    @Published var currentSession: JCrossTranspileSession?
-    @Published var isTranspiling = false
+    // MARK: - State (処理系: actor 内部状態)
 
     private let nerEngine: any BitNetTranspilerInterface
     private var sessions: [String: JCrossTranspileSession] = [:]
+    var currentSession: JCrossTranspileSession?   // actor 内部で面換が保証される
 
     // Kanji topology assignment rules
     private static let kanjiMap: [String: (String, Double)] = [
@@ -206,9 +231,15 @@ final class JCrossCodeTranspiler: ObservableObject {
 
     /// ソースコード → JCross 中間言語変換
     /// 返値: (jcrossCode, sessionID)  ← sessionID は復元時に必要
-    func transpileToJCross(_ source: String, language: CodeLanguage) async -> (jcross: String, sessionID: String) {
-        isTranspiling = true
-        defer { isTranspiling = false }
+    ///
+    /// - noiseLevel: ノイズノードの注入数 (0=なし, 1=低, 2=中, 3=高)
+    ///   ノイズが多いほどLLMによるパターン推論が困難になる。
+    func transpileToJCross(
+        _ source: String,
+        language: CodeLanguage,
+        noiseLevel: Int = 2
+    ) async -> (jcross: String, sessionID: String) {
+        // isTranspiling は JCrossCodeTranspilerUI (UIプロキシ) が管理する
 
         let session = newSession()
 
@@ -218,10 +249,16 @@ final class JCrossCodeTranspiler: ObservableObject {
         // Phase 2: 構文トークン化
         let tokens = tokenize(source, language: language)
 
-        // Phase 3: JCross 変換
+        // Phase 3: JCross 変換 (Z軸リテラル随離 + ノイズ注入)
         var output = ""
-        output += jcrossHeader(language: language)
-        output += transpileTokens(tokens, sensitiveTokens: Set(sensitiveTokens), session: session, language: language)
+        output += jcrossHeader(language: language, session: session)
+        output += transpileTokens(
+            tokens,
+            sensitiveTokens: Set(sensitiveTokens),
+            session: session,
+            language: language,
+            noiseLevel: noiseLevel
+        )
 
         return (output, session.sessionID)
     }
@@ -261,12 +298,14 @@ final class JCrossCodeTranspiler: ObservableObject {
 
     // MARK: - JCross Generation
 
-    private func jcrossHeader(language: CodeLanguage) -> String {
+    private func jcrossHeader(language: CodeLanguage, session: JCrossTranspileSession) -> String {
         """
         // JCROSS_BEGIN
-        // lang:\(language.rawValue) ver:1.0 enc:kanji-topology
-        // ⚠️ Verantyx JCross Intermediate Representation
-        // ⚠️ Proprietary format — requires Verantyx SDK to interpret
+        // lang:\(language.rawValue) ver:2.0 enc:kanji-topology+z-axis
+        // session:\(session.sessionID.prefix(8))
+        // ⚠️ Verantyx JCross Intermediate Representation (6-Axis)
+        // ⚠️ Z-Axis literals are LOCALLY ISOLATED — not present in this output
+        // ⚠️ DUMMY nodes are noise — structural integrity requires local Vault
 
         """
     }
@@ -275,7 +314,8 @@ final class JCrossCodeTranspiler: ObservableObject {
         _ tokens: [CodeToken],
         sensitiveTokens: Set<String>,
         session: JCrossTranspileSession,
-        language: CodeLanguage
+        language: CodeLanguage,
+        noiseLevel: Int
     ) -> String {
         var lines: [String] = []
 
@@ -293,7 +333,8 @@ final class JCrossCodeTranspiler: ObservableObject {
                     token.value,
                     sensitiveTokens: sensitiveTokens,
                     session: session,
-                    language: language
+                    language: language,
+                    noiseLevel: noiseLevel
                 )
                 lines.append(transpiled)
             }
@@ -307,11 +348,31 @@ final class JCrossCodeTranspiler: ObservableObject {
         _ line: String,
         sensitiveTokens: Set<String>,
         session: JCrossTranspileSession,
-        language: CodeLanguage
+        language: CodeLanguage,
+        noiseLevel: Int
     ) -> String {
         var result = line
+        let vault = session.zAxisVault
 
-        // Replace sensitive tokens first (they become REDACTED)
+        // Phase Z: リテラル値を Z軸に随離
+        // ⚠️ String.Index の範囲置換は多バイト文字（漢字・絵文字）で
+        //    UTF-16 オフセット計算が崩れ out-of-bounds クラッシュになる。
+        //    代わりに「値マッチ → 先頭から1回だけ置換」方式で安全に処理する。
+        let langHint = languageHint(for: language)
+        let literals = LiteralExtractor.extractFromLine(result, lineNumber: 0, language: langHint)
+        // 長い値から優先して置換することでサブストリング誤マッチを防ぐ
+        for lit in literals.sorted(by: { $0.value.count > $1.value.count }) {
+            guard let constID = vault.store(rawValue: lit.cleanValue, category: lit.category) else {
+                continue  // 感度閾値未満はスキップ
+            }
+            // 最初の1回だけ安全に置換（rangeで操作しない）
+            if let safeRange = result.range(of: lit.value) {
+                result.replaceSubrange(safeRange, with: "⧪\(constID)⧫")
+            }
+        }
+
+
+        // Phase S: センシティブ識別子をシークレットノードに変換
         for secret in sensitiveTokens {
             if result.contains(secret) {
                 let node = makeNode(
@@ -324,17 +385,18 @@ final class JCrossCodeTranspiler: ObservableObject {
             }
         }
 
-        // Replace identifiers with JCross node IDs
+        // Phase I: 識別子を JCross ノードIDに変換
         let identifiers = extractIdentifiers(from: result, language: language)
         for ident in identifiers {
             guard !isKeyword(ident, language: language) else { continue }
+            // CONST:/NOISE: トークンを誤って置換しないようにがある
+            guard !ident.hasPrefix("CONST") && !ident.hasPrefix("NOISE") else { continue }
             let node: JCrossCodeNode
-            if let existing = session.nodesBySymbol[ident] {
+            if let existing = session.node(forSymbol: ident) {
                 node = existing
             } else {
                 node = makeNode(symbol: ident, kind: .identifier, session: session, isSensitive: false)
             }
-            // Replace whole-word occurrences
             let pattern = "\\b\(NSRegularExpression.escapedPattern(for: ident))\\b"
             if let regex = try? NSRegularExpression(pattern: pattern) {
                 let ns = result as NSString
@@ -344,6 +406,14 @@ final class JCrossCodeTranspiler: ObservableObject {
                     withTemplate: "⟨\(node.id)⟩"
                 )
             }
+        }
+
+        // Phase N: ノイズノードを注入
+        // 演算パターンからの統計的推論を妨げるため、
+        // 意味のないDUMMYトークンを行末コメントとして付加する。
+        if noiseLevel > 0 && !result.trimmingCharacters(in: .whitespaces).isEmpty {
+            let noiseTokens = (0..<noiseLevel).map { _ in "⟪\(vault.generateNoiseID())⟫" }
+            result += " /* " + noiseTokens.joined(separator: " ") + " */"
         }
 
         return result
@@ -453,35 +523,49 @@ final class JCrossCodeTranspiler: ObservableObject {
 
     private func restoreFromJCross(_ jcross: String, session: JCrossTranspileSession) -> String {
         var result = jcross
+        let vault = session.zAxisVault
 
-        // Remove JCross metadata lines
-        let lines = result.components(separatedBy: "\n").filter {
-            !$0.hasPrefix("// JCROSS_") &&
-            !$0.hasPrefix("// ⚠️") &&
-            !$0.hasPrefix("// lang:") &&
-            !$0.hasPrefix("// ver:")
-        }
-        result = lines.joined(separator: "\n")
+        // JCross メタデータ行を除去
+        result = result.components(separatedBy: "\n")
+            .filter {
+                !$0.hasPrefix("// JCROSS_") &&
+                !$0.hasPrefix("// ⚠️") &&
+                !$0.hasPrefix("// lang:") &&
+                !$0.hasPrefix("// ver:") &&
+                !$0.hasPrefix("// session:")
+            }
+            .joined(separator: "\n")
 
-        // Restore [omit] comments (replace with empty comment)
         result = result.replacingOccurrences(of: "// [omit]", with: "")
 
-        // Restore node IDs: ⟨F1⟩ → originalSymbol, 「S1」 → [REDACTED]
-        let nodePattern = try? NSRegularExpression(pattern: #"⟨([A-Z]\d+)⟩"#)
-        let secretPattern = try? NSRegularExpression(pattern: #"「([A-Z]\d+)」"#)
-
-        nodePattern?.enumerateMatches(in: result, range: NSRange(result.startIndex..., in: result)) { match, _, _ in
-            guard let match, let range = Range(match.range(at: 1), in: result) else { return }
-            let nodeID = String(result[range])
-            if let node = session.nodesByID[nodeID], !node.isSensitive {
-                // Will restore below
+        // Phase Z-1: ノイズコメント除去
+        // /* ⟪NOISE:xxxx⟫ ⟪NOISE:yyyy⟫ */ 形式を削除
+        // ブラケット形式の揺れに対応 (⟪⟫ と ⧪⧫ 両方)
+        let noisePatterns = [
+            #"/\* (?:[⟪⧪]NOISE:[a-zA-Z0-9:]+[⟫⧫] ?)+\*/"#,
+        ]
+        for pattern in noisePatterns {
+            if let rx = try? NSRegularExpression(pattern: pattern) {
+                let ns = result as NSString
+                result = rx.stringByReplacingMatches(
+                    in: result,
+                    range: NSRange(location: 0, length: ns.length),
+                    withTemplate: ""
+                )
             }
         }
 
-        // Batch restore nodes
-        for (nodeID, node) in session.nodesByID.sorted(by: { $0.key < $1.key }) {
+        // Phase Z-2: CONST トークン → 実際のリテラル値に復元 (Z軸Vaultから)
+        // ブラケット形式の揺れに対応
+        for (constID, rawValue) in vault.restoreMap {
+            result = result.replacingOccurrences(of: "⟪\(constID)⟫", with: rawValue)
+            result = result.replacingOccurrences(of: "⧪\(constID)⧫", with: rawValue)
+        }
+
+        // Phase I: 識別子ノードを元のシンボルに復元 (スレッド安全アクセス)
+        let allNodes = session.nodesByID  // snapshot (read-only)
+        for (nodeID, node) in allNodes.sorted(by: { $0.key < $1.key }) {
             if node.isSensitive {
-                // Secrets: replace with env-var suggestion
                 let envVar = "$\(node.originalSymbol.uppercased().replacingOccurrences(of: " ", with: "_"))"
                 result = result.replacingOccurrences(of: "「\(nodeID)」", with: envVar)
             } else {
@@ -489,7 +573,7 @@ final class JCrossCodeTranspiler: ObservableObject {
             }
         }
 
-        return result
+        return result.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     // MARK: - Enums & Support Types
@@ -499,6 +583,21 @@ final class JCrossCodeTranspiler: ObservableObject {
     }
 
     enum NodeKind { case identifier, secret }
+
+    // MARK: - Language → LiteralLanguageHint conversion
+
+    private func languageHint(for language: CodeLanguage) -> LiteralLanguageHint {
+        switch language {
+        case .swift:      return .swift
+        case .python:     return .python
+        case .typescript: return .typescript
+        case .javascript: return .javascript
+        case .rust:       return .rust
+        case .go:         return .go
+        case .kotlin:     return .kotlin
+        default:          return .generic
+        }
+    }
 }
 
 // MARK: - CodeToken
@@ -518,5 +617,51 @@ extension JCrossTranspileSession {
         let sensitive = nodesByID.values.filter { $0.isSensitive }.count
         let total = nodesByID.count
         return "Session \(sessionID.prefix(8)): \(total) nodes (\(sensitive) secrets redacted)"
+    }
+}
+
+// MARK: - JCrossCodeTranspilerUI
+//
+// Phase 1: @MainActor ObservableObject プロキシ。
+// SwiftUI ビューはこのクラス経由でバインドし、重い処理は actor に委譲する。
+// 既存の呼び出し元は `JCrossCodeTranspilerUI.shared` に移行するだけ。
+
+@MainActor
+final class JCrossCodeTranspilerUI: ObservableObject {
+
+    static let shared = JCrossCodeTranspilerUI()
+
+    /// UIバインディング用の公開状態
+    @Published var isTranspiling = false
+    @Published var currentSessionID: String? = nil
+
+    /// 処理系 actor（UIと完全に分離）
+    let processingActor = JCrossCodeTranspiler()
+
+    private init() {}
+
+    // MARK: - Forwarding API
+
+    func transpileToJCross(
+        _ source: String,
+        language: JCrossCodeTranspiler.CodeLanguage,
+        noiseLevel: Int = 2
+    ) async -> (jcross: String, sessionID: String) {
+        isTranspiling = true
+        defer { isTranspiling = false }
+
+        let result = await processingActor.transpileToJCross(
+            source, language: language, noiseLevel: noiseLevel
+        )
+        currentSessionID = result.sessionID
+        return result
+    }
+
+    func reverseTranspile(_ jcross: String, sessionID: String) async -> String? {
+        await processingActor.reverseTranspile(jcross, sessionID: sessionID)
+    }
+
+    func purgeExpiredSessions() {
+        Task { await processingActor.purgeExpiredSessions() }
     }
 }
