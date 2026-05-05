@@ -74,6 +74,7 @@
 		72662D2EC9F582795A04936C /* SimpleJCrossTranspiler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B99ABA9CD8F1879B2BFA33E /* SimpleJCrossTranspiler.swift */; };
 		74716BFE363BFF66BF180656 /* ResizableSplit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2123AA8E95CFC74CF0FA42F4 /* ResizableSplit.swift */; };
 		767AECB5C753A290ADB44E93 /* AppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93C2041C7D910D0DCA7A80B /* AppLanguage.swift */; };
+		77111CABD5E81DE95EFB8144 /* SelfUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A5D0AA47B4834E94B2C633D /* SelfUpdater.swift */; };
 		79B9E40D24E24D7FBE441055 /* JCross3DGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7042BB94F70341019475EE90 /* JCross3DGraph.swift */; };
 		7C76F52B3661495C92048C93 /* LanguageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 674A38A3D3F9A65C3671CB3A /* LanguageManager.swift */; };
 		7CA969BFE91C612D890DBE8B /* VXTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 738FB55C5C3A6DA181BBAC71 /* VXTimeline.swift */; };
@@ -174,6 +175,7 @@
 		17D6335B9FE38BA61EA5696E /* VerantyxApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerantyxApp.swift; sourceTree = "<group>"; };
 		18ADC885663D166B988131F6 /* ExtensionUIPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionUIPanelView.swift; sourceTree = "<group>"; };
 		19116FA01BD2FF3991F62DD3 /* BitNetL1Tagger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitNetL1Tagger.swift; sourceTree = "<group>"; };
+		1A5D0AA47B4834E94B2C633D /* SelfUpdater.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SelfUpdater.swift; sourceTree = "<group>"; };
 		1B99ABA9CD8F1879B2BFA33E /* SimpleJCrossTranspiler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleJCrossTranspiler.swift; sourceTree = "<group>"; };
 		1D2BF39536A4169EC367F0A5 /* SkillLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillLibrary.swift; sourceTree = "<group>"; };
 		2123AA8E95CFC74CF0FA42F4 /* ResizableSplit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizableSplit.swift; sourceTree = "<group>"; };
@@ -533,6 +535,7 @@
 				DD8BBB55D4627EE66EB79331 /* WorkspaceManager.swift */,
 				73A12C23B1AA597A4C3B999C /* QwenVideoAnalyzer.swift */,
 				C801F7BC0A711368DE98915B /* VideoClipManager.swift */,
+				1A5D0AA47B4834E94B2C633D /* SelfUpdater.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -785,6 +788,7 @@
 				4CA514393373A7E7EA4023DC /* HumanProofPuzzleView.swift in Sources */,
 				B54F640122EABF79E5A97241 /* QwenVideoAnalyzer.swift in Sources */,
 				BDA3395893352F98E06E14CB /* VideoClipManager.swift in Sources */,
+				77111CABD5E81DE95EFB8144 /* SelfUpdater.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

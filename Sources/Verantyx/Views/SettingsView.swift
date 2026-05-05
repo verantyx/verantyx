@@ -15,6 +15,7 @@ struct SettingsView: View {
     @State private var showOpenAIKey = false
     @State private var showDeepSeekKey = false
     @State private var showGeminiKey = false
+    @ObservedObject private var updater = SelfUpdater.shared
 
     enum SettingsTab: String, CaseIterable {
         case general = "General"
@@ -232,6 +233,70 @@ struct SettingsView: View {
 
     private var generalSettings: some View {
         VStack(alignment: .leading, spacing: 20) {
+            sectionHeader("Software Update", icon: "arrow.triangle.2.circlepath")
+
+            settingsCard {
+                VStack(alignment: .leading, spacing: 14) {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Verantyx \(updater.currentVersion)")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(.white)
+                            
+                            if updater.isChecking {
+                                Text("Checking for updates...")
+                                    .font(.system(size: 11))
+                                    .foregroundStyle(.secondary)
+                            } else if updater.updateAvailable {
+                                Text("Update available: v\(updater.latestVersion)")
+                                    .font(.system(size: 11, weight: .semibold))
+                                    .foregroundStyle(Color(red: 0.4, green: 0.9, blue: 0.5))
+                            } else {
+                                Text("Verantyx is up to date.")
+                                    .font(.system(size: 11))
+                                    .foregroundStyle(.secondary)
+                            }
+                            
+                            if let error = updater.errorMessage {
+                                Text(error)
+                                    .font(.system(size: 10))
+                                    .foregroundStyle(.red)
+                            }
+                        }
+                        
+                        Spacer()
+                        
+                        if updater.updateAvailable {
+                            Button {
+                                updater.downloadAndInstallUpdate()
+                            } label: {
+                                if updater.isDownloading {
+                                    HStack(spacing: 6) {
+                                        ProgressView().scaleEffect(0.6).frame(width: 12, height: 12)
+                                        Text("Downloading...")
+                                    }
+                                } else {
+                                    Text("Update Now")
+                                        .bold()
+                                }
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .tint(Color(red: 0.3, green: 0.6, blue: 1.0))
+                            .disabled(updater.isDownloading)
+                        } else {
+                            Button("Check for Updates") {
+                                Task { await updater.checkForUpdates() }
+                            }
+                            .buttonStyle(.bordered)
+                            .disabled(updater.isChecking)
+                        }
+                    }
+                }
+            }
+            .onAppear {
+                Task { await updater.checkForUpdates(background: true) }
+            }
+
             sectionHeader("Language / 言語", icon: "globe")
 
             settingsCard {

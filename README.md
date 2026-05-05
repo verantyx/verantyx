@@ -4,7 +4,7 @@
   <p><i>Trading token efficiency for mathematically guaranteed security, deterministic patching, and autonomous skill generation.</i></p>
 
   <p>
-    <a href="https://github.com/verantyx/verantyx/releases/latest"><img src="https://img.shields.io/badge/version-1.2.9-blue?style=flat-square" alt="Version 1.2.9"></a>
+    <a href="https://github.com/verantyx/verantyx/releases/latest"><img src="https://img.shields.io/badge/version-1.3.0-blue?style=flat-square" alt="Version 1.3.0"></a>
     <img src="https://img.shields.io/badge/platform-macOS%2014%2B-lightgrey?style=flat-square">
     <img src="https://img.shields.io/badge/Apple%20Silicon-optimized-orange?style=flat-square">
     <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square">
@@ -23,9 +23,9 @@
 
 ## 📦 Download
 
-**[→ Download Latest Release (v1.2.9)](https://github.com/verantyx/verantyx/releases/latest)**
+**[→ Download Latest Release (v1.3.0)](https://github.com/verantyx/verantyx/releases/latest)**
 
-1. Download **`VerantyxIDE-1.2.9.pkg`**
+1. Download **`VerantyxIDE-1.3.0.pkg`**
 2. Double-click the installer to automatically overwrite any old versions.
 
 ---
@@ -126,7 +126,9 @@ Verantyx captures your physical keyboard cadence (typing entropy) and mouse traj
 
 ---
 
-## ✨ What's New in v1.2.9
+## ✨ What's New in v1.3.0
+
+- **In-App Auto Updater**: Added a native auto-updater in the IDE Settings to allow single-click updates going forward without manual downloads.
 
 - **Visual Anchor UI Restored**: Fixed an SF Symbol rendering bug and layout constraint that hid the Visual Anchor injection button. 
 - **AgentChatView Polish**: Implemented `.frame(width: 114)` to support the full suite of attachment tools.
