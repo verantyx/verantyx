@@ -9,6 +9,9 @@ struct AgentChatView: View {
     @State private var activeTab: Tab = .workspace
     @State private var inputText: String = ""
     @FocusState private var inputFocused: Bool
+    
+    @State private var showVisualAnchorPrompt: Bool = false
+    @State private var visualAnchorText: String = ""
 
     enum Tab: String, CaseIterable {
         case workspace = "Workspace"
@@ -510,6 +513,61 @@ struct AgentChatView: View {
                     .contentShape(Rectangle())
                     .buttonStyle(.plain)
                     .help(app.t("Attach file", "ファイルを添付"))
+                    
+                    // ── Visual Anchor Insertion ──
+                    Button {
+                        showVisualAnchorPrompt = true
+                    } label: {
+                        Image(systemName: "anchor")
+                            .font(.system(size: 15))
+                            .foregroundStyle(Color(red: 0.9, green: 0.3, blue: 0.3))
+                            .frame(width: 26, height: 26)
+                    }
+                    .contentShape(Rectangle())
+                    .buttonStyle(.plain)
+                    .help(app.t("Insert Visual Anchor", "Visual Anchorを注入"))
+                    .popover(isPresented: $showVisualAnchorPrompt) {
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("Visual Anchor 注入")
+                                .font(.headline)
+                            Text("絶対に守らせたい指示を入力してください。")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            
+                            TextEditor(text: $visualAnchorText)
+                                .frame(width: 300, height: 100)
+                                .font(.system(size: 12, design: .monospaced))
+                                .border(Color.gray.opacity(0.3))
+                            
+                            HStack {
+                                Spacer()
+                                Button("Cancel") {
+                                    showVisualAnchorPrompt = false
+                                }
+                                Button("Inject") {
+                                    guard !visualAnchorText.isEmpty else { return }
+                                    let anchorBase64 = CognitiveAnchorEngine.shared.getCustomAnchor(text: visualAnchorText)
+                                    // Base64からローカルファイルに書き出して添付する
+                                    if let data = Data(base64Encoded: anchorBase64),
+                                       let img = NSImage(data: data) {
+                                        let tempUrl = FileManager.default.temporaryDirectory.appendingPathComponent("anchor_\(UUID().uuidString).png")
+                                        if let tiff = img.tiffRepresentation,
+                                           let bitmap = NSBitmapImageRep(data: tiff),
+                                           let png = bitmap.representation(using: .png, properties: [:]) {
+                                            try? png.write(to: tempUrl)
+                                            let attached = AttachedImage(name: "VisualAnchor.png", url: tempUrl, nsImage: img)
+                                            app.attachedImages.append(attached)
+                                        }
+                                    }
+                                    showVisualAnchorPrompt = false
+                                    visualAnchorText = ""
+                                }
+                                .buttonStyle(.borderedProminent)
+                                .tint(.red)
+                            }
+                        }
+                        .padding()
+                    }
 
                     // ── Self Fix — icon-only, fixed frame ────────────────
                     // Using just the icon + background color (no expanding text)

@@ -70,6 +70,15 @@ public actor CognitiveAnchorEngine {
         }
     }
     
+    /// 任意のテキストを含むカスタム視覚アンカーを生成する
+    public func getCustomAnchor(text: String) -> String {
+        return renderDynamicAnchor(
+            text: "CRITICAL DIRECTIVE:\n" + text,
+            backgroundColor: NSColor(red: 0.8, green: 0.0, blue: 0.0, alpha: 1.0),
+            textColor: NSColor.white
+        ) ?? redPixelBase64
+    }
+    
     /// 現在のプロンプトのコンテキスト（文字やツール利用状況）から、
     /// 注入すべき認知アンカーを判定する。
     public func evaluateAnchorMode(instruction: String) -> CognitiveAnchorMode? {
