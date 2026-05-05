@@ -159,7 +159,7 @@ struct StatusBarView: View {
                 Text("VX")
                     .font(.system(size: 10, weight: .bold, design: .monospaced))
                     .foregroundStyle(Color(red: 0.4, green: 0.9, blue: 0.6))
-                Text("v0.1")
+                Text(appVersion)
                     .font(.system(size: 10, design: .monospaced))
                     .foregroundStyle(.secondary)
             }
@@ -235,6 +235,11 @@ struct StatusBarView: View {
     }
 
     // MARK: - Computed
+
+    private var appVersion: String {
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "unknown"
+        return "v\(version)"
+    }
 
     private var modelLabel: String {
         switch app.modelStatus {
