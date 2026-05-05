@@ -532,11 +532,10 @@ class SafariVisionBridge {
     }
 
     func takeScreenshot() async throws -> String {
-        if !CGPreflightScreenCaptureAccess() {
-            CGRequestScreenCaptureAccess()
-            throw BrowserError.ioError("Please grant Screen Recording permission in System Settings -> Privacy & Security, then restart the app.")
-        }
-
+        // CGPreflightScreenCaptureAccess check removed:
+        // When running debug builds from Xcode or Terminal, this API often returns false incorrectly
+        // due to dynamic code signing, even when the user has granted permissions.
+        // We will directly attempt `screencapture` and rely on its exit status instead.
         let options = CGWindowListOption(arrayLiteral: .optionOnScreenOnly, .excludeDesktopElements)
         guard let windowList = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as? [[String: Any]] else {
             throw BrowserError.ioError("Failed to get window list")
@@ -553,20 +552,32 @@ class SafariVisionBridge {
               let windowID = windowInfo[kCGWindowNumber as String] as? CGWindowID else {
             throw BrowserError.ioError("Could not find main window for \(appName)")
         }
-
-        guard let image = CGWindowListCreateImage(.null, .optionIncludingWindow, windowID, .boundsIgnoreFraming) else {
-            throw BrowserError.ioError("Failed to create image from window. Check Screen Recording permissions.")
+        // macOS 15.0+ obsoletes CGWindowListCreateImage and it often returns nil even with permissions.
+        // We use the built-in 'screencapture' CLI tool as a highly reliable fallback.
+        let tempURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString + ".jpg")
+        
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/sbin/screencapture")
+        process.arguments = ["-l\(windowID)", "-t", "jpg", "-x", tempURL.path]
+        
+        do {
+            try process.run()
+            process.waitUntilExit()
+            
+            if process.terminationStatus != 0 {
+                throw BrowserError.ioError("screencapture command failed with status \(process.terminationStatus). Please check Screen Recording permissions.")
+            }
+            
+            let data = try Data(contentsOf: tempURL)
+            try? FileManager.default.removeItem(at: tempURL)
+            return data.base64EncodedString()
+        } catch {
+            try? FileManager.default.removeItem(at: tempURL)
+            throw BrowserError.ioError("Failed to capture screen: \(error.localizedDescription)")
         }
-
-        let bitmapRep = NSBitmapImageRep(cgImage: image)
-        guard let jpegData = bitmapRep.representation(using: .jpeg, properties: [.compressionFactor: 0.8]) else {
-            throw BrowserError.ioError("Failed to encode image to JPEG")
-        }
-
-        return jpegData.base64EncodedString()
     }
 
-    func hidClick(x: Double, y: Double) async throws {
+    func hidClick(x: Double, y: Double, entropy: [[Double]]? = nil) async throws {
         let options = CGWindowListOption(arrayLiteral: .optionOnScreenOnly, .excludeDesktopElements)
         guard let windowList = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as? [[String: Any]],
               let windowInfo = windowList.first(where: { info in
@@ -593,14 +604,67 @@ class SafariVisionBridge {
         let screenY = windowY + y
         let point = CGPoint(x: screenX, y: screenY)
 
-        guard let mouseDown = CGEvent(mouseEventSource: nil, mouseType: .leftMouseDown, mouseCursorPosition: point, mouseButton: .left),
-              let mouseUp = CGEvent(mouseEventSource: nil, mouseType: .leftMouseUp, mouseCursorPosition: point, mouseButton: .left) else {
+        let source = CGEventSource(stateID: .hidSystemState)
+        let currentMouse = CGEvent(source: nil)?.location ?? CGPoint(x: screenX - 50, y: screenY - 50)
+        
+        if let biometricPoints = entropy, !biometricPoints.isEmpty {
+            // Use real biometric entropy extracted from puzzle
+            for pt in biometricPoints {
+                guard pt.count >= 2 else { continue }
+                // Map normalized entropy points [0..1] to the trajectory bounding box
+                let px = currentMouse.x + (screenX - currentMouse.x) * pt[0]
+                let py = currentMouse.y + (screenY - currentMouse.y) * pt[1]
+                
+                if let moveEvent = CGEvent(mouseEventSource: source, mouseType: .mouseMoved, mouseCursorPosition: CGPoint(x: px, y: py), mouseButton: .left) {
+                    moveEvent.post(tap: .cgSessionEventTap)
+                }
+                
+                // If the entropy includes a timestamp/delta, we could use it, else default to realistic timing
+                let sleepTime = pt.count >= 3 ? UInt64(pt[2] * 1_000_000) : UInt64.random(in: 8_000_000...22_000_000)
+                try? await Task.sleep(nanoseconds: sleepTime)
+            }
+            // Ensure we land exactly on the target
+            if let finalMove = CGEvent(mouseEventSource: source, mouseType: .mouseMoved, mouseCursorPosition: point, mouseButton: .left) {
+                finalMove.post(tap: .cgSessionEventTap)
+            }
+            try? await Task.sleep(nanoseconds: 15_000_000)
+            
+        } else {
+            // Fallback: Synthetic human-like trajectory
+            let steps = Int.random(in: 15...25)
+            let deviationX = Double.random(in: -30...30)
+            let deviationY = Double.random(in: -30...30)
+            
+            for i in 1...steps {
+                let t = Double(i) / Double(steps)
+                let easeT = 0.5 * (1.0 - cos(.pi * t))
+                
+                let basePx = currentMouse.x + (screenX - currentMouse.x) * easeT
+                let basePy = currentMouse.y + (screenY - currentMouse.y) * easeT
+                
+                let arc = sin(.pi * t)
+                let jitterX = Double.random(in: -1.5...1.5)
+                let jitterY = Double.random(in: -1.5...1.5)
+                
+                let px = basePx + (deviationX * arc) + jitterX
+                let py = basePy + (deviationY * arc) + jitterY
+                
+                if let moveEvent = CGEvent(mouseEventSource: source, mouseType: .mouseMoved, mouseCursorPosition: CGPoint(x: px, y: py), mouseButton: .left) {
+                    moveEvent.post(tap: .cgSessionEventTap)
+                }
+                let sleepTime = UInt64.random(in: 8_000_000...22_000_000)
+                try? await Task.sleep(nanoseconds: sleepTime)
+            }
+        }
+
+        guard let mouseDown = CGEvent(mouseEventSource: source, mouseType: .leftMouseDown, mouseCursorPosition: point, mouseButton: .left),
+              let mouseUp = CGEvent(mouseEventSource: source, mouseType: .leftMouseUp, mouseCursorPosition: point, mouseButton: .left) else {
             throw BrowserError.ioError("Failed to create CGEvent")
         }
 
-        mouseDown.post(tap: .cghidEventTap)
-        try? await Task.sleep(nanoseconds: 50_000_000)
-        mouseUp.post(tap: .cghidEventTap)
+        mouseDown.post(tap: .cgSessionEventTap)
+        try? await Task.sleep(nanoseconds: 80_000_000)
+        mouseUp.post(tap: .cgSessionEventTap)
     }
 
     func typeText(_ text: String) async throws {
@@ -621,14 +685,14 @@ class SafariVisionBridge {
 
             if let eventDown = CGEvent(keyboardEventSource: source, virtualKey: 0, keyDown: true) {
                 eventDown.keyboardSetUnicodeString(stringLength: buf.count, unicodeString: buf)
-                eventDown.post(tap: .cghidEventTap)
+                eventDown.post(tap: .cgSessionEventTap)
             }
-            try? await Task.sleep(nanoseconds: 20_000_000)
+            try? await Task.sleep(nanoseconds: 30_000_000)
             if let eventUp = CGEvent(keyboardEventSource: source, virtualKey: 0, keyDown: false) {
                 eventUp.keyboardSetUnicodeString(stringLength: buf.count, unicodeString: buf)
-                eventUp.post(tap: .cghidEventTap)
+                eventUp.post(tap: .cgSessionEventTap)
             }
-            try? await Task.sleep(nanoseconds: 50_000_000)
+            try? await Task.sleep(nanoseconds: 80_000_000)
         }
     }
 
@@ -642,6 +706,39 @@ class SafariVisionBridge {
                         cont.resume(throwing: BrowserError.ioError("AppleScript error: \(err)"))
                     } else {
                         cont.resume(returning: ())
+                    }
+                } else {
+                    cont.resume(throwing: BrowserError.ioError("Failed to compile AppleScript"))
+                }
+            }
+        }
+    }
+
+    func evalJS(_ script: String) async throws -> String {
+        // Applescript needs the script string properly escaped.
+        let escapedScript = script.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
+        let ascript = """
+        tell application "Safari"
+            if (count every document) > 0 then
+                return do JavaScript "\(escapedScript)" in document 1
+            else
+                return ""
+            end if
+        end tell
+        """
+        return try await runAppleScriptWithResult(ascript)
+    }
+
+    private func runAppleScriptWithResult(_ script: String) async throws -> String {
+        return try await withCheckedThrowingContinuation { cont in
+            DispatchQueue.global(qos: .userInitiated).async {
+                if let appleScript = NSAppleScript(source: script) {
+                    var errorInfo: NSDictionary?
+                    let descriptor = appleScript.executeAndReturnError(&errorInfo)
+                    if let err = errorInfo {
+                        cont.resume(throwing: BrowserError.ioError("AppleScript error: \(err)"))
+                    } else {
+                        cont.resume(returning: descriptor.stringValue ?? "")
                     }
                 } else {
                     cont.resume(throwing: BrowserError.ioError("Failed to compile AppleScript"))

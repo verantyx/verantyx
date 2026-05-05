@@ -141,7 +141,6 @@ struct AgentToolParser {
     [SEARCH_MULTI: q]         網並×3→統: 上位3URL並列取得→統合回答 ★推奨
     [SEARCH: q]               網×1: 単一検索
     [BROWSE: url]             覧: URLをMarkdownで取得
-    [EVAL_JS: script]         JS実: ブラウザでJS実行
     [SAFARI: url] [CHROME: url]    ブラウザで開く（Cookie利用可）
     [VISION_BROWSE: url]      視覧: ブラウザでURLを開きスクショ撮影
     [VISION_SNAPSHOT]         視撮: 現在の画面を再スクショして更新
@@ -381,6 +380,11 @@ struct AgentToolParser {
         }
 
         // ── 4. Single-line tags ────────────────────────────────────────────
+        // Some models output </think> on the same line as the tool call.
+        // We replace </think> and <think> with newlines to ensure tools start at the beginning of a line.
+        cleaned = cleaned.replacingOccurrences(of: "</think>", with: "\n")
+                         .replacingOccurrences(of: "<think>", with: "\n")
+                         
         let lines = cleaned.components(separatedBy: "\n")
         var resultLines: [String] = []
 
@@ -902,11 +906,11 @@ actor AgentToolExecutor {
         // ── Web / Grounding ───────────────────────────────────────────────
 
         case .browse(let url):
-            let result = await WebSearchEngine.shared.browse(url: url, preferredSource: .verantyxBrowser)
+            let result = await WebSearchEngine.shared.browse(url: url, preferredSource: .safari)
             return "[WEB PAGE: \(result.url)]\n\(result.contextSnippet)\n[END WEB PAGE]"
 
         case .search(let query):
-            let result = await WebSearchEngine.shared.search(query: query)
+            let result = await WebSearchEngine.shared.search(query: query, preferredSource: .safari)
             // Auto-store in JCross (importance 0.7, zone near)
             let snippet = String(result.contextSnippet.prefix(200))
             await persistSearchResult(key: "web_\(query.prefix(30))", value: snippet)
@@ -916,10 +920,7 @@ actor AgentToolExecutor {
             return await executeSearchMulti(query: query)
 
         case .evalJS(let script):
-            do {
-                let result = try await BrowserBridge.shared.evalJS(script)
-                return "[JS RESULT] \(result)"
-            } catch { return "[JS ERROR] \(error.localizedDescription)" }
+            return "[ERROR] [EVAL_JS] has been permanently decommissioned for WAF evasion. You MUST use [VISION_ACT: click x y] or [VISION_ACT: type text] to interact with the page."
 
         case .openSafari(let url):
             let result = await WebSearchEngine.shared.browse(url: url, preferredSource: .safari)
@@ -952,7 +953,22 @@ actor AgentToolExecutor {
                 if cmd == "click" && parts.count >= 3 {
                     let x = Double(parts[1]) ?? 0.0
                     let y = Double(parts[2]) ?? 0.0
-                    try await SafariVisionBridge.shared.hidClick(x: x, y: y)
+                    
+                    let cgPoints = await MainActor.run { AppState.shared?.lastEntropy }
+                    await MainActor.run { AppState.shared?.lastEntropy = nil } // Consume
+                    
+                    var entropyPoints: [[Double]]? = nil
+                    if let points = cgPoints {
+                        let mapped = points.map { [Double($0.x), Double($0.y)] }
+                        if mapped.count > 100 {
+                            let step = max(1, mapped.count / 100)
+                            entropyPoints = stride(from: 0, to: mapped.count, by: step).prefix(100).map { mapped[$0] }
+                        } else {
+                            entropyPoints = mapped
+                        }
+                    }
+                    
+                    try await SafariVisionBridge.shared.hidClick(x: x, y: y, entropy: entropyPoints)
                 } else if cmd == "type" && parts.count >= 2 {
                     let text = action.dropFirst(5).trimmingCharacters(in: .whitespaces)
                     try await SafariVisionBridge.shared.typeText(text)
@@ -1283,7 +1299,7 @@ actor AgentToolExecutor {
 
     private func executeSearchMulti(query: String) async -> String {
         // Step 1: get search result page
-        let primary = await WebSearchEngine.shared.search(query: query)
+        let primary = await WebSearchEngine.shared.search(query: query, preferredSource: .safari)
         let primaryText = primary.contextSnippet
 
         // Step 2: extract additional URLs from the search result
@@ -1295,7 +1311,7 @@ actor AgentToolExecutor {
         await withTaskGroup(of: (Int, String).self) { group in
             for (i, url) in urls.enumerated() {
                 group.addTask {
-                    let r = await WebSearchEngine.shared.browse(url: url, preferredSource: .verantyxBrowser)
+                    let r = await WebSearchEngine.shared.browse(url: url, preferredSource: .safari)
                     return (i + 2, "[Source \(i+2): \(r.url)]\n\(String(r.contextSnippet.prefix(600)))")
                 }
             }
