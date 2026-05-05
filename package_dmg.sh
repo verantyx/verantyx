@@ -46,6 +46,13 @@ mkdir -p "$STAGING_DIR"
 
 # ── 2. Build Release ────────────────────────────────────────────────────────
 echo "[2/7] Release ビルド中..."
+
+# LaunchServices のキャッシュバグ（古いアプリが起動する問題）を回避するため、
+# ビルドごとに CFBundleVersion (ビルド番号) を一意のタイムスタンプに更新する
+BUILD_NUMBER=$(date +%s)
+/usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD_NUMBER" "$(pwd)/Sources/Verantyx/Info.plist"
+echo "   Build Number (CFBundleVersion) set to: $BUILD_NUMBER"
+
 if [ "$SIGN_MODE" = "developer_id" ]; then
   # Extract team ID directly from the Developer ID cert
   DEV_ID_TEAM=$(echo "$DEV_ID_CERT" | grep -oE '\([A-Z0-9]{10}\)' | tr -d '()')
@@ -54,6 +61,8 @@ if [ "$SIGN_MODE" = "developer_id" ]; then
     -scheme "$SCHEME" \
     -configuration "$CONFIGURATION" \
     -destination "platform=macOS" \
+    MARKETING_VERSION="${VERSION}" \
+    CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
     CODE_SIGN_STYLE="Manual" \
     CODE_SIGN_IDENTITY="$DEV_ID_CERT" \
     DEVELOPMENT_TEAM="$DEV_ID_TEAM" \
@@ -66,6 +75,8 @@ else
     -scheme "$SCHEME" \
     -configuration "$CONFIGURATION" \
     -destination "platform=macOS" \
+    MARKETING_VERSION="${VERSION}" \
+    CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
     CODE_SIGN_STYLE="Manual" \
     CODE_SIGN_IDENTITY="-" \
     CODE_SIGNING_REQUIRED=NO \
