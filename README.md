@@ -117,6 +117,10 @@ When Verantyx detects potential hallucinations, it injects **Visual Anchors** (r
 Verantyx is deeply autonomous. If a user requests a task (e.g., *"Record the screen based on the system definition"*) but the required OS-level screen recording API is unavailable, the agent **does not say "I can't do it."** 
 Instead, it recognizes that DOM-based capturing is a viable alternative, autonomously writes the required tool logic in real-time, registers it as a new persistent "Skill", and executes the user's request. 
 
+**Demo: The Agent Writes Its Own Tool on the Fly**
+The video below demonstrates the agent receiving a request it lacks a built-in tool for, writing the required DOM-based tool logic, and executing it seamlessly.
+<video src="https://github.com/Ag3497120/verantyx/releases/download/v1.2.5/demo_skill_generation.mov" controls="controls" muted="muted" style="max-width: 100%; border-radius: 8px;"></video>
+
 ### 5. Biometric Stealth Browser 🕵️‍♂️
 Agents must interact with the live web to read documentation, but BotGuard and Cloudflare block headless browsers.
 Verantyx captures your physical keyboard cadence (typing entropy) and mouse trajectory (mouse entropy) locally. When the agent browses the web, it replays your exact human biometric entropy using macOS `CGEvent` simulation to completely bypass bot detection—all while running completely in the background without stealing your OS window focus.
