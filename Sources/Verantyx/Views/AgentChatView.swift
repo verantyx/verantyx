@@ -518,7 +518,7 @@ struct AgentChatView: View {
                     Button {
                         showVisualAnchorPrompt = true
                     } label: {
-                        Image(systemName: "anchor")
+                        Image(systemName: "exclamationmark.lock.fill")
                             .font(.system(size: 15))
                             .foregroundStyle(Color(red: 0.9, green: 0.3, blue: 0.3))
                             .frame(width: 26, height: 26)
