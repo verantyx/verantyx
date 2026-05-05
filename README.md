@@ -4,7 +4,7 @@
   <p><i>Trading token efficiency for mathematically guaranteed security, deterministic patching, and autonomous skill generation.</i></p>
 
   <p>
-    <a href="https://github.com/Ag3497120/verantyx/releases/latest"><img src="https://img.shields.io/badge/version-1.2.5-blue?style=flat-square" alt="Version 1.2.5"></a>
+    <a href="https://github.com/verantyx/verantyx/releases/latest"><img src="https://img.shields.io/badge/version-1.2.5-blue?style=flat-square" alt="Version 1.2.5"></a>
     <img src="https://img.shields.io/badge/platform-macOS%2014%2B-lightgrey?style=flat-square">
     <img src="https://img.shields.io/badge/Apple%20Silicon-optimized-orange?style=flat-square">
     <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square">
@@ -23,7 +23,7 @@
 
 ## 📦 Download
 
-**[→ Download Latest Release (v1.2.5)](https://github.com/Ag3497120/verantyx/releases/latest)**
+**[→ Download Latest Release (v1.2.5)](https://github.com/verantyx/verantyx/releases/latest)**
 
 1. Download **`VerantyxIDE-1.2.5.dmg`**
 2. Drag **Verantyx.app** to your **Applications** folder.
@@ -119,7 +119,7 @@ Instead, it recognizes that DOM-based capturing is a viable alternative, autonom
 
 **Demo: The Agent Writes Its Own Tool on the Fly**
 The video below demonstrates the agent receiving a request it lacks a built-in tool for, writing the required DOM-based tool logic, and executing it seamlessly.
-<video src="https://github.com/Ag3497120/verantyx/releases/download/v1.2.5/demo_skill_generation.mov" controls="controls" muted="muted" style="max-width: 100%; border-radius: 8px;"></video>
+<video src="https://github.com/verantyx/verantyx/releases/download/v1.2.5/demo_skill_generation.mov" controls="controls" muted="muted" style="max-width: 100%; border-radius: 8px;"></video>
 
 ### 5. Biometric Stealth Browser 🕵️‍♂️
 Agents must interact with the live web to read documentation, but BotGuard and Cloudflare block headless browsers.
@@ -170,7 +170,7 @@ If you want to contribute to a serious systems programming project, look for the
 - Xcode 15.0+
 
 ```bash
-git clone https://github.com/Ag3497120/verantyx.git
+git clone https://github.com/verantyx/verantyx.git
 cd verantyx/VerantyxIDE
 open Verantyx.xcodeproj
 # Select the Verantyx scheme and hit Cmd+R
