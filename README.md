@@ -4,7 +4,7 @@
   <p><i>Trading token efficiency for mathematically guaranteed security, deterministic patching, and autonomous skill generation.</i></p>
 
   <p>
-    <a href="https://github.com/verantyx/verantyx/releases/latest"><img src="https://img.shields.io/badge/version-1.2.5-blue?style=flat-square" alt="Version 1.2.5"></a>
+    <a href="https://github.com/verantyx/verantyx/releases/latest"><img src="https://img.shields.io/badge/version-1.2.7-blue?style=flat-square" alt="Version 1.2.7"></a>
     <img src="https://img.shields.io/badge/platform-macOS%2014%2B-lightgrey?style=flat-square">
     <img src="https://img.shields.io/badge/Apple%20Silicon-optimized-orange?style=flat-square">
     <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square">
@@ -14,7 +14,7 @@
     <a href="#-the-hacker-news-pitch-why-verantyx">Why Verantyx?</a> •
     <a href="#-the-heart-of-gatekeeper-6-axis-jcross-ir">Gatekeeper 6-Axis IR</a> •
     <a href="#-technical-capabilities">Capabilities</a> •
-    <a href="#-whats-new-in-v125">What's New</a> •
+    <a href="#-whats-new-in-v127">What's New</a> •
     <a href="#-contribute">Contribute</a>
   </p>
 </div>
@@ -23,9 +23,9 @@
 
 ## 📦 Download
 
-**[→ Download Latest Release (v1.2.5)](https://github.com/verantyx/verantyx/releases/latest)**
+**[→ Download Latest Release (v1.2.7)](https://github.com/verantyx/verantyx/releases/latest)**
 
-1. Download **`VerantyxIDE-1.2.5.dmg`**
+1. Download **`VerantyxIDE-1.2.7.dmg`**
 2. Drag **Verantyx.app** to your **Applications** folder.
 3. **Bypass Gatekeeper (macOS Security):** Right-click `Verantyx.app` in Finder → **"Open"**. Or run in Terminal: `xattr -d com.apple.quarantine /Applications/Verantyx.app`
 
@@ -127,7 +127,7 @@ Verantyx captures your physical keyboard cadence (typing entropy) and mouse traj
 
 ---
 
-## ✨ What's New in v1.2.5
+## ✨ What's New in v1.2.7
 
 - **Visual Anchor UI Restored**: Fixed an SF Symbol rendering bug and layout constraint that hid the Visual Anchor injection button. 
 - **AgentChatView Polish**: Implemented `.frame(width: 114)` to support the full suite of attachment tools.
