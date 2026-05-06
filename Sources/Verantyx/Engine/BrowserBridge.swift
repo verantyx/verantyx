@@ -516,6 +516,50 @@ class SafariVisionBridge {
     static let shared = SafariVisionBridge()
 
     private let appName = "Safari"
+    private var initialBounds: [String: Double]? = nil
+
+    private func enforceSafariBounds() async throws {
+        let options = CGWindowListOption(arrayLiteral: .optionOnScreenOnly, .excludeDesktopElements)
+        guard let windowList = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as? [[String: Any]],
+              let windowInfo = windowList.first(where: { info in
+                  guard (info[kCGWindowOwnerName as String] as? String) == appName else { return false }
+                  guard let layer = info[kCGWindowLayer as String] as? Int, layer == 0 else { return false }
+                  guard let bounds = info[kCGWindowBounds as String] as? [String: Any],
+                        let height = bounds["Height"] as? Double, height > 100 else { return false }
+                  return true
+              }),
+              let boundsDict = windowInfo[kCGWindowBounds as String] as? [String: Any] else {
+            return
+        }
+
+        if initialBounds == nil {
+            // First time we see it, save its initial position
+            initialBounds = [
+                "X": boundsDict["X"] as! Double,
+                "Y": boundsDict["Y"] as! Double,
+                "Width": boundsDict["Width"] as! Double,
+                "Height": boundsDict["Height"] as! Double
+            ]
+        } else if let target = initialBounds {
+            // Enforce bounds if moved
+            let currentX = boundsDict["X"] as! Double
+            let currentY = boundsDict["Y"] as! Double
+            let currentW = boundsDict["Width"] as! Double
+            let currentH = boundsDict["Height"] as! Double
+
+            if abs(currentX - target["X"]!) > 5 || abs(currentY - target["Y"]!) > 5 ||
+               abs(currentW - target["Width"]!) > 5 || abs(currentH - target["Height"]!) > 5 {
+                
+                let script = """
+                tell application "Safari"
+                    set bounds of window 1 to {\(Int(target["X"]!)), \(Int(target["Y"]!)), \(Int(target["X"]! + target["Width"]!)), \(Int(target["Y"]! + target["Height"]!))}
+                end tell
+                """
+                try? await runAppleScript(script)
+                try? await Task.sleep(nanoseconds: 300_000_000)
+            }
+        }
+    }
 
     func navigate(_ url: String) async throws {
         let script = """
@@ -529,6 +573,7 @@ class SafariVisionBridge {
         """
         try await runAppleScript(script)
         try await Task.sleep(nanoseconds: 2_000_000_000) // Wait for load
+        try await enforceSafariBounds()
     }
 
     func takeScreenshot() async throws -> String {
@@ -536,6 +581,8 @@ class SafariVisionBridge {
             CGRequestScreenCaptureAccess()
             throw BrowserError.ioError("Please grant Screen Recording permission in System Settings -> Privacy & Security, then restart the app.")
         }
+
+        try await enforceSafariBounds()
 
         let options = CGWindowListOption(arrayLiteral: .optionOnScreenOnly, .excludeDesktopElements)
         guard let windowList = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as? [[String: Any]] else {
@@ -567,6 +614,8 @@ class SafariVisionBridge {
     }
 
     func hidClick(x: Double, y: Double) async throws {
+        try await enforceSafariBounds()
+
         let options = CGWindowListOption(arrayLiteral: .optionOnScreenOnly, .excludeDesktopElements)
         guard let windowList = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as? [[String: Any]],
               let windowInfo = windowList.first(where: { info in
@@ -576,10 +625,38 @@ class SafariVisionBridge {
                         let height = bounds["Height"] as? Double, height > 100 else { return false }
                   return true
               }),
+              let windowID = windowInfo[kCGWindowNumber as String] as? CGWindowID,
               let boundsDict = windowInfo[kCGWindowBounds as String] as? [String: Any],
               let windowX = boundsDict["X"] as? Double,
-              let windowY = boundsDict["Y"] as? Double else {
+              let windowY = boundsDict["Y"] as? Double,
+              let logicalWidth = boundsDict["Width"] as? Double,
+              let logicalHeight = boundsDict["Height"] as? Double else {
             throw BrowserError.ioError("Could not find main window bounds for \(appName)")
+        }
+
+        // Coordinate resolution calculation based on Retina scaling factor
+        guard let image = CGWindowListCreateImage(.null, .optionIncludingWindow, windowID, .boundsIgnoreFraming) else {
+            throw BrowserError.ioError("Failed to create image for coordinate calc")
+        }
+        
+        let pixelWidth = Double(image.width)
+        let pixelHeight = Double(image.height)
+        
+        // Assume VLM outputs 1000-based normalized coords if x,y <= 1000 and the image is larger.
+        // Or if it outputs absolute pixels, divide by Retina scale factor.
+        let logicalClickX: Double
+        let logicalClickY: Double
+        
+        if x <= 1000 && y <= 1000 && (pixelWidth >= 1000 || pixelHeight >= 1000) {
+            // 1000-based Normalized Coordinates (Qwen-VL style)
+            logicalClickX = (x / 1000.0) * logicalWidth
+            logicalClickY = (y / 1000.0) * logicalHeight
+        } else {
+            // Absolute Pixel Coordinates (scaled by Retina factor)
+            let scaleX = pixelWidth / logicalWidth
+            let scaleY = pixelHeight / logicalHeight
+            logicalClickX = x / scaleX
+            logicalClickY = y / scaleY
         }
 
         // Activate Safari
@@ -589,8 +666,8 @@ class SafariVisionBridge {
         try? await runAppleScript(script)
         try? await Task.sleep(nanoseconds: 100_000_000)
 
-        let screenX = windowX + x
-        let screenY = windowY + y
+        let screenX = windowX + logicalClickX
+        let screenY = windowY + logicalClickY
         let point = CGPoint(x: screenX, y: screenY)
 
         guard let mouseDown = CGEvent(mouseEventSource: nil, mouseType: .leftMouseDown, mouseCursorPosition: point, mouseButton: .left),
