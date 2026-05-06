@@ -113,14 +113,14 @@ actor SearchGate {
         sessionId: String,
         turnNumber: Int,
         tier: ModelTier,
-        preferredSource: BrowseSource = .verantyxBrowser,
+        preferredSource: BrowseSource = .safari,
         entropy: [[Double]]? = nil
     ) async -> String {
         guard decision.needsSearch, !decision.query.isEmpty else { return "" }
 
         switch decision.searchType {
         case .memory:
-            return executeMemorySearch(
+            return await executeMemorySearch(
                 decision: decision, sessionId: sessionId,
                 turnNumber: turnNumber, tier: tier
             )
@@ -141,7 +141,7 @@ actor SearchGate {
         sessionId: String,
         turnNumber: Int,
         tier: ModelTier
-    ) -> String {
+    ) async -> String {
         let budget: Int
         let topK: Int
         switch tier {
@@ -157,10 +157,10 @@ actor SearchGate {
         )
         guard !searchResult.isEmpty else { return "" }
 
-        updateUsedAtTags(
+        await updateUsedAtTags(
             searchResult: searchResult, turnNumber: turnNumber, context: decision.query
         )
-        saveSearchResult(
+        await saveSearchResult(
             sessionId: sessionId, turnNumber: turnNumber,
             query: decision.query, result: searchResult, type: "memory"
         )
@@ -202,7 +202,7 @@ actor SearchGate {
 
         let resultBlock = "[WEB SEARCH: \"\(String(query.prefix(60)))\"\n\(bodyText)\n[/WEB SEARCH]"
 
-        saveSearchResult(
+        await saveSearchResult(
             sessionId: sessionId, turnNumber: turnNumber,
             query: query, result: resultBlock, type: "web"
         )
@@ -211,11 +211,15 @@ actor SearchGate {
 
     // MARK: - 保存・タグ更新
 
-    private func updateUsedAtTags(searchResult: String, turnNumber: Int, context: String) {
+    private func updateUsedAtTags(searchResult: String, turnNumber: Int, context: String) async {
+        let wsPath = await MainActor.run { AppState.shared?.cortexWorkspacePath ?? AppState.shared?.workspaceURL?.path }
+        guard let ws = wsPath else { return }
+        let baseDir = URL(fileURLWithPath: ws)
+        
         let zones: [URL] = [
-            URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent(".openclaw/memory/near"),
-            URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent(".openclaw/memory/front"),
-            URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent(".openclaw/memory/mid"),
+            baseDir.appendingPathComponent(".openclaw/memory/near"),
+            baseDir.appendingPathComponent(".openclaw/memory/front"),
+            baseDir.appendingPathComponent(".openclaw/memory/mid"),
         ]
 
         let namePattern = #"TURN_[A-Za-z0-9_]+|TLSUMMARY_[A-Za-z0-9_]+|CONV_[A-Za-z0-9_]+"#
@@ -246,9 +250,11 @@ actor SearchGate {
     private func saveSearchResult(
         sessionId: String, turnNumber: Int,
         query: String, result: String, type: String
-    ) {
-        let nearDir = URL(fileURLWithPath: NSHomeDirectory())
-            .appendingPathComponent(".openclaw/memory/near", isDirectory: true)
+    ) async {
+        let wsPath = await MainActor.run { AppState.shared?.cortexWorkspacePath ?? AppState.shared?.workspaceURL?.path }
+        guard let ws = wsPath else { return }
+        let baseDir = URL(fileURLWithPath: ws)
+        let nearDir = baseDir.appendingPathComponent(".openclaw/memory/near", isDirectory: true)
         try? FileManager.default.createDirectory(at: nearDir, withIntermediateDirectories: true)
 
         let ts       = Int(Date().timeIntervalSince1970)

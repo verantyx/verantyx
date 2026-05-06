@@ -13,6 +13,8 @@ enum OperationMode: String, CaseIterable, Codable, Identifiable {
     case human         = "Human"
     case humanPriority = "Human_Priority"
     case gatekeeper    = "Gatekeeper"
+    case autoSwarm     = "Auto_Swarm"
+    case swarm         = "Swarm"
 
     var id: String { rawValue }
 
@@ -22,6 +24,8 @@ enum OperationMode: String, CaseIterable, Codable, Identifiable {
         case .human:         return "person.fill"
         case .humanPriority: return "keyboard"
         case .gatekeeper:    return "shield.lefthalf.filled"
+        case .autoSwarm:     return "infinity.circle.fill"
+        case .swarm:         return "square.stack.3d.up.fill"
         }
     }
 
@@ -31,6 +35,8 @@ enum OperationMode: String, CaseIterable, Codable, Identifiable {
         case .human:         return Color(red: 0.4,  green: 0.75, blue: 1.0)
         case .humanPriority: return Color(red: 0.55, green: 1.0,  blue: 0.65)
         case .gatekeeper:    return Color(red: 0.2,  green: 0.9,  blue: 0.5)
+        case .autoSwarm:     return Color(red: 0.9,  green: 0.2,  blue: 0.5)
+        case .swarm:         return Color(red: 0.8,  green: 0.4,  blue: 0.8)
         }
     }
 
@@ -44,6 +50,10 @@ enum OperationMode: String, CaseIterable, Codable, Identifiable {
             return L("VS Code style: Code editor centered, AI right", "VS Codeスタイル: コードエディタ中心・AIチャット右")
         case .gatekeeper:
             return L("Local LLM commander, JCross IR only, source hidden", "ローカルLLMが司令官・外部APIはJCross IRのみ・ソースコード非公開")
+        case .autoSwarm:
+            return L("Fully autonomous Swarm: Automatically switches strategies", "完全自動スウォーム: タスクに応じて戦略を自動切替・承認なし")
+        case .swarm:
+            return L("Manual Swarm: Choose Ultrawork or Ralph, requires approvals", "手動スウォーム: Ultrawork/Ralphを手動切替・Diff承認あり")
         }
     }
     
@@ -53,6 +63,8 @@ enum OperationMode: String, CaseIterable, Codable, Identifiable {
         case .human:         return L("Human", "ヒューマン")
         case .humanPriority: return L("Human Priority", "ヒューマン優先")
         case .gatekeeper:    return L("Gatekeeper", "ゲートキーパー")
+        case .autoSwarm:     return L("Auto Swarm", "完全自動スウォーム")
+        case .swarm:         return L("Swarm", "スウォーム")
         }
     }
 
@@ -63,6 +75,8 @@ enum OperationMode: String, CaseIterable, Codable, Identifiable {
         case .human:         return "HM"
         case .humanPriority: return "HP"
         case .gatekeeper:    return "GK"
+        case .autoSwarm:     return "AS"
+        case .swarm:         return "SW"
         }
     }
 
@@ -72,7 +86,9 @@ enum OperationMode: String, CaseIterable, Codable, Identifiable {
         case .human:         return .humanPriority
         case .humanPriority: return .aiPriority
         case .aiPriority:    return .gatekeeper
-        case .gatekeeper:    return .human
+        case .gatekeeper:    return .autoSwarm
+        case .autoSwarm:     return .swarm
+        case .swarm:         return .human
         }
     }
 }

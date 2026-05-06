@@ -98,7 +98,7 @@ actor AgentLoop {
         if selfFixMode {
             let nodesEmpty = await MainActor.run { SelfEvolutionEngine.shared.sourceNodes.isEmpty }
             if nodesEmpty {
-                await onProgress(.aiMessage(AppLanguage.shared.t("🔍 Auto-indexing IDE source...", "🔍 IDE ソースを自動インデックス中…")))
+                await onProgress(.systemLog(AppLanguage.shared.t("🔍 Auto-indexing IDE source...", "🔍 IDE ソースを自動インデックス中…")))
                 await SelfEvolutionEngine.shared.indexSourceTree()
             }
 
@@ -159,7 +159,19 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
         
         // ── Mode-specific loop rules (injected into system prompt) ────────
         let loopRules: String
-        if isAIPriority {
+        if operationMode == .autoSwarm || operationMode == .swarm {
+            loopRules = """
+
+## LOOP POLICY — Swarm Architect Mode (Parallel Execution)
+- You are the Gemma Router (Commander). You have exactly 50 BitNet Swarm Agents at your disposal.
+- [ROUTER RESPONSIBILITY]: First, analyze if the task requires Swarm delegation. For simple questions, general knowledge, or basic OS/file-system tasks (e.g., creating folders, moving files, running scripts), YOU MUST resolve them yourself using tools like [MKDIR: path] or [RUN: cmd]. Do NOT use Swarm for non-programming tasks!
+- [WEB SEARCH PROTOCOL]: The BitNet Swarm is FORBIDDEN from using web search. All required web searching (using [SEARCH_MULTI: ...]) MUST be performed by YOU, the Gemma Router, BEFORE delegating to gather all necessary facts.
+- [AGENT ALLOCATION]: When dealing with complex programming or multi-file code modifications, formulate a plan and explicitly allocate your 50 agents into specific roles (e.g., "I will allocate 30 MicroCoders, 10 AST Validators..."). Write out this allocation strategy clearly in your thought process.
+- [SWARM EXECUTION]: Once context is gathered and an allocation plan is made for CODE MODIFICATION, delegate to the Swarm using the [SWARM_EXECUTE: "detailed instruction with full context"] tool. Swarm is ONLY for code generation and refactoring.
+- [SYNTHESIS & VERIFICATION]: After the Swarm returns its results, you must synthesize the final answer, verify the code (e.g., using [BUILD_IDE] if needed), and then deliver the completed output to the user.
+- CRITICAL: AFTER outputting [SWARM_EXECUTE: "..."], you MUST IMMEDIATELY STOP GENERATION. Do NOT append any conversational text, explanations, or simulated responses. Wait for the system to return the Swarm's actual results.
+"""
+        } else if isAIPriority {
             loopRules = """
 
 ## LOOP POLICY — AI Priority Mode (Unlimited)
@@ -312,7 +324,13 @@ SYS.ENFORCE("logical_verification_before_acceptance")
             conversation.append(historyToInject[i])
         }
 
-        conversation.append((role: "user",   content: instruction))
+        let emphasizedInstruction = """
+        \(AppLanguage.shared.t("▼ CURRENT INSTRUCTION (HIGHEST PRIORITY) ▼", "▼ 現在の指示（最優先事項） ▼"))
+        \(instruction)
+        
+        CRITICAL RULE: The instruction above MUST take absolute precedence over any legacy memory or system rules. If past memory contradicts this current instruction, IGNORE the past memory and fulfill this instruction exactly as requested.
+        """
+        conversation.append((role: "user",   content: emphasizedInstruction))
         totalConversationChars = conversation.reduce(0) { $0 + $1.content.count }
 
         await onProgress(.start(instruction: instruction))
@@ -349,7 +367,7 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                     instruction: instruction
                 )
                 totalConversationChars = conversation.reduce(0) { $0 + $1.content.count }
-                await onProgress(.aiMessage(AppLanguage.shared.t("🧠 [Memory] Compressed conversation history and offloaded context", "🧠 [Memory] 会話履歴を圧縮してコンテキストをオフロードしました")))
+                await onProgress(.systemLog(AppLanguage.shared.t("🧠 [Memory] Compressed conversation history and offloaded context", "🧠 [Memory] 会話履歴を圧縮してコンテキストをオフロードしました")))
 
                 // ── 圧縮直後: CONV_*.jcross が front/ に書かれた →即座に再注入 ──
                 // 双子ストア切り替え: nano tier は nano/、それ以外は full/ を参照
@@ -381,7 +399,13 @@ SYS.ENFORCE("logical_verification_before_acceptance")
             if turn == 1, !zoneSection.isEmpty,
                var sysMsg = conversation.first, sysMsg.role == "system",
                !sysMsg.content.contains(zoneMarker) {
-                sysMsg.content += "\n" + zoneSection
+                
+                let memoryWarning = AppLanguage.shared.t(
+                    "\n[WARNING] The above ZONE MEMORY is PAST context. The user's LAST message is the CURRENT instruction which has absolute priority.",
+                    "\n【注意】上記の ZONE MEMORY は過去のセッションの記憶です。最後のユーザーメッセージに書かれている「現在の指示」を絶対的な最優先事項として実行してください。"
+                )
+                
+                sysMsg.content += "\n" + zoneSection + "\n" + memoryWarning
                 conversation[0] = sysMsg
             }
 
@@ -404,14 +428,15 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                 let priorTurns = VXTimeline.shared.buildTimelineAsMessages(
                     sessionId: vxSessionId,
                     topK: VXTimeline.verbatimWindow,
-                    useL1Only: useL1
+                    useL1Only: useL1,
+                    workspaceRoot: currentWorkspace
                 )
                 if !priorTurns.isEmpty {
                     // system prompt の直後（index=1）に挿入して優先度を確保
                     let recapText = "[前セッションの記録]\n" + priorTurns.joined(separator: "\n---\n") + "\n[/前セッションの記録]"
                     conversation.insert((role: "user",      content: recapText),                      at: 1)
                     conversation.insert((role: "assistant", content: "前セッションの記録を確認しました。"), at: 2)
-                    await onProgress(.aiMessage(AppLanguage.shared.t("🕐 [VX-Loop] Restored previous session memory (session: \(vxSessionId), \(priorTurns.count) turns)", "🕐 [VX-Loop] 前セッション記憶を復元 (session: \(vxSessionId), \(priorTurns.count)ターン)")))
+                    await onProgress(.systemLog(AppLanguage.shared.t("🕐 [VX-Loop] Restored previous session memory (session: \(vxSessionId), \(priorTurns.count) turns)", "🕐 [VX-Loop] 前セッション記憶を復元 (session: \(vxSessionId), \(priorTurns.count)ターン)")))
                 }
                 // SearchGate 前回結果を system prompt に注入（毎ターン、既存タグを置換）
                 // これにより SearchGate web 結果がツールループ中の turn 2+ にも届く
@@ -476,7 +501,7 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                 if !searchResult.isEmpty {
                     let hitLine = searchResult.components(separatedBy: "\n")
                         .first(where: { $0.contains("hit") }) ?? ""
-                    await onProgress(.aiMessage("<think>\n🔍 [MemSearch] \(hitLine)\n</think>"))
+                    await onProgress(.systemLog("<think>\n🔍 [MemSearch] \(hitLine)\n</think>"))
                 }
             }
 
@@ -519,6 +544,7 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                 modelStatus: modelStatus,
                 activeModel: activeModel,
                 profile: profile,
+                operationMode: operationMode,
                 onProgress: onProgress    // ← onToken コールバックで .streamToken を発行
             ) else {
                 await onProgress(.error("Model returned nil response"))
@@ -537,7 +563,7 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                 let irNodes = JCrossIRParser.parse(rawResponse)
                 let verifyClaims = JCrossIRParser.extractVerifyClaims(from: irNodes)
 
-                await onProgress(.aiMessage(
+                await onProgress(.systemLog(
                     "🔬 [IR] ノード: \(irNodes.map(\.description).joined(separator: "→"))"
                 ))
 
@@ -557,7 +583,7 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                     )
 
                     let summary = await IRVerificationEngine.shared.debugSummary(verifyResults)
-                    await onProgress(.aiMessage(AppLanguage.shared.t("🔬 [IR Verify] \(summary)", "🔬 [IR検証] \(summary)")))
+                    await onProgress(.systemLog(AppLanguage.shared.t("🔬 [IR Verify] \(summary)", "🔬 [IR検証] \(summary)")))
 
                     if await IRVerificationEngine.shared.allVerified(verifyResults) {
                         // ✅ 全照合成功 → [出:X] を最終回答として採用、IR ブロックを除去
@@ -571,7 +597,7 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                         // ❌ 照合失敗 → 記憶補完して再生成
                         let failedClaims = await IRVerificationEngine.shared.failedClaims(verifyResults)
                         let recoveryQuery = failedClaims.joined(separator: " ")
-                        await onProgress(.aiMessage(
+                        await onProgress(.systemLog(
                             AppLanguage.shared.t("🔄 [IR Restore] Verification failed: \(failedClaims.joined(separator: ", ")) → Memory supplementation", "🔄 [IR復元] 照合失敗: \(failedClaims.joined(separator: ", ")) → 記憶補完")
                         ))
 
@@ -599,6 +625,7 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                             modelStatus: modelStatus,
                             activeModel: activeModel,
                             profile: profile,
+                            operationMode: operationMode,
                             onProgress: onProgress
                         ) {
                             rawResponse = JCrossIRParser.stripIR(from: retryResponse)
@@ -624,7 +651,7 @@ SYS.ENFORCE("logical_verification_before_acceptance")
             if vxLoopEnabled && !didConfusionRetry && !irWasVerified && ConfusionDetector.isConfused(rawResponse) {
                 didConfusionRetry = true
                 let matched = ConfusionDetector.matchedPatterns(in: rawResponse)
-                await onProgress(.aiMessage(AppLanguage.shared.t("🔄 [Autonomous] Detected '\(matched.first ?? "context")'. Instructing information search...", "🔄 [自律思考] 「\(matched.first ?? "context")」を検知。情報探索を指示します...")))
+                await onProgress(.systemLog(AppLanguage.shared.t("🔄 [Autonomous] Detected '\(matched.first ?? "context")'. Instructing information search...", "🔄 [自律思考] 「\(matched.first ?? "context")」を検知。情報探索を指示します...")))
                 
                 var pushConversation = conversation
                 pushConversation.append((role: "assistant", content: rawResponse))
@@ -641,6 +668,7 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                     modelStatus: modelStatus,
                     activeModel: activeModel,
                     profile: profile,
+                    operationMode: operationMode,
                     onProgress: onProgress
                 ) {
                     rawResponse = retryResponse
@@ -686,7 +714,7 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                     let searchLabel = gateDecision.searchType == .web
                         ? "<think>\n🌐 [VX-Loop] " + AppLanguage.shared.t("Web Search", "Web検索") + " → \"\(String(gateDecision.query.prefix(40)))\"\n</think>"
                         : "<think>\n🔎 [VX-Loop] SearchGate: " + AppLanguage.shared.t("Memory Search", "記憶検索") + " → \"\(String(gateDecision.query.prefix(40)))\"\n</think>"
-                    await onProgress(.aiMessage(searchLabel))
+                    await onProgress(.systemLog(searchLabel))
                     var entropyPoints: [[Double]]? = nil
                     if gateDecision.searchType == .web {
                         var cooldownLeft = await MainActor.run { () -> TimeInterval in
@@ -739,7 +767,7 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                         sessionId: vxSessionId,
                         turnNumber: turn,
                         tier: profile.tier,
-                        preferredSource: .verantyxBrowser,
+                        preferredSource: .safari,
                         entropy: entropyPoints
                     )
                     vxLastSearchResult = sgResult
@@ -758,7 +786,8 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                     turnNumber: globalTurnNumber,
                     userInput: userText,
                     assistantOutput: vxCleanResponse,
-                    searchResults: vxLastSearchResult
+                    searchResults: vxLastSearchResult,
+                    workspaceRoot: currentWorkspace
                 )
             } else {
                 vxCleanResponse = rawResponse
@@ -942,7 +971,7 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                                     messages: msgs,
                                     maxTokens: profile.tier.maxTokens,
                                     temperature: profile.tier.temperature,
-                                    onToken: { _ in }
+                                    onToken: { _ in return true }
                                 )
                             case .anthropicReady(let model, _):
                                 let sys  = msgs.first(where: { $0.role == "system" })?.content ?? ""
@@ -1009,7 +1038,7 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                         // 成功: 元の result をリトライ結果で上書き
                         result = retryResult
                         reactContext.retriesThisTurn += 1
-                        await onProgress(.aiMessage(AppLanguage.shared.t("✅ [ReAct] Retry Search Succeeded (Attempt \(reactContext.retriesThisTurn))", "✅ [ReAct] 再検索成功 (試行\(reactContext.retriesThisTurn))")))
+                        await onProgress(.systemLog(AppLanguage.shared.t("✅ [ReAct] Retry Search Succeeded (Attempt \(reactContext.retriesThisTurn))", "✅ [ReAct] 再検索成功 (試行\(reactContext.retriesThisTurn))")))
 
                     case .retry(let newQuery, let reason):
                         // 通常は発生しない（run()内部でループしているため）
@@ -1019,7 +1048,7 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                         // 上限超過: フェイルセーフ報告を result に挿入
                         result = report
                         reactContext.retriesThisTurn = ReActRetryEngine.shared.maxRetries
-                        await onProgress(.aiMessage(AppLanguage.shared.t("🔍 [ReAct] Max retries (\(ReActRetryEngine.shared.maxRetries)) exceeded. Sending fail-safe report.", "🔍 [ReAct] 最大試行回数(\(ReActRetryEngine.shared.maxRetries))を超過。フェイルセーフ報告を送信します。")))
+                        await onProgress(.systemLog(AppLanguage.shared.t("🔍 [ReAct] Max retries (\(ReActRetryEngine.shared.maxRetries)) exceeded. Sending fail-safe report.", "🔍 [ReAct] 最大試行回数(\(ReActRetryEngine.shared.maxRetries))を超過。フェイルセーフ報告を送信します。")))
                     }
                 }
 
@@ -1035,7 +1064,8 @@ SYS.ENFORCE("logical_verification_before_acceptance")
 
             // ── Yield check (Human Mode) ──────────────────────────────────
             consecutiveToolOnlyTurns += 1
-            if !isAIPriority && consecutiveToolOnlyTurns >= yieldAfterToolTurns {
+            let disableYield = isAIPriority || operationMode == .autoSwarm || operationMode == .swarm
+            if !disableYield && consecutiveToolOnlyTurns >= yieldAfterToolTurns {
                 consecutiveToolOnlyTurns = 0
                 let yieldMsg = AppLanguage.shared.t("""
                     ⏸ [Yield — Turn \(turn)] Called tools \(yieldAfterToolTurns) times consecutively, \
@@ -1053,7 +1083,7 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                     次のステップについて確認してください。続行しますか？または別のアプローチを指定してください。
                     """
                 )
-                await onProgress(.aiMessage(yieldMsg))
+                await onProgress(.systemLog(yieldMsg))
                 // Pause — wait for user's next message via the normal chat flow
                 return
             }
@@ -1193,53 +1223,62 @@ SYS.ENFORCE("logical_verification_before_acceptance")
         modelStatus: AppState.ModelStatus,
         activeModel: String,
         profile: ModelProfile = ModelProfileDetector.detect(modelId: "default"),
+        operationMode: OperationMode = .human,
         onProgress: @escaping @Sendable (LoopEvent) async -> Void
     ) async -> String? {
+        var mutableConversation = conversation
+        var anchorImages: [String]? = nil
+        
+        // ── Modality Hacking: Inject Cognitive Anchor or Vision Screenshot ──
+        if let lastUserIndex = mutableConversation.lastIndex(where: { $0.role == "user" }) {
+            let lastUserMsg = mutableConversation[lastUserIndex]
+            
+            if let screenshot = await CognitiveAnchorEngine.shared.consumeVisionScreenshot() {
+                anchorImages = [screenshot]
+                var visionInstructions = """
+
+                [VISION SYSTEM] The attached image is the current screenshot of the safari window. Analyze it visually to decide your next action using [VISION_ACT: x, y] or [VISION_TYPE: text].
+                
+                CRITICAL RULE (WAF EVASION): NEVER guess and directly navigate to deep links (e.g., login pages like slack.com/login or zenn.dev/login) using your internal knowledge. Accessing deep links without a search engine referer is unnatural and triggers Botguards/WAFs. You MUST use [SEARCH: "Service Name login"] first, then navigate from the search results. NEVER use [BROWSE: guessed-url] directly.
+                """
+                
+                let visionLogs = await CortexEngine.shared?.nodes.filter { $0.key.hasPrefix("vision_log_") }.sorted { $0.timestamp > $1.timestamp }.prefix(5) ?? []
+                if !visionLogs.isEmpty {
+                    let logStr = visionLogs.map { "- \($0.value)" }.joined(separator: "\n")
+                    visionInstructions += "\n\n[PAST VISION ACTIONS]\nYou recently performed these actions. DO NOT repeat the exact same coordinates if they failed. Draw a mental map of where you have already clicked:\n\(logStr)"
+                }
+                
+                mutableConversation[lastUserIndex].content = lastUserMsg.content + visionInstructions
+                await onProgress(.systemLog(AppLanguage.shared.t("<think>\n👁️ [Vision System] Injected live browser screenshot for analysis.\n</think>", "<think>\n👁️ [Vision System] ブラウザのライブスクリーンショットを解析用に注入しました。\n</think>")))
+            } else {
+                let systemMsg = mutableConversation.first(where: { $0.role == "system" })?.content ?? ""
+                let isDeficit = systemMsg.contains("DEFICIT DETECTED")
+                if let mode = await CognitiveAnchorEngine.shared.evaluateAnchorMode(
+                    instruction: lastUserMsg.content,
+                    memorySection: isDeficit ? "DEFICIT DETECTED" : "",
+                    isSwarmMode: operationMode == .autoSwarm || operationMode == .swarm
+                ) {
+                let base64Image = await CognitiveAnchorEngine.shared.getAnchor(for: mode)
+                anchorImages = [base64Image]
+                
+                // Commander Orchestrator Intervention: Anti-Hallucination & WAF Evasion Override
+                let antiHallucinationWarning = """
+
+                [COMMANDER INTERVENTION]
+                CRITICAL RULE 1: NEVER hallucinate or fabricate tool execution results. When you use ANY tool (especially [SWARM_EXECUTE: ...], [RUN], [SEARCH], [WRITE]), you MUST STOP generation immediately and wait for the system to return the real output. Do NOT simulate the output yourself. If you output a response right after a tool call without waiting, you will fail the mission.
+                
+                CRITICAL RULE 2 (WAF EVASION): NEVER guess and directly navigate to deep links (e.g., login pages like slack.com/login or zenn.dev/login) using your internal knowledge. Accessing deep links without a search engine referer is unnatural and triggers Botguards/WAFs. You MUST use [SEARCH: "Service Name login"] first, then navigate from the search results. NEVER use [BROWSE: guessed-url] directly.
+                """
+                mutableConversation[lastUserIndex].content = lastUserMsg.content + antiHallucinationWarning
+                
+                await onProgress(.systemLog(AppLanguage.shared.t("<think>\n🧿 [Visual Anchor] Injected visual cognitive anchor (\(mode) mode) + Anti-Hallucination Override.\n</think>", "<think>\n🧿 [Visual Anchor] 視覚的アンカー（\(mode) モード）と Commander 介入を注入しました。ツールの結果捏造を強く禁止します。\n</think>")))
+                }
+            }
+        }
+
         switch modelStatus {
 
         case .ollamaReady(let model):
-            var mutableConversation = conversation
-
-            // ── Modality Hacking: Inject Cognitive Anchor or Vision Screenshot ──
-            var anchorImages: [String]? = nil
-            if let lastUserIndex = mutableConversation.lastIndex(where: { $0.role == "user" }) {
-                let lastUserMsg = mutableConversation[lastUserIndex]
-                
-                if let screenshot = await CognitiveAnchorEngine.shared.consumeVisionScreenshot() {
-                    anchorImages = [screenshot]
-                    var visionInstructions = """
-
-                    [VISION SYSTEM] The attached image is the current screenshot of the verantyx-browser window. Analyze it visually to decide your next action using [VISION_ACT: x, y] or [VISION_TYPE: text].
-                    
-                    CRITICAL RULE (WAF EVASION): NEVER guess and directly navigate to deep links (e.g., login pages like slack.com/login or zenn.dev/login) using your internal knowledge. Accessing deep links without a search engine referer is unnatural and triggers Botguards/WAFs. You MUST use [SEARCH: "Service Name login"] first, then navigate from the search results. NEVER use [BROWSE: guessed-url] directly.
-                    """
-                    
-                    let visionLogs = await CortexEngine.shared?.nodes.filter { $0.key.hasPrefix("vision_log_") }.sorted { $0.timestamp > $1.timestamp }.prefix(5) ?? []
-                    if !visionLogs.isEmpty {
-                        let logStr = visionLogs.map { "- \($0.value)" }.joined(separator: "\n")
-                        visionInstructions += "\n\n[PAST VISION ACTIONS]\nYou recently performed these actions. DO NOT repeat the exact same coordinates if they failed. Draw a mental map of where you have already clicked:\n\(logStr)"
-                    }
-                    
-                    mutableConversation[lastUserIndex].content = lastUserMsg.content + visionInstructions
-                    await onProgress(.aiMessage(AppLanguage.shared.t("<think>\n👁️ [Vision System] Injected live browser screenshot for analysis.\n</think>", "<think>\n👁️ [Vision System] ブラウザのライブスクリーンショットを解析用に注入しました。\n</think>")))
-                } else if let mode = await CognitiveAnchorEngine.shared.evaluateAnchorMode(instruction: lastUserMsg.content) {
-                    let base64Image = await CognitiveAnchorEngine.shared.getAnchor(for: mode)
-                    anchorImages = [base64Image]
-                    
-                    // Commander Orchestrator Intervention: Anti-Hallucination & WAF Evasion Override
-                    let antiHallucinationWarning = """
-
-                    [COMMANDER INTERVENTION]
-                    CRITICAL RULE 1: NEVER hallucinate or fabricate tool execution results. When you use a tool (e.g., [RUN], [SEARCH], [WRITE]), STOP generation immediately and wait for the system to return the real output. Do NOT simulate the output yourself.
-                    
-                    CRITICAL RULE 2 (WAF EVASION): NEVER guess and directly navigate to deep links (e.g., login pages like slack.com/login or zenn.dev/login) using your internal knowledge. Accessing deep links without a search engine referer is unnatural and triggers Botguards/WAFs. You MUST use [SEARCH: "Service Name login"] first, then navigate from the search results. NEVER use [BROWSE: guessed-url] directly.
-                    """
-                    mutableConversation[lastUserIndex].content = lastUserMsg.content + antiHallucinationWarning
-                    
-                    await onProgress(.aiMessage(AppLanguage.shared.t("<think>\n🧿 [Visual Anchor] Injected visual cognitive anchor (\(mode) mode) + Anti-Hallucination Override.\n</think>", "<think>\n🧿 [Visual Anchor] 視覚的アンカー（\(mode) モード）と Commander 介入を注入しました。ツールの結果捏造を強く禁止します。\n</think>")))
-                }
-            }
-
             // multi-turn 会話配列を直接渡す（prompt string に変換不要）
             return await OllamaClient.shared.generateConversation(
                 model: model,
@@ -1248,14 +1287,15 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                 maxTokens: profile.tier.maxTokens,
                 temperature: profile.tier.temperature,
                 onToken: { token in
-                    Task { await onProgress(.streamToken(token)) }
+                    await onProgress(.streamToken(token))
+                    return true
                 }
             )
 
         case .anthropicReady(let model, _):
             // system prompt を分離
-            let systemContent = conversation.first(where: { $0.role == "system" })?.content ?? ""
-            let chatMessages  = conversation.filter { $0.role != "system" }
+            let systemContent = mutableConversation.first(where: { $0.role == "system" })?.content ?? ""
+            let chatMessages  = mutableConversation.filter { $0.role != "system" }
             let isThinking    = model.contains("3-7") || model.contains("claude-3-7")
             return await AnthropicClient.shared.generate(
                 model: model,
@@ -1277,12 +1317,13 @@ SYS.ENFORCE("logical_verification_before_acceptance")
             // but the RETURN value uses the authoritative onFinish payload
             // (= result.output from MLXLMCommon.generate) to guarantee the
             // rawResponse is never garbled by delta accumulation issues.
-            let prompt = buildConversationPrompt(conversation)
+            let prompt = buildConversationPrompt(mutableConversation)
             final class StringBox: @unchecked Sendable { var value = "" }
             let authoritativeOutput = StringBox()
             do {
                 try await MLXRunner.shared.streamGenerateTokens(
                     prompt: prompt,
+                    images: anchorImages,
                     maxTokens: profile.tier.maxTokens,
                     temperature: profile.tier.temperature,
                     onToken: { @Sendable piece in
@@ -1332,7 +1373,7 @@ SYS.ENFORCE("logical_verification_before_acceptance")
             let rawUserPrompt  = historySnippet + userPrompt
             let fullUserPrompt = String(rawUserPrompt.prefix(600))  // ← ユーザー側キャップ
 
-            await onProgress(.aiMessage(AppLanguage.shared.t("⚡ [BitNet] \(model) — Inferencing...", "⚡ [BitNet] \(model) — 推論中...")))
+            await onProgress(.systemLog(AppLanguage.shared.t("⚡ [BitNet] \(model) — Inferencing...", "⚡ [BitNet] \(model) — 推論中...")))
             guard let result = await BitNetCommanderEngine.shared.generate(
                 prompt: fullUserPrompt,
                 systemPrompt: sysContent
@@ -1372,6 +1413,7 @@ enum LoopEvent: @unchecked Sendable {
     case thinking(turn: Int)
     case streamToken(String)          // NEW: リアルタイムトークン（UIがダイレクト・ストリーミング表示用）
     case aiMessage(String)             // 完成テキストブロック
+    case systemLog(String)             // UI用のシステムログ（LLMの履歴には入らない）
     case toolCall(AgentToolCall)
     case toolResult(AgentToolCall)
     case workspaceChanged(URL)

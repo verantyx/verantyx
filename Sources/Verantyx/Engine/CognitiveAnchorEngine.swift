@@ -15,6 +15,8 @@ public enum CognitiveAnchorMode {
     case logic       // 論理モード（ASTと純粋な事実だけを見る。青色の視覚アンカー）
     case searchForce // 検索強制モード（[SEARCH REQUIRED] の警告画像）
     case temporal    // 時間軸強制モード（現在の日時を描画し、未来知識の欠如を自覚させる）
+    case memoryDeficit // メモリ欠損モード（L1-L3未ヒット時の自動補完強制）
+    case swarmCommander // Swarm司令官モード（自己実行を禁止し、全てをSwarmに委譲させる）
 }
 
 public actor CognitiveAnchorEngine {
@@ -67,6 +69,18 @@ public actor CognitiveAnchorEngine {
                 backgroundColor: NSColor.black,
                 textColor: NSColor.green
             ) ?? bluePixelBase64
+        case .memoryDeficit:
+            return renderDynamicAnchor(
+                text: "[ MEMORY DEFICIT ]\nL1-L3 CACHE MISS.\nSEARCH REQUIRED TO AUTO-COMPLETE.",
+                backgroundColor: NSColor.systemPurple,
+                textColor: NSColor.white
+            ) ?? redPixelBase64
+        case .swarmCommander:
+            return renderDynamicAnchor(
+                text: "🔥 ROUTER MODE ACTIVE 🔥\nEXECUTION FORBIDDEN.\nDELEGATE ALL TASKS TO SWARM.",
+                backgroundColor: NSColor(red: 0.8, green: 0.0, blue: 0.0, alpha: 1.0),
+                textColor: NSColor.white
+            ) ?? redPixelBase64
         }
     }
     
@@ -81,7 +95,15 @@ public actor CognitiveAnchorEngine {
     
     /// 現在のプロンプトのコンテキスト（文字やツール利用状況）から、
     /// 注入すべき認知アンカーを判定する。
-    public func evaluateAnchorMode(instruction: String) -> CognitiveAnchorMode? {
+    public func evaluateAnchorMode(instruction: String, memorySection: String = "", isSwarmMode: Bool = false) -> CognitiveAnchorMode? {
+        if isSwarmMode {
+            return .swarmCommander
+        }
+
+        if memorySection.contains("DEFICIT DETECTED") {
+            return .memoryDeficit
+        }
+
         let lower = instruction.lowercased()
         
         // 1. 時間軸・最新情報への言及があればTemporal Anchor

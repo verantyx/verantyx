@@ -232,7 +232,7 @@ actor PreflightSearchEngine {
 
             let githubURL = path.hasPrefix("http") ? path : "https://github.com/\(path)"
             let browserResult = await WebSearchEngine.shared.browse(
-                url: githubURL, preferredSource: .verantyxBrowser
+                url: githubURL, preferredSource: .safari
             )
             var text = String(browserResult.contextSnippet.prefix(budget))
 
@@ -247,7 +247,7 @@ actor PreflightSearchEngine {
         if query.hasPrefix("http://") || query.hasPrefix("https://") {
             if query.lowercased().contains("github.com/") {
                 let browserResult = await WebSearchEngine.shared.browse(
-                    url: query, preferredSource: .verantyxBrowser
+                    url: query, preferredSource: .safari
                 )
                 var text = String(browserResult.contextSnippet.prefix(budget))
                 let path = query
@@ -258,7 +258,7 @@ actor PreflightSearchEngine {
                 }
                 return text.isEmpty ? "" : text
             }
-            let result = await WebSearchEngine.shared.browse(url: query, preferredSource: .verantyxBrowser)
+            let result = await WebSearchEngine.shared.browse(url: query, preferredSource: .safari)
             return String(result.contextSnippet.prefix(budget))
         }
 
@@ -266,7 +266,7 @@ actor PreflightSearchEngine {
         let result = await WebSearchEngine.shared.search(
             query: query,
             engine: .google,
-            preferredSource: .verantyxBrowser
+            preferredSource: .safari
         )
         let text = String(result.contextSnippet.prefix(budget))
         return text.isEmpty || text.hasPrefix("❌") ? "" : text

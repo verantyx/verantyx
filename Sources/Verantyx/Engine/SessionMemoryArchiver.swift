@@ -40,45 +40,30 @@ final class SessionMemoryArchiver {
     // 書き込みは常に両方に同期 → 情報密度だけが違う「双子」の状態を維持。
     // 読み込みは tier に応じてディレクトリを切り替える。
 
+    private func dynamicMemoryDir(subpath: String) -> URL {
+        let cortexWs = UserDefaults.standard.string(forKey: "cortex_workspace_path")
+        let normalWs = UserDefaults.standard.string(forKey: "last_workspace_path")
+        let wsPath = cortexWs ?? normalWs
+        let baseDir: URL
+        if let ws = wsPath {
+            baseDir = URL(fileURLWithPath: ws).appendingPathComponent(".openclaw/memory")
+        } else {
+            baseDir = URL(fileURLWithPath: "/tmp").appendingPathComponent(".openclaw/memory")
+        }
+        let dir = baseDir.appendingPathComponent(subpath, isDirectory: true)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        return dir
+    }
+
     // ── full/ ストア (L1-L3 フルスペック) ────────────────────────────────
-    private let mcpFrontDir: URL = {
-        let dir = URL(fileURLWithPath: NSHomeDirectory())
-            .appendingPathComponent(".openclaw/memory/front", isDirectory: true)
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        return dir
-    }()
-    private let mcpNearDir: URL = {
-        let dir = URL(fileURLWithPath: NSHomeDirectory())
-            .appendingPathComponent(".openclaw/memory/near", isDirectory: true)
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        return dir
-    }()
-    private let mcpMidDir: URL = {
-        let dir = URL(fileURLWithPath: NSHomeDirectory())
-            .appendingPathComponent(".openclaw/memory/mid", isDirectory: true)
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        return dir
-    }()
+    private var mcpFrontDir: URL { dynamicMemoryDir(subpath: "front") }
+    private var mcpNearDir: URL { dynamicMemoryDir(subpath: "near") }
+    var mcpMidDir: URL { dynamicMemoryDir(subpath: "mid") }
 
     // ── nano/ ストア (L1 漢字トポロジーのみ) ─────────────────────────────
-    private let nanoFrontDir: URL = {
-        let dir = URL(fileURLWithPath: NSHomeDirectory())
-            .appendingPathComponent(".openclaw/memory/nano/front", isDirectory: true)
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        return dir
-    }()
-    private let nanoNearDir: URL = {
-        let dir = URL(fileURLWithPath: NSHomeDirectory())
-            .appendingPathComponent(".openclaw/memory/nano/near", isDirectory: true)
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        return dir
-    }()
-    private let nanoMidDir: URL = {
-        let dir = URL(fileURLWithPath: NSHomeDirectory())
-            .appendingPathComponent(".openclaw/memory/nano/mid", isDirectory: true)
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        return dir
-    }()
+    private var nanoFrontDir: URL { dynamicMemoryDir(subpath: "nano/front") }
+    private var nanoNearDir: URL { dynamicMemoryDir(subpath: "nano/near") }
+    private var nanoMidDir: URL { dynamicMemoryDir(subpath: "nano/mid") }
 
     // MARK: - Progressive archiving (every N messages, overwrites previous)
 
@@ -556,51 +541,63 @@ final class SessionMemoryArchiver {
 
     // MARK: - Skill Catalog Indexer
 
-    /// .agents/skills/ 内の SKILL.md を走査して mid/SKILL_*.jcross に登録する。
+    /// .agents/skills/ 内の SKILL.md や .yaml ファイルを走査して mid/SKILL_*.jcross に登録する。
     ///
     /// 動作:
-    ///   1. workspaceRoot/.agents/skills/ 以下の全 SKILL.md を探索
-    ///   2. YAML frontmatter から name / description を抽出
+    ///   1. workspaceRoot/.agents/skills/ 以下の全 SKILL.md および .yaml / .yml を探索
+    ///   2. YAML frontmatter 又は YAML 本文から name / description を抽出
     ///   3. mid/SKILL_{name}.jcross が7日以内に存在すれば再作成をスキップ
     ///   4. L1 = 1行サマリー、L2 = 主要キーワード/用途、として書き込む
     ///
     /// 呼び出しタイミング: アプリ起動時 (AppMain or VerantyxApp.init)
-    func indexSkills(workspaceRoot: URL? = nil) {
+    func indexSkills(workspaceRoot: URL? = nil) async {
         let fm = FileManager.default
 
+        let cortexSkillsPath = await MainActor.run { AppState.shared?.cortexSkillsPath }
+        var cortexSkillsURL: URL? = nil
+        if let path = cortexSkillsPath {
+            cortexSkillsURL = URL(fileURLWithPath: path)
+        }
+
         // ── スキルディレクトリを決定 ────────────────────────────────────────
-        // 優先度: 引数 > Bundle主Bundle > ~/.openclaw/skills
+        // 優先度: 引数 > Cortex連携パス > Bundle主Bundle > ~/.openclaw/skills
         let candidates: [URL] = [
             workspaceRoot.map { $0.appendingPathComponent(".agents/skills") },
+            cortexSkillsURL,
             Bundle.main.bundleURL.deletingLastPathComponent()
                 .appendingPathComponent(".agents/skills"),
-            URL(fileURLWithPath: NSHomeDirectory())
+            URL(fileURLWithPath: "/tmp")
                 .appendingPathComponent(".openclaw/skills"),
         ].compactMap { $0 }
 
-        var skillMDs: [URL] = []
+        var skillFiles: [URL] = []
         for dir in candidates {
             guard let enumerator = fm.enumerator(
                 at: dir,
                 includingPropertiesForKeys: nil,
                 options: [.skipsHiddenFiles]
             ) else { continue }
-            for case let file as URL in enumerator
-            where file.lastPathComponent == "SKILL.md" {
-                skillMDs.append(file)
+            for case let file as URL in enumerator {
+                let name = file.lastPathComponent.lowercased()
+                if name == "skill.md" || name.hasSuffix(".yaml") || name.hasSuffix(".yml") {
+                    skillFiles.append(file)
+                }
             }
         }
 
-        guard !skillMDs.isEmpty else { return }
+        guard !skillFiles.isEmpty else { return }
 
-        // ── 各 SKILL.md を処理 ─────────────────────────────────────────────
+        // ── 各 スキルファイル (.md / .yaml) を処理 ─────────────────────────────────────────────
         let sevenDaysAgo = Date().addingTimeInterval(-7 * 86400)
 
-        for mdURL in skillMDs {
-            guard let raw = try? String(contentsOf: mdURL, encoding: .utf8) else { continue }
+        for fileURL in skillFiles {
+            guard let raw = try? String(contentsOf: fileURL, encoding: .utf8) else { continue }
 
-            // YAML frontmatter パース (--- ... ---)
-            let name        = yamlField(raw, key: "name")        ?? mdURL.deletingLastPathComponent().lastPathComponent
+            // YAML (Frontmatter or raw YAML) パース
+            let fallbackName = fileURL.lastPathComponent.lowercased() == "skill.md"
+                ? fileURL.deletingLastPathComponent().lastPathComponent
+                : fileURL.deletingPathExtension().lastPathComponent
+            let name        = yamlField(raw, key: "name")        ?? fallbackName
             let description = yamlField(raw, key: "description") ?? ""
             let safeName    = name.replacingOccurrences(of: "/", with: "-")
                                    .replacingOccurrences(of: " ", with: "_")
@@ -612,11 +609,16 @@ final class SessionMemoryArchiver {
                 continue  // 7日以内に更新済み → スキップ
             }
 
-            // --- 本文からキーワード抽出（## Goal / ## Inputs / ## Notes 等） ---
+            // --- 本文からキーワード抽出（## Goal / ## Inputs / ## Notes 等 または YAMLキー） ---
             let body = stripYAMLFrontmatter(raw)
-            let goals = extractMarkdownSection(body, heading: "Goal")
-            let inputs = extractMarkdownSection(body, heading: "Inputs")
-            let useLine = extractMarkdownSection(body, heading: "Use when")
+            let mdGoals = extractMarkdownSection(body, heading: "Goal")
+            let goals = mdGoals.isEmpty ? (yamlField(raw, key: "goal") ?? "") : mdGoals
+            
+            let mdInputs = extractMarkdownSection(body, heading: "Inputs")
+            let inputs = mdInputs.isEmpty ? (yamlField(raw, key: "inputs") ?? "") : mdInputs
+            
+            let mdUseLine = extractMarkdownSection(body, heading: "Use when")
+            let useLine = mdUseLine.isEmpty ? (yamlField(raw, key: "use_when") ?? "") : mdUseLine
 
             // L1 サマリー（1行）
             let l1 = "[スキル:\(name)] \(description)"
@@ -643,7 +645,7 @@ final class SessionMemoryArchiver {
             ;;; JCross Memory Node — SKILL
             ;;; Skill: \(name)
             ;;; Indexed: \(timestamp)
-            ;;; Source: \(mdURL.path)
+            ;;; Source: \(fileURL.path)
 
             [L1_SUMMARY]
             \(l1)
@@ -660,21 +662,75 @@ final class SessionMemoryArchiver {
 
             try? content.write(to: destURL, atomically: true, encoding: .utf8)
         }
+
+        // ── 構築したJCrossノードから skills_catalog.json を生成 (tool-search-oss用) ──
+        var catalogEntries: [[String: String]] = []
+        let jcrossFiles = listZone(mcpMidDir, prefixFilter: ["SKILL"], topK: 5000)
+        for jcross in jcrossFiles {
+            let safeName = jcross.deletingPathExtension().lastPathComponent.replacingOccurrences(of: "SKILL_", with: "")
+            if let raw = try? String(contentsOf: jcross, encoding: .utf8) {
+                let l1 = extractSection(from: raw, tag: "L1_SUMMARY") ?? ""
+                var desc = l1
+                if let bracketEnd = l1.firstIndex(of: "]") {
+                    desc = String(l1[l1.index(after: bracketEnd)...]).trimmingCharacters(in: .whitespaces)
+                }
+                if desc.isEmpty { desc = "スキル: \(safeName)" }
+                catalogEntries.append([
+                    "name": safeName,
+                    "description": desc,
+                    "serverName": "verantyx-skills"
+                ])
+            }
+        }
+        
+        if !catalogEntries.isEmpty,
+           let data = try? JSONSerialization.data(withJSONObject: catalogEntries, options: .prettyPrinted) {
+            let catalogURL = mcpMidDir.appendingPathComponent("skills_catalog.json")
+            try? data.write(to: catalogURL)
+            
+            let catalogPath = catalogURL.path
+            Task { @MainActor in
+                let config = MCPServerConfig(
+                    name: "tool-search-oss",
+                    transport: .stdio,
+                    command: "sh -c \"cd /Users/motonishikoudai/verantyx-cli && python3 -m tool_search_oss.server --catalog \(catalogPath)\"",
+                    mode: .ai
+                )
+                if let existing = MCPEngine.shared.servers.first(where: { $0.name == "tool-search-oss" }) {
+                    if existing.command != config.command {
+                        var updated = config
+                        updated.id = existing.id
+                        MCPEngine.shared.updateServer(updated)
+                        await MCPEngine.shared.restartServer(id: updated.id)
+                    }
+                } else {
+                    MCPEngine.shared.addServer(config)
+                    await MCPEngine.shared.connect(server: config)
+                }
+            }
+        }
     }
 
     // MARK: - Skill Indexer Helpers
 
-    /// YAML frontmatter から key の値を抽出する
+    /// YAML frontmatter または 生の YAML テキストから key の値を抽出する
     private func yamlField(_ raw: String, key: String) -> String? {
         let lines = raw.components(separatedBy: "\n")
-        var inFront = false
+        let hasFrontmatter = lines.first(where: { !$0.trimmingCharacters(in: .whitespaces).isEmpty })?.hasPrefix("---") == true
+        var inFront = !hasFrontmatter // フロントマターが無い場合は全体をYAMLとして扱う
+        
         for line in lines {
             let trimmed = line.trimmingCharacters(in: .whitespaces)
-            if trimmed == "---" { inFront = !inFront; continue }
+            if hasFrontmatter && trimmed == "---" {
+                inFront = !inFront
+                continue
+            }
             if !inFront { continue }
+            
             if trimmed.hasPrefix("\(key):") {
                 let value = trimmed.dropFirst("\(key):".count).trimmingCharacters(in: .whitespaces)
-                return value.isEmpty ? nil : value
+                let cleanValue = value.trimmingCharacters(in: .init(charactersIn: "\"'"))
+                return cleanValue.isEmpty ? nil : cleanValue
             }
         }
         return nil

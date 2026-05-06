@@ -310,8 +310,8 @@ struct SideBySideDiffView: View {
     private func actionBar(_ diff: FileDiff) -> some View {
         HStack(spacing: 12) {
             // File path
-            Text(diff.fileURL.path.replacingOccurrences(
-                of: NSHomeDirectory(), with: "~"))
+            let wsPath = app.cortexWorkspacePath ?? app.workspaceURL?.path ?? ""
+            Text(wsPath.isEmpty ? diff.fileURL.path : diff.fileURL.path.replacingOccurrences(of: wsPath, with: "~"))
                 .font(.system(size: 10, design: .monospaced))
                 .foregroundStyle(Color(red: 0.42, green: 0.42, blue: 0.58))
                 .lineLimit(1)
@@ -327,7 +327,7 @@ struct SideBySideDiffView: View {
                 }
                 app.addSystemMessage("↩️ Changes rejected.")
             } label: {
-                Text("Reject")
+                Text(app.t("Reject", "拒否"))
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(Color(red: 0.9, green: 0.38, blue: 0.38))
                     .padding(.horizontal, 18)
@@ -342,11 +342,32 @@ struct SideBySideDiffView: View {
             .buttonStyle(.plain)
             .keyboardShortcut(.escape)
 
+            // Approve All
+            Button {
+                app.autoApproveDiffs = true
+                applyDiff(diff)
+                app.addSystemMessage(app.t("🚀 Auto-Approve enabled. Swarm will no longer pause for diffs.", "🚀 自動承認が有効になりました。Swarmは今後Diffで停止しません。"))
+            } label: {
+                Text(app.t("Approve All", "ずっと承認"))
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(Color(red: 0.9, green: 0.8, blue: 0.2))
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Color(red: 0.3, green: 0.25, blue: 0.05).opacity(0.75),
+                                in: RoundedRectangle(cornerRadius: 6))
+                    .overlay(RoundedRectangle(cornerRadius: 6)
+                        .strokeBorder(Color(red: 0.9, green: 0.8, blue: 0.2).opacity(0.4),
+                                      lineWidth: 1))
+            }
+            .contentShape(Rectangle())
+            .buttonStyle(.plain)
+            .help(app.t("Approve this diff and automatically approve all future diffs in this session", "このDiffを承認し、今後このセッション中のすべてのDiffを自動承認します"))
+
             // Approve
             Button {
                 applyDiff(diff)
             } label: {
-                Text("Approve")
+                Text(app.t("Approve", "承認"))
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(Color(red: 0.3, green: 0.92, blue: 0.48))
                     .padding(.horizontal, 18)

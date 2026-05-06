@@ -2,6 +2,7 @@ import Foundation
 import MLX
 import MLXLLM
 import MLXLMCommon
+import CoreImage
 import Hub
 
 // MARK: - MLXRunner (Direct In-Process Inference)
@@ -935,6 +936,7 @@ actor MLXRunner {
 
     func streamGenerateTokens(
         prompt: String,
+        images: [String]? = nil,
         maxTokens: Int = 4096,
         temperature: Double = 0.6,
         onToken: @escaping @Sendable (String) -> Void,
@@ -959,7 +961,21 @@ actor MLXRunner {
             repetitionPenalty: 1.15,
             repetitionContextSize: 64
         )
-        let userInput = UserInput(prompt: prompt)
+        var mlxImages: [UserInput.Image] = []
+        if let base64Images = images {
+            for b64 in base64Images {
+                if let data = Data(base64Encoded: b64), let ciImage = CIImage(data: data) {
+                    mlxImages.append(.ciImage(ciImage))
+                }
+            }
+        }
+        
+        let userInput: UserInput
+        if mlxImages.isEmpty {
+            userInput = UserInput(prompt: prompt)
+        } else {
+            userInput = UserInput(prompt: prompt, images: mlxImages)
+        }
 
         try await box.perform { (context: ModelContext) in
             let lmInput: LMInput
@@ -1129,6 +1145,7 @@ actor MLXRunner {
 
     func generate(
         prompt: String,
+        images: [String]? = nil,
         maxTokens: Int = 2048,
         temperature: Double = 0.1
     ) async throws -> String {
@@ -1140,7 +1157,21 @@ actor MLXRunner {
             repetitionPenalty: 1.15,
             repetitionContextSize: 64
         )
-        let userInput = UserInput(prompt: prompt)
+        var mlxImages: [UserInput.Image] = []
+        if let base64Images = images {
+            for b64 in base64Images {
+                if let data = Data(base64Encoded: b64), let ciImage = CIImage(data: data) {
+                    mlxImages.append(.ciImage(ciImage))
+                }
+            }
+        }
+        
+        let userInput: UserInput
+        if mlxImages.isEmpty {
+            userInput = UserInput(prompt: prompt)
+        } else {
+            userInput = UserInput(prompt: prompt, images: mlxImages)
+        }
 
         return try await box.perform { (context: ModelContext) in
             let lmInput: LMInput

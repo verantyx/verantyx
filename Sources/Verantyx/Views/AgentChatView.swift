@@ -12,6 +12,7 @@ struct AgentChatView: View {
     
     @State private var showVisualAnchorPrompt: Bool = false
     @State private var visualAnchorText: String = ""
+    @State private var showMiniExplorer: Bool = true
 
     enum Tab: String, CaseIterable {
         case workspace = "Workspace"
@@ -158,6 +159,21 @@ struct AgentChatView: View {
             }
             Spacer()
 
+            // Toggle Mini Explorer
+            Button {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    showMiniExplorer.toggle()
+                }
+            } label: {
+                Image(systemName: "sidebar.top")
+                    .font(.system(size: 11))
+                    .foregroundStyle(showMiniExplorer ? Color(red: 0.4, green: 0.7, blue: 1.0) : Color(red: 0.5, green: 0.5, blue: 0.6))
+            }
+            .contentShape(Rectangle())
+            .buttonStyle(.plain)
+            .padding(.horizontal, 6)
+            .help(app.t("Toggle Mini File Explorer", "ミニエクスプローラーを切替"))
+
             // New session quick button
             Button {
                 app.newChatSession()
@@ -210,29 +226,39 @@ struct AgentChatView: View {
     // MARK: - Workspace (main chat)
 
     private var workspaceView: some View {
-        ZStack(alignment: .bottomLeading) {
-            // NSTextView ベースのトランスクリプト。
-            // 単一テキストストレージのためメッセージをまたいでドラッグ選択・コピーができる。
-            ChatTranscriptView(messages: app.messages, isGenerating: app.isGenerating)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        VStack(spacing: 0) {
+            if showMiniExplorer {
+                FileTreeView()
+                    .frame(minHeight: 150, maxHeight: 280)
+                    .background(Color(red: 0.1, green: 0.1, blue: 0.13))
+                
+                Divider().opacity(0.3)
+            }
             
-            if app.isGenerating {
-                HStack(spacing: 8) {
-                    if let url = URL(string: "file:///Users/motonishikoudai/verantyx-cli/VerantyxIDE/Sources/Verantyx/Views/mp_.mp4") {
-                        VideoSpinnerView(videoURL: url, speed: 2.7)
-                            .frame(width: 18, height: 18)
+            ZStack(alignment: .bottomLeading) {
+                // NSTextView ベースのトランスクリプト。
+                // 単一テキストストレージのためメッセージをまたいでドラッグ選択・コピーができる。
+                ChatTranscriptView(messages: app.messages, isGenerating: app.isGenerating)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                
+                if app.isGenerating {
+                    HStack(spacing: 8) {
+                        if let url = URL(string: "file:///Users/motonishikoudai/verantyx-cli/VerantyxIDE/Sources/Verantyx/Views/mp_.mp4") {
+                            VideoSpinnerView(videoURL: url, speed: 2.7)
+                                .frame(width: 18, height: 18)
+                        }
+                        Text("Generating...")
+                            .font(.system(size: 11, weight: .bold, design: .monospaced))
+                            .foregroundStyle(Color(red: 0.35, green: 0.85, blue: 0.80))
                     }
-                    Text("Generating...")
-                        .font(.system(size: 11, weight: .bold, design: .monospaced))
-                        .foregroundStyle(Color(red: 0.35, green: 0.85, blue: 0.80))
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(Color(red: 0.13, green: 0.13, blue: 0.16).opacity(0.85), in: Capsule())
+                    .overlay(Capsule().stroke(Color(red: 0.35, green: 0.85, blue: 0.80).opacity(0.3), lineWidth: 1))
+                    .padding(16)
+                    .transition(.opacity.combined(with: .move(edge: .bottom)))
+                    .animation(.easeInOut(duration: 0.3), value: app.isGenerating)
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(Color(red: 0.13, green: 0.13, blue: 0.16).opacity(0.85), in: Capsule())
-                .overlay(Capsule().stroke(Color(red: 0.35, green: 0.85, blue: 0.80).opacity(0.3), lineWidth: 1))
-                .padding(16)
-                .transition(.opacity.combined(with: .move(edge: .bottom)))
-                .animation(.easeInOut(duration: 0.3), value: app.isGenerating)
             }
         }
     }
@@ -323,6 +349,35 @@ struct AgentChatView: View {
                     .buttonStyle(.borderedProminent)
                     .controlSize(.small)
                     .tint(app.editingMode == app.operationMode ? .green : .blue)
+                    
+                    Divider().frame(height: 16).opacity(0.5)
+                    
+                    // ── Auditor (監視役) Settings ──
+                    Toggle(isOn: $app.isAuditorEnabled) {
+                        Text("監視 (Auditor)")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundStyle(app.isAuditorEnabled ? Color.yellow : Color.gray)
+                    }
+                    .toggleStyle(.checkbox)
+                    
+                    if app.isAuditorEnabled {
+                        if app.ollamaModels.isEmpty {
+                            TextField("llama3.1:8b", text: $app.activeAuditorModel)
+                                .textFieldStyle(.roundedBorder)
+                                .font(.system(size: 11, design: .monospaced))
+                                .frame(width: 110)
+                        } else {
+                            Picker("", selection: $app.activeAuditorModel) {
+                                ForEach(app.ollamaModels, id: \.self) { m in
+                                    Text(m).tag(m)
+                                }
+                            }
+                            .labelsHidden()
+                            .frame(width: 120)
+                        }
+                    }
+                    
+                    Divider().frame(height: 16).opacity(0.5)
                     
                     // Active Backend Badge
                     let isOllama: Bool = {

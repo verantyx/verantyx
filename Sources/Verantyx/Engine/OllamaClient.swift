@@ -31,7 +31,7 @@ public enum StopReason: String, Sendable {
 public actor OllamaClient {
 
     public static let shared = OllamaClient()
-    private let baseURL = "http://127.0.0.1:11434"
+    public let baseURL = "http://127.0.0.1:11434"
     private var _available: Bool? = nil
     private var _availableTime: Date? = nil
 
@@ -229,12 +229,12 @@ public actor OllamaClient {
     // Ollamaは stream:true 時に NDJSON チャンクを逐次返す。
     // ここでは AgentLoop 互換のシグネチャを保ちつつ、内部はストリームで受信する。
 
-    public func generate(
+    nonisolated public func generate(
         model: String,
         prompt: String,
         maxTokens: Int = 2048,
         temperature: Double = 0.15,
-        onToken: (@Sendable (String) -> Void)? = nil   // NEW: per-token callback
+        onToken: (@Sendable (String) async -> Bool)? = nil   // NEW: per-token callback, return false to abort
     ) async -> String? {
         // シングルユーザーメッセージをmulti-turn形式に変換
         let messages: [[String: Any]] = [["role": "user", "content": prompt]]
@@ -250,13 +250,13 @@ public actor OllamaClient {
     // MARK: - generateConversation() — multi-turn対応（AgentLoop用）
     // openclaw: convertToOllamaMessages() と同様にロールをそのまま渡す
 
-    public func generateConversation(
+    nonisolated public func generateConversation(
         model: String,
         messages: [(role: String, content: String)],
         imagesForLastUserMessage: [String]? = nil,
         maxTokens: Int = 2048,
         temperature: Double = 0.15,
-        onToken: (@Sendable (String) -> Void)? = nil
+        onToken: (@Sendable (String) async -> Bool)? = nil
     ) async -> String? {
         var ollamaMessages: [[String: Any]] = messages.map { ["role": $0.role, "content": $0.content] }
         
@@ -287,12 +287,12 @@ public actor OllamaClient {
     //   3. HTTP 非200 を黙って捨てる → エラーが UI に届かない
     //      Fix: エラーボディを読んで progressHandler に流す
 
-    private func streamChat(
+    nonisolated private func streamChat(
         model: String,
         messages: [[String: Any]],
         maxTokens: Int,
         temperature: Double,
-        onToken: (@Sendable (String) -> Void)? = nil,
+        onToken: (@Sendable (String) async -> Bool)? = nil,
         onError: (@Sendable (String) -> Void)? = nil
     ) async -> String? {
         // まず大きいコンテキストで試み、失敗したら小さくリトライ（MacのVRAM制約への適応）
@@ -320,13 +320,13 @@ public actor OllamaClient {
         return nil
     }
 
-    private func streamChatAttempt(
+    nonisolated private func streamChatAttempt(
         model: String,
         messages: [[String: Any]],
         maxTokens: Int,
         temperature: Double,
         numCtx: Int,
-        onToken: (@Sendable (String) -> Void)? = nil,
+        onToken: (@Sendable (String) async -> Bool)? = nil,
         onError: (@Sendable (String) -> Void)?
     ) async -> String? {
         guard let url = URL(string: "\(baseURL)/api/chat") else { return nil }
@@ -348,6 +348,7 @@ public actor OllamaClient {
             "options": [
                 "num_ctx":       numCtx,
                 "num_predict":   max(maxTokens, 512),
+                "num_keep":      1024,        // StreamingLLM (Attention Sink): Keep first 1024 tokens in KV cache
                 "temperature":   temperature,
                 "top_p":         0.9,
                 "repeat_penalty": 1.05
@@ -386,7 +387,9 @@ public actor OllamaClient {
                 if let message = json["message"] as? [String: Any] {
                     if let token = message["content"] as? String, !token.isEmpty {
                         accumulated += token
-                        onToken?(token)
+                        if let onToken = onToken, await !onToken(token) {
+                            break // Abort early if callback returns false
+                        }
                     }
                     if let think = message["thinking"] as? String, !think.isEmpty {
                         accumulatedThink += think
@@ -450,6 +453,7 @@ public actor OllamaClient {
                     "options": [
                         "num_ctx":     32768,
                         "num_predict": max(maxTokens, 512),
+                        "num_keep":    1024,   // StreamingLLM (Attention Sink): Keep first 1024 tokens in KV cache
                         "temperature": temperature
                     ]
                 ]

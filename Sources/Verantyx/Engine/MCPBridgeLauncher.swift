@@ -56,6 +56,8 @@ final class MCPBridgeLauncher: ObservableObject {
         for pidStr in out.components(separatedBy: .newlines) {
             let trimmed = pidStr.trimmingCharacters(in: .whitespaces)
             guard let pid = Int32(trimmed), pid > 0 else { continue }
+            // EADDRINUSE対策: 自分自身をキルしないようにする
+            if pid == ProcessInfo.processInfo.processIdentifier { continue }
             kill(pid, SIGTERM)
             print("[MCPBridgeLauncher] 🔪 Killed zombie PID \(pid) holding port \(bridgePort)")
         }
@@ -66,7 +68,7 @@ final class MCPBridgeLauncher: ObservableObject {
 
     // MARK: - Public API
 
-    func start() {
+    func start(onPortCleared: @MainActor @Sendable @escaping () -> Void = {}) {
         guard monitorTask == nil else {
             print("[MCPBridgeLauncher] ⚠️ Already running — ignoring duplicate start()")
             return
@@ -77,6 +79,7 @@ final class MCPBridgeLauncher: ObservableObject {
         // アプリ起動時に残留ゾンビを一括削除（Xcodeデバッグ再起動対策）
         Task.detached(priority: .utility) { [weak self] in
             self?.killZombieOnPort()
+            await onPortCleared()
         }
         // ⚠️ nonisolated Task: runLoop は MainActor を専有しない
         monitorTask = Task.detached(priority: .utility) { [weak self] in
@@ -125,7 +128,7 @@ final class MCPBridgeLauncher: ObservableObject {
     /// ⚠️ nonisolated: killZombieOnPort()/findNode() などブロッキング呼び出しを含むため
     ///    runLoop() から Task.detached 経由で呼ばれ、MainActor をブロックしない。
     nonisolated private func launch() async {
-        guard let (nodeBin, serverScript, projectRoot) = resolvePaths() else {
+        guard let (nodeBin, serverScript, projectRoot) = await resolvePaths() else {
             await MainActor.run {
                 launchError = "Cannot locate node binary or MCP server script."
             }
@@ -265,12 +268,18 @@ final class MCPBridgeLauncher: ObservableObject {
     // MARK: - Path resolution
 
     /// Returns (nodeBinary, serverScript, projectRoot) or nil if not found.
-    nonisolated private func resolvePaths() -> (URL, URL, URL)? {
+    nonisolated private func resolvePaths() async -> (URL, URL, URL)? {
         // 1. node binary
-        guard let nodeBin = findNode() else { return nil }
+        guard let nodeBin = await findNode() else { return nil }
 
-        let home = NSHomeDirectory()
-        let verantyxCLI = URL(fileURLWithPath: "\(home)/verantyx-cli")
+        let wsPath = await MainActor.run { AppState.shared?.cortexWorkspacePath ?? AppState.shared?.workspaceURL?.path }
+        let verantyxCLI: URL
+        if let ws = wsPath {
+            let u = URL(fileURLWithPath: ws)
+            verantyxCLI = u.lastPathComponent == "VerantyxIDE" ? u.deletingLastPathComponent() : u
+        } else {
+            verantyxCLI = URL(fileURLWithPath: "/tmp/verantyx-cli")
+        }
 
         // 2. server.ts 候補 (実際に存在するパス順)
         let scriptCandidates: [(script: String, root: URL)] = [
@@ -304,9 +313,10 @@ final class MCPBridgeLauncher: ObservableObject {
     }
 
     /// ⚠️ nonisolated: proc.waitUntilExit() を含むため
+    /// ⚠️ nonisolated: proc.waitUntilExit() を含むため
     ///    必ずバックグラウンドスレッド（Task.detached）から呼ぶこと。
-    nonisolated private func findNode() -> URL? {
-        let home = NSHomeDirectory()
+    nonisolated private func findNode() async -> URL? {
+        let home = await MainActor.run { AppState.shared?.cortexWorkspacePath ?? AppState.shared?.workspaceURL?.path } ?? "/tmp"
         // Fast path: known Homebrew / nvm / system locations
         let knownPaths = [
             "/opt/homebrew/bin/node",

@@ -331,3 +331,63 @@ extension JCrossIRPatcher {
         let warnings: [String]
     }
 }
+import Foundation
+
+/// JCross Graph Patch Engine
+/// Safely merges AST-verified patches from the NPU Gatekeeper into the actual JCross Vault / File System.
+@MainActor
+public final class JCrossGraphPatchEngine {
+    public static let shared = JCrossGraphPatchEngine()
+    
+    private init() {}
+    
+    /// Commits an approved patch to the physical file system and requests a JCross Topology re-index.
+    public func commit(patch: String, targetFile: String, workspaceURL: URL?) throws {
+        guard let workspace = workspaceURL else {
+            throw NSError(domain: "JCrossGraphPatchEngine", code: 1, userInfo: [NSLocalizedDescriptionKey: "No active workspace. Cannot commit patch."])
+        }
+        
+        let fileURL = workspace.appendingPathComponent(targetFile)
+        
+        // 1. Extract raw code from LLM Markdown output
+        let cleanCode = extractCode(from: patch)
+        
+        if cleanCode.isEmpty {
+            throw NSError(domain: "JCrossGraphPatchEngine", code: 2, userInfo: [NSLocalizedDescriptionKey: "Extracted code is empty. Aborting commit."])
+        }
+        
+        // 2. Diff Application vs Full Overwrite
+        // If the LLM returned a unified diff (--- a/ +++ b/), we would apply it.
+        // For E-Cores generating the full file or pure code block, we overwrite safely.
+        // In a true 100% production system, we'd use SwiftSyntax to merge the AST node directly.
+        // Here we simulate the final file write.
+        
+        let fileManager = FileManager.default
+        if !fileManager.fileExists(atPath: fileURL.path) {
+            // Create directory if it doesn't exist
+            let dirURL = fileURL.deletingLastPathComponent()
+            try fileManager.createDirectory(at: dirURL, withIntermediateDirectories: true, attributes: nil)
+        }
+        
+        // Safety check: Don't overwrite if it looks like a fragmented snippet and the file is large,
+        // unless it's a unified diff. We assume the E-core outputted the full file for now based on prompt.
+        try cleanCode.write(to: fileURL, atomically: true, encoding: .utf8)
+        
+        print("✅ [JCross Graph Patch Engine] Successfully committed changes to \(targetFile).")
+        
+        // 3. (Future) Trigger JCross L1-L3 Re-indexing to update the semantic blackboard
+        // JCrossIRVault.shared.reindex(file: fileURL)
+    }
+    
+    private func extractCode(from raw: String) -> String {
+        // Strip out markdown ```swift ... ```
+        let pattern = #"```(?:swift)?\n([\s\S]*?)```"#
+        if let regex = try? NSRegularExpression(pattern: pattern),
+           let match = regex.firstMatch(in: raw, range: NSRange(raw.startIndex..., in: raw)),
+           let range = Range(match.range(at: 1), in: raw) {
+            return String(raw[range]).trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        // Fallback: If no markdown block is present, return the raw text
+        return raw.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+}

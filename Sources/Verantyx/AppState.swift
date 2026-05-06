@@ -71,6 +71,14 @@ final class AppState: ObservableObject {
     @Published var activeWebViews: [String: WKWebView] = [:]
     @Published var workspaceURL: URL?
     @Published var workspaceFiles: [URL] = []
+    
+    // ── Distributed Cortex Connectivity (Handshake) ──
+    @Published var cortexWorkspacePath: String? = nil
+    @Published var cortexSkillsPath: String? = nil
+    @Published var cortexSwarmActive: Bool = false
+    @Published var swarmNodeCount: Int = 0
+    @Published var swarmStatusText: String = "Offline"
+    @Published var isCortexConnected: Bool = false
     @Published var selectedFile: URL? {
         didSet {
             // Notify Extension Host that a new document was opened
@@ -214,6 +222,7 @@ final class AppState: ObservableObject {
     // Diff
     @Published var pendingDiff: FileDiff?
     @Published var showDiff = false
+    @Published var autoApproveDiffs: Bool = false
 
     // Human Mode: file write / create / edit approval
     @Published var pendingFileApproval: FileApprovalRequest? = nil
@@ -260,6 +269,41 @@ final class AppState: ObservableObject {
                 }
             }
         }
+    }
+
+    // ── Swarm Strategy ──
+    enum SwarmStrategy: String, CaseIterable, Codable, Identifiable {
+        case auto      = "Auto"
+        case ultrawork = "Ultrawork"
+        case ralph     = "Ralph"
+        var id: String { rawValue }
+
+        var displayName: String {
+            switch self {
+            case .auto:      return "Auto"
+            case .ultrawork: return "Ultrawork"
+            case .ralph:     return "Ralph"
+            }
+        }
+    }
+
+    @Published var activeSwarmStrategy: SwarmStrategy = {
+        let raw = UserDefaults.standard.string(forKey: "active_swarm_strategy") ?? SwarmStrategy.auto.rawValue
+        return SwarmStrategy(rawValue: raw) ?? .auto
+    }() {
+        didSet { UserDefaults.standard.set(activeSwarmStrategy.rawValue, forKey: "active_swarm_strategy") }
+    }
+
+    // ── Auditor (監視役) ──
+    @Published var activeAuditorModel: String = {
+        UserDefaults.standard.string(forKey: "active_auditor_model") ?? "llama3.1:8b"
+    }() {
+        didSet { UserDefaults.standard.set(activeAuditorModel, forKey: "active_auditor_model") }
+    }
+    @Published var isAuditorEnabled: Bool = {
+        UserDefaults.standard.bool(forKey: "is_auditor_enabled")
+    }() {
+        didSet { UserDefaults.standard.set(isAuditorEnabled, forKey: "is_auditor_enabled") }
     }
 
     // Artifacts (Claude-style live preview)
@@ -786,6 +830,7 @@ final class AppState: ObservableObject {
         messages.removeAll()
         pendingDiff = nil
         showDiff    = false
+        autoApproveDiffs = false
         // 新セッション開始時に VXTimeline ID をリセット
         vxChatSessionId = String(UUID().uuidString.prefix(8))
         let newSession = sessions.newSession(messages: [], workspacePath: workspaceURL?.path)
@@ -1157,9 +1202,9 @@ final class AppState: ObservableObject {
         do {
             try diff.modifiedContent.write(to: diff.fileURL, atomically: true, encoding: .utf8)
             selectedFileContent = diff.modifiedContent
-            addSystemMessage(self.t("⚡ [AI Priority] Auto-applied diff: \\(diff.fileURL.lastPathComponent)", "⚡ [AI Priority] 差分を自動適用: \\(diff.fileURL.lastPathComponent)"))
+            addSystemMessage(self.t("⚡ [AI Priority] Auto-applied diff: \(diff.fileURL.lastPathComponent)", "⚡ [AI Priority] 差分を自動適用: \(diff.fileURL.lastPathComponent)"))
         } catch {
-            addSystemMessage(self.t("❌ Auto-apply failed: \\(error.localizedDescription)", "❌ 自動適用失敗: \\(error.localizedDescription)"))
+            addSystemMessage(self.t("❌ Auto-apply failed: \(error.localizedDescription)", "❌ 自動適用失敗: \(error.localizedDescription)"))
         }
         pendingDiff = nil
         showDiff = false
@@ -1190,7 +1235,13 @@ final class AppState: ObservableObject {
 
         // nano/small モデルはユーザーが operationMode を手動変更していても
         // 常に AI Priority ループで動作させる（VX-Loop + ConfusionDetector が必須なため）
-        let snap_operationMode = isNanoSmallModelActive ? .aiPriority : operationMode
+        // ただし、Swarm Mode は特別に維持する
+        let snap_operationMode: OperationMode
+        if operationMode == .autoSwarm {
+            snap_operationMode = operationMode
+        } else {
+            snap_operationMode = isNanoSmallModelActive ? .aiPriority : operationMode
+        }
 
         // Build image context suffix so models that read text still see the filename
         var imageContext = ""
@@ -1295,6 +1346,9 @@ final class AppState: ObservableObject {
                             self.addSystemMessage(self.t("🧬 Detected \(patches.count) patches — check Self-Evolution panel", "🧬 \(patches.count) 個のパッチを検出 — Self-Evolution パネルで確認できます"))
                         }
                     }
+
+                case .systemLog(let text):
+                    self.messages.append(ChatMessage(role: .system, content: text))
 
                 case .toolCall(let call):
                     self.messages.append(ChatMessage(role: .system,
@@ -1591,7 +1645,7 @@ final class AppState: ObservableObject {
         guard let req = pendingFileApproval else { return }
         pendingFileApproval = nil
         req.approve()
-        addSystemMessage(self.t("✅ Approved: \\(req.displayFileName)", "✅ 承認しました: \\(req.displayFileName)"))
+        addSystemMessage(self.t("✅ Approved: \(req.displayFileName)", "✅ 承認しました: \(req.displayFileName)"))
     }
 
     /// User tapped "拒否" — resume the AgentLoop continuation with false, skip write.
@@ -1600,7 +1654,7 @@ final class AppState: ObservableObject {
         let name = req.displayFileName
         pendingFileApproval = nil
         req.reject()
-        addSystemMessage(self.t("⏸ Rejected: \\(name)", "⏸ 拒否しました: \\(name)"))
+        addSystemMessage(self.t("⏸ Rejected: \(name)", "⏸ 拒否しました: \(name)"))
     }
 
 
@@ -1820,7 +1874,8 @@ final class AppState: ObservableObject {
     /// Apply pending patches then quit; rebuild.sh relaunches the app.
     func performRestart() {
         try? SelfEvolutionEngine.shared.applyAllPatches()
-        let rebuildScript = NSHomeDirectory() + "/verantyx-cli/VerantyxIDE/rebuild.sh"
+        guard let wsPath = cortexWorkspacePath ?? workspaceURL?.path else { return }
+        let rebuildScript = wsPath + "/rebuild.sh"
         if FileManager.default.fileExists(atPath: rebuildScript) {
             Task.detached {
                 let process = Process()

@@ -245,12 +245,14 @@ final class SessionStore: ObservableObject {
     // Fetch a single JCross node via the MCP server file system
     // (reads from ~/.openclaw/memory/ where JCross nodes live)
     private func fetchJCrossNode(fileName: String, layer: JCrossLayer) async -> String? {
-        // Resolve from known JCross storage paths
+        let wsPath = await MainActor.run { AppState.shared?.cortexWorkspacePath ?? AppState.shared?.workspaceURL?.path }
+        guard let basePath = wsPath else { return nil }
+        
         let searchPaths: [String] = [
-            NSHomeDirectory() + "/.openclaw/memory/front/" + fileName,
-            NSHomeDirectory() + "/.openclaw/memory/near/" + fileName,
-            NSHomeDirectory() + "/.openclaw/memory/mid/" + fileName,
-            NSHomeDirectory() + "/.openclaw/memory/deep/" + fileName,
+            basePath + "/.openclaw/memory/front/" + fileName,
+            basePath + "/.openclaw/memory/near/" + fileName,
+            basePath + "/.openclaw/memory/mid/" + fileName,
+            basePath + "/.openclaw/memory/deep/" + fileName,
         ]
 
         for path in searchPaths {

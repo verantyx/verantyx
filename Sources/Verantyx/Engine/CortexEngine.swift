@@ -82,9 +82,14 @@ final class CortexEngine: ObservableObject {
 
     // MARK: - Zone directories (MCP parity: ~/.openclaw/memory/<zone>/)
 
-    private let mcpMemoryRoot: URL = {
-        let dir = URL(fileURLWithPath: NSHomeDirectory())
-            .appendingPathComponent(".openclaw/memory", isDirectory: true)
+    private var mcpMemoryRoot: URL {
+        let wsPath = AppState.shared?.cortexWorkspacePath ?? AppState.shared?.workspaceURL?.path
+        let dir: URL
+        if let wsPath = wsPath {
+            dir = URL(fileURLWithPath: wsPath).appendingPathComponent(".openclaw/memory", isDirectory: true)
+        } else {
+            dir = URL(fileURLWithPath: "/tmp").appendingPathComponent(".openclaw/memory", isDirectory: true)
+        }
         for zone in MemoryNode.Zone.allCases {
             let zoneDir = dir.appendingPathComponent(zone.rawValue, isDirectory: true)
             try? FileManager.default.createDirectory(at: zoneDir, withIntermediateDirectories: true)
@@ -95,7 +100,7 @@ final class CortexEngine: ObservableObject {
             withIntermediateDirectories: true
         )
         return dir
-    }()
+    }
 
     // Legacy single-file fallback (for migration)
     private let legacyStorageURL: URL = {
@@ -241,7 +246,15 @@ final class CortexEngine: ObservableObject {
     func buildMemoryPrompt(for query: String) -> String {
         guard isEnabled else { return "" }
         let relevant = recall(for: query, topK: 10)
-        guard !relevant.isEmpty else { return "" }
+        guard !relevant.isEmpty else { 
+            return """
+
+            [CORTEX MEMORY — DEFICIT DETECTED]
+            No relevant L1-L3 memory found for this task.
+            CRITICAL DIRECTIVE: You MUST use [SEARCH] or [SEARCH_MULTI] to gather missing context before proceeding. Do NOT hallucinate.
+            [/CORTEX MEMORY]
+            """
+        }
 
         let facts = relevant.map { node in
             let zoneIcon = node.zone == .front ? "⚡" : node.zone == .near ? "🔵" : "💾"

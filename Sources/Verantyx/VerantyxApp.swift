@@ -111,7 +111,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
             // フェーズ2: GlobalTaskSupervisor 経由で BrowserBridge などを停止
             GlobalTaskSupervisor.shared.register(priority: .userInitiated) {
-                await BrowserBridgePool.shared.shutdown()
+                // BrowserBridgePool is deprecated
             }
             await GlobalTaskSupervisor.shared.shutdown(timeout: 2.0)
 
@@ -154,7 +154,10 @@ struct VerantyxApp: App {
 
                     appState.registerCIErrorHook()
                     appState.registerRestartHook()
-                    MCPBridgeLauncher.shared.start()
+                    MCPBridgeLauncher.shared.start {
+                        CortexHandshakeServer.shared.start()
+                        CortexWebSocketServer.shared.start()
+                    }
                     MCPSkillSync.shared.startPolling()
                     ExtensionHostManager.shared.start()
 
@@ -164,7 +167,7 @@ struct VerantyxApp: App {
 
                     let wsURL = appState.workspaceURL
                     Task.detached(priority: .utility) {
-                        SessionMemoryArchiver.shared.indexSkills(workspaceRoot: wsURL)
+                        await SessionMemoryArchiver.shared.indexSkills(workspaceRoot: wsURL)
                     }
 
                     // ── L2.5 インデックス起動 (0.3秒後: UIが描画された後) ──────

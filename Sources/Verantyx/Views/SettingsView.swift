@@ -401,6 +401,47 @@ struct SettingsView: View {
                     )
                 }
             }
+
+            sectionHeader(app.t("External Integration", "外部連携 (追加機能)"), icon: "network")
+
+            settingsCard {
+                VStack(alignment: .leading, spacing: 14) {
+                    Text(app.t(
+                        "You can connect the verantyx-compiler to Antigravity or Claude Desktop to let external AIs access the Verantyx Spatial Memory and Gatekeeper tools.",
+                        "Antigravity や Claude Desktop に verantyx-compiler を追加することで、外部の AI が Verantyx の空間記憶や Gatekeeper ツールにアクセスできるようになります。"
+                    ))
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+                    
+                    Text(app.t("1. Open your MCP config file (e.g., claude_desktop_config.json)", "1. MCP の設定ファイル (claude_desktop_config.json など) を開きます"))
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(.white)
+                    
+                    Text(app.t("2. Add the verantyx-compiler server:", "2. 以下の通り verantyx-compiler サーバーを追加します:"))
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(.white)
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        let ws = app.cortexWorkspacePath ?? app.workspaceURL?.path ?? ""
+                        let base = ws.hasSuffix("VerantyxIDE") ? URL(fileURLWithPath: ws).deletingLastPathComponent().path : (ws.isEmpty ? "/path/to/verantyx-cli" : ws)
+                        
+                        Text("\"verantyx-compiler\": {\n  \"command\": \"node\",\n  \"args\": [\n    \"--import\", \"tsx\",\n    \"\(base)/src/verantyx/mcp/server.ts\"\n  ]\n}")
+                        .font(.system(size: 10, design: .monospaced))
+                        .foregroundStyle(Color(red: 0.8, green: 0.85, blue: 0.95))
+                    }
+                    .padding(10)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color(red: 0.08, green: 0.08, blue: 0.1), in: RoundedRectangle(cornerRadius: 6))
+                    .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(Color.white.opacity(0.1), lineWidth: 1))
+                    
+                    Text(app.t(
+                        "3. Restart your external AI client. It will automatically sync with this IDE via the shared workspace.",
+                        "3. 外部の AI クライアントを再起動してください。共有ワークスペースを通じて、この IDE と自動的に連携・同期します。"
+                    ))
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(.white)
+                }
+            }
         }
     }
 

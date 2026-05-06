@@ -55,7 +55,7 @@ final class CommanderOrchestrator: ObservableObject {
         // これにより Commander がスキルを注入された状態でユーザーに応答できる。
         Task.detached(priority: .background) {
             let workspaceURL = await GatekeeperModeState.shared.vault.workspaceURL
-            SessionMemoryArchiver.shared.indexSkills(workspaceRoot: workspaceURL)
+            await SessionMemoryArchiver.shared.indexSkills(workspaceRoot: workspaceURL)
         }
     }
 
@@ -326,6 +326,12 @@ final class CommanderOrchestrator: ObservableObject {
                     title: "GK_TASK_COMPLETE", l1: cTL1, l2: cTL2, l3: "Request: \(cMsg)"
                 )
             }
+            
+            // Auto-Distillation: Evaluate if the completed task should be a reusable skill
+            let taskSummary = lastWorkerSummary
+            Task.detached(priority: .background) { [weak self] in
+                await self?.autoDistillSkillIfNeeded(userMessage: cMsg, workerSummary: taskSummary)
+            }
         }
 
         phase = .commanderPlanning(step: isJp ? "最終回答を生成中..." : "Generating final response...")
@@ -402,9 +408,9 @@ final class CommanderOrchestrator: ObservableObject {
         """
 
         // 1. claw-code ハイジャック済みプロンプト (base)
-        let clawBasePrompt = loadSkillPrompt(skillId: "claw_commander_hijacked") ?? ""
+        let clawBasePrompt = await loadSkillPrompt(skillId: "claw_commander_hijacked") ?? ""
         // 2. 255スキルからメッセージに最適なJCross操作をマッチング
-        let skillHint = matchSkillForMessage(userMessage)
+        let skillHint = await matchSkillForMessage(userMessage)
         let systemPrompt = """
         You are a Commander LLM. Respond ONLY in valid JSON. No markdown, no extra text.
         \(clawBasePrompt.isEmpty ? "" : "\n[CLAW-CODE FLOW BASE]\n" + String(clawBasePrompt.prefix(600)))
@@ -483,7 +489,7 @@ final class CommanderOrchestrator: ObservableObject {
         commanderPlan: CommanderPlan,
         vaultContext: String
     ) async -> WorkerResult {
-        let systemPrompt = buildWorkerSystemPrompt()
+        let systemPrompt = await buildWorkerSystemPrompt()
 
         let userContent = """
         \(commanderPlan.workerInstructions)
@@ -550,6 +556,85 @@ final class CommanderOrchestrator: ObservableObject {
             - ONLY output the final Japanese response.
             """
         )
+    }
+
+    // MARK: - Auto-Distillation (Self-Learning)
+
+    private func autoDistillSkillIfNeeded(userMessage: String, workerSummary: String) async {
+        let isJp = AppLanguage.shared.isJapanese
+        let prompt = """
+        Analyze the following task completion summary.
+        User Request: \(userMessage)
+        Worker Action: \(workerSummary.prefix(1500))
+
+        Determine if this task represents a highly reusable programming skill, architectural pattern, or a complex bug fix that should be memorized as a generic 'Skill'.
+        If YES, generate a YAML file content for this skill. It must contain 'name', 'description', 'goal', 'inputs', and 'use_when' fields, followed by a detailed 'steps' or 'payload' array.
+        If NO, output exactly 'NO_SKILL_NEEDED'.
+        
+        Output ONLY 'NO_SKILL_NEEDED' or the raw YAML content. Do NOT wrap in ```yaml.
+        """
+
+        let systemPrompt = """
+        You are the Verantyx Auto-Distillation Engine.
+        Your job is to identify generic, reusable skills from completed tasks.
+        Rules for YAML format:
+        name: snake_case_name
+        description: Brief description
+        goal: What this skill achieves
+        inputs: Required inputs
+        use_when: When to trigger this skill
+        payload:
+          - Step 1
+          - Step 2
+        """
+
+        let response = await callCommander(prompt: prompt, systemPrompt: systemPrompt)
+        let trimmed = response.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if trimmed == "NO_SKILL_NEEDED" || trimmed.isEmpty || trimmed.contains("NO_SKILL_NEEDED") {
+            return
+        }
+
+        // Clean up markdown code blocks if the model ignored the instructions
+        var yamlContent = trimmed
+        if yamlContent.hasPrefix("```yaml") {
+            yamlContent = yamlContent.replacingOccurrences(of: "```yaml\n", with: "")
+        }
+        if yamlContent.hasPrefix("```") {
+            yamlContent = yamlContent.replacingOccurrences(of: "```\n", with: "")
+        }
+        if yamlContent.hasSuffix("```") {
+            yamlContent = String(yamlContent.dropLast(3))
+        }
+
+        // Extract a name to save the file
+        let lines = yamlContent.components(separatedBy: .newlines)
+        var skillName = "auto_skill_\(Int(Date().timeIntervalSince1970))"
+        for line in lines {
+            if line.hasPrefix("name:") {
+                let extracted = line.dropFirst(5).trimmingCharacters(in: .whitespaces)
+                    .trimmingCharacters(in: .init(charactersIn: "\"'"))
+                if !extracted.isEmpty {
+                    skillName = extracted
+                }
+                break
+            }
+        }
+
+        // Save to .agents/skills/
+        let workspaceURL = await MainActor.run { vault.workspaceURL }
+        let skillsDir = workspaceURL.appendingPathComponent(".agents/skills")
+        try? FileManager.default.createDirectory(at: skillsDir, withIntermediateDirectories: true)
+        
+        let fileURL = skillsDir.appendingPathComponent("\(skillName).yaml")
+        try? yamlContent.write(to: fileURL, atomically: true, encoding: .utf8)
+        
+        // Notify IDE
+        await MainActor.run {
+            self.appendMessage(.system(isJp 
+                ? "🧠 [Self-Distillation] 再利用可能なパターンを検出しました。スキル '\(skillName).yaml' として自動保存しました。" 
+                : "🧠 [Self-Distillation] Reusable pattern detected. Auto-saved as skill '\(skillName).yaml'."))
+        }
     }
 
     // MARK: - callCommander: BitNet → MLX → Ollama 3段フォールバック
@@ -737,9 +822,9 @@ final class CommanderOrchestrator: ObservableObject {
         }
     }
 
-    private func buildWorkerSystemPrompt() -> String {
-        // スキルDBから flows/worker_system_prompt.skill.yaml をロードして強化
-        let skillOverride = loadSkillPrompt(skillId: "verantyx_worker_system")
+    private func buildWorkerSystemPrompt() async -> String {
+        // 1. Optional Override based on generic skill prompt
+        let skillOverride = await loadSkillPrompt(skillId: "verantyx_worker_system")
         if let override = skillOverride, !override.isEmpty {
             return override
         }
@@ -779,9 +864,21 @@ final class CommanderOrchestrator: ObservableObject {
         """
     }
 
+    private func getSkillsRoot() async -> URL? {
+        return await MainActor.run {
+            if let sp = AppState.shared?.cortexSkillsPath, !sp.isEmpty {
+                return URL(fileURLWithPath: sp)
+            }
+            if let ws = AppState.shared?.workspaceURL {
+                return ws.appendingPathComponent(".agents/skills")
+            }
+            return nil
+        }
+    }
+
     /// スキルDB (.agents/skills/) から指定 skillId のプロンプトテンプレートを読み込む
-    private func loadSkillPrompt(skillId: String) -> String? {
-        let skillsRoot = URL(fileURLWithPath: NSHomeDirectory() + "/verantyx-cli/.agents/skills")
+    private func loadSkillPrompt(skillId: String) async -> String? {
+        guard let skillsRoot = await getSkillsRoot() else { return nil }
         let fm = FileManager.default
         guard let enumerator = fm.enumerator(at: skillsRoot, includingPropertiesForKeys: nil,
                                               options: [.skipsHiddenFiles]) else { return nil }
@@ -803,8 +900,8 @@ final class CommanderOrchestrator: ObservableObject {
     }
 
     /// メッセージキーワードで全255スキルをスコアリングし最適JCross操作を返す
-    func matchSkillForMessage(_ message: String) -> String {
-        let skillsRoot = URL(fileURLWithPath: NSHomeDirectory() + "/verantyx-cli/.agents/skills")
+    func matchSkillForMessage(_ message: String) async -> String {
+        guard let skillsRoot = await getSkillsRoot() else { return "" }
         let fm = FileManager.default
         guard let enumerator = fm.enumerator(at: skillsRoot, includingPropertiesForKeys: nil,
                                               options: [.skipsHiddenFiles]) else { return "" }

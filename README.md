@@ -4,7 +4,7 @@
   <p><i>Trading token efficiency for mathematically guaranteed security, deterministic patching, and autonomous skill generation.</i></p>
 
   <p>
-    <a href="https://github.com/verantyx/verantyx/releases/latest"><img src="https://img.shields.io/badge/version-1.3.0-blue?style=flat-square" alt="Version 1.3.0"></a>
+    <a href="https://github.com/verantyx/verantyx/releases/latest"><img src="https://img.shields.io/badge/version-1.4.0-blue?style=flat-square" alt="Version 1.4.0"></a>
     <img src="https://img.shields.io/badge/platform-macOS%2014%2B-lightgrey?style=flat-square">
     <img src="https://img.shields.io/badge/Apple%20Silicon-optimized-orange?style=flat-square">
     <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square">
@@ -14,7 +14,7 @@
     <a href="#-the-hacker-news-pitch-why-verantyx">Why Verantyx?</a> •
     <a href="#-the-heart-of-gatekeeper-6-axis-jcross-ir">Gatekeeper 6-Axis IR</a> •
     <a href="#-technical-capabilities">Capabilities</a> •
-    <a href="#-whats-new-in-v127">What's New</a> •
+    <a href="#-whats-new-in-v140">What's New</a> •
     <a href="#-contribute">Contribute</a>
   </p>
 </div>
@@ -23,9 +23,9 @@
 
 ## 📦 Download
 
-**[→ Download Latest Release (v1.3.0)](https://github.com/verantyx/verantyx/releases/latest)**
+**[→ Download Latest Release (v1.4.0)](https://github.com/verantyx/verantyx/releases/latest)**
 
-1. Download **`VerantyxIDE-1.3.0.pkg`**
+1. Download **`VerantyxIDE-1.4.0.pkg`**
 2. Double-click the installer to automatically overwrite any old versions.
 
 ---
@@ -106,13 +106,19 @@ Standard text-based RAG causes context-window amnesia. Verantyx uses a 5-tier sp
 ### 2. Cross-Client Context Sync (Verantyx Cortex MCP)
 Your coding session doesn't live in a silo. By leveraging the **Verantyx-Cortex MCP Tool**, conversations and memory states created in Claude Desktop or Antigravity agents are seamlessly shared with the Verantyx IDE via JCross spatial memory. All your AI clients share the exact same persistent brain.
 
-### 3. Visual Anchors & Anti-Hallucination ⚓️
+### 3. Verantyx Swarm: Asymmetric Multi-Agent System 🐝
+Running a true multi-agent swarm locally has historically been impossible due to VRAM constraints. Verantyx solves this by implementing an **Asymmetric Multi-Agent Topology (Time-Sharing KV Cache)**:
+*   **The Router (Gemma 4 26B)**: A single high-intelligence model acts as the Project Manager. It translates ambiguous user intents into strict, low-entropy structural patches.
+*   **The Swarm (50x BitNet 1.58b)**: Leveraging 1-bit quantization, Verantyx loads up to 50 micro-agents (30 Coders, 20 Checkers) simultaneously in unified memory. 
+*   **JCross Blackboard**: To prevent cascading failures and communication chaos, agents do NOT message each other directly. Instead, they submit AST-validated patches (Pull Requests) directly to the central JCross Spatial Topology. The Gemma Router maintains oversight over the entire graph without suffering from context exhaustion.
+
+### 4. Visual Anchors & Anti-Hallucination ⚓️
 Local LLMs often suffer from "sycophancy" (answering confidently even when hallucinating facts). 
 When Verantyx detects potential hallucinations, it injects **Visual Anchors** (rendering strict text directives as Base64 images). By feeding these images into a Multi-Modal LLM, it targets the visual cortex of the model to bypass text-attention degradation. 
 
 **Real-world flow:** When asked about non-existent libraries (e.g., *"Use pandas.quantum_compress()"*), the IDE injects a Visual Anchor to force fact-checking, triggers a background Stealth Web Search, retrieves the top 3 results, realizes the function is a hallucination, and correctly explains how to use `pd.to_numeric(downcast=...)` instead.
 
-### 4. Autonomous Skill Generation (Zero-Shot Tools)
+### 5. Autonomous Skill Generation (Zero-Shot Tools)
 Verantyx is deeply autonomous. If a user requests a task (e.g., *"Record the screen based on the system definition"*) but the required OS-level screen recording API is unavailable, the agent **does not say "I can't do it."** 
 Instead, it recognizes that DOM-based capturing is a viable alternative, autonomously writes the required tool logic in real-time, registers it as a new persistent "Skill", and executes the user's request. 
 
@@ -120,20 +126,18 @@ Instead, it recognizes that DOM-based capturing is a viable alternative, autonom
 The video below demonstrates the agent receiving a request it lacks a built-in tool for, writing the required DOM-based tool logic, and executing it seamlessly.
 <video src="https://github.com/verantyx/verantyx/releases/download/v1.2.5/demo_skill_generation.mov" controls="controls" muted="muted" style="max-width: 100%; border-radius: 8px;"></video>
 
-### 5. Biometric Stealth Browser 🕵️‍♂️
+### 6. Biometric Stealth Browser 🕵️‍♂️
 Agents must interact with the live web to read documentation, but BotGuard and Cloudflare block headless browsers.
 Verantyx captures your physical keyboard cadence (typing entropy) and mouse trajectory (mouse entropy) locally. When the agent browses the web, it replays your exact human biometric entropy using macOS `CGEvent` simulation to completely bypass bot detection—all while running completely in the background without stealing your OS window focus.
 
 ---
 
-## ✨ What's New in v1.3.0
+## ✨ What's New in v1.4.0
 
-- **In-App Auto Updater**: Added a native auto-updater in the IDE Settings to allow single-click updates going forward without manual downloads.
-
-- **Visual Anchor UI Restored**: Fixed an SF Symbol rendering bug and layout constraint that hid the Visual Anchor injection button. 
-- **AgentChatView Polish**: Implemented `.frame(width: 114)` to support the full suite of attachment tools.
-- **BitNet 1.58b Support**: Deep integration with 1-bit LLMs for ultra-low memory footprint edge inference.
-- **MainActor Deadlocks Eliminated**: Eradicated all `Task.detached` threading crashes during heavy MLX inference, resulting in 60fps buttery smooth UI scrolling even during maximum GPU load.
+- **Verantyx Swarm Architecture**: Introduced an asymmetric multi-agent infrastructure routing tasks from Gemma 4 26B to 50 concurrent BitNet workers via JCross Blackboard state management.
+- **Swarm Monitor UI**: Added a dedicated responsive 50-agent monitor layout to visualize active Coders and AST Gatekeeper Checkers.
+- **Unified Visual Anchor Support**: Extended Visual Anchor injection compatibility to MLX-based models.
+- **macOS Native Fullscreen & Biometric Prompts**: Enhanced native UX by leveraging `AXFullScreen` AppleScript overrides and Dock icon bounce events (`NSApp.requestUserAttention`) for biometric puzzle requests.
 
 ---
 
@@ -149,6 +153,7 @@ Verantyx captures your physical keyboard cadence (typing entropy) and mouse traj
 | 👁️ Visual Anchor Prompt Injection | ✅ v1.2 |
 | 🕵️‍♂️ Biometric Stealth Browser (Bot Evasion) | ✅ v1.2 |
 | 🧬 Autonomous Skill/Tool Generation | ✅ v1.2 |
+| 🐝 Asymmetric Swarm Architecture | ✅ v1.4 |
 
 ---
 

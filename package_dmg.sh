@@ -51,6 +51,8 @@ echo "[2/7] Release ビルド中..."
 # ビルドごとに CFBundleVersion (ビルド番号) を一意のタイムスタンプに更新する
 BUILD_NUMBER=$(date +%s)
 /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD_NUMBER" "$(pwd)/Sources/Verantyx/Info.plist"
+/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${VERSION}" "$(pwd)/Sources/Verantyx/Info.plist"
+echo "   Version (CFBundleShortVersionString) set to: ${VERSION}"
 echo "   Build Number (CFBundleVersion) set to: $BUILD_NUMBER"
 
 if [ "$SIGN_MODE" = "developer_id" ]; then
@@ -68,7 +70,7 @@ if [ "$SIGN_MODE" = "developer_id" ]; then
     DEVELOPMENT_TEAM="$DEV_ID_TEAM" \
     CODE_SIGNING_REQUIRED=YES \
     OTHER_CODE_SIGN_FLAGS="--timestamp" \
-    BUILD_DIR="$(pwd)/build" \
+    SYMROOT="$(pwd)/build" \
     build 2>&1 | grep -E "error:|warning:|SUCCEEDED|FAILED" | tail -10
 else
   xcodebuild \
@@ -81,15 +83,15 @@ else
     CODE_SIGN_IDENTITY="-" \
     CODE_SIGNING_REQUIRED=NO \
     CODE_SIGNING_ALLOWED=NO \
-    BUILD_DIR="$(pwd)/build" \
+    SYMROOT="$(pwd)/build" \
     build 2>&1 | grep -E "error:|warning:|SUCCEEDED|FAILED" | tail -10
 fi
 
 # ── 3. Find .app ────────────────────────────────────────────────────────────
 echo "[3/7] .app バンドルを探索..."
-APP_PATH=$(find "$(pwd)/build" -name "${APP_NAME}.app" -maxdepth 8 | head -1)
-if [ -z "$APP_PATH" ]; then
-  echo "❌ Error: ${APP_NAME}.app が見つかりません"
+APP_PATH="$(pwd)/build/${CONFIGURATION}/${APP_NAME}.app"
+if [ ! -d "$APP_PATH" ]; then
+  echo "❌ Error: ${APP_PATH} が見つかりません"
   exit 1
 fi
 echo "   Found: $APP_PATH"
@@ -140,39 +142,30 @@ else
   echo "[6/7] 公証スキップ (Developer ID + Apple ID が必要)"
 fi
 
-# ── 7. Create PKG Installer (Forced Overwrite) ────────────────────────────────
-echo "[7/7] PKG インストーラーを作成中..."
+# ── 7. Create DMG Installer ────────────────────────────────────────────────
+echo "[7/7] DMG インストーラーを作成中..."
 mkdir -p "$DIST_DIR"
-PKG_NAME="VerantyxIDE-${VERSION}.pkg"
+DMG_FINAL_NAME="VerantyxIDE-${VERSION}.dmg"
 
-# Create preinstall script to force quit the app before overwriting
-mkdir -p "$STAGING_DIR/scripts"
-cat > "$STAGING_DIR/scripts/preinstall" << 'EOF'
-#!/bin/bash
-killall Verantyx 2>/dev/null || true
-exit 0
-EOF
-chmod +x "$STAGING_DIR/scripts/preinstall"
+# Create a temporary source folder for hdiutil
+mkdir -p "$STAGING_DIR/dmg_root"
+mv "$STAGING_DIR/${APP_NAME}.app" "$STAGING_DIR/dmg_root/"
+ln -s /Applications "$STAGING_DIR/dmg_root/Applications"
 
-# Create a temporary root folder for pkgbuild
-mkdir -p "$STAGING_DIR/root/Applications"
-mv "$STAGING_DIR/${APP_NAME}.app" "$STAGING_DIR/root/Applications/"
-
-pkgbuild --root "$STAGING_DIR/root" \
-         --scripts "$STAGING_DIR/scripts" \
-         --identifier "com.verantyx.ide.pkg" \
-         --version "$VERSION" \
-         --install-location "/" \
-         "$DIST_DIR/$PKG_NAME" > /dev/null
+hdiutil create -volname "${APP_NAME}" \
+               -srcfolder "$STAGING_DIR/dmg_root" \
+               -ov \
+               -format UDZO \
+               "$DIST_DIR/$DMG_FINAL_NAME" > /dev/null
 
 rm -rf "$STAGING_DIR"
 
 # ── Done ────────────────────────────────────────────────────────────────────
-PKG_SIZE=$(du -sh "$DIST_DIR/${PKG_NAME}" | cut -f1)
+PKG_SIZE=$(du -sh "$DIST_DIR/${DMG_FINAL_NAME}" | cut -f1)
 echo ""
 echo "================================================"
 echo "✅ 完了!"
-echo "   出力: dist/${PKG_NAME} (${PKG_SIZE})"
+echo "   出力: dist/${DMG_FINAL_NAME} (${PKG_SIZE})"
 echo "   署名: ${SIGN_MODE}"
 echo ""
 
@@ -191,5 +184,5 @@ fi
 
 echo ""
 echo "📌 GitHub Release に添付:"
-echo "   gh release create v${VERSION} dist/${PKG_NAME} --repo verantyx/verantyx"
+echo "   gh release create v${VERSION} dist/${DMG_FINAL_NAME} --repo verantyx/verantyx"
 echo "================================================"

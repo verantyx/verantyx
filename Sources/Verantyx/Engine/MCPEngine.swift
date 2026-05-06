@@ -573,13 +573,32 @@ final class MCPEngine: ObservableObject {
             ? getOrCreateSession(for: server)
             : nil
 
-        // Run on background thread — never inherits @MainActor, no re-entrant deadlock
         let execTask = Task<String, Error>.detached(priority: .userInitiated) {
             let deadline: Date = resolvedMode == .human
                 ? Date().addingTimeInterval(60)
                 : Date.distantFuture
 
-            let params: [String: Any] = ["name": toolName, "arguments": arguments]
+            var finalArgs = arguments
+            if serverName == "tool-search-oss" {
+                let allTools = await MainActor.run {
+                    self.connectedTools.filter { $0.serverName != "tool-search-oss" }
+                }
+                let toolsList = allTools.map { t -> [String: Any] in
+                    var dict: [String: Any] = [
+                        "name": "\(t.serverName).\(t.name)",
+                        "description": t.description
+                    ]
+                    // inputSchema is [String: AnyCodable]. Convert to [String: Any] via JSONSerialization
+                    if let data = try? JSONEncoder().encode(t.inputSchema),
+                       let schema = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                        dict["inputSchema"] = schema
+                    }
+                    return dict
+                }
+                finalArgs["tools"] = toolsList
+            }
+
+            let params: [String: Any] = ["name": toolName, "arguments": finalArgs]
 
             switch server.transport {
             case .stdio:
@@ -723,10 +742,22 @@ final class MCPEngine: ObservableObject {
                 mode: .ai
             )
             servers.append(config)
-            saveServers()
-            
             Task { await self.connect(server: config) }
         }
+
+        // ── Auto-inject tool-search-oss if missing ──
+        if !servers.contains(where: { $0.name == "tool-search-oss" }) {
+            let config = MCPServerConfig(
+                name: "tool-search-oss",
+                transport: .stdio,
+                command: "sh -c \"cd /Users/motonishikoudai/verantyx-cli/tool-search-oss && /usr/local/bin/node --import tsx/esm src/server.ts\"",
+                mode: .ai
+            )
+            servers.append(config)
+            Task { await self.connect(server: config) }
+        }
+
+        saveServers()
     }
 }
 

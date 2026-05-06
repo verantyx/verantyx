@@ -41,33 +41,37 @@ final class VXTimeline {
     }
 
     // ── ゾーンディレクトリ ─────────────────────────────────────────────────
-    private let nearDir: URL = {
-        let dir = URL(fileURLWithPath: NSHomeDirectory())
-            .appendingPathComponent(".openclaw/memory/near", isDirectory: true)
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        return dir
-    }()
 
-    private let midDir: URL = {
-        let dir = URL(fileURLWithPath: NSHomeDirectory())
-            .appendingPathComponent(".openclaw/memory/mid", isDirectory: true)
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        return dir
-    }()
+    private func baseMemoryDir(workspaceRoot: URL?) -> URL {
+        if let ws = workspaceRoot {
+            return ws.appendingPathComponent(".openclaw/memory", isDirectory: true)
+        }
+        return URL(fileURLWithPath: "/tmp").appendingPathComponent(".openclaw/memory", isDirectory: true)
+    }
 
-    private let deepDir: URL = {
-        let dir = URL(fileURLWithPath: NSHomeDirectory())
-            .appendingPathComponent(".openclaw/memory/deep", isDirectory: true)
+    private func nearDir(workspaceRoot: URL?) -> URL {
+        let dir = baseMemoryDir(workspaceRoot: workspaceRoot).appendingPathComponent("near", isDirectory: true)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         return dir
-    }()
+    }
 
-    private let frontDir: URL = {
-        let dir = URL(fileURLWithPath: NSHomeDirectory())
-            .appendingPathComponent(".openclaw/memory/front", isDirectory: true)
+    private func midDir(workspaceRoot: URL?) -> URL {
+        let dir = baseMemoryDir(workspaceRoot: workspaceRoot).appendingPathComponent("mid", isDirectory: true)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         return dir
-    }()
+    }
+
+    private func deepDir(workspaceRoot: URL?) -> URL {
+        let dir = baseMemoryDir(workspaceRoot: workspaceRoot).appendingPathComponent("deep", isDirectory: true)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        return dir
+    }
+
+    private func frontDir(workspaceRoot: URL?) -> URL {
+        let dir = baseMemoryDir(workspaceRoot: workspaceRoot).appendingPathComponent("front", isDirectory: true)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        return dir
+    }
 
     // MARK: - ターンを記録
 
@@ -84,11 +88,12 @@ final class VXTimeline {
         turnNumber: Int,
         userInput: String,
         assistantOutput: String,
-        searchResults: String = ""
+        searchResults: String = "",
+        workspaceRoot: URL? = nil
     ) -> URL {
         let ts = Int(Date().timeIntervalSince1970)
         let fileName = "TURN_\(sessionId)_\(String(format: "%04d", turnNumber))_\(ts).jcross"
-        let url = nearDir.appendingPathComponent(fileName)
+        let url = nearDir(workspaceRoot: workspaceRoot).appendingPathComponent(fileName)
 
         // ── L1: 1行サマリー ─────────────────────────────────────────────
         let userPreview = String(userInput.prefix(80)).replacingOccurrences(of: "\n", with: " ")
@@ -127,7 +132,7 @@ final class VXTimeline {
 
         // 50 ターン到達チェック
         if turnNumber % Self.compressionAt == 0 {
-            compressGeneration(sessionId: sessionId, upToTurn: turnNumber)
+            compressGeneration(sessionId: sessionId, upToTurn: turnNumber, workspaceRoot: workspaceRoot)
         }
 
         return url
@@ -137,8 +142,8 @@ final class VXTimeline {
 
     /// near/ から sessionId に属する最新 verbatimWindow ターンを取得し
     /// system prompt 注入用の文字列として返す。
-    func buildTimelineInjection(sessionId: String, layer: JCrossLayer = .l2) -> String {
-        let turns = listTurns(sessionId: sessionId, topK: Self.verbatimWindow)
+    func buildTimelineInjection(sessionId: String, layer: JCrossLayer = .l2, workspaceRoot: URL? = nil) -> String {
+        let turns = listTurns(sessionId: sessionId, topK: Self.verbatimWindow, workspaceRoot: workspaceRoot)
         guard !turns.isEmpty else { return "" }
 
         var parts: [String] = []
@@ -174,8 +179,8 @@ final class VXTimeline {
     /// AgentLoop の conversation 配列に直接挿入するための形式で返す。
     /// useL1Only=true (nano): L1_SUMMARY（短いファクト）で 2048 トークン制限を節約
     /// useL1Only=false (large): L3_VERBATIM（逐語）で詳細を保持
-    func buildTimelineAsMessages(sessionId: String, topK: Int, useL1Only: Bool = false) -> [String] {
-        let turns = listTurns(sessionId: sessionId, topK: topK)
+    func buildTimelineAsMessages(sessionId: String, topK: Int, useL1Only: Bool = false, workspaceRoot: URL? = nil) -> [String] {
+        let turns = listTurns(sessionId: sessionId, topK: topK, workspaceRoot: workspaceRoot)
         guard !turns.isEmpty else { return [] }
 
         var lines: [String] = []
@@ -225,9 +230,9 @@ final class VXTimeline {
     // MARK: - 50ターン圧縮 → front/ に昇格
 
     /// sessionId の最新 compressionAt ターン分を 1 ノードに圧縮して front/ に書き込む。
-    private func compressGeneration(sessionId: String, upToTurn: Int) {
+    private func compressGeneration(sessionId: String, upToTurn: Int, workspaceRoot: URL? = nil) {
         let generation = upToTurn / Self.compressionAt
-        let turns = listTurns(sessionId: sessionId, topK: Self.compressionAt)
+        let turns = listTurns(sessionId: sessionId, topK: Self.compressionAt, workspaceRoot: workspaceRoot)
         guard !turns.isEmpty else { return }
 
         // L1 サマリー（先頭と末尾のターンから）
@@ -272,7 +277,7 @@ final class VXTimeline {
             l2: allFacts.joined(separator: "\n"),
             l3: l3
         )
-        let destURL = frontDir.appendingPathComponent(fileName)
+        let destURL = frontDir(workspaceRoot: workspaceRoot).appendingPathComponent(fileName)
         try? content.write(to: destURL, atomically: true, encoding: .utf8)
     }
 
@@ -280,10 +285,10 @@ final class VXTimeline {
 
     /// near/ + mid/ + deep/ から sessionId に属する TURN_* ファイルを新しい順で topK 件返す
     /// GC により near/ から追い出されたターンも確実に取得する
-    private func listTurns(sessionId: String, topK: Int) -> [URL] {
+    private func listTurns(sessionId: String, topK: Int, workspaceRoot: URL? = nil) -> [URL] {
         let fm = FileManager.default
         // 全ゾーンを検索（GCで追い出されたファイルも拾う）
-        let searchDirs = [nearDir, midDir, deepDir]
+        let searchDirs = [nearDir(workspaceRoot: workspaceRoot), midDir(workspaceRoot: workspaceRoot), deepDir(workspaceRoot: workspaceRoot)]
         var allFiles: [URL] = []
         for dir in searchDirs {
             let files = (try? fm.contentsOfDirectory(

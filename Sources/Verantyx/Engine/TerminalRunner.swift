@@ -63,7 +63,8 @@ final class TerminalRunner: ObservableObject {
         in directory: URL? = nil,
         initiatedByAI: Bool = false
     ) async -> TerminalResult {
-        let dir = directory ?? workingDirectory ?? URL(fileURLWithPath: NSHomeDirectory())
+        let fallbackPath = AppState.shared?.cortexWorkspacePath ?? AppState.shared?.workspaceURL?.path
+        let dir = directory ?? workingDirectory ?? (fallbackPath != nil ? URL(fileURLWithPath: fallbackPath!) : URL(fileURLWithPath: "/tmp"))
 
         // Log the command
         let cmdString = "[\(dir.lastPathComponent)] \(command)"

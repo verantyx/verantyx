@@ -66,9 +66,15 @@ final class ParanoiaEngine {
             let candidate = resDir.appendingPathComponent("ronin-extract")
             if FileManager.default.fileExists(atPath: candidate.path) { return resDir }
         }
-        // Fallback: development build location
-        return URL(fileURLWithPath: NSHomeDirectory())
-            .appendingPathComponent("verantyx-cli/verantyx-browser/target/debug")
+        let fallbackPath = AppState.shared?.cortexWorkspacePath ?? AppState.shared?.workspaceURL?.path
+        let baseDir: URL
+        if let fallback = fallbackPath {
+            let wsUrl = URL(fileURLWithPath: fallback)
+            baseDir = wsUrl.lastPathComponent == "VerantyxIDE" ? wsUrl.deletingLastPathComponent() : wsUrl
+        } else {
+            baseDir = URL(fileURLWithPath: "/tmp").appendingPathComponent("verantyx-cli")
+        }
+        return baseDir.appendingPathComponent("verantyx-browser/target/debug")
     }
 
     private var extractorBinary: URL { binaryDir.appendingPathComponent("ronin-extract") }

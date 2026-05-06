@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(AppKit)
+import AppKit
+#endif
 
 // MARK: - WebSearchEngine
 // High-level search/browse interface for the AI agent.
@@ -45,7 +48,7 @@ struct WebSearchResult {
 }
 
 enum BrowseSource {
-    case verantyxBrowser    // Rust WKWebView stealth
+
     case safari
     case chrome
     case arc
@@ -59,7 +62,7 @@ actor WebSearchEngine {
 
     static let shared = WebSearchEngine()
 
-    private let pool        = BrowserBridgePool.shared
+
     private let applescript = AppleScriptBridge.shared
 
     // MARK: - Main: search
@@ -127,9 +130,15 @@ actor WebSearchEngine {
             
         } else if isEntropyStale {
             print("Telemetry: Biometric entropy stale or missing. Triggering puzzle.")
-            await MainActor.run { AppState.shared?.requiresHumanPuzzle = true }
+            await MainActor.run { 
+                AppState.shared?.requiresHumanPuzzle = true
+                #if os(macOS)
+                NSApp.requestUserAttention(.criticalRequest)
+                #endif
+            }
             var waitingForPuzzle = await MainActor.run { AppState.shared?.requiresHumanPuzzle == true }
             while waitingForPuzzle {
+                // Unlimited wait time for biometric entropy as requested
                 try? await Task.sleep(nanoseconds: 200_000_000)
                 waitingForPuzzle = await MainActor.run { AppState.shared?.requiresHumanPuzzle == true }
             }
@@ -175,8 +184,7 @@ actor WebSearchEngine {
 
         let result: WebSearchResult
         switch preferredSource {
-        case .verantyxBrowser:
-            result = await browseWithRustBrowser(url: url, query: originalQuery, entropy: finalEntropy, keyboardEntropy: keyboardEntropy, target: finalTarget)
+
 
         case .safari:
             result = await browseWithAppleScript(url: url, browser: .safari, query: originalQuery)
@@ -213,63 +221,7 @@ actor WebSearchEngine {
         return result
     }
 
-    private func browseWithRustBrowser(url: String, query: String?, entropy: [[Double]]? = nil, keyboardEntropy: [Double]? = nil, target: [Double]? = nil) async -> WebSearchResult {
-        if let points = entropy, !points.isEmpty {
-            await MainActor.run { AppState.shared?.isAgentControllingMouse = true }
-            // Estimate duration: ~10ms per point + 100ms click
-            let estimatedDuration = Double(points.count) * 0.01 + 0.1
-            Task {
-                try? await Task.sleep(nanoseconds: UInt64(estimatedDuration * 1_000_000_000))
-                await MainActor.run { AppState.shared?.isAgentControllingMouse = false }
-            }
-        }
-        
-        do {
-            var markdown = ""
-            if let q = query, url.contains("duckduckgo.com") {
-                markdown = try await pool.interactiveSearch(query: q, searchURL: url, entropy: entropy, keyboardEntropy: keyboardEntropy, target: target)
-            } else {
-                markdown = try await pool.fetch(url, entropy: entropy, keyboardEntropy: keyboardEntropy, target: target)
-            }
-            
-            // Clean up heavy Markdown image tags and domain links that verantyx-browser produces
-            if let imgRegex = try? NSRegularExpression(pattern: "\\[<img.*?\\]\\([^)]+\\)", options: [.caseInsensitive, .dotMatchesLineSeparators]) {
-                markdown = imgRegex.stringByReplacingMatches(in: markdown, range: NSRange(markdown.startIndex..., in: markdown), withTemplate: "")
-            }
-            if let linkJunkRegex = try? NSRegularExpression(pattern: "\\[ www\\.[^]]+\\]\\([^)]+\\)", options: [.caseInsensitive]) {
-                markdown = linkJunkRegex.stringByReplacingMatches(in: markdown, range: NSRange(markdown.startIndex..., in: markdown), withTemplate: "")
-            }
-            
-            // Remove DDG UI clutter from markdown
-            if let ddgRegex = try? NSRegularExpression(pattern: "All Regions\\s+Argentina\\s+Australia.*?(Past Year)", options: [.dotMatchesLineSeparators, .caseInsensitive]) {
-                markdown = ddgRegex.stringByReplacingMatches(in: markdown, range: NSRange(markdown.startIndex..., in: markdown), withTemplate: "")
-            }
-            // Remove DDG long tracking URLs to save tokens
-            if let ddgUrlRegex = try? NSRegularExpression(pattern: "\\(https://duckduckgo\\.com/y\\.js\\?[^)]+\\)", options: [.caseInsensitive]) {
-                markdown = ddgUrlRegex.stringByReplacingMatches(in: markdown, range: NSRange(markdown.startIndex..., in: markdown), withTemplate: "()")
-            }
-            // Remove DDG Ad disclaimer
-            if let ddgAdRegex = try? NSRegularExpression(pattern: "Viewing ads is privacy protected.*?private-search\\)\\)\\.", options: [.dotMatchesLineSeparators, .caseInsensitive]) {
-                markdown = ddgAdRegex.stringByReplacingMatches(in: markdown, range: NSRange(markdown.startIndex..., in: markdown), withTemplate: "")
-            }
-            
-            return WebSearchResult(
-                query: query ?? url,
-                url: url,
-                markdown: markdown.isEmpty ? "(empty page)" : markdown,
-                source: .verantyxBrowser,
-                truncated: markdown.count > 6000
-            )
-        } catch {
-            // verantyx-browser 失敗 → Firefox Bridge で再試行
-            let fbResult = await browseWithFirefoxBridge(url: url, query: query)
-            if !fbResult.isFailure {
-                return fbResult
-            }
-            // 最終フォールバック: URLSession
-            return await browseWithFetch(url: url, query: query)
-        }
-    }
+
 
 
 

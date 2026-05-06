@@ -70,6 +70,14 @@ struct MainSplitView: View {
                         insertion: .move(edge: .top).combined(with: .opacity),
                         removal:   .move(edge: .top).combined(with: .opacity)
                     ))
+                } else if app.operationMode == .autoSwarm || app.operationMode == .swarm {
+                    // ── Swarm Mode: Multi-Agent Monitor ────────────────────
+                    SwarmMonitorView()
+                        .environmentObject(app)
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .leading).combined(with: .opacity),
+                            removal:   .move(edge: .leading).combined(with: .opacity)
+                        ))
                 } else {
                     // ── Human Mode: standard 4-pane IDE ───────────────────
                     humanModeLayout
@@ -683,7 +691,7 @@ struct ModeSelectorOverlay: View {
     @EnvironmentObject var app: AppState
     let onDismiss: () -> Void
 
-    let modes: [OperationMode] = [.human, .humanPriority, .aiPriority, .gatekeeper]
+    let modes: [OperationMode] = [.human, .humanPriority, .aiPriority, .gatekeeper, .autoSwarm, .swarm]
 
     var body: some View {
         VStack(spacing: 16) {

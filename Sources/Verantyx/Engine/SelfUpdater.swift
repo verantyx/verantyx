@@ -40,9 +40,9 @@ class SelfUpdater: ObservableObject {
                 if latest.compare(currentVersion, options: .numeric) == .orderedDescending {
                     self.updateAvailable = true
                     
-                    // Find PKG asset
-                    if let pkgAsset = assets.first(where: { ($0["name"] as? String ?? "").hasSuffix(".pkg") }),
-                       let urlString = pkgAsset["browser_download_url"] as? String,
+                    // Find DMG asset (switched from PKG in v1.3.6)
+                    if let dmgAsset = assets.first(where: { ($0["name"] as? String ?? "").hasSuffix(".dmg") }),
+                       let urlString = dmgAsset["browser_download_url"] as? String,
                        let downloadURL = URL(string: urlString) {
                         self.pkgDownloadURL = downloadURL
                     }
@@ -62,32 +62,60 @@ class SelfUpdater: ObservableObject {
         isDownloading = true
         errorMessage = nil
         
-        let destination = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("VerantyxUpdate_\(latestVersion).pkg")
+        let destination = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("VerantyxUpdate_\(latestVersion).dmg")
         
         // Remove old file if exists
         try? FileManager.default.removeItem(at: destination)
         
         let task = URLSession.shared.downloadTask(with: url) { [weak self] localURL, response, error in
-            Task { @MainActor in
-                self?.isDownloading = false
-                
-                if let error = error {
+            if let error = error {
+                Task { @MainActor in
+                    self?.isDownloading = false
                     self?.errorMessage = "Download failed: \(error.localizedDescription)"
-                    return
                 }
+                return
+            }
+            
+            guard let localURL = localURL else {
+                Task { @MainActor in self?.isDownloading = false }
+                return
+            }
+            
+            do {
+                try FileManager.default.moveItem(at: localURL, to: destination)
+                let script = """
+                #!/bin/bash
+                while kill -0 \(ProcessInfo.processInfo.processIdentifier) 2>/dev/null; do
+                    sleep 0.5
+                done
+                MOUNT_INFO=$(hdiutil attach "\(destination.path)" -nobrowse)
+                MOUNT_POINT=$(echo "$MOUNT_INFO" | grep "/Volumes/" | awk -F '\t' '{print $3}' | xargs)
+                if [ -n "$MOUNT_POINT" ]; then
+                    rm -rf /Applications/Verantyx.app
+                    cp -R "$MOUNT_POINT/Verantyx.app" /Applications/
+                    hdiutil detach "$MOUNT_POINT"
+                    open /Applications/Verantyx.app
+                fi
+                """
+                let scriptURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("verantyx_update.sh")
+                try script.write(to: scriptURL, atomically: true, encoding: .utf8)
+                try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: scriptURL.path)
                 
-                guard let localURL = localURL else { return }
+                let process = Process()
+                process.executableURL = URL(fileURLWithPath: "/bin/bash")
+                process.arguments = ["-c", "nohup \(scriptURL.path) >/dev/null 2>&1 &"]
+                try process.run()
                 
-                do {
-                    try FileManager.default.moveItem(at: localURL, to: destination)
-                    // Open the PKG installer
-                    NSWorkspace.shared.open(destination)
-                    
+                Task { @MainActor in
+                    self?.isDownloading = false
                     // Terminate ourself to let the installer work
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                         NSApplication.shared.terminate(nil)
                     }
-                } catch {
+                }
+            } catch {
+                Task { @MainActor in
+                    self?.isDownloading = false
                     self?.errorMessage = "Failed to prepare update: \(error.localizedDescription)"
                 }
             }

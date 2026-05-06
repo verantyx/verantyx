@@ -1,5 +1,8 @@
 import Foundation
 import SwiftUI
+#if canImport(AppKit)
+import AppKit
+#endif
 
 // MARK: - AgentTool
 // Tool definitions that the AI can emit in its response.
@@ -39,6 +42,8 @@ enum AgentTool {
     case applyPatch(relativePath: String, content: String)
     case buildIDE
     case restartIDE
+    // ── Swarm Execution ──────────────────────────────────────────────────────
+    case swarmExecute(String)                     // SWARM_EXECUTE: delegate to Swarm Engine
     // ── Self-Admin (JARVIS) ──────────────────────────────────────────────────
     case setSetting(key: String, value: String)       // SET_SETTING: key=value
     case addMCPServer(name: String, command: String, mode: String)  // ADD_MCP_SERVER
@@ -87,6 +92,7 @@ struct AgentToolCall: Identifiable {
         case .applyPatch(let p, _):        return "📦 patch → \(p)"
         case .buildIDE:                    return "🔨 xcodebuild"
         case .restartIDE:                  return "🔄 restart IDE"
+        case .swarmExecute(let i):         return "🐝 swarm_exec: \(i.prefix(30))"
         // Self-Admin
         case .setSetting(let k, let v):    return "⚙️ set \(k) = \(v.prefix(30))"
         case .addMCPServer(let n, _, _):   return "➕ MCP: \(n)"
@@ -152,6 +158,7 @@ struct AgentToolParser {
     [GIT_RESTORE: path]       版戻: git restore（変更取消）
     [ASK_HUMAN: q]            人問: ユーザーに確認（Human Modeで停止）
     [APPLY_PATCH: path]```content```[/APPLY_PATCH]    貼: IDEソース書き換え(Self-Fix専用)
+    [SWARM_EXECUTE: task]     蜂: BitNet Swarm（50並列エージェント）にタスクを委譲して実行させる
     [BUILD_IDE]               建: xcodebuild実行
     [RESTART_IDE]             再: 再起動ダイアログ表示
     [USE_SKILL: 名前]          技呼: 登録済スキルを実行（1トークンで複数ステップを完了）
@@ -194,14 +201,18 @@ struct AgentToolParser {
           無関係の第三者をコントリビューターに巻き込む事故を引き起こす。
 
     ── §スキル SKILL RULES ──────────────────────────────────────────────────
-    必⑨  技呼優先: §スキルライブラリで該当スキルが見つかった場合、パイプラインを手動再現する前に
-          [USE_SKILL] を必ず試みる。実行時間エコノミー・トークン節約を実現する。
-    必⑩  技鍛判断: タスク完了後、「次回も同じ手順を踏む可能性」が高い場合は
+    必⑨  Search-First (探索優先): 複雑な要求を受けた場合、直ちに実装を始める前に
+          必ず [MCP_CALL: tool-search-oss.discover_tools]{"task_description": "..."}[/MCP_CALL] を実行し、
+          既存の解決策(スキル)が存在しないか確認すること。これによりトークン消費とコンテキスト肥大化を防ぐ。
+    必⑩  技呼優先: discover_tools で該当スキルが見つかった場合、手動でパイプラインを構築する前に
+          [USE_SKILL: 名前|引数=値] を試みること。
+    必⑪  技鍛判断: タスク完了後、「次回も同じ手順を踏む可能性」が高い場合は
           [FORGE_SKILL] でスキル登録する。営業固有タスク・Scaffold・設定パターンが対象。
           単発性の高い一回性タスクは登録不要。
-    必⑪  技鍛形式: FORGE_SKILL の payload には [TOOL:] 文字列をそのまま記載する。
+    必⑫  技鍛形式: FORGE_SKILL の payload には [TOOL:] 文字列をそのまま記載する。
           プレースホルダー板: {{workspace}}、{{file}}、{{target}} などで汎用化する。
-    必⑫  連続操作: マークダウンや長文コードを生成した場合でも、後続の操作（例: [VISION_ACT] による投稿やクリック）が指示されているなら、**必ず同じ返答の最後に**該当ツールを呼び出すこと。テキスト生成だけで満足して[DONE]を出さない。
+    必⑬  連続操作: マークダウンや長文コードを生成した場合でも、後続の操作（例: [VISION_ACT] による投稿やクリック）が指示されているなら、**必ず同じ返答の最後に**該当ツールを呼び出すこと。テキスト生成だけで満足して[DONE]を出さない。
+    必⑭  Swarm委譲: [SWARM_EXECUTE]を使用した場合、その直後に文章を続けて自ら回答を生成してはならない（ハルシネーション禁止）。ツール呼び出しで**直ちにテキスト生成を停止**し、システムの実行結果を待つこと。
 
     ── §実例 FEW-SHOT ────────────────────────────────────────────────────────
     例A「Swift 6の並行処理は？」→ 網並必須:
@@ -269,26 +280,40 @@ struct AgentToolParser {
     static func buildMCPSection(from tools: [MCPTool]) -> String {
         guard !tools.isEmpty else { return "" }
 
+        let hasToolSearch = tools.contains { $0.serverName == "tool-search-oss" }
+        
         // Group by server for readability
         var byServer: [String: [MCPTool]] = [:]
         for tool in tools {
+            // If tool-search-oss is active, ONLY show tool-search-oss and verantyx-compiler in the prompt
+            if hasToolSearch && tool.serverName != "tool-search-oss" && tool.serverName != "verantyx-compiler" {
+                continue
+            }
             byServer[tool.serverName, default: []].append(tool)
         }
 
         var lines: [String] = [
             "── §MCPツール MCP TOOLS (接: 接続済みサーバー) ──────────────────────────────",
-            "以下のMCPサーバーが接続済みです。ブラウザ操作・Web自動化・外部APIアクセスなど",
-            "該当タスクでは必ずこれらのMCPツールを組み込みツールより優先して使ってください。",
-            "",
             "呼び出し構文: [MCP_CALL: serverName.toolName]{\"arg\": \"value\"}[/MCP_CALL]",
             ""
         ]
+        
+        if hasToolSearch {
+            lines.append("⚠️ DEFER-LOADING ENABLED: To save context, most MCP tools are HIDDEN.")
+            lines.append("   Use `tool-search-oss.search_tools` to discover tools dynamically.")
+            lines.append("   (Note: The 'tools' argument is auto-injected by the IDE, you only need to pass 'query').")
+            lines.append("")
+        } else {
+            lines.append("以下のMCPサーバーが接続済みです。ブラウザ操作・Web自動化・外部APIアクセスなど")
+            lines.append("該当タスクでは必ずこれらのMCPツールを組み込みツールより優先して使ってください。")
+            lines.append("")
+        }
 
         for (serverName, serverTools) in byServer.sorted(by: { $0.key < $1.key }) {
             lines.append("  📡 \(serverName):")
             for tool in serverTools {
                 let desc = tool.description.isEmpty ? "(説明なし)" : tool.description
-                lines.append("    • \(serverName).\(tool.name) — \(desc)")
+                lines.append("    • \(serverName).\(tool.name) — \(desc.components(separatedBy: "\n").first ?? desc)")
             }
         }
 
@@ -388,67 +413,72 @@ struct AgentToolParser {
         for line in lines {
             let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
 
-            if      let m = match(trimmed, pattern: #"^\[MKDIR:\s*([^\]]+)\]$"#) {
+            if      let m = match(trimmed, pattern: #"\[MKDIR:\s*([^\]]+)\]"#) {
                 tools.append(.makeDir(expandHome(m)))
-            } else if let m = match(trimmed, pattern: #"^\[RUN:\s*([^\]]+)\]$"#) {
+            } else if let m = match(trimmed, pattern: #"\[RUN:\s*([^\]]+)\]"#) {
                 // Normalize: nano モデルが [RUN:LIST_DIR] のように型名をコマンド名と将揷して出力するハルシネーションを修正
                 if let normalized = normalizeRunToKnownTool(m) {
                     tools.append(normalized)
                 } else {
                     tools.append(.runCommand(m))
                 }
-            } else if let m = match(trimmed, pattern: #"^\[WORKSPACE:\s*([^\]]+)\]$"#) {
+            } else if let m = match(trimmed, pattern: #"\[WORKSPACE:\s*([^\]]+)\]"#) {
                 tools.append(.setWorkspace(expandHome(m)))
-            } else if let m = match(trimmed, pattern: #"^\[DONE[:\s]*([^\]]*)\]$"#) {
+            } else if let m = match(trimmed, pattern: #"\[DONE[:\s]*([^\]]*)\]"#) {
                 tools.append(.done(message: m.isEmpty ? "Task complete." : m))
-            } else if let m = match(trimmed, pattern: #"^\[READ:\s*([^\]]+)\]$"#) {
+            } else if let m = match(trimmed, pattern: #"\[READ:\s*([^\]]+)\]"#) {
                 tools.append(.readFile(expandHome(m)))
-            } else if let m = match(trimmed, pattern: #"^\[LIST_DIR:\s*([^\]]+)\]$"#) {
+            } else if let m = match(trimmed, pattern: #"\[LIST_DIR:\s*([^\]]+)\]"#) {
                 tools.append(.listDir(expandHome(m)))
             // ── Web ─────────────────────────────────────────────────────
-            } else if let m = match(trimmed, pattern: #"^\[BROWSE:\s*([^\]]+)\]$"#) {
+            } else if let m = match(trimmed, pattern: #"\[BROWSE:\s*([^\]]+)\]"#) {
                 tools.append(.browse(url: m))
-            } else if let m = match(trimmed, pattern: #"^\[SEARCH_MULTI:\s*([^\]]+)\]$"#) {
+            } else if let m = match(trimmed, pattern: #"\[SEARCH_MULTI:\s*([^\]]+)\]"#) {
                 tools.append(.searchMulti(query: m))
-            } else if let m = match(trimmed, pattern: #"^\[SEARCH:\s*([^\]]+)\]$"#) {
+            } else if let m = match(trimmed, pattern: #"\[SEARCH:\s*([^\]]+)\]"#) {
                 tools.append(.search(query: m))
-            } else if let m = match(trimmed, pattern: #"^\[EVAL_JS:\s*([^\]]+)\]$"#) {
+            } else if let m = match(trimmed, pattern: #"\[EVAL_JS:\s*([^\]]+)\]"#) {
                 tools.append(.evalJS(script: m))
-            } else if let m = match(trimmed, pattern: #"^\[SAFARI:\s*([^\]]+)\]$"#) {
+            } else if let m = match(trimmed, pattern: #"\[SAFARI:\s*([^\]]+)\]"#) {
                 tools.append(.openSafari(url: m))
-            } else if let m = match(trimmed, pattern: #"^\[CHROME:\s*([^\]]+)\]$"#) {
+            } else if let m = match(trimmed, pattern: #"\[CHROME:\s*([^\]]+)\]"#) {
                 tools.append(.openChrome(url: m))
-            } else if let m = match(trimmed, pattern: #"^\[VISION_BROWSE:\s*([^\]]+)\]$"#) {
+            } else if let m = match(trimmed, pattern: #"\[VISION_BROWSE:\s*([^\]]+)\]"#) {
                 tools.append(.visionBrowse(url: m))
-            } else if trimmed == "[VISION_SNAPSHOT]" {
+            } else if trimmed.contains("[VISION_SNAPSHOT]") {
                 tools.append(.visionSnapshot)
-            } else if let m = match(trimmed, pattern: #"^\[VISION_ACT:\s*([^\]]+)\]$"#) {
+            } else if let m = match(trimmed, pattern: #"\[VISION_ACT:\s*([^\]]+)\]"#) {
                 tools.append(.visionAct(action: m))
             // ── JCross ──────────────────────────────────────────────────
-            } else if let m = match(trimmed, pattern: #"^\[JCROSS_QUERY:\s*([^\]]+)\]$"#) {
+            } else if let m = match(trimmed, pattern: #"\[JCROSS_QUERY:\s*([^\]]+)\]"#) {
                 tools.append(.jcrossQuery(m))
-            } else if let m = match(trimmed, pattern: #"^\[JCROSS_STORE:\s*([^=\]]+)=([^\]]*)\]$"#) {
+            } else if let m = match(trimmed, pattern: #"\[JCROSS_STORE:\s*([^=\]]+)=([^\]]*)\]"#) {
                 let parts = parseKV(trimmed)
                 tools.append(.jcrossStore(key: parts.key, value: parts.value))
             // ── Git ──────────────────────────────────────────────────────
-            } else if let m = match(trimmed, pattern: #"^\[GIT_COMMIT:\s*([^\]]+)\]$"#) {
+            } else if let m = match(trimmed, pattern: #"\[GIT_COMMIT:\s*([^\]]+)\]"#) {
                 tools.append(.gitCommit(m))
-            } else if let m = match(trimmed, pattern: #"^\[GIT_RESTORE:\s*([^\]]+)\]$"#) {
+            } else if let m = match(trimmed, pattern: #"\[GIT_RESTORE:\s*([^\]]+)\]"#) {
                 tools.append(.gitRestore(m))
             // ── Human ────────────────────────────────────────────────────
-            } else if let m = match(trimmed, pattern: #"^\[ASK_HUMAN:\s*([^\]]+)\]$"#) {
+            } else if let m = match(trimmed, pattern: #"\[ASK_HUMAN:\s*([^\]]+)\]"#) {
                 tools.append(.askHuman(m))
             // ── Self-Fix ─────────────────────────────────────────────────
-            } else if trimmed == "[BUILD_IDE]" {
+            } else if trimmed.contains("[BUILD_IDE]") {
                 tools.append(.buildIDE)
-            } else if trimmed == "[RESTART_IDE]" {
+            } else if trimmed.contains("[RESTART_IDE]") {
                 tools.append(.restartIDE)
+            // ── Swarm ────────────────────────────────────────────────────
+            } else if let m = match(trimmed, pattern: #"\[SWARM_EXECUTE:\s*([^\]]+)\]"#) {
+                tools.append(.swarmExecute(m))
+                // STOP parsing immediately to truncate any hallucinated text generated by the model
+                break
             // ── Self-Admin (JARVIS) ───────────────────────────────────────────
-            } else if let m = match(trimmed, pattern: #"^\[SET_MODEL:\s*([^\]]+)\]$"#) {
+            } else if let m = match(trimmed, pattern: #"\[SET_MODEL:\s*([^\]]+)\]"#) {
                 tools.append(.setModel(m))
-            } else if let m = match(trimmed, pattern: #"^\[PULL_MODEL:\s*([^\]]+)\]$"#) {
+            } else if let m = match(trimmed, pattern: #"\[PULL_MODEL:\s*([^\]]+)\]"#) {
                 tools.append(.pullModel(m))
-            } else if let m = match(trimmed, pattern: #"^\[REMOVE_MCP_SERVER:\s*([^\]]+)\]$"#) {
+            } else if let m = match(trimmed, pattern: #"\[REMOVE_MCP_SERVER:\s*([^\]]+)\]"#) {
                 tools.append(.removeMCPServer(name: m))
             } else if trimmed.hasPrefix("[ADD_MCP_SERVER:") {
                 if let tool = parseAddMCPServer(trimmed) { tools.append(tool) }
@@ -511,7 +541,7 @@ struct AgentToolParser {
     }
 
     static func expandHome(_ path: String) -> String {
-        if path.hasPrefix("~/") { return NSHomeDirectory() + path.dropFirst(1) }
+        if path.hasPrefix("~/") { return String(path.dropFirst(2)) }
         return path
     }
 
@@ -639,6 +669,8 @@ struct AgentToolParser {
 actor AgentToolExecutor {
 
     private let fileManager = FileManager.default
+    private var lastVisionClickTarget: CGPoint?
+    private var consecutiveClickLoopCount = 0
 
     private func relativePath(of url: URL, workspace: URL?) -> String {
         guard let ws = workspace else { return url.lastPathComponent }
@@ -683,9 +715,12 @@ actor AgentToolExecutor {
             let original = (try? String(contentsOf: url, encoding: .utf8)) ?? ""
             let lineCount = content.components(separatedBy: "\n").count
 
-            let isAIMode = await MainActor.run { AppState.shared?.operationMode == .aiPriority }
+            let isAutoWrite = await MainActor.run { 
+                guard let state = AppState.shared else { return false }
+                return state.operationMode == .aiPriority || state.operationMode == .autoSwarm || state.autoApproveDiffs 
+            }
 
-            if isAIMode {
+            if isAutoWrite {
                 // ══ AI MODE: write immediately → right panel artifact ══════════
                 do { try content.write(to: url, atomically: true, encoding: .utf8) }
                 catch { return "✗ write failed for \(path): \(error.localizedDescription)" }
@@ -701,7 +736,7 @@ actor AgentToolExecutor {
                     let art = Artifact(type: artType, content: content, title: url.lastPathComponent)
                     AppState.shared?.ingestArtifact(art)  // forces showArtifactPanel = true
                 }
-                return "✓ [AI Mode] Wrote \(url.lastPathComponent) (\(lineCount) lines)"
+                return "✓ [Auto-Write] Wrote \(url.lastPathComponent) (\(lineCount) lines)"
 
             } else {
                 // ══ HUMAN MODE: show diff → suspend → write only after approval ═
@@ -841,9 +876,12 @@ actor AgentToolExecutor {
             lines.replaceSubrange((startLine-1)...(endLine-1), with: replacement)
             let patched = lines.joined(separator: "\n")
 
-            let isAIMode2 = await MainActor.run { AppState.shared?.operationMode == .aiPriority }
+            let isAutoWrite = await MainActor.run { 
+                guard let state = AppState.shared else { return false }
+                return state.operationMode == .aiPriority || state.operationMode == .autoSwarm || state.autoApproveDiffs 
+            }
 
-            if isAIMode2 {
+            if isAutoWrite {
                 // ══ AI MODE: write immediately ═══════════════════════════════
                 do {
                     try patched.write(to: url, atomically: true, encoding: .utf8)
@@ -860,7 +898,7 @@ actor AgentToolExecutor {
                     let art = Artifact(type: artType, content: patched, title: url.lastPathComponent)
                     AppState.shared?.ingestArtifact(art)
                 }
-                return "✓ [AI Mode] Edited \(url.lastPathComponent) lines \(startLine)-\(endLine) → 右パネルに表示中"
+                return "✓ [Auto-Write] Edited \(url.lastPathComponent) lines \(startLine)-\(endLine) → 右パネルに表示中"
 
             } else {
                 // ══ HUMAN MODE: show diff → suspend → write only after approval ═
@@ -903,7 +941,7 @@ actor AgentToolExecutor {
         // ── Web / Grounding ───────────────────────────────────────────────
 
         case .browse(let url):
-            let result = await WebSearchEngine.shared.browse(url: url, preferredSource: .verantyxBrowser)
+            let result = await WebSearchEngine.shared.browse(url: url, preferredSource: .safari)
             return "[WEB PAGE: \(result.url)]\n\(result.contextSnippet)\n[END WEB PAGE]"
 
         case .search(let query):
@@ -953,6 +991,23 @@ actor AgentToolExecutor {
                 if cmd == "click" && parts.count >= 3 {
                     let x = Double(parts[1]) ?? 0.0
                     let y = Double(parts[2]) ?? 0.0
+                    
+                    let target = CGPoint(x: x, y: y)
+                    if let last = lastVisionClickTarget {
+                        let distance = hypot(last.x - target.x, last.y - target.y)
+                        if distance < 30.0 {
+                            consecutiveClickLoopCount += 1
+                        } else {
+                            consecutiveClickLoopCount = 0
+                        }
+                    }
+                    lastVisionClickTarget = target
+                    
+                    if consecutiveClickLoopCount >= 3 {
+                        consecutiveClickLoopCount = 0 // reset so it can try elsewhere later
+                        return "[VISION ERROR] VISION_BLOCKED: You have clicked near (\(x), \(y)) multiple times without success. The UI is not responding to your clicks here. DO NOT click here again. You MUST try a different tool (like scrolling or typing) or ask the human."
+                    }
+                    
                     try await SafariVisionBridge.shared.hidClick(x: x, y: y)
                 } else if cmd == "type" && parts.count >= 2 {
                     let text = action.dropFirst(5).trimmingCharacters(in: .whitespaces)
@@ -1011,12 +1066,14 @@ actor AgentToolExecutor {
         // ── Git / Safety ──────────────────────────────────────────────────
 
         case .gitCommit(let message):
-            let ws = workspaceURL?.path ?? NSHomeDirectory() + "/verantyx-cli/VerantyxIDE"
+            let wsPath = await MainActor.run { AppState.shared?.cortexWorkspacePath ?? AppState.shared?.workspaceURL?.path } ?? workspaceURL?.path
+            guard let ws = wsPath else { return "✗ Workspace not set." }
             return await runShell("git add -A && git commit -m '\(message.replacingOccurrences(of: "'", with: "\\'"))'",
                                    workingDir: URL(fileURLWithPath: ws))
 
         case .gitRestore(let path):
-            let ws = workspaceURL?.path ?? NSHomeDirectory() + "/verantyx-cli/VerantyxIDE"
+            let wsPath = await MainActor.run { AppState.shared?.cortexWorkspacePath ?? AppState.shared?.workspaceURL?.path } ?? workspaceURL?.path
+            guard let ws = wsPath else { return "✗ Workspace not set." }
             return await runShell("git restore \(path)", workingDir: URL(fileURLWithPath: ws))
 
         case .askHuman(let question):
@@ -1026,6 +1083,9 @@ actor AgentToolExecutor {
                     name: .agentAskHuman,
                     object: question
                 )
+                #if os(macOS)
+                NSApp.requestUserAttention(.criticalRequest)
+                #endif
             }
             return "ASK_HUMAN_POSTED: \(question)\n[PAUSED — waiting for human response]"
 
@@ -1046,6 +1106,18 @@ actor AgentToolExecutor {
                 NotificationCenter.default.post(name: .agentRequestsRestart, object: nil)
             }
             return "RESTART_REQUESTED: User will be asked to restart the app."
+
+        // ── Swarm Execution ──────────────────────────────────────────────────────
+        
+        case .swarmExecute(let instruction):
+            let modelId = await MainActor.run { AppState.shared?.activeOllamaModel ?? "gemma" }
+            await MainActor.run {
+                SwarmEngine.shared.isSwarmActive = true
+            }
+            let report = await SwarmEngine.shared.executeSwarmMission(instruction: instruction, modelId: modelId) { progress in
+                // Progress is logged internally or could be dispatched
+            }
+            return "✓ [SWARM EXECUTED] Results:\n\(report)"
 
         // ── Self-Admin (JARVIS) ───────────────────────────────────────────────
 
@@ -1214,7 +1286,7 @@ actor AgentToolExecutor {
                 let value = args[key] as? String ?? ""
                 if value.trimmingCharacters(in: .whitespaces).isEmpty {
                     return "必須パラメーター「\(key)」が空です。\n" +
-                           "例: [MCP_CALL: \(server).\(tool)]{\"\\(key)\": \"値\"}[/MCP_CALL]"
+                           "例: [MCP_CALL: \(server).\(tool)]{\"\(key)\": \"値\"}[/MCP_CALL]"
                 }
             }
         }
@@ -1222,7 +1294,6 @@ actor AgentToolExecutor {
     }
 
     // MARK: - PULL_MODEL: ollama pull with streaming progress
-
 
     private func pullModelWithProgress(_ modelId: String) async -> String {
         // Verify ollama is installed
@@ -1320,7 +1391,7 @@ actor AgentToolExecutor {
         await withTaskGroup(of: (Int, String).self) { group in
             for (i, url) in urls.enumerated() {
                 group.addTask {
-                    let r = await WebSearchEngine.shared.browse(url: url, preferredSource: .verantyxBrowser)
+                    let r = await WebSearchEngine.shared.browse(url: url, preferredSource: .safari)
                     return (i + 2, "[Source \(i+2): \(r.url)]\n\(String(r.contextSnippet.prefix(600)))")
                 }
             }
@@ -1394,33 +1465,21 @@ actor AgentToolExecutor {
     private func resolve(_ path: String, workspace: URL?) -> URL {
         // Absolute paths go as-is
         if path.hasPrefix("/") { return URL(fileURLWithPath: path) }
-        // Home-relative
-        if path.hasPrefix("~/") {
-            return URL(fileURLWithPath: NSHomeDirectory() + path.dropFirst(1))
-        }
+        
         // Workspace-relative (most common in agent context)
-        if let ws = workspace  { return ws.appendingPathComponent(path) }
-        // Fallback: try well-known locations so agents without a workspace
-        // can still read files the user means by bare names.
-        let home = URL(fileURLWithPath: NSHomeDirectory())
-        let candidates: [URL] = [
-            home.appendingPathComponent(path),
-            home.appendingPathComponent("Desktop/\(path)"),
-            home.appendingPathComponent("Documents/\(path)"),
-        ]
-        for c in candidates {
-            if FileManager.default.fileExists(atPath: c.path) { return c }
-        }
-        // Last resort: home-relative
-        return home.appendingPathComponent(path)
+        if let ws = workspace { return ws.appendingPathComponent(path) }
+        
+        // Fallback: use /tmp
+        return URL(fileURLWithPath: "/tmp").appendingPathComponent(path.hasPrefix("~/") ? String(path.dropFirst(2)) : path)
     }
 
     private func runShell(_ command: String, workingDir: URL?) async -> String {
-        await Task.detached(priority: .userInitiated) {
+        let fallbackDir = await MainActor.run { AppState.shared?.cortexWorkspacePath.map { URL(fileURLWithPath: $0) } } ?? URL(fileURLWithPath: "/tmp")
+        return await Task.detached(priority: .userInitiated) {
             let process = Process()
             process.executableURL = URL(fileURLWithPath: "/bin/zsh")
             process.arguments = ["-c", command]
-            process.currentDirectoryURL = workingDir ?? URL(fileURLWithPath: NSHomeDirectory())
+            process.currentDirectoryURL = workingDir ?? fallbackDir
 
             var env = ProcessInfo.processInfo.environment
             env["PATH"] = (env["PATH"] ?? "/usr/bin:/bin") + ":/usr/local/bin:/opt/homebrew/bin"
@@ -1446,8 +1505,12 @@ actor AgentToolExecutor {
     // MARK: - IDE Build
 
     private func runIDEBuild() async -> String {
-        await Task.detached(priority: .userInitiated) {
-            let projectPath = NSHomeDirectory() + "/verantyx-cli/VerantyxIDE/Verantyx.xcodeproj"
+        let wsPath = await MainActor.run { AppState.shared?.cortexWorkspacePath ?? AppState.shared?.workspaceURL?.path }
+        guard let ws = wsPath else { return "BUILD_ERROR: Workspace not set." }
+        let u = URL(fileURLWithPath: ws)
+        let baseDir = u.lastPathComponent == "VerantyxIDE" ? u : u.appendingPathComponent("VerantyxIDE")
+        let projectPath = baseDir.appendingPathComponent("Verantyx.xcodeproj").path
+        return await Task.detached(priority: .userInitiated) {
             guard FileManager.default.fileExists(atPath: projectPath) else {
                 return "BUILD_ERROR: Verantyx.xcodeproj not found at \(projectPath)."
             }

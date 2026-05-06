@@ -52,7 +52,7 @@ final class JCrossLogicDecomposer {
             if isLogicalOperator(token) {
                 // X-Axis (Control Flow): 論理演算子
                 let cf = ControlFlowProjection(
-                    kind: .logicalOperator,
+                    kind: .conditionalBranch,
                     branchCount: getOperatorArity(token),
                     conditionHash: "0x" + SHA256.hash(data: Data(token.utf8)).map { String(format: "%02x", $0) }.joined().prefix(8),
                     conditionArity: 1
