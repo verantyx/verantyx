@@ -959,6 +959,17 @@ actor AgentToolExecutor {
                     try await SafariVisionBridge.shared.typeText(text)
                 }
                 
+                // Auto-store vision action in JCross memory (L1-L3)
+                await MainActor.run {
+                    let timeId = String(Int(Date().timeIntervalSince1970))
+                    CortexEngine.shared?.remember(
+                        key: "vision_log_\(timeId)",
+                        value: "Action: [VISION_ACT: \(action)]. The AI executed this action on the browser.",
+                        importance: 0.85,
+                        zone: .front
+                    )
+                }
+                
                 try await Task.sleep(nanoseconds: 1_000_000_000) // Delay for UI reaction
                 let base64 = try await SafariVisionBridge.shared.takeScreenshot()
                 await CognitiveAnchorEngine.shared.setVisionScreenshot(base64)
@@ -969,6 +980,7 @@ actor AgentToolExecutor {
                     Action performed. New screenshot injected.
                     🔴 A red circle shows where your mouse clicked. 
                     If the screen did not change, you probably missed the target.
+                    WARNING: If you have already tried clicking here previously and it didn't work, DO NOT click the exact same coordinates again. You MUST adjust the coordinates based on the red cursor's offset from the target.
                     Search for the red cursor in this new screenshot, calculate the offset to the actual target, and try clicking again.
                     Once you successfully hit the target, save the coordinates using [FORGE_SKILL] to make it a one-shot process next time.
                     """

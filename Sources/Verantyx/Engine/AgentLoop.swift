@@ -1222,12 +1222,19 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                 
                 if let screenshot = await CognitiveAnchorEngine.shared.consumeVisionScreenshot() {
                     anchorImages = [screenshot]
-                    let visionInstructions = """
+                    var visionInstructions = """
 
                     [VISION SYSTEM] The attached image is the current screenshot of the verantyx-browser window. Analyze it visually to decide your next action using [VISION_ACT: x, y] or [VISION_TYPE: text].
                     
                     CRITICAL RULE (WAF EVASION): NEVER guess and directly navigate to deep links (e.g., login pages like slack.com/login or zenn.dev/login) using your internal knowledge. Accessing deep links without a search engine referer is unnatural and triggers Botguards/WAFs. You MUST use [SEARCH: "Service Name login"] first, then navigate from the search results. NEVER use [BROWSE: guessed-url] directly.
                     """
+                    
+                    let visionLogs = await CortexEngine.shared?.nodes.filter { $0.key.hasPrefix("vision_log_") }.sorted { $0.timestamp > $1.timestamp }.prefix(5) ?? []
+                    if !visionLogs.isEmpty {
+                        let logStr = visionLogs.map { "- \($0.value)" }.joined(separator: "\n")
+                        visionInstructions += "\n\n[PAST VISION ACTIONS]\nYou recently performed these actions. DO NOT repeat the exact same coordinates if they failed. Draw a mental map of where you have already clicked:\n\(logStr)"
+                    }
+                    
                     mutableConversation[lastUserIndex].content = lastUserMsg.content + visionInstructions
                     await onProgress(.aiMessage(AppLanguage.shared.t("<think>\n👁️ [Vision System] Injected live browser screenshot for analysis.\n</think>", "<think>\n👁️ [Vision System] ブラウザのライブスクリーンショットを解析用に注入しました。\n</think>")))
                 } else if let mode = await CognitiveAnchorEngine.shared.evaluateAnchorMode(instruction: lastUserMsg.content) {
