@@ -90,22 +90,88 @@ actor WebSearchEngine {
         videoFrames: [String]? = nil
     ) async -> WebSearchResult {
         
-        // ── COMPLETE VERSION: Qwen3.6-27B Video Analysis Pipeline ──
         var finalEntropy = entropy
         var finalTarget: [Double]? = nil
+        var currentVideoFrames = videoFrames
+        var currentKeyboardEntropy = keyboardEntropy
         
-        if let frames = videoFrames, !frames.isEmpty {
-            // 1. Harvesting Phase via Video (Qwen3.6-27B)
+        // ── 🧩 Biometric Entropy Collection & Fully Automatic Mode 🧩 ──
+        var isEntropyStale = false
+        var isAutoMode = false
+        
+        await MainActor.run {
+            let savedSamplesCount = UserDefaults.standard.integer(forKey: "bio_samples_count")
+            if savedSamplesCount >= 200 {
+                isAutoMode = true
+            } else {
+                if let ts = AppState.shared?.lastEntropyTimestamp {
+                    isEntropyStale = Date().timeIntervalSince(ts) > 300
+                } else {
+                    isEntropyStale = true
+                }
+            }
+        }
+        
+        if isAutoMode {
+            print("Telemetry: Fully Automatic Mode (200+ samples). Biometric lock bypassed.")
+            // Try to use any remaining recent entropy anyway, but do not wait
+            let (points, frames, kb) = await MainActor.run {
+                (AppState.shared?.lastEntropy, AppState.shared?.lastVideoFrames, AppState.shared?.lastKeyboardEntropy)
+            }
+            if finalEntropy == nil, let pts = points {
+                let mapped = pts.map { [Double($0.x), Double($0.y)] }
+                finalEntropy = stride(from: 0, to: mapped.count, by: max(1, mapped.count / 100)).prefix(100).map { mapped[$0] }
+            }
+            if currentVideoFrames == nil { currentVideoFrames = frames }
+            if currentKeyboardEntropy == nil { currentKeyboardEntropy = kb }
+            
+        } else if isEntropyStale {
+            print("Telemetry: Biometric entropy stale or missing. Triggering puzzle.")
+            await MainActor.run { AppState.shared?.requiresHumanPuzzle = true }
+            var waitingForPuzzle = await MainActor.run { AppState.shared?.requiresHumanPuzzle == true }
+            while waitingForPuzzle {
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                waitingForPuzzle = await MainActor.run { AppState.shared?.requiresHumanPuzzle == true }
+            }
+            
+            // Retrieve the freshly captured entropy
+            let (newPoints, newFrames, newKb) = await MainActor.run {
+                (AppState.shared?.lastEntropy, AppState.shared?.lastVideoFrames, AppState.shared?.lastKeyboardEntropy)
+            }
+            if let pts = newPoints {
+                let mapped = pts.map { [Double($0.x), Double($0.y)] }
+                finalEntropy = stride(from: 0, to: mapped.count, by: max(1, mapped.count / 100)).prefix(100).map { mapped[$0] }
+            }
+            currentVideoFrames = newFrames
+            currentKeyboardEntropy = newKb
+            
+            // Increment sample count
+            let newCount = UserDefaults.standard.integer(forKey: "bio_samples_count") + 1
+            UserDefaults.standard.set(newCount, forKey: "bio_samples_count")
+            print("Telemetry: Biometric sample saved. Total: \(newCount)/200 for Auto Mode")
+        } else if finalEntropy == nil {
+            // Fresh entropy available but not passed in directly
+            let (points, frames, kb) = await MainActor.run {
+                (AppState.shared?.lastEntropy, AppState.shared?.lastVideoFrames, AppState.shared?.lastKeyboardEntropy)
+            }
+            if let pts = points {
+                let mapped = pts.map { [Double($0.x), Double($0.y)] }
+                finalEntropy = stride(from: 0, to: mapped.count, by: max(1, mapped.count / 100)).prefix(100).map { mapped[$0] }
+            }
+            if currentVideoFrames == nil { currentVideoFrames = frames }
+            if currentKeyboardEntropy == nil { currentKeyboardEntropy = kb }
+        }
+        
+        // ── COMPLETE VERSION: Qwen3.6-27B Video Analysis Pipeline ──
+        if let frames = currentVideoFrames, !frames.isEmpty {
             if let extracted = await QwenVideoAnalyzer.shared.extractEntropyFromVideo(base64Frames: frames) {
                 finalEntropy = extracted
             }
-            
-            // 2. Targeting Phase via Screenshot (Qwen3.6-27B)
-            // Using the last frame as the current browser state representation
             if let target = await QwenVideoAnalyzer.shared.identifyTargetCoordinates(screenshotBase64: frames.last!) {
                 finalTarget = target
             }
         }
+
 
         let result: WebSearchResult
         switch preferredSource {

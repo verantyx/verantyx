@@ -971,22 +971,6 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                                 }
                             }
                             
-                            let isEntropyStale = await MainActor.run { () -> Bool in
-                                guard let ts = AppState.shared?.lastEntropyTimestamp else { return true }
-                                let stale = Date().timeIntervalSince(ts) > 300
-                                if stale {
-                                    print("Telemetry: Biometric entropy stale in ReAct Loop. Re-puzzling triggered.")
-                                }
-                                return stale
-                            }
-                            if isEntropyStale {
-                                await MainActor.run { AppState.shared?.requiresHumanPuzzle = true }
-                                var waitingForPuzzle = await MainActor.run { AppState.shared?.requiresHumanPuzzle == true }
-                                while waitingForPuzzle {
-                                    try? await Task.sleep(nanoseconds: 200_000_000)
-                                    waitingForPuzzle = await MainActor.run { AppState.shared?.requiresHumanPuzzle == true }
-                                }
-                            }
                             var entropyPoints: [[Double]]? = nil
                             let cgPoints = await MainActor.run { AppState.shared?.lastEntropy }
                             await MainActor.run { AppState.shared?.lastEntropy = nil } // Consume and clear
@@ -1000,6 +984,7 @@ SYS.ENFORCE("logical_verification_before_acceptance")
                                     entropyPoints = mapped
                                 }
                             }
+
 
                             let searchResult = await WebSearchEngine.shared.search(
                                 query: newQuery,

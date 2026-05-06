@@ -70,6 +70,13 @@ struct ChatTranscriptView: NSViewRepresentable {
         tv.textStorage?.beginEditing()
         tv.textStorage?.setAttributedString(attrStr)
         tv.textStorage?.endEditing()
+        
+        // Force immediate layout and display to prevent text from disappearing until scroll/hover
+        tv.needsLayout = true
+        tv.needsDisplay = true
+        if let layoutManager = tv.layoutManager, let textContainer = tv.textContainer {
+            layoutManager.ensureLayout(for: textContainer)
+        }
 
         // 選択範囲を復元（末尾が伸びても start 位置は有効なことが多い）
         if savedSel.location != NSNotFound {
@@ -81,7 +88,10 @@ struct ChatTranscriptView: NSViewRepresentable {
 
         // 末尾にいた場合のみ自動スクロール
         if wasAtBottom {
-            DispatchQueue.main.async { tv.scrollToEndOfDocument(nil) }
+            DispatchQueue.main.async {
+                tv.scrollToEndOfDocument(nil)
+                sv.reflectScrolledClipView(sv.contentView)
+            }
         }
     }
 

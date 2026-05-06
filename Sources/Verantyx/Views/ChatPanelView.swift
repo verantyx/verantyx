@@ -19,7 +19,7 @@ struct ChatPanelView: View {
             // Messages
             ScrollViewReader { proxy in
                 ScrollView {
-                    LazyVStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 12) {
                         ForEach(app.messages) { msg in
                             MessageBubble(message: msg)
                                 .id(msg.id)
@@ -30,8 +30,6 @@ struct ChatPanelView: View {
                         }
                     }
                     .padding(16)
-                    // 注意: frame(maxWidth: .infinity) は LazyVStack の Lazy 性菽を無効化する
-                    // 全メッセージを一括レイアウトするため大話履歴で retain storm が発生する
                 }
                 // アニメーションなしでスクロール: テキスト震えを防ぐ
                 .onChange(of: app.messages.count) { _, _ in
