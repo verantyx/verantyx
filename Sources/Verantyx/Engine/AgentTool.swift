@@ -961,6 +961,18 @@ actor AgentToolExecutor {
                 try await Task.sleep(nanoseconds: 1_000_000_000) // Delay for UI reaction
                 let base64 = try await SafariVisionBridge.shared.takeScreenshot()
                 await CognitiveAnchorEngine.shared.setVisionScreenshot(base64)
+                
+                if cmd == "click" {
+                    return """
+                    [VISION_ACT: \(action)]
+                    Action performed. New screenshot injected.
+                    🔴 A red circle shows where your mouse clicked. 
+                    If the screen did not change, you probably missed the target.
+                    Search for the red cursor in this new screenshot, calculate the offset to the actual target, and try clicking again.
+                    Once you successfully hit the target, save the coordinates using [FORGE_SKILL] to make it a one-shot process next time.
+                    """
+                }
+
                 return "[VISION_ACT: \(action)]\nAction performed. New screenshot injected."
             } catch { return "[VISION ERROR] \(error.localizedDescription)" }
 

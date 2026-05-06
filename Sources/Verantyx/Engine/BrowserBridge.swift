@@ -597,7 +597,12 @@ class SafariVisionBridge {
                   let height = bounds["Height"] as? Double, height > 100 else { return false }
             return true
         }),
-              let windowID = windowInfo[kCGWindowNumber as String] as? CGWindowID else {
+              let windowID = windowInfo[kCGWindowNumber as String] as? CGWindowID,
+              let boundsDict = windowInfo[kCGWindowBounds as String] as? [String: Any],
+              let windowX = boundsDict["X"] as? Double,
+              let windowY = boundsDict["Y"] as? Double,
+              let logicalWidth = boundsDict["Width"] as? Double,
+              let logicalHeight = boundsDict["Height"] as? Double else {
             throw BrowserError.ioError("Could not find main window for \(appName)")
         }
 
@@ -605,8 +610,44 @@ class SafariVisionBridge {
             throw BrowserError.ioError("Failed to create image from window. Check Screen Recording permissions.")
         }
 
-        let bitmapRep = NSBitmapImageRep(cgImage: image)
-        guard let jpegData = bitmapRep.representation(using: .jpeg, properties: [.compressionFactor: 0.8]) else {
+        let pixelWidth = Double(image.width)
+        let pixelHeight = Double(image.height)
+        let scaleX = pixelWidth / logicalWidth
+        let scaleY = pixelHeight / logicalHeight
+
+        let nsImage = NSImage(cgImage: image, size: NSSize(width: pixelWidth, height: pixelHeight))
+        nsImage.lockFocus()
+
+        // Mouse location logic
+        let mouseLoc = NSEvent.mouseLocation
+        let screenHeight = NSScreen.screens.first?.frame.height ?? 0
+        let topYMouse = screenHeight - mouseLoc.y // Convert to top-left coordinate system
+
+        // Calculate relative to the window
+        let relativeX = mouseLoc.x - windowX
+        let relativeY = topYMouse - windowY
+
+        // If the mouse is inside the window
+        if relativeX >= 0 && relativeX <= logicalWidth && relativeY >= 0 && relativeY <= logicalHeight {
+            let pxX = relativeX * scaleX
+            // In nsImage context, origin is BOTTOM-LEFT.
+            let nsImageMouseY = pixelHeight - (relativeY * scaleY) // Invert Y for NSImage
+
+            let circleRect = NSRect(x: pxX - 10, y: nsImageMouseY - 10, width: 20, height: 20)
+            NSColor.red.setFill()
+            let path = NSBezierPath(ovalIn: circleRect)
+            path.fill()
+            
+            NSColor.white.setStroke()
+            path.lineWidth = 2
+            path.stroke()
+        }
+
+        nsImage.unlockFocus()
+
+        guard let tiffData = nsImage.tiffRepresentation,
+              let bitmapRep = NSBitmapImageRep(data: tiffData),
+              let jpegData = bitmapRep.representation(using: .jpeg, properties: [.compressionFactor: 0.8]) else {
             throw BrowserError.ioError("Failed to encode image to JPEG")
         }
 
