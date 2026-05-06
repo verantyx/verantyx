@@ -386,7 +386,7 @@ struct AgentToolParser {
         var resultLines: [String] = []
 
         for line in lines {
-            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
 
             if      let m = match(trimmed, pattern: #"^\[MKDIR:\s*([^\]]+)\]$"#) {
                 tools.append(.makeDir(expandHome(m)))
