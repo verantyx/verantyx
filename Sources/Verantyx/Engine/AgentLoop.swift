@@ -1431,8 +1431,8 @@ enum ModelTier: String, Sendable {
         case .nano:   return 2048
         case .small:  return 4096
         case .mid:    return 6144
-        case .large:  return 8192
-        case .giant:  return 12288
+        case .large:  return 16384
+        case .giant:  return 32768
         }
     }
 
