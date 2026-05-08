@@ -1,77 +1,73 @@
-# Verantyx 🧠
+# Verantyx: The Ultimate AI Control IDE
 
-**一晩でタスクを完遂する、ローカルMac専用の自己進化型 Neuro-Symbolic Swarm Agent**
+## Overview
 
-Verantyxは、単なるAIアシスタントではありません。あなたのMacのローカルリソース（M1/M2/M3/M4 Max）を極限まで使い切り、一晩で数週間分のエンジニアリングタスクを自律完遂する**自己進化型の群知能（Swarm）エージェント**です。
+Welcome to the unified **Verantyx** repository. This project is the culmination and consolidation of everything we have learned and built across multiple antecedent projects:
+- `verantyx`
+- `verantyx-logic`
+- `verantyx-cortex`
+- `tool-search-oss`
+- `verantyx-pure-through`
 
-## 🎯 Concept
+By merging these disparate engines, we have created a single, powerful platform whose sole, laser-focused theme is **"Controlling AI."** 
 
-現代のAIコーディングは、コンテキスト制限とハルシネーション（幻覚）に悩まされています。
-Verantyxはこれを解決するため、生物の脳の構造を模倣した **Neuro-Symbolic Architecture** を採用しました。
+This repository provides a unified macOS IDE (with a built-in CLI layer from `verantyx-cli`) designed to manage, steer, and safely execute autonomous AI agents. Instead of simply building an AI application, Verantyx is a meta-tool—an IDE *for* AI—allowing humans to direct agent loops, monitor deep contextual memory (JCross Tri-Layer Architecture), and securely authorize local and cloud LLM actions.
 
-- **Neuro（直感）:** 軽量かつ高速なローカルLLM（Gemma / BitNet等）による超並列ルーティングと瞬時の意思決定。
-- **Symbolic（論理）:** `JCross` 空間記憶と L1〜L3 キャッシュ層を用いた、決定論的かつ汚染ゼロのコンテキスト管理。
+## 🌟 Demo Video Area
 
-この2つを融合させることで、数万ターンに及ぶ自律ループでもコンテキストを崩壊させず、確実にプロジェクトを完遂へと導きます。
+> *Watch Verantyx in action. The video below demonstrates the autonomous Agent Loop, real-time streaming, and Gatekeeper intervention in the IDE.*
 
-## 📂 Architecture
+<p align="center">
+  <!-- To embed a local video or hosted video, use the video tag or markdown image link if it's a GIF. GitHub supports dragging and dropping .mov or .mp4 files directly here. -->
+  <video src="https://github.com/user-attachments/assets/your-video-id-here.mov" controls="controls" muted="muted" style="max-height:640px; width:100%; max-width: 800px;">
+    Your browser does not support the video tag.
+  </video>
+</p>
 
-今回、点在していた各神経モジュールを単一の「Verantyx モノレポ」として完全に統合しました。これらは互いに独立しつつも、MCP（Model Context Protocol）を通じて有機的に結合し、1つの巨大な Swarm を形成します。
+## ✨ What Can Verantyx Do?
 
-```mermaid
-graph TD
-    subgraph Swarm[Neuro-Symbolic Swarm]
-        direction TB
-        Core[core: 思考エンジン] -->|Command| CLI[cli: アプリケーション層]
-        Core -->|Spatial Routing| Cortex[cortex: 空間記憶]
-        Core -->|Context Flush| Memory[memory: コンテキスト汚染防止]
-        Core -->|Call| Tools[tools: ツール群]
-        
-        Cortex -->|JCross Read/Write| Memory
-        Tools -->|Tool Output| Cortex
-    end
+Verantyx is engineered to bring unparalleled transparency, security, and autonomy to your engineering workflows. Its capabilities include:
 
-    classDef default fill:#1E1E1E,stroke:#444,stroke-width:1px,color:#E0E0E0;
-    classDef core fill:#2D3748,stroke:#4A5568,stroke-width:2px,color:#E2E8F0;
-    classDef cortex fill:#2C7A7B,stroke:#319795,stroke-width:2px,color:#E6FFFA;
-    classDef memory fill:#742A2A,stroke:#9B2C2C,stroke-width:2px,color:#FFF5F5;
-    classDef tools fill:#744210,stroke:#975A16,stroke-width:2px,color:#FFFFF0;
-    
-    class Core core;
-    class Cortex cortex;
-    class Memory memory;
-    class Tools tools;
+- **Unified macOS IDE & CLI:** A native SwiftUI IDE that integrates the raw terminal power of `verantyx-cli`. Use the UI to visualize operations, or the CLI to integrate with Unix pipelines.
+- **Agent Loop Execution:** Run complex, multi-step ReAct loops locally (via Ollama/BitNet) or in the cloud (Anthropic Claude). The IDE streams real-time thinking (`<think>`) and tool execution statuses so you always know what the GPU is doing.
+- **JCross Tri-Layer Memory:** An autonomous spatial memory engine. Verantyx automatically compresses, indexes (Kanji topology), and stores past decisions into a unified `.jcross` knowledge graph, preventing context overflow and hallucination over thousands of turns.
+- **Gatekeeper Security:** Never blindly trust external APIs. The Gatekeeper intervenes and securely manages file access, obfuscating sensitive business logic into semantic intermediate representations (IR) before external LLMs ever see them.
+- **MCP (Model Context Protocol) Integration:** Natively exposes a suite of memory, search, and system management tools via MCP servers, allowing platforms like Claude Desktop and Antigravity to interface directly with your local workspace.
+- **Stealth Browser Automation (`verantyx-browser`):** A custom browser engine designed to emulate human biological data (mouse bezier curves, typo-driven typing algorithms) to bypass automated bot protections while researching and scraping data.
+
+## 📂 Project Structure
+
+This monorepo is structured to separate the core IDE, the autonomous logic cortex, and the external tool bindings:
+
+```text
+.
+├── cli/                 # The macOS Swift IDE and CLI app wrappers
+│   ├── VerantyxIDE/     # Main SwiftUI Application project (Verantyx.app)
+│   ├── verantyx-browser/# Rust-based stealth browser automation engine
+│   └── Verantyx-Logic/  # Legacy logic modules being migrated
+├── cortex/              # The brain: Agentic loop, JCross Memory, and MCP servers
+│   ├── src/verantyx/    # Core TypeScript orchestrators and memory engines
+│   ├── jcross-memory/   # Rust implementations for fast JCross memory parsing
+│   └── apps/ios/        # Experimental mobile companions
+├── tools/               # External tool definitions and OSS catalog
+└── README.md            # This file
 ```
 
-### 1. `core/` (思考エンジン)
-Swarm全体の「大脳皮質」。Gemma 4 26B などのローカルモデルを高速な `mlx-swift` や BitNetデーモンで駆動させます。
-Zero-Prefillによる超高速推論で、複数のワーカーエージェントを束ねて超並列でタスクを実行します。
+## 🚀 Getting Started
 
-### 2. `cortex/` & `cortex-ios/` (空間記憶)
-タスクの全体像やディレクトリ構造を `JCross` フォーマットの空間構造として保持します。
-フラットなテキストではなく、ディレクトリやファイルの「意味的な距離」をL1.5インデックスとしてグラフ化し、ワーカーが必要な記憶だけをミリ秒単位で引き出せるようにします。
+### 1. Download the Latest Release
+Head over to the [Releases](https://github.com/Ag3497120/verantyx-1/releases) page and download the latest `VerantyxIDE-x.x.x.dmg`.
 
-### 3. `memory/` (コンテキスト汚染防止)
-かつての `pure-through` プロジェクトを統合した、忘却と長期記憶の管理モジュール。
-無限ループ実行時にVRAM限界（OOM）を防ぐため、重要度（Zone）に応じて記憶を動的に L1（高速メモリ）から L3（ストレージ）へ退避・スワップします。
+### 2. Connect Your Agents
+Verantyx can act as an MCP Server for Antigravity or Claude Desktop. Configure your MCP settings to point to the built-in `cortex/src/verantyx/mcp/server.ts` to expose the JCross memory and workspace tools.
 
-### 4. `tools/` (ツール群)
-エージェントが下界と接触するための「手足」。
-`tool-search-oss` をベースとし、MCPサーバー群（ファイル操作、ウェブ検索、ターミナル実行など）をダイナミックに検索・ロードしてタスクを実行します。
-
-### 5. `cli/` (CLI & IDE)
-旧バージョンの Verantyx-CLI や IDE 機能が集約されたエントリーポイント。
-Swarm の自律駆動（AgentLoop）をホストし、人間が介入できるGUI/CUIインターフェースを提供します。
-
-## 🚀 Get Started
-
-Verantyx Swarm を起動して、圧倒的なパフォーマンスを体験してください：
-
+### 3. Build from Source
+If you wish to compile the IDE yourself:
 ```bash
-# SwarmエージェントのBootと再コンテキスト化
-cd cli
-npm install
-npm run dev
+cd cli/VerantyxIDE
+bash package_dmg.sh 1.4.6
 ```
+*(Requires Xcode 15+ and macOS 14.0+)*
 
-*あなたのMacが、眠らない最強のエンジニアリング・チームに進化します。*
+---
+*Your machine is no longer just a computer. With Verantyx, it is a tireless, controllable, and secure engineering swarm.*

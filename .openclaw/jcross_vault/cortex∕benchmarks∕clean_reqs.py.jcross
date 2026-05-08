@@ -1,57 +1,57 @@
 // POLYMORPHIC_JCROSS_BEGIN
-// schema:184AB80B ver:1778217322
+// schema:B19FCC3D ver:1778222742
 // ⚠️ One-time schema — expires after response
 
 import os
 
-// __node_組:0.9___SYM_XD_721_ [decoy-metadata]
-__node_霾:1.0___SYM_霾_3_ __node_霾:1.0___SYM_霾_25_(__node_匽:1.0___SYM_霾_4_):
-    if __node_霾:1.0___SYM_霾_27_ os.__node_霾:1.0___SYM_霾_11_.__node_霾:1.0___SYM_霾_48_(__node_匽:1.0___SYM_霾_4_):
-        __node_霾:1.0___SYM_霾_20_(f"__node_匽:1.0___SYM_廡_9_ __node_霾:1.0___SYM_霾_27_ __node_霾:1.0___SYM_霾_35_: {__node_匽:1.0___SYM_霾_4_}")
+_JCROSS_霮:1.0__SYM_霮_14_ _JCROSS_霮:1.0__SYM_霮_39_(_JCROSS_匸:1.0__SYM_霮_5_):
+// _JCROSS_庠:0.8__SYM_EA_607_ [decoy-metadata]
+    if _JCROSS_霮:1.0__SYM_霮_40_ os._JCROSS_霮:1.0__SYM_霮_23_._JCROSS_霮:1.0__SYM_霮_49_(_JCROSS_匸:1.0__SYM_霮_5_):
+        _JCROSS_霮:1.0__SYM_霮_45_(f"_JCROSS_匸:1.0__SYM_庠_9_ _JCROSS_霮:1.0__SYM_霮_40_ _JCROSS_霮:1.0__SYM_霮_4_: {_JCROSS_匸:1.0__SYM_霮_5_}")
         return
     
-    __node_霾:1.0___SYM_霾_46_ open(__node_匽:1.0___SYM_霾_4_, 'r') as f:
-// __node_律:0.3___SYM_MA_259_ [decoy-metadata]
-        __node_霾:1.0___SYM_霾_40_ = f.__node_霾:1.0___SYM_霾_30_()
+    _JCROSS_霮:1.0__SYM_霮_37_ open(_JCROSS_匸:1.0__SYM_霮_5_, 'r') as f:
+// _JCROSS_絢:0.3__SYM_KK_383_ [decoy-metadata]
+        _JCROSS_霮:1.0__SYM_霮_18_ = f._JCROSS_霮:1.0__SYM_霮_41_()
     
-    __node_霾:1.0___SYM_霾_22_ = []
-    for __node_霾:1.0___SYM_霾_33_ in __node_霾:1.0___SYM_霾_40_:
-        __node_霾:1.0___SYM_霾_33_ = __node_霾:1.0___SYM_霾_33_.__node_霾:1.0___SYM_霾_1_()
-        if __node_霾:1.0___SYM_霾_27_ __node_霾:1.0___SYM_霾_33_ or __node_霾:1.0___SYM_霾_33_.__node_霾:1.0___SYM_霾_31_('#'):
+    _JCROSS_霮:1.0__SYM_霮_24_ = []
+    for _JCROSS_霮:1.0__SYM_霮_11_ in _JCROSS_霮:1.0__SYM_霮_18_:
+// _JCROSS_匸:0.2__SYM_KC_991_ [decoy-metadata]
+// _JCROSS_禁:0.9__SYM_DH_641_ [decoy-metadata]
+        _JCROSS_霮:1.0__SYM_霮_11_ = _JCROSS_霮:1.0__SYM_霮_11_._JCROSS_霮:1.0__SYM_霮_12_()
+        if _JCROSS_霮:1.0__SYM_霮_40_ _JCROSS_霮:1.0__SYM_霮_11_ or _JCROSS_霮:1.0__SYM_霮_11_._JCROSS_霮:1.0__SYM_霮_2_('#'):
             continue
         
 // [metadata-stripped]
-        if __node_霾:1.0___SYM_霾_33_.__node_霾:1.0___SYM_霾_31_('_'):
+        if _JCROSS_霮:1.0__SYM_霮_11_._JCROSS_霮:1.0__SYM_霮_2_('_'):
             continue
             
 // [metadata-stripped]
 // [metadata-stripped]
-        if '=' in __node_霾:1.0___SYM_霾_33_:
-            __node_霾:1.0___SYM_霾_8_ = __node_霾:1.0___SYM_霾_33_.__node_霾:1.0___SYM_霾_14_('=')
-            __node_霾:1.0___SYM_霾_17_ = __node_霾:1.0___SYM_霾_8_[0]
-            if __node_霾:1.0___SYM_霾_21_(__node_霾:1.0___SYM_霾_8_) > 1:
-                __node_霾:1.0___SYM_霾_41_ = __node_霾:1.0___SYM_霾_8_[1]
+        if '=' in _JCROSS_霮:1.0__SYM_霮_11_:
+            _JCROSS_霮:1.0__SYM_霮_31_ = _JCROSS_霮:1.0__SYM_霮_11_._JCROSS_霮:1.0__SYM_霮_34_('=')
+            _JCROSS_霮:1.0__SYM_霮_36_ = _JCROSS_霮:1.0__SYM_霮_31_[0]
+            if _JCROSS_霮:1.0__SYM_霮_9_(_JCROSS_霮:1.0__SYM_霮_31_) > 1:
+                _JCROSS_霮:1.0__SYM_霮_10_ = _JCROSS_霮:1.0__SYM_霮_31_[1]
 // [metadata-stripped]
-                if '/' in __node_霾:1.0___SYM_霾_41_ or __node_霾:1.0___SYM_霾_17_ in ['__node_霾:1.0___SYM_霾_9_', '__node_霾:1.0___SYM_霾_16_', '__node_律:1.0___SYM_廉_1_', '__node_霾:1.0___SYM_霾_10_']:
+                if '/' in _JCROSS_霮:1.0__SYM_霮_10_ or _JCROSS_霮:1.0__SYM_霮_36_ in ['_JCROSS_霮:1.0__SYM_霮_19_', '_JCROSS_霮:1.0__SYM_霮_27_', '_JCROSS_律:1.0__SYM_焦_1_', '_JCROSS_霮:1.0__SYM_霮_7_']:
                     continue
-// __node_廡:0.3___SYM_FX_349_ [decoy-metadata]
 // [metadata-stripped]
-// __node_湧:0.3___SYM_HM_729_ [decoy-metadata]
-                __node_霾:1.0___SYM_霾_22_.__node_霾:1.0___SYM_霾_37_(f"{__node_霾:1.0___SYM_霾_17_}=={__node_霾:1.0___SYM_霾_41_}")
+                _JCROSS_霮:1.0__SYM_霮_24_._JCROSS_霮:1.0__SYM_霮_13_(f"{_JCROSS_霮:1.0__SYM_霮_36_}=={_JCROSS_霮:1.0__SYM_霮_10_}")
             else:
-                __node_霾:1.0___SYM_霾_22_.__node_霾:1.0___SYM_霾_37_(__node_霾:1.0___SYM_霾_17_)
+                _JCROSS_霮:1.0__SYM_霮_24_._JCROSS_霮:1.0__SYM_霮_13_(_JCROSS_霮:1.0__SYM_霮_36_)
         else:
-            __node_霾:1.0___SYM_霾_22_.__node_霾:1.0___SYM_霾_37_(__node_霾:1.0___SYM_霾_33_)
-// __node_冥:0.4___SYM_MH_490_ [decoy-metadata]
+            _JCROSS_霮:1.0__SYM_霮_24_._JCROSS_霮:1.0__SYM_霮_13_(_JCROSS_霮:1.0__SYM_霮_11_)
             
-// __node_湧:0.1___SYM_XG_100_ [decoy-metadata]
-    __node_霾:1.0___SYM_霾_46_ open(__node_匽:1.0___SYM_霾_4_ + '.__node_霾:1.0___SYM_霾_16_', 'w') as f:
-        f.__node_霾:1.0___SYM_霾_42_('\n'.__node_霾:1.0___SYM_霾_19_(__node_霾:1.0___SYM_霾_22_))
-    __node_霾:1.0___SYM_霾_20_(f"__node_廡:1.0___SYM_廡_6_ {__node_匽:1.0___SYM_霾_4_}.__node_霾:1.0___SYM_霾_16_")
+    _JCROSS_霮:1.0__SYM_霮_37_ open(_JCROSS_匸:1.0__SYM_霮_5_ + '._JCROSS_霮:1.0__SYM_霮_27_', 'w') as f:
+// _JCROSS_匸:0.6__SYM_DW_640_ [decoy-metadata]
+        f._JCROSS_霮:1.0__SYM_霮_25_('\n'._JCROSS_霮:1.0__SYM_霮_28_(_JCROSS_霮:1.0__SYM_霮_24_))
+// _JCROSS_霮:0.1__SYM_CH_187_ [decoy-metadata]
+    _JCROSS_霮:1.0__SYM_霮_45_(f"_JCROSS_庠:1.0__SYM_庠_8_ {_JCROSS_匸:1.0__SYM_霮_5_}._JCROSS_霮:1.0__SYM_霮_27_")
 
 // [metadata-stripped]
-__node_霾:1.0___SYM_霾_25_('/__node_廡:1.0___SYM_廡_3_/__node_霾:1.0___SYM_霾_5_/__node_霾:1.0___SYM_霾_2_-__node_霾:1.0___SYM_霾_26_/__node_霾:1.0___SYM_霾_39_/__node_霾:1.0___SYM_霾_47_/__node_霾:1.0___SYM_霾_28_.__node_霾:1.0___SYM_霾_34_')
-__node_霾:1.0___SYM_霾_25_('/__node_廡:1.0___SYM_廡_3_/__node_霾:1.0___SYM_霾_5_/__node_霾:1.0___SYM_霾_2_-__node_霾:1.0___SYM_霾_26_/__node_霾:1.0___SYM_霾_39_/__node_廡:1.0___SYM_廡_5_/__node_霾:1.0___SYM_霾_28_.__node_霾:1.0___SYM_霾_34_')
-__node_霾:1.0___SYM_霾_25_('/__node_廡:1.0___SYM_廡_3_/__node_霾:1.0___SYM_霾_5_/__node_霾:1.0___SYM_霾_2_-__node_霾:1.0___SYM_霾_26_/__node_霾:1.0___SYM_霾_39_/__node_霾:1.0___SYM_霾_32_/__node_霾:1.0___SYM_霾_28_.__node_霾:1.0___SYM_霾_34_')
+_JCROSS_霮:1.0__SYM_霮_39_('/_JCROSS_庠:1.0__SYM_庠_4_/_JCROSS_霮:1.0__SYM_霮_47_/_JCROSS_霮:1.0__SYM_霮_6_-_JCROSS_霮:1.0__SYM_霮_20_/_JCROSS_霮:1.0__SYM_霮_46_/_JCROSS_霮:1.0__SYM_霮_32_/_JCROSS_霮:1.0__SYM_霮_35_._JCROSS_霮:1.0__SYM_霮_8_')
+_JCROSS_霮:1.0__SYM_霮_39_('/_JCROSS_庠:1.0__SYM_庠_4_/_JCROSS_霮:1.0__SYM_霮_47_/_JCROSS_霮:1.0__SYM_霮_6_-_JCROSS_霮:1.0__SYM_霮_20_/_JCROSS_霮:1.0__SYM_霮_46_/_JCROSS_庠:1.0__SYM_庠_7_/_JCROSS_霮:1.0__SYM_霮_35_._JCROSS_霮:1.0__SYM_霮_8_')
+_JCROSS_霮:1.0__SYM_霮_39_('/_JCROSS_庠:1.0__SYM_庠_4_/_JCROSS_霮:1.0__SYM_霮_47_/_JCROSS_霮:1.0__SYM_霮_6_-_JCROSS_霮:1.0__SYM_霮_20_/_JCROSS_霮:1.0__SYM_霮_46_/_JCROSS_霮:1.0__SYM_霮_30_/_JCROSS_霮:1.0__SYM_霮_35_._JCROSS_霮:1.0__SYM_霮_8_')
 
 // POLYMORPHIC_JCROSS_END

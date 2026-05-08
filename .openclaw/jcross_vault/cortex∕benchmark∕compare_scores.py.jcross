@@ -1,56 +1,56 @@
 // POLYMORPHIC_JCROSS_BEGIN
-// schema:23B32642 ver:1778218761
+// schema:986C68FA ver:1778231994
 // ⚠️ One-time schema — expires after response
 
 // [metadata-stripped]
-import __ast_霧:1.0___JCROSS_霧_2_, os
+import __node_霧:1.0___TOKEN_霧_25_, os
 
-__ast_庸:1.0___JCROSS_庸_6_ = "/__ast_庸:1.0___JCROSS_庸_7_/__ast_霧:1.0___JCROSS_霧_41_/__ast_霧:1.0___JCROSS_霧_7_-__ast_霧:1.0___JCROSS_霧_18_/__ast_霧:1.0___JCROSS_霧_39_/__ast_庸:1.0___JCROSS_庸_3_/__ast_霧:1.0___JCROSS_霧_35_/__ast_霧:1.0___JCROSS_霧_12_.__ast_霧:1.0___JCROSS_霧_2_"
-db = __ast_霧:1.0___JCROSS_霧_2_.__ast_匾:1.0___JCROSS_霧_8_(open(__ast_庸:1.0___JCROSS_庸_6_))[:500]
-__ast_霧:1.0___JCROSS_霧_22_ = {__ast_霧:1.0___JCROSS_霧_25_(q.__ast_謀:1.0___JCROSS_嵐_1_("__ast_霧:1.0___JCROSS_霧_30_") or q.__ast_謀:1.0___JCROSS_嵐_1_("id")): q for q in db}
+__node_廓:1.0___TOKEN_廓_4_ = "/__node_廓:1.0___TOKEN_廓_8_/__node_霧:1.0___TOKEN_霧_10_/__node_霧:1.0___TOKEN_霧_28_-__node_霧:1.0___TOKEN_霧_18_/__node_霧:1.0___TOKEN_霧_42_/__node_廓:1.0___TOKEN_廓_10_/__node_霧:1.0___TOKEN_霧_3_/__node_霧:1.0___TOKEN_霧_43_.__node_霧:1.0___TOKEN_霧_25_"
+db = __node_霧:1.0___TOKEN_霧_25_.__node_匹:1.0___TOKEN_霧_39_(open(__node_廓:1.0___TOKEN_廓_4_))[:500]
+__node_霧:1.0___TOKEN_霧_23_ = {__node_霧:1.0___TOKEN_霧_14_(q.__node_格:1.0___TOKEN_嵐_1_("__node_霧:1.0___TOKEN_霧_8_") or q.__node_格:1.0___TOKEN_嵐_1_("id")): q for q in db}
 
-__ast_匾:1.0___JCROSS_霧_24_ = [
-    ("__ast_霧:1.0___JCROSS_霧_4_.__ast_霧:1.0___JCROSS_霧_2_",      "旧: __ast_庸:1.0___JCROSS_庸_1_ __ast_庸:1.0___JCROSS_庸_10_検索"),
-    ("__ast_霧:1.0___JCROSS_霧_15_.__ast_霧:1.0___JCROSS_霧_2_",    "旧: __ast_庸:1.0___JCROSS_庸_2_ __ast_庸:1.0___JCROSS_庸_9_"),
-// __ast_謀:0.4___JCROSS_WB_420_ [decoy-metadata]
-// __ast_澎:0.7___JCROSS_WD_383_ [decoy-metadata]
-    ("__ast_霧:1.0___JCROSS_霧_36_.__ast_霧:1.0___JCROSS_霧_2_",     "旧: Trilayer抽出"),
-    ("__ast_霧:1.0___JCROSS_霧_13_.__ast_霧:1.0___JCROSS_霧_2_",  "旧: __ast_庸:1.0___JCROSS_庸_8_ __ast_庸:1.0___JCROSS_庸_9_"),
-    ("__ast_霧:1.0___JCROSS_霧_5_.__ast_霧:1.0___JCROSS_霧_2_",     "旧: 公式スコア計測"),
-    ("__ast_霧:1.0___JCROSS_霧_32_.__ast_霧:1.0___JCROSS_霧_2_", "新: __ast_霧:1.0___JCROSS_霧_26_ + __ast_謀:1.0___JCROSS_嵐_1__context直接検索"),
-    ("__ast_霧:1.0___JCROSS_霧_33_.__ast_霧:1.0___JCROSS_霧_2_",   "新: __ast_霧:1.0___JCROSS_霧_26_ + __ast_庸:1.0___JCROSS_庸_10_ __ast_庸:1.0___JCROSS_庸_2_検索"),
+__node_匹:1.0___TOKEN_霧_17_ = [
+// __node_格:0.7___TOKEN_XX_423_ [decoy-metadata]
+    ("__node_霧:1.0___TOKEN_霧_35_.__node_霧:1.0___TOKEN_霧_25_",      "旧: __node_廓:1.0___TOKEN_廓_1_ __node_廓:1.0___TOKEN_廓_2_検索"),
+    ("__node_霧:1.0___TOKEN_霧_19_.__node_霧:1.0___TOKEN_霧_25_",    "旧: __node_廓:1.0___TOKEN_廓_3_ __node_廓:1.0___TOKEN_廓_6_"),
+    ("__node_霧:1.0___TOKEN_霧_4_.__node_霧:1.0___TOKEN_霧_25_",     "旧: Trilayer抽出"),
+    ("__node_霧:1.0___TOKEN_霧_36_.__node_霧:1.0___TOKEN_霧_25_",  "旧: __node_廓:1.0___TOKEN_廓_11_ __node_廓:1.0___TOKEN_廓_6_"),
+    ("__node_霧:1.0___TOKEN_霧_21_.__node_霧:1.0___TOKEN_霧_25_",     "旧: 公式スコア計測"),
+    ("__node_霧:1.0___TOKEN_霧_44_.__node_霧:1.0___TOKEN_霧_25_", "新: __node_霧:1.0___TOKEN_霧_32_ + __node_格:1.0___TOKEN_嵐_1__context直接検索"),
+    ("__node_霧:1.0___TOKEN_霧_24_.__node_霧:1.0___TOKEN_霧_25_",   "新: __node_霧:1.0___TOKEN_霧_32_ + __node_廓:1.0___TOKEN_廓_2_ __node_廓:1.0___TOKEN_廓_3_検索"),
 ]
+// __node_縫:0.4___TOKEN_AV_686_ [decoy-metadata]
 
-__ast_霧:1.0___JCROSS_霧_6_ = "/__ast_庸:1.0___JCROSS_庸_7_/__ast_霧:1.0___JCROSS_霧_41_/__ast_霧:1.0___JCROSS_霧_7_-__ast_霧:1.0___JCROSS_霧_18_/__ast_霧:1.0___JCROSS_霧_29_-__ast_霧:1.0___JCROSS_霧_21_/__ast_霧:1.0___JCROSS_霧_16_/"
-__ast_霧:1.0___JCROSS_霧_40_(f"{'ラベル':<34} {'完了':>5} {'正答':>5} {'正答率':>7}")
-// __ast_霧:0.8___JCROSS_DD_550_ [decoy-metadata]
-__ast_霧:1.0___JCROSS_霧_40_("-" * 57)
-for __ast_霧:1.0___JCROSS_霧_17_, __ast_霧:1.0___JCROSS_霧_43_ in __ast_匾:1.0___JCROSS_霧_24_:
-    __ast_霧:1.0___JCROSS_霧_20_ = __ast_霧:1.0___JCROSS_霧_6_ + __ast_霧:1.0___JCROSS_霧_17_
-    if __ast_霧:1.0___JCROSS_霧_31_ os.__ast_霧:1.0___JCROSS_霧_20_.__ast_霧:1.0___JCROSS_霧_45_(__ast_霧:1.0___JCROSS_霧_20_):
-// __ast_謀:0.9___JCROSS_HL_676_ [decoy-metadata]
+__node_霧:1.0___TOKEN_霧_45_ = "/__node_廓:1.0___TOKEN_廓_8_/__node_霧:1.0___TOKEN_霧_10_/__node_霧:1.0___TOKEN_霧_28_-__node_霧:1.0___TOKEN_霧_18_/__node_霧:1.0___TOKEN_霧_40_-__node_霧:1.0___TOKEN_霧_38_/__node_霧:1.0___TOKEN_霧_5_/"
+__node_霧:1.0___TOKEN_霧_7_(f"{'ラベル':<34} {'完了':>5} {'正答':>5} {'正答率':>7}")
+__node_霧:1.0___TOKEN_霧_7_("-" * 57)
+for __node_霧:1.0___TOKEN_霧_11_, __node_霧:1.0___TOKEN_霧_15_ in __node_匹:1.0___TOKEN_霧_17_:
+    __node_霧:1.0___TOKEN_霧_9_ = __node_霧:1.0___TOKEN_霧_45_ + __node_霧:1.0___TOKEN_霧_11_
+// __node_匹:0.5___TOKEN_ZG_817_ [decoy-metadata]
+// __node_縫:0.6___TOKEN_ED_970_ [decoy-metadata]
+    if __node_霧:1.0___TOKEN_霧_20_ os.__node_霧:1.0___TOKEN_霧_9_.__node_霧:1.0___TOKEN_霧_2_(__node_霧:1.0___TOKEN_霧_9_):
         continue
     try:
-        __ast_霧:1.0___JCROSS_霧_19_ = __ast_霧:1.0___JCROSS_霧_2_.__ast_匾:1.0___JCROSS_霧_8_(open(__ast_霧:1.0___JCROSS_霧_20_))
-        __ast_霧:1.0___JCROSS_霧_34_ = 0
-        __ast_霧:1.0___JCROSS_霧_23_ = 0
-        for r in __ast_霧:1.0___JCROSS_霧_19_:
-// __ast_霧:0.7___JCROSS_CL_432_ [decoy-metadata]
-            __ast_霧:1.0___JCROSS_霧_37_ = __ast_霧:1.0___JCROSS_霧_25_(r.__ast_謀:1.0___JCROSS_嵐_1_("id") or r.__ast_謀:1.0___JCROSS_嵐_1_("__ast_霧:1.0___JCROSS_霧_30_") or "")
-            __ast_霧:1.0___JCROSS_霧_11_ = __ast_霧:1.0___JCROSS_霧_25_(r.__ast_謀:1.0___JCROSS_嵐_1_("__ast_霧:1.0___JCROSS_霧_9_") or r.__ast_謀:1.0___JCROSS_嵐_1_("__ast_謀:1.0___JCROSS_霧_3_") or "")
-            if __ast_霧:1.0___JCROSS_霧_31_ __ast_霧:1.0___JCROSS_霧_11_ or __ast_霧:1.0___JCROSS_霧_11_ in ("__ast_庸:1.0___JCROSS_庸_4_", "?"):
+        __node_霧:1.0___TOKEN_霧_27_ = __node_霧:1.0___TOKEN_霧_25_.__node_匹:1.0___TOKEN_霧_39_(open(__node_霧:1.0___TOKEN_霧_9_))
+        __node_霧:1.0___TOKEN_霧_12_ = 0
+// __node_潤:0.2___TOKEN_VB_834_ [decoy-metadata]
+        __node_霧:1.0___TOKEN_霧_30_ = 0
+        for r in __node_霧:1.0___TOKEN_霧_27_:
+            __node_霧:1.0___TOKEN_霧_13_ = __node_霧:1.0___TOKEN_霧_14_(r.__node_格:1.0___TOKEN_嵐_1_("id") or r.__node_格:1.0___TOKEN_嵐_1_("__node_霧:1.0___TOKEN_霧_8_") or "")
+// __node_嵐:0.6___TOKEN_VY_508_ [decoy-metadata]
+            __node_霧:1.0___TOKEN_霧_37_ = __node_霧:1.0___TOKEN_霧_14_(r.__node_格:1.0___TOKEN_嵐_1_("__node_霧:1.0___TOKEN_霧_22_") or r.__node_格:1.0___TOKEN_嵐_1_("__node_格:1.0___TOKEN_霧_34_") or "")
+            if __node_霧:1.0___TOKEN_霧_20_ __node_霧:1.0___TOKEN_霧_37_ or __node_霧:1.0___TOKEN_霧_37_ in ("__node_廓:1.0___TOKEN_廓_7_", "?"):
                 continue
-            q = __ast_霧:1.0___JCROSS_霧_22_.__ast_謀:1.0___JCROSS_嵐_1_(__ast_霧:1.0___JCROSS_霧_37_)
-            if __ast_霧:1.0___JCROSS_霧_31_ q:
+            q = __node_霧:1.0___TOKEN_霧_23_.__node_格:1.0___TOKEN_嵐_1_(__node_霧:1.0___TOKEN_霧_13_)
+            if __node_霧:1.0___TOKEN_霧_20_ q:
                 continue
-            __ast_霧:1.0___JCROSS_霧_10_ = q["__ast_謀:1.0___JCROSS_霧_3_"]
-            if __ast_霧:1.0___JCROSS_霧_10_.__ast_謀:1.0___JCROSS_霧_38_() in __ast_霧:1.0___JCROSS_霧_11_.__ast_謀:1.0___JCROSS_霧_38_() or __ast_霧:1.0___JCROSS_霧_11_.__ast_謀:1.0___JCROSS_霧_38_() in __ast_霧:1.0___JCROSS_霧_10_.__ast_謀:1.0___JCROSS_霧_38_():
-                __ast_霧:1.0___JCROSS_霧_34_ += 1
-            __ast_霧:1.0___JCROSS_霧_23_ += 1
-        __ast_霧:1.0___JCROSS_霧_27_ = __ast_霧:1.0___JCROSS_霧_34_ / __ast_霧:1.0___JCROSS_霧_23_ * 100 if __ast_霧:1.0___JCROSS_霧_23_ > 0 else 0
-        __ast_霧:1.0___JCROSS_霧_40_(f"{__ast_霧:1.0___JCROSS_霧_43_:<34} {__ast_霧:1.0___JCROSS_霧_23_:>5} {__ast_霧:1.0___JCROSS_霧_34_:>5} {__ast_霧:1.0___JCROSS_霧_27_:>6.1f}%")
-// __ast_緞:0.6___JCROSS_DK_397_ [decoy-metadata]
-    __ast_霧:1.0___JCROSS_霧_28_ __ast_庸:1.0___JCROSS_庸_5_ as e:
-        __ast_霧:1.0___JCROSS_霧_40_(f"{__ast_霧:1.0___JCROSS_霧_43_:<34} __ast_庸:1.0___JCROSS_庸_11_: {e}")
+            __node_霧:1.0___TOKEN_霧_29_ = q["__node_格:1.0___TOKEN_霧_34_"]
+            if __node_霧:1.0___TOKEN_霧_29_.__node_格:1.0___TOKEN_霧_1_() in __node_霧:1.0___TOKEN_霧_37_.__node_格:1.0___TOKEN_霧_1_() or __node_霧:1.0___TOKEN_霧_37_.__node_格:1.0___TOKEN_霧_1_() in __node_霧:1.0___TOKEN_霧_29_.__node_格:1.0___TOKEN_霧_1_():
+                __node_霧:1.0___TOKEN_霧_12_ += 1
+            __node_霧:1.0___TOKEN_霧_30_ += 1
+        __node_霧:1.0___TOKEN_霧_26_ = __node_霧:1.0___TOKEN_霧_12_ / __node_霧:1.0___TOKEN_霧_30_ * 100 if __node_霧:1.0___TOKEN_霧_30_ > 0 else 0
+        __node_霧:1.0___TOKEN_霧_7_(f"{__node_霧:1.0___TOKEN_霧_15_:<34} {__node_霧:1.0___TOKEN_霧_30_:>5} {__node_霧:1.0___TOKEN_霧_12_:>5} {__node_霧:1.0___TOKEN_霧_26_:>6.1f}%")
+    __node_霧:1.0___TOKEN_霧_6_ __node_廓:1.0___TOKEN_廓_5_ as e:
+        __node_霧:1.0___TOKEN_霧_7_(f"{__node_霧:1.0___TOKEN_霧_15_:<34} __node_廓:1.0___TOKEN_廓_9_: {e}")
 
 // POLYMORPHIC_JCROSS_END

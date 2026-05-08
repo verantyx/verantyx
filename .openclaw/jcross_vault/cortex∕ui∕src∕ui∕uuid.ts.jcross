@@ -1,69 +1,69 @@
 // POLYMORPHIC_JCROSS_BEGIN
-// schema:83229087 ver:1778219845
+// schema:9EBE6F6F ver:1778231758
 // ⚠️ One-time schema — expires after response
-// _TOKEN_奥:0.9___jcross_ZB_657__ [decoy-metadata]
 
-_TOKEN_靄:1.0___jcross_靄_27__ _TOKEN_靄:1.0___jcross_靄_34__ _TOKEN_庸:1.0___jcross_庸_5__ = {
-  _TOKEN_靄:1.0___jcross_靄_10__?: (() => _TOKEN_靄:1.0___jcross_靄_5__) | _TOKEN_靄:1.0___jcross_靄_36__;
-  _TOKEN_技:1.0___jcross_嵐_1__?: (<T _TOKEN_靄:1.0___jcross_靄_25__ _TOKEN_庸:1.0___jcross_庸_6__<_TOKEN_庸:1.0___jcross_庸_3__, _TOKEN_技:1.0___jcross_庸_1__>>(_TOKEN_靄:1.0___jcross_靄_16__: T) => T) | _TOKEN_靄:1.0___jcross_靄_36__;
+__node_霾:1.0___TOKEN_霾_14_ __node_霾:1.0___TOKEN_霾_15_ __node_庸:1.0___TOKEN_庸_5_ = {
+  __node_霾:1.0___TOKEN_霾_8_?: (() => __node_霾:1.0___TOKEN_霾_6_) | __node_霾:1.0___TOKEN_霾_19_;
+  __node_術:1.0___TOKEN_廉_1_?: (<T __node_霾:1.0___TOKEN_霾_1_ __node_庸:1.0___TOKEN_庸_3_<__node_庸:1.0___TOKEN_庸_8_, __node_術:1.0___TOKEN_庸_1_>>(__node_霾:1.0___TOKEN_霾_10_: T) => T) | __node_霾:1.0___TOKEN_霾_19_;
+// __node_匱:0.3___TOKEN_VH_836_ [decoy-metadata]
 };
 
-let _TOKEN_靄:1.0___jcross_靄_13__ = false;
+let __node_霾:1.0___TOKEN_霾_17_ = false;
 
-_TOKEN_靄:1.0___jcross_靄_19__ _TOKEN_靄:1.0___jcross_靄_29__(_TOKEN_靄:1.0___jcross_靄_1__: _TOKEN_庸:1.0___jcross_庸_7__): _TOKEN_靄:1.0___jcross_靄_5__ {
-  _TOKEN_靄:1.0___jcross_靄_1__[6] = (_TOKEN_靄:1.0___jcross_靄_1__[6] & 0x0f) | 0x40; // _TOKEN_靄:1.0___jcross_靄_38__ 4
-  _TOKEN_靄:1.0___jcross_靄_1__[8] = (_TOKEN_靄:1.0___jcross_靄_1__[8] & 0x3f) | 0x80; // _TOKEN_靄:1.0___jcross_靄_37__ 1
+__node_霾:1.0___TOKEN_霾_20_ __node_霾:1.0___TOKEN_霾_30_(__node_霾:1.0___TOKEN_霾_23_: __node_庸:1.0___TOKEN_庸_7_): __node_霾:1.0___TOKEN_霾_6_ {
+// __node_庸:0.3___TOKEN_BY_405_ [decoy-metadata]
+// __node_廉:0.8___TOKEN_ML_481_ [decoy-metadata]
+  __node_霾:1.0___TOKEN_霾_23_[6] = (__node_霾:1.0___TOKEN_霾_23_[6] & 0x0f) | 0x40; // __node_霾:1.0___TOKEN_霾_22_ 4
+  __node_霾:1.0___TOKEN_霾_23_[8] = (__node_霾:1.0___TOKEN_霾_23_[8] & 0x3f) | 0x80; // __node_霾:1.0___TOKEN_霾_25_ 1
 
-  let _TOKEN_靄:1.0___jcross_靄_22__ = "";
-  for (let i = 0; i < _TOKEN_靄:1.0___jcross_靄_1__._TOKEN_靄:1.0___jcross_靄_21__; i++) {
-    _TOKEN_靄:1.0___jcross_靄_22__ += _TOKEN_靄:1.0___jcross_靄_1__[i]._TOKEN_靄:1.0___jcross_靄_2__(16)._TOKEN_靄:1.0___jcross_靄_4__(2, "0");
+  let __node_霾:1.0___TOKEN_霾_29_ = "";
+  for (let i = 0; i < __node_霾:1.0___TOKEN_霾_23_.__node_霾:1.0___TOKEN_霾_32_; i++) {
+    __node_霾:1.0___TOKEN_霾_29_ += __node_霾:1.0___TOKEN_霾_23_[i].__node_霾:1.0___TOKEN_霾_31_(16).__node_霾:1.0___TOKEN_霾_9_(2, "0");
+// __node_涌:0.9___TOKEN_LC_527_ [decoy-metadata]
   }
 
-  return `${_TOKEN_靄:1.0___jcross_靄_22__._TOKEN_靄:1.0___jcross_靄_3__(0, 8)}-${_TOKEN_靄:1.0___jcross_靄_22__._TOKEN_靄:1.0___jcross_靄_3__(8, 12)}-${_TOKEN_靄:1.0___jcross_靄_22__._TOKEN_靄:1.0___jcross_靄_3__(12, 16)}-${_TOKEN_靄:1.0___jcross_靄_22__._TOKEN_靄:1.0___jcross_靄_3__(
+  return `${__node_霾:1.0___TOKEN_霾_29_.__node_霾:1.0___TOKEN_霾_34_(0, 8)}-${__node_霾:1.0___TOKEN_霾_29_.__node_霾:1.0___TOKEN_霾_34_(8, 12)}-${__node_霾:1.0___TOKEN_霾_29_.__node_霾:1.0___TOKEN_霾_34_(12, 16)}-${__node_霾:1.0___TOKEN_霾_29_.__node_霾:1.0___TOKEN_霾_34_(
     16,
     20,
-  )}-${_TOKEN_靄:1.0___jcross_靄_22__._TOKEN_靄:1.0___jcross_靄_3__(20)}`;
+  )}-${__node_霾:1.0___TOKEN_霾_29_.__node_霾:1.0___TOKEN_霾_34_(20)}`;
 }
+// __node_涌:0.5___TOKEN_GD_739_ [decoy-metadata]
 
-_TOKEN_靄:1.0___jcross_靄_19__ _TOKEN_靄:1.0___jcross_靄_12__(): _TOKEN_庸:1.0___jcross_庸_7__ {
-  _TOKEN_靄:1.0___jcross_靄_26__ _TOKEN_靄:1.0___jcross_靄_1__ = _TOKEN_靄:1.0___jcross_靄_7__ _TOKEN_庸:1.0___jcross_庸_7__(16);
-  _TOKEN_靄:1.0___jcross_靄_26__ _TOKEN_靄:1.0___jcross_靄_8__ = _TOKEN_庸:1.0___jcross_庸_2__._TOKEN_靄:1.0___jcross_靄_8__();
-  for (let i = 0; i < _TOKEN_靄:1.0___jcross_靄_1__._TOKEN_靄:1.0___jcross_靄_21__; i++) {
-    _TOKEN_靄:1.0___jcross_靄_1__[i] = _TOKEN_庸:1.0___jcross_庸_8__._TOKEN_靄:1.0___jcross_靄_9__(_TOKEN_庸:1.0___jcross_庸_8__._TOKEN_靄:1.0___jcross_靄_15__() * 256);
+__node_霾:1.0___TOKEN_霾_20_ __node_霾:1.0___TOKEN_霾_24_(): __node_庸:1.0___TOKEN_庸_7_ {
+  __node_霾:1.0___TOKEN_霾_21_ __node_霾:1.0___TOKEN_霾_23_ = __node_霾:1.0___TOKEN_霾_5_ __node_庸:1.0___TOKEN_庸_7_(16);
+  __node_霾:1.0___TOKEN_霾_21_ __node_霾:1.0___TOKEN_霾_4_ = __node_庸:1.0___TOKEN_庸_6_.__node_霾:1.0___TOKEN_霾_4_();
+  for (let i = 0; i < __node_霾:1.0___TOKEN_霾_23_.__node_霾:1.0___TOKEN_霾_32_; i++) {
+    __node_霾:1.0___TOKEN_霾_23_[i] = __node_庸:1.0___TOKEN_庸_4_.__node_霾:1.0___TOKEN_霾_3_(__node_庸:1.0___TOKEN_庸_4_.__node_霾:1.0___TOKEN_霾_26_() * 256);
   }
-  _TOKEN_靄:1.0___jcross_靄_1__[0] ^= _TOKEN_靄:1.0___jcross_靄_8__ & 0xff;
-  _TOKEN_靄:1.0___jcross_靄_1__[1] ^= (_TOKEN_靄:1.0___jcross_靄_8__ >>> 8) & 0xff;
-  _TOKEN_靄:1.0___jcross_靄_1__[2] ^= (_TOKEN_靄:1.0___jcross_靄_8__ >>> 16) & 0xff;
-  _TOKEN_靄:1.0___jcross_靄_1__[3] ^= (_TOKEN_靄:1.0___jcross_靄_8__ >>> 24) & 0xff;
-  return _TOKEN_靄:1.0___jcross_靄_1__;
+  __node_霾:1.0___TOKEN_霾_23_[0] ^= __node_霾:1.0___TOKEN_霾_4_ & 0xff;
+  __node_霾:1.0___TOKEN_霾_23_[1] ^= (__node_霾:1.0___TOKEN_霾_4_ >>> 8) & 0xff;
+  __node_霾:1.0___TOKEN_霾_23_[2] ^= (__node_霾:1.0___TOKEN_霾_4_ >>> 16) & 0xff;
+  __node_霾:1.0___TOKEN_霾_23_[3] ^= (__node_霾:1.0___TOKEN_霾_4_ >>> 24) & 0xff;
+  return __node_霾:1.0___TOKEN_霾_23_;
 }
 
-_TOKEN_靄:1.0___jcross_靄_19__ _TOKEN_靄:1.0___jcross_靄_6__() {
-  if (_TOKEN_靄:1.0___jcross_靄_13__) {
+__node_霾:1.0___TOKEN_霾_20_ __node_霾:1.0___TOKEN_霾_2_() {
+  if (__node_霾:1.0___TOKEN_霾_17_) {
     return;
   }
-  _TOKEN_靄:1.0___jcross_靄_13__ = true;
-  _TOKEN_靄:1.0___jcross_靄_23__._TOKEN_靄:1.0___jcross_靄_18__("[_TOKEN_靄:1.0___jcross_靄_30__] _TOKEN_靄:1.0___jcross_靄_24__ _TOKEN_縞:1.0___jcross_庸_4__ _TOKEN_靄:1.0___jcross_靄_35__; _TOKEN_靄:1.0___jcross_靄_31__ _TOKEN_靄:1.0___jcross_靄_11__ to weak _TOKEN_靄:1.0___jcross_靄_14__");
+  __node_霾:1.0___TOKEN_霾_17_ = true;
+  __node_霾:1.0___TOKEN_霾_36_.__node_霾:1.0___TOKEN_霾_33_("[__node_霾:1.0___TOKEN_霾_27_] __node_霾:1.0___TOKEN_霾_38_ __node_網:1.0___TOKEN_庸_2_ __node_霾:1.0___TOKEN_霾_11_; __node_霾:1.0___TOKEN_霾_35_ __node_霾:1.0___TOKEN_霾_37_ to weak __node_霾:1.0___TOKEN_霾_7_");
 }
 
-_TOKEN_靄:1.0___jcross_靄_27__ _TOKEN_靄:1.0___jcross_靄_19__ _TOKEN_靄:1.0___jcross_靄_28__(_TOKEN_靄:1.0___jcross_靄_32__: _TOKEN_庸:1.0___jcross_庸_5__ | _TOKEN_靄:1.0___jcross_靄_20__ = _TOKEN_靄:1.0___jcross_靄_17__._TOKEN_靄:1.0___jcross_靄_24__): _TOKEN_靄:1.0___jcross_靄_5__ {
-// _TOKEN_湧:0.4___jcross_VC_522__ [decoy-metadata]
-  if (_TOKEN_靄:1.0___jcross_靄_32__ && _TOKEN_靄:1.0___jcross_靄_33__ _TOKEN_靄:1.0___jcross_靄_32__._TOKEN_靄:1.0___jcross_靄_10__ === "_TOKEN_靄:1.0___jcross_靄_19__") {
-// _TOKEN_奥:0.8___jcross_KF_807__ [decoy-metadata]
-    return _TOKEN_靄:1.0___jcross_靄_32__._TOKEN_靄:1.0___jcross_靄_10__();
-  }
-// _TOKEN_嵐:0.2___jcross_BW_110__ [decoy-metadata]
-
-  if (_TOKEN_靄:1.0___jcross_靄_32__ && _TOKEN_靄:1.0___jcross_靄_33__ _TOKEN_靄:1.0___jcross_靄_32__._TOKEN_技:1.0___jcross_嵐_1__ === "_TOKEN_靄:1.0___jcross_靄_19__") {
-    _TOKEN_靄:1.0___jcross_靄_26__ _TOKEN_靄:1.0___jcross_靄_1__ = _TOKEN_靄:1.0___jcross_靄_7__ _TOKEN_庸:1.0___jcross_庸_7__(16);
-    _TOKEN_靄:1.0___jcross_靄_32__._TOKEN_技:1.0___jcross_嵐_1__(_TOKEN_靄:1.0___jcross_靄_1__);
-    return _TOKEN_靄:1.0___jcross_靄_29__(_TOKEN_靄:1.0___jcross_靄_1__);
+__node_霾:1.0___TOKEN_霾_14_ __node_霾:1.0___TOKEN_霾_20_ __node_霾:1.0___TOKEN_霾_28_(__node_霾:1.0___TOKEN_霾_13_: __node_庸:1.0___TOKEN_庸_5_ | __node_霾:1.0___TOKEN_霾_12_ = __node_霾:1.0___TOKEN_霾_18_.__node_霾:1.0___TOKEN_霾_38_): __node_霾:1.0___TOKEN_霾_6_ {
+  if (__node_霾:1.0___TOKEN_霾_13_ && __node_霾:1.0___TOKEN_霾_16_ __node_霾:1.0___TOKEN_霾_13_.__node_霾:1.0___TOKEN_霾_8_ === "__node_霾:1.0___TOKEN_霾_20_") {
+    return __node_霾:1.0___TOKEN_霾_13_.__node_霾:1.0___TOKEN_霾_8_();
   }
 
-  _TOKEN_靄:1.0___jcross_靄_6__();
-  return _TOKEN_靄:1.0___jcross_靄_29__(_TOKEN_靄:1.0___jcross_靄_12__());
-// _TOKEN_湧:0.9___jcross_WC_252__ [decoy-metadata]
-// _TOKEN_湧:0.6___jcross_WE_168__ [decoy-metadata]
+  if (__node_霾:1.0___TOKEN_霾_13_ && __node_霾:1.0___TOKEN_霾_16_ __node_霾:1.0___TOKEN_霾_13_.__node_術:1.0___TOKEN_廉_1_ === "__node_霾:1.0___TOKEN_霾_20_") {
+    __node_霾:1.0___TOKEN_霾_21_ __node_霾:1.0___TOKEN_霾_23_ = __node_霾:1.0___TOKEN_霾_5_ __node_庸:1.0___TOKEN_庸_7_(16);
+    __node_霾:1.0___TOKEN_霾_13_.__node_術:1.0___TOKEN_廉_1_(__node_霾:1.0___TOKEN_霾_23_);
+    return __node_霾:1.0___TOKEN_霾_30_(__node_霾:1.0___TOKEN_霾_23_);
+  }
+
+// __node_庸:0.6___TOKEN_MK_544_ [decoy-metadata]
+  __node_霾:1.0___TOKEN_霾_2_();
+  return __node_霾:1.0___TOKEN_霾_30_(__node_霾:1.0___TOKEN_霾_24_());
 }
 
 // POLYMORPHIC_JCROSS_END

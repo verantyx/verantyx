@@ -1,57 +1,57 @@
 // POLYMORPHIC_JCROSS_BEGIN
-// schema:441EB925 ver:1778218761
-// _SYM_匽:0.7__TOKEN_VY_249_ [decoy-metadata]
-// _SYM_縺:0.7__TOKEN_GF_961_ [decoy-metadata]
+// schema:A5C14D92 ver:1778231994
 // ⚠️ One-time schema — expires after response
 
 // [metadata-stripped]
 """
-_SYM_策:1.0__TOKEN_燦_2_.py — _SYM_廓:1.0__TOKEN_廓_11_ 2 _SYM_策:1.0__TOKEN_霮_40_: _SYM_幽:1.0__TOKEN_霮_41_ _SYM_霮:1.0__TOKEN_霮_12_ _SYM_策:1.0__TOKEN_霮_6_ _SYM_霮:1.0__TOKEN_霮_59_.
-_SYM_廓:1.0__TOKEN_廓_1_: _SYM_霮:1.0__TOKEN_霮_57_ _SYM_策:1.0__TOKEN_燦_2_.py <_SYM_霮:1.0__TOKEN_霮_44_> <_SYM_幽:1.0__TOKEN_霮_47_> [_SYM_幽:1.0__TOKEN_霮_43_] ...
-_SYM_廓:1.0__TOKEN_廓_7_ _SYM_霮:1.0__TOKEN_霮_8_ _SYM_霮:1.0__TOKEN_霮_52_ _SYM_霮:1.0__TOKEN_霮_35_ _SYM_霮:1.0__TOKEN_霮_14_ _SYM_霮:1.0__TOKEN_霮_34_ _SYM_霮:1.0__TOKEN_霮_3_ _SYM_霮:1.0__TOKEN_霮_8_ _SYM_幽:1.0__TOKEN_霮_27_.
+_OPAQUE_道:1.0__SYM_曠_2_.py — _OPAQUE_墟:1.0__SYM_墟_6_ 2 _OPAQUE_道:1.0__SYM_礫_17_: _OPAQUE_窟:1.0__SYM_礫_10_ _OPAQUE_礫:1.0__SYM_礫_19_ _OPAQUE_道:1.0__SYM_礫_33_ _OPAQUE_礫:1.0__SYM_礫_51_.
+_OPAQUE_墟:1.0__SYM_墟_4_: _OPAQUE_礫:1.0__SYM_礫_24_ _OPAQUE_道:1.0__SYM_曠_2_.py <_OPAQUE_礫:1.0__SYM_礫_13_> <_OPAQUE_窟:1.0__SYM_礫_28_> [_OPAQUE_窟:1.0__SYM_礫_35_] ...
+_OPAQUE_墟:1.0__SYM_墟_2_ _OPAQUE_礫:1.0__SYM_礫_50_ _OPAQUE_礫:1.0__SYM_礫_32_ _OPAQUE_礫:1.0__SYM_礫_22_ _OPAQUE_礫:1.0__SYM_礫_39_ _OPAQUE_礫:1.0__SYM_礫_11_ _OPAQUE_礫:1.0__SYM_礫_34_ _OPAQUE_礫:1.0__SYM_礫_50_ _OPAQUE_窟:1.0__SYM_礫_58_.
 """
-import _SYM_霮:1.0__TOKEN_霮_2_, os, _SYM_霮:1.0__TOKEN_霮_37_, re
+import _OPAQUE_礫:1.0__SYM_礫_36_, os, _OPAQUE_礫:1.0__SYM_礫_44_, re
 
-_SYM_廓:1.0__TOKEN_廓_5_ = "/_SYM_廓:1.0__TOKEN_廓_6_/_SYM_霮:1.0__TOKEN_霮_56_/_SYM_霮:1.0__TOKEN_霮_9_-_SYM_霮:1.0__TOKEN_霮_26_/_SYM_霮:1.0__TOKEN_霮_54_/_SYM_廓:1.0__TOKEN_廓_3_/_SYM_霮:1.0__TOKEN_霮_48_/_SYM_霮:1.0__TOKEN_霮_19_._SYM_霮:1.0__TOKEN_霮_2_"
+_OPAQUE_墟:1.0__SYM_墟_3_ = "/_OPAQUE_墟:1.0__SYM_墟_7_/_OPAQUE_礫:1.0__SYM_礫_15_/_OPAQUE_礫:1.0__SYM_礫_38_-_OPAQUE_礫:1.0__SYM_礫_25_/_OPAQUE_礫:1.0__SYM_礫_54_/_OPAQUE_墟:1.0__SYM_墟_10_/_OPAQUE_礫:1.0__SYM_礫_5_/_OPAQUE_礫:1.0__SYM_礫_56_._OPAQUE_礫:1.0__SYM_礫_36_"
 
-// _SYM_縺:0.9__TOKEN_AW_378_ [decoy-metadata]
-if _SYM_霮:1.0__TOKEN_霮_16_(_SYM_霮:1.0__TOKEN_霮_37_._SYM_霮:1.0__TOKEN_霮_32_) < 3:
-    _SYM_霮:1.0__TOKEN_霮_55_("_SYM_廓:1.0__TOKEN_廓_1_: _SYM_霮:1.0__TOKEN_霮_57_ _SYM_策:1.0__TOKEN_燦_2_.py <_SYM_霮:1.0__TOKEN_霮_44_> <_SYM_幽:1.0__TOKEN_霮_47_> [_SYM_幽:1.0__TOKEN_霮_43_]...")
-    _SYM_霮:1.0__TOKEN_霮_37_._SYM_霮:1.0__TOKEN_霮_51_(1)
+// _OPAQUE_紬:0.7__SYM_ED_311_ [decoy-metadata]
+if _OPAQUE_礫:1.0__SYM_礫_52_(_OPAQUE_礫:1.0__SYM_礫_44_._OPAQUE_礫:1.0__SYM_礫_47_) < 3:
+    _OPAQUE_礫:1.0__SYM_礫_7_("_OPAQUE_墟:1.0__SYM_墟_4_: _OPAQUE_礫:1.0__SYM_礫_24_ _OPAQUE_道:1.0__SYM_曠_2_.py <_OPAQUE_礫:1.0__SYM_礫_13_> <_OPAQUE_窟:1.0__SYM_礫_28_> [_OPAQUE_窟:1.0__SYM_礫_35_]...")
+// _OPAQUE_紬:0.4__SYM_HA_451_ [decoy-metadata]
+// _OPAQUE_窟:0.5__SYM_KL_967_ [decoy-metadata]
+    _OPAQUE_礫:1.0__SYM_礫_44_._OPAQUE_礫:1.0__SYM_礫_59_(1)
 
-// _SYM_燦:0.9__TOKEN_GG_582_ [decoy-metadata]
-_SYM_霮:1.0__TOKEN_霮_33_      = _SYM_霮:1.0__TOKEN_霮_37_._SYM_霮:1.0__TOKEN_霮_32_[1]
-_SYM_幽:1.0__TOKEN_霮_27_ = [k._SYM_策:1.0__TOKEN_霮_50_() for k in _SYM_霮:1.0__TOKEN_霮_37_._SYM_霮:1.0__TOKEN_霮_32_[2:]]
+_OPAQUE_礫:1.0__SYM_礫_46_      = _OPAQUE_礫:1.0__SYM_礫_44_._OPAQUE_礫:1.0__SYM_礫_47_[1]
+_OPAQUE_窟:1.0__SYM_礫_58_ = [k._OPAQUE_道:1.0__SYM_礫_1_() for k in _OPAQUE_礫:1.0__SYM_礫_44_._OPAQUE_礫:1.0__SYM_礫_47_[2:]]
 
-// _SYM_霮:0.3__TOKEN_EV_606_ [decoy-metadata]
-db = _SYM_霮:1.0__TOKEN_霮_2_._SYM_匽:1.0__TOKEN_霮_13_(open(_SYM_廓:1.0__TOKEN_廓_5_, _SYM_霮:1.0__TOKEN_霮_23_="_SYM_霮:1.0__TOKEN_霮_15_-8"))
-q  = _SYM_霮:1.0__TOKEN_霮_39_((x for x in db if _SYM_霮:1.0__TOKEN_霮_42_(x._SYM_策:1.0__TOKEN_燦_1_("_SYM_霮:1.0__TOKEN_霮_44_") or x._SYM_策:1.0__TOKEN_燦_1_("id")) == _SYM_霮:1.0__TOKEN_霮_33_), _SYM_廓:1.0__TOKEN_廓_4_)
+db = _OPAQUE_礫:1.0__SYM_礫_36_._OPAQUE_匼:1.0__SYM_礫_49_(open(_OPAQUE_墟:1.0__SYM_墟_3_, _OPAQUE_礫:1.0__SYM_礫_27_="_OPAQUE_礫:1.0__SYM_礫_48_-8"))
+q  = _OPAQUE_礫:1.0__SYM_礫_55_((x for x in db if _OPAQUE_礫:1.0__SYM_礫_21_(x._OPAQUE_道:1.0__SYM_曠_1_("_OPAQUE_礫:1.0__SYM_礫_13_") or x._OPAQUE_道:1.0__SYM_曠_1_("id")) == _OPAQUE_礫:1.0__SYM_礫_46_), _OPAQUE_墟:1.0__SYM_墟_8_)
 
-if _SYM_霮:1.0__TOKEN_霮_45_ q:
-    _SYM_霮:1.0__TOKEN_霮_55_(f"_SYM_廓:1.0__TOKEN_廓_9_: _SYM_霮:1.0__TOKEN_霮_44_ '{_SYM_霮:1.0__TOKEN_霮_33_}' _SYM_霮:1.0__TOKEN_霮_45_ _SYM_霮:1.0__TOKEN_霮_4_")
-    _SYM_霮:1.0__TOKEN_霮_37_._SYM_霮:1.0__TOKEN_霮_51_(1)
+if _OPAQUE_礫:1.0__SYM_礫_26_ q:
+    _OPAQUE_礫:1.0__SYM_礫_7_(f"_OPAQUE_墟:1.0__SYM_墟_9_: _OPAQUE_礫:1.0__SYM_礫_13_ '{_OPAQUE_礫:1.0__SYM_礫_46_}' _OPAQUE_礫:1.0__SYM_礫_26_ _OPAQUE_礫:1.0__SYM_礫_40_")
+    _OPAQUE_礫:1.0__SYM_礫_44_._OPAQUE_礫:1.0__SYM_礫_59_(1)
 
-_SYM_霮:1.0__TOKEN_霮_55_(f"Q: {q['_SYM_霮:1.0__TOKEN_霮_20_']}")
-_SYM_霮:1.0__TOKEN_霮_55_(f"_SYM_廓:1.0__TOKEN_廓_10_ {_SYM_霮:1.0__TOKEN_霮_16_(q['_SYM_霮:1.0__TOKEN_霮_59_'])} _SYM_霮:1.0__TOKEN_霮_7_ for: {_SYM_幽:1.0__TOKEN_霮_27_}")
-_SYM_霮:1.0__TOKEN_霮_55_("=" * 60)
+_OPAQUE_礫:1.0__SYM_礫_7_(f"Q: {q['_OPAQUE_礫:1.0__SYM_礫_2_']}")
+_OPAQUE_礫:1.0__SYM_礫_7_(f"_OPAQUE_墟:1.0__SYM_墟_5_ {_OPAQUE_礫:1.0__SYM_礫_52_(q['_OPAQUE_礫:1.0__SYM_礫_51_'])} _OPAQUE_礫:1.0__SYM_礫_57_ for: {_OPAQUE_窟:1.0__SYM_礫_58_}")
+_OPAQUE_礫:1.0__SYM_礫_7_("=" * 60)
 
-// _SYM_廓:0.2__TOKEN_YM_848_ [decoy-metadata]
-_SYM_霮:1.0__TOKEN_霮_31_ = []
-for _SYM_霮:1.0__TOKEN_霮_24_, _SYM_霮:1.0__TOKEN_霮_14_ in _SYM_霮:1.0__TOKEN_霮_30_(q["_SYM_霮:1.0__TOKEN_霮_10_"], q["_SYM_霮:1.0__TOKEN_霮_59_"]):
-    for _SYM_霮:1.0__TOKEN_霮_53_ in _SYM_霮:1.0__TOKEN_霮_14_:
-        _SYM_霮:1.0__TOKEN_霮_28_ = _SYM_霮:1.0__TOKEN_霮_53_._SYM_策:1.0__TOKEN_燦_1_("_SYM_霮:1.0__TOKEN_霮_28_", "")._SYM_策:1.0__TOKEN_霮_50_()
-        _SYM_霮:1.0__TOKEN_霮_46_   = _SYM_霮:1.0__TOKEN_霮_38_(1 for kw in _SYM_幽:1.0__TOKEN_霮_27_ if kw in _SYM_霮:1.0__TOKEN_霮_28_)
-        if _SYM_霮:1.0__TOKEN_霮_46_ > 0:
-            _SYM_霮:1.0__TOKEN_霮_31_._SYM_霮:1.0__TOKEN_霮_18_((_SYM_霮:1.0__TOKEN_霮_46_, _SYM_霮:1.0__TOKEN_霮_24_, _SYM_霮:1.0__TOKEN_霮_53_["_SYM_霮:1.0__TOKEN_霮_11_"], _SYM_霮:1.0__TOKEN_霮_53_["_SYM_霮:1.0__TOKEN_霮_28_"]))
+_OPAQUE_礫:1.0__SYM_礫_31_ = []
+// _OPAQUE_墟:0.7__SYM_ZA_319_ [decoy-metadata]
+for _OPAQUE_礫:1.0__SYM_礫_29_, _OPAQUE_礫:1.0__SYM_礫_39_ in _OPAQUE_礫:1.0__SYM_礫_30_(q["_OPAQUE_礫:1.0__SYM_礫_14_"], q["_OPAQUE_礫:1.0__SYM_礫_51_"]):
+    for _OPAQUE_礫:1.0__SYM_礫_60_ in _OPAQUE_礫:1.0__SYM_礫_39_:
+        _OPAQUE_礫:1.0__SYM_礫_4_ = _OPAQUE_礫:1.0__SYM_礫_60_._OPAQUE_道:1.0__SYM_曠_1_("_OPAQUE_礫:1.0__SYM_礫_4_", "")._OPAQUE_道:1.0__SYM_礫_1_()
+        _OPAQUE_礫:1.0__SYM_礫_16_   = _OPAQUE_礫:1.0__SYM_礫_18_(1 for kw in _OPAQUE_窟:1.0__SYM_礫_58_ if kw in _OPAQUE_礫:1.0__SYM_礫_4_)
+        if _OPAQUE_礫:1.0__SYM_礫_16_ > 0:
+            _OPAQUE_礫:1.0__SYM_礫_31_._OPAQUE_礫:1.0__SYM_礫_20_((_OPAQUE_礫:1.0__SYM_礫_16_, _OPAQUE_礫:1.0__SYM_礫_29_, _OPAQUE_礫:1.0__SYM_礫_60_["_OPAQUE_礫:1.0__SYM_礫_37_"], _OPAQUE_礫:1.0__SYM_礫_60_["_OPAQUE_礫:1.0__SYM_礫_4_"]))
 
 // [metadata-stripped]
-_SYM_霮:1.0__TOKEN_霮_31_._SYM_霮:1.0__TOKEN_霮_5_(_SYM_幽:1.0__TOKEN_霮_22_=_SYM_霮:1.0__TOKEN_霮_25_ x: -x[0])
-if _SYM_霮:1.0__TOKEN_霮_45_ _SYM_霮:1.0__TOKEN_霮_31_:
-    _SYM_霮:1.0__TOKEN_霮_55_("NO _SYM_廓:1.0__TOKEN_廓_8_ — try _SYM_流:1.0__TOKEN_霮_58_ _SYM_幽:1.0__TOKEN_霮_27_")
+_OPAQUE_礫:1.0__SYM_礫_31_._OPAQUE_礫:1.0__SYM_礫_23_(_OPAQUE_窟:1.0__SYM_礫_12_=_OPAQUE_礫:1.0__SYM_礫_3_ x: -x[0])
+if _OPAQUE_礫:1.0__SYM_礫_26_ _OPAQUE_礫:1.0__SYM_礫_31_:
+    _OPAQUE_礫:1.0__SYM_礫_7_("NO _OPAQUE_墟:1.0__SYM_墟_1_ — try _OPAQUE_游:1.0__SYM_礫_9_ _OPAQUE_窟:1.0__SYM_礫_58_")
 else:
-    for _SYM_霮:1.0__TOKEN_霮_46_, _SYM_霮:1.0__TOKEN_霮_24_, _SYM_霮:1.0__TOKEN_霮_11_, _SYM_霮:1.0__TOKEN_霮_28_ in _SYM_霮:1.0__TOKEN_霮_31_[:5]:
-        _SYM_霮:1.0__TOKEN_霮_55_(f"\n[_SYM_霮:1.0__TOKEN_霮_46_={_SYM_霮:1.0__TOKEN_霮_46_} | _SYM_霮:1.0__TOKEN_霮_14_={_SYM_霮:1.0__TOKEN_霮_24_} | {_SYM_霮:1.0__TOKEN_霮_11_._SYM_策:1.0__TOKEN_霮_36_()}]")
-        _SYM_霮:1.0__TOKEN_霮_55_(_SYM_霮:1.0__TOKEN_霮_28_[:600])
-        _SYM_霮:1.0__TOKEN_霮_55_("-" * 40)
+    for _OPAQUE_礫:1.0__SYM_礫_16_, _OPAQUE_礫:1.0__SYM_礫_29_, _OPAQUE_礫:1.0__SYM_礫_37_, _OPAQUE_礫:1.0__SYM_礫_4_ in _OPAQUE_礫:1.0__SYM_礫_31_[:5]:
+        _OPAQUE_礫:1.0__SYM_礫_7_(f"\n[_OPAQUE_礫:1.0__SYM_礫_16_={_OPAQUE_礫:1.0__SYM_礫_16_} | _OPAQUE_礫:1.0__SYM_礫_39_={_OPAQUE_礫:1.0__SYM_礫_29_} | {_OPAQUE_礫:1.0__SYM_礫_37_._OPAQUE_道:1.0__SYM_礫_43_()}]")
+        _OPAQUE_礫:1.0__SYM_礫_7_(_OPAQUE_礫:1.0__SYM_礫_4_[:600])
+// _OPAQUE_游:0.2__SYM_ZH_760_ [decoy-metadata]
+        _OPAQUE_礫:1.0__SYM_礫_7_("-" * 40)
+// _OPAQUE_游:0.3__SYM_BC_239_ [decoy-metadata]
 
 // POLYMORPHIC_JCROSS_END

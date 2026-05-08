@@ -59,6 +59,8 @@ if [ "$SIGN_MODE" = "developer_id" ]; then
     DEVELOPMENT_TEAM="$DEV_ID_TEAM" \
     CODE_SIGNING_REQUIRED=YES \
     OTHER_CODE_SIGN_FLAGS="--timestamp" \
+    MARKETING_VERSION="${VERSION}" \
+    CURRENT_PROJECT_VERSION="${VERSION}" \
     BUILD_DIR="$(pwd)/build" \
     build 2>&1 | grep -E "error:|warning:|SUCCEEDED|FAILED" | tail -10
 else
@@ -70,6 +72,8 @@ else
     CODE_SIGN_IDENTITY="-" \
     CODE_SIGNING_REQUIRED=NO \
     CODE_SIGNING_ALLOWED=NO \
+    MARKETING_VERSION="${VERSION}" \
+    CURRENT_PROJECT_VERSION="${VERSION}" \
     BUILD_DIR="$(pwd)/build" \
     build 2>&1 | grep -E "error:|warning:|SUCCEEDED|FAILED" | tail -10
 fi

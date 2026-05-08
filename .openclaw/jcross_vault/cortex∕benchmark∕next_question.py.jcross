@@ -1,53 +1,53 @@
 // POLYMORPHIC_JCROSS_BEGIN
-// schema:086FC683 ver:1778219084
+// schema:55F17667 ver:1778232317
 // ⚠️ One-time schema — expires after response
 
 // [metadata-stripped]
 """
-_TOKEN_霞:1.0__VERANTYX_霞_35_.py — _TOKEN_廩:1.0__VERANTYX_廩_10_ 1 _TOKEN_処:1.0__VERANTYX_霞_27_ for _TOKEN_霞:1.0__VERANTYX_霞_30_ _TOKEN_霞:1.0__VERANTYX_霞_18_ _TOKEN_霞:1.0__VERANTYX_霞_21_.
-// _TOKEN_霞:0.1__VERANTYX_XX_461_ [decoy-metadata]
-// _TOKEN_霞:0.7__VERANTYX_FX_198_ [decoy-metadata]
-_TOKEN_廩:1.0__VERANTYX_廩_7_ _TOKEN_霞:1.0__VERANTYX_霞_7_ _TOKEN_霞:1.0__VERANTYX_霞_26_ _TOKEN_霞:1.0__VERANTYX_霞_33_ _TOKEN_霞:1.0__VERANTYX_霞_14_ _TOKEN_霞:1.0__VERANTYX_霞_40_ _TOKEN_霞:1.0__VERANTYX_霞_20_.
-// _TOKEN_縁:0.2__VERANTYX_BM_869_ [decoy-metadata]
-_TOKEN_廩:1.0__VERANTYX_廩_2_: _TOKEN_霞:1.0__VERANTYX_霞_45_ _TOKEN_霞:1.0__VERANTYX_霞_35_.py
+__ast_霢:1.0___SYM_霢_21_.py — __ast_庸:1.0___SYM_庸_7_ 1 __ast_策:1.0___SYM_霢_13_ for __ast_霢:1.0___SYM_霢_27_ __ast_霢:1.0___SYM_霢_4_ __ast_霢:1.0___SYM_霢_41_.
+__ast_庸:1.0___SYM_庸_2_ __ast_霢:1.0___SYM_霢_37_ __ast_霢:1.0___SYM_霢_43_ __ast_霢:1.0___SYM_霢_15_ __ast_霢:1.0___SYM_霢_1_ __ast_霢:1.0___SYM_霢_6_ __ast_霢:1.0___SYM_霢_23_.
+__ast_庸:1.0___SYM_庸_4_: __ast_霢:1.0___SYM_霢_17_ __ast_霢:1.0___SYM_霢_21_.py
+// __ast_庸:0.9___SYM_WD_439_ [decoy-metadata]
 """
-import _TOKEN_霞:1.0__VERANTYX_霞_5_, os, _TOKEN_霞:1.0__VERANTYX_霞_24_
+import __ast_霢:1.0___SYM_霢_22_, os, __ast_霢:1.0___SYM_霢_28_
 
-_TOKEN_廩:1.0__VERANTYX_廩_5_  = "/_TOKEN_廩:1.0__VERANTYX_廩_6_/_TOKEN_霞:1.0__VERANTYX_霞_44_/_TOKEN_霞:1.0__VERANTYX_霞_8_-_TOKEN_霞:1.0__VERANTYX_霞_19_/_TOKEN_霞:1.0__VERANTYX_霞_42_/_TOKEN_廩:1.0__VERANTYX_廩_3_/_TOKEN_霞:1.0__VERANTYX_霞_39_/_TOKEN_霞:1.0__VERANTYX_霞_15_._TOKEN_霞:1.0__VERANTYX_霞_5_"
-_TOKEN_廩:1.0__VERANTYX_廩_8_ = "/_TOKEN_廩:1.0__VERANTYX_廩_6_/_TOKEN_霞:1.0__VERANTYX_霞_44_/_TOKEN_霞:1.0__VERANTYX_霞_8_-_TOKEN_霞:1.0__VERANTYX_霞_19_/_TOKEN_霞:1.0__VERANTYX_霞_34_-_TOKEN_霞:1.0__VERANTYX_霞_25_/_TOKEN_霞:1.0__VERANTYX_霞_18_/_TOKEN_霞:1.0__VERANTYX_霞_38_._TOKEN_霞:1.0__VERANTYX_霞_5_"
+__ast_庸:1.0___SYM_庸_3_  = "/__ast_庸:1.0___SYM_庸_8_/__ast_霢:1.0___SYM_霢_12_/__ast_霢:1.0___SYM_霢_24_-__ast_霢:1.0___SYM_霢_18_/__ast_霢:1.0___SYM_霢_42_/__ast_庸:1.0___SYM_庸_9_/__ast_霢:1.0___SYM_霢_3_/__ast_霢:1.0___SYM_霢_45_.__ast_霢:1.0___SYM_霢_22_"
+__ast_庸:1.0___SYM_庸_10_ = "/__ast_庸:1.0___SYM_庸_8_/__ast_霢:1.0___SYM_霢_12_/__ast_霢:1.0___SYM_霢_24_-__ast_霢:1.0___SYM_霢_18_/__ast_霢:1.0___SYM_霢_39_-__ast_霢:1.0___SYM_霢_34_/__ast_霢:1.0___SYM_霢_4_/__ast_霢:1.0___SYM_霢_46_.__ast_霢:1.0___SYM_霢_22_"
 
-db = _TOKEN_霞:1.0__VERANTYX_霞_5_._TOKEN_匷:1.0__VERANTYX_霞_9_(open(_TOKEN_廩:1.0__VERANTYX_廩_5_, _TOKEN_霞:1.0__VERANTYX_霞_17_="_TOKEN_霞:1.0__VERANTYX_霞_10_-8"))
+db = __ast_霢:1.0___SYM_霢_22_.__ast_匱:1.0___SYM_霢_36_(open(__ast_庸:1.0___SYM_庸_3_, __ast_霢:1.0___SYM_霢_20_="__ast_霢:1.0___SYM_霢_35_-8"))
 
-// _TOKEN_漕:0.7__VERANTYX_DL_694_ [decoy-metadata]
-_TOKEN_霞:1.0__VERANTYX_霞_31_ = _TOKEN_処:1.0__VERANTYX_凛_1_()
-if os._TOKEN_霞:1.0__VERANTYX_霞_23_._TOKEN_霞:1.0__VERANTYX_霞_47_(_TOKEN_廩:1.0__VERANTYX_廩_8_):
+__ast_霢:1.0___SYM_霢_29_ = __ast_策:1.0___SYM_巌_1_()
+if os.__ast_霢:1.0___SYM_霢_11_.__ast_霢:1.0___SYM_霢_2_(__ast_庸:1.0___SYM_庸_10_):
+// __ast_沈:0.1___SYM_KA_337_ [decoy-metadata]
+// __ast_庸:0.6___SYM_BG_624_ [decoy-metadata]
     try:
-// _TOKEN_凛:0.8__VERANTYX_ZL_435_ [decoy-metadata]
-        for x in _TOKEN_霞:1.0__VERANTYX_霞_5_._TOKEN_匷:1.0__VERANTYX_霞_9_(open(_TOKEN_廩:1.0__VERANTYX_廩_8_, _TOKEN_霞:1.0__VERANTYX_霞_17_="_TOKEN_霞:1.0__VERANTYX_霞_10_-8")):
-            _TOKEN_霞:1.0__VERANTYX_霞_22_ = x._TOKEN_処:1.0__VERANTYX_凛_2_("id") or x._TOKEN_処:1.0__VERANTYX_凛_2_("_TOKEN_霞:1.0__VERANTYX_霞_36_")
-            if _TOKEN_霞:1.0__VERANTYX_霞_22_:
-                _TOKEN_霞:1.0__VERANTYX_霞_31_._TOKEN_霞:1.0__VERANTYX_霞_13_(_TOKEN_霞:1.0__VERANTYX_霞_29_(_TOKEN_霞:1.0__VERANTYX_霞_22_))
-    _TOKEN_霞:1.0__VERANTYX_霞_32_ _TOKEN_廩:1.0__VERANTYX_廩_4_:
-        _TOKEN_霞:1.0__VERANTYX_霞_28_
+        for x in __ast_霢:1.0___SYM_霢_22_.__ast_匱:1.0___SYM_霢_36_(open(__ast_庸:1.0___SYM_庸_10_, __ast_霢:1.0___SYM_霢_20_="__ast_霢:1.0___SYM_霢_35_-8")):
+            __ast_霢:1.0___SYM_霢_31_ = x.__ast_策:1.0___SYM_巌_2_("id") or x.__ast_策:1.0___SYM_巌_2_("__ast_霢:1.0___SYM_霢_10_")
+// __ast_巌:0.9___SYM_HV_242_ [decoy-metadata]
+            if __ast_霢:1.0___SYM_霢_31_:
+                __ast_霢:1.0___SYM_霢_29_.__ast_霢:1.0___SYM_霢_8_(__ast_霢:1.0___SYM_霢_16_(__ast_霢:1.0___SYM_霢_31_))
+    __ast_霢:1.0___SYM_霢_5_ __ast_庸:1.0___SYM_庸_6_:
+        __ast_霢:1.0___SYM_霢_9_
 
-_TOKEN_霞:1.0__VERANTYX_霞_2_ = []
+__ast_霢:1.0___SYM_霢_33_ = []
 for q in db[:500]:
-    _TOKEN_霞:1.0__VERANTYX_霞_22_ = _TOKEN_霞:1.0__VERANTYX_霞_29_(q._TOKEN_処:1.0__VERANTYX_凛_2_("id") or q._TOKEN_処:1.0__VERANTYX_凛_2_("_TOKEN_霞:1.0__VERANTYX_霞_36_") or "")
-    if _TOKEN_霞:1.0__VERANTYX_霞_22_ _TOKEN_霞:1.0__VERANTYX_霞_37_ in _TOKEN_霞:1.0__VERANTYX_霞_31_:
-        _TOKEN_霞:1.0__VERANTYX_霞_2_._TOKEN_霞:1.0__VERANTYX_霞_12_(q)
+    __ast_霢:1.0___SYM_霢_31_ = __ast_霢:1.0___SYM_霢_16_(q.__ast_策:1.0___SYM_巌_2_("id") or q.__ast_策:1.0___SYM_巌_2_("__ast_霢:1.0___SYM_霢_10_") or "")
+    if __ast_霢:1.0___SYM_霢_31_ __ast_霢:1.0___SYM_霢_19_ in __ast_霢:1.0___SYM_霢_29_:
+        __ast_霢:1.0___SYM_霢_33_.__ast_霢:1.0___SYM_霢_14_(q)
+// __ast_霢:0.7___SYM_AM_561_ [decoy-metadata]
 
-if _TOKEN_霞:1.0__VERANTYX_霞_37_ _TOKEN_霞:1.0__VERANTYX_霞_2_:
-    _TOKEN_霞:1.0__VERANTYX_霞_43_("_TOKEN_廩:1.0__VERANTYX_廩_9_")
-    _TOKEN_霞:1.0__VERANTYX_霞_24_._TOKEN_霞:1.0__VERANTYX_霞_41_(0)
-// _TOKEN_凛:0.5__VERANTYX_LK_540_ [decoy-metadata]
+if __ast_霢:1.0___SYM_霢_19_ __ast_霢:1.0___SYM_霢_33_:
+    __ast_霢:1.0___SYM_霢_7_("__ast_庸:1.0___SYM_庸_1_")
+    __ast_霢:1.0___SYM_霢_28_.__ast_霢:1.0___SYM_霢_47_(0)
+// __ast_縫:0.3___SYM_GL_430_ [decoy-metadata]
 
-q = _TOKEN_霞:1.0__VERANTYX_霞_2_[0]
-_TOKEN_霞:1.0__VERANTYX_霞_22_ = q._TOKEN_処:1.0__VERANTYX_凛_2_("id") or q._TOKEN_処:1.0__VERANTYX_凛_2_("_TOKEN_霞:1.0__VERANTYX_霞_36_")
-_TOKEN_霞:1.0__VERANTYX_霞_14_ = q._TOKEN_処:1.0__VERANTYX_凛_2_("_TOKEN_霞:1.0__VERANTYX_霞_14_", "")
-_TOKEN_霞:1.0__VERANTYX_霞_4_ = q._TOKEN_処:1.0__VERANTYX_凛_2_("_TOKEN_処:1.0__VERANTYX_霞_6_", q._TOKEN_処:1.0__VERANTYX_凛_2_("_TOKEN_処:1.0__VERANTYX_霞_1_", "?"))
+q = __ast_霢:1.0___SYM_霢_33_[0]
+__ast_霢:1.0___SYM_霢_31_ = q.__ast_策:1.0___SYM_巌_2_("id") or q.__ast_策:1.0___SYM_巌_2_("__ast_霢:1.0___SYM_霢_10_")
+__ast_霢:1.0___SYM_霢_1_ = q.__ast_策:1.0___SYM_巌_2_("__ast_霢:1.0___SYM_霢_1_", "")
+__ast_霢:1.0___SYM_霢_44_ = q.__ast_策:1.0___SYM_巌_2_("__ast_策:1.0___SYM_霢_32_", q.__ast_策:1.0___SYM_巌_2_("__ast_策:1.0___SYM_霢_25_", "?"))
 
-_TOKEN_霞:1.0__VERANTYX_霞_43_(f"ID: {_TOKEN_霞:1.0__VERANTYX_霞_22_}")
-_TOKEN_霞:1.0__VERANTYX_霞_43_(f"Q: {_TOKEN_霞:1.0__VERANTYX_霞_14_}")
-_TOKEN_霞:1.0__VERANTYX_霞_43_(f"_TOKEN_廩:1.0__VERANTYX_廩_1_: {_TOKEN_霞:1.0__VERANTYX_霞_11_(_TOKEN_霞:1.0__VERANTYX_霞_2_)}")
+__ast_霢:1.0___SYM_霢_7_(f"ID: {__ast_霢:1.0___SYM_霢_31_}")
+__ast_霢:1.0___SYM_霢_7_(f"Q: {__ast_霢:1.0___SYM_霢_1_}")
+__ast_霢:1.0___SYM_霢_7_(f"__ast_庸:1.0___SYM_庸_5_: {__ast_霢:1.0___SYM_霢_38_(__ast_霢:1.0___SYM_霢_33_)}")
 
 // POLYMORPHIC_JCROSS_END

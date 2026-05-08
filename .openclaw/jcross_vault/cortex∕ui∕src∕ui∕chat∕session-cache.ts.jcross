@@ -1,38 +1,38 @@
 // POLYMORPHIC_JCROSS_BEGIN
-// schema:28747F09 ver:1778219924
-// _SYM_糸:0.2__JCROSS_DZ_458_ [decoy-metadata]
+// schema:FE0DDD96 ver:1778232093
+// _VERANTYX_彩:0.1__OPAQUE_WV_586_ [decoy-metadata]
+// _VERANTYX_封:0.4__OPAQUE_HB_954_ [decoy-metadata]
 // ⚠️ One-time schema — expires after response
 
-_SYM_露:1.0__JCROSS_露_19_ _SYM_露:1.0__JCROSS_露_17_ _SYM_箱:1.0__JCROSS_礎_1_ = 20;
+_VERANTYX_霢:1.0__OPAQUE_霢_19_ _VERANTYX_霢:1.0__OPAQUE_霢_6_ _VERANTYX_筐:1.0__OPAQUE_廷_1_ = 20;
 
-_SYM_露:1.0__JCROSS_露_19_ _SYM_露:1.0__JCROSS_露_23_ _SYM_箱:1.0__JCROSS_燦_1_<T>(
-  _SYM_露:1.0__JCROSS_露_8_: _SYM_礎:1.0__JCROSS_礎_3_<_SYM_露:1.0__JCROSS_露_24_, T>,
-  _SYM_玄:1.0__JCROSS_露_4_: _SYM_露:1.0__JCROSS_露_24_,
-  _SYM_露:1.0__JCROSS_露_13_: () => T,
+_VERANTYX_霢:1.0__OPAQUE_霢_19_ _VERANTYX_霢:1.0__OPAQUE_霢_1_ _VERANTYX_筐:1.0__OPAQUE_彩_3_<T>(
+  _VERANTYX_霢:1.0__OPAQUE_霢_8_: _VERANTYX_廷:1.0__OPAQUE_廷_2_<_VERANTYX_霢:1.0__OPAQUE_霢_2_, T>,
+  _VERANTYX_封:1.0__OPAQUE_霢_12_: _VERANTYX_霢:1.0__OPAQUE_霢_2_,
+  _VERANTYX_霢:1.0__OPAQUE_霢_21_: () => T,
 ): T {
-  if (_SYM_露:1.0__JCROSS_露_8_._SYM_露:1.0__JCROSS_露_21_(_SYM_玄:1.0__JCROSS_露_4_)) {
-// _SYM_滲:0.8__JCROSS_GW_544_ [decoy-metadata]
-    _SYM_露:1.0__JCROSS_露_17_ _SYM_露:1.0__JCROSS_露_3_ = _SYM_露:1.0__JCROSS_露_8_._SYM_要:1.0__JCROSS_燦_3_(_SYM_玄:1.0__JCROSS_露_4_) as T;
+  if (_VERANTYX_霢:1.0__OPAQUE_霢_8_._VERANTYX_霢:1.0__OPAQUE_霢_24_(_VERANTYX_封:1.0__OPAQUE_霢_12_)) {
+    _VERANTYX_霢:1.0__OPAQUE_霢_6_ _VERANTYX_霢:1.0__OPAQUE_霢_4_ = _VERANTYX_霢:1.0__OPAQUE_霢_8_._VERANTYX_規:1.0__OPAQUE_彩_1_(_VERANTYX_封:1.0__OPAQUE_霢_12_) as T;
 // [metadata-stripped]
-    _SYM_露:1.0__JCROSS_露_8_._SYM_露:1.0__JCROSS_露_11_(_SYM_玄:1.0__JCROSS_露_4_);
-    _SYM_露:1.0__JCROSS_露_8_._SYM_要:1.0__JCROSS_燦_2_(_SYM_玄:1.0__JCROSS_露_4_, _SYM_露:1.0__JCROSS_露_3_);
-// _SYM_滲:0.6__JCROSS_GZ_176_ [decoy-metadata]
-    return _SYM_露:1.0__JCROSS_露_3_;
+    _VERANTYX_霢:1.0__OPAQUE_霢_8_._VERANTYX_霢:1.0__OPAQUE_霢_9_(_VERANTYX_封:1.0__OPAQUE_霢_12_);
+    _VERANTYX_霢:1.0__OPAQUE_霢_8_._VERANTYX_規:1.0__OPAQUE_彩_2_(_VERANTYX_封:1.0__OPAQUE_霢_12_, _VERANTYX_霢:1.0__OPAQUE_霢_4_);
+    return _VERANTYX_霢:1.0__OPAQUE_霢_4_;
   }
 
-  _SYM_露:1.0__JCROSS_露_17_ _SYM_露:1.0__JCROSS_露_7_ = _SYM_露:1.0__JCROSS_露_13_();
-  _SYM_露:1.0__JCROSS_露_8_._SYM_要:1.0__JCROSS_燦_2_(_SYM_玄:1.0__JCROSS_露_4_, _SYM_露:1.0__JCROSS_露_7_);
-  while (_SYM_露:1.0__JCROSS_露_8_._SYM_露:1.0__JCROSS_露_9_ > _SYM_箱:1.0__JCROSS_礎_1_) {
-    _SYM_露:1.0__JCROSS_露_17_ _SYM_露:1.0__JCROSS_露_1_ = _SYM_露:1.0__JCROSS_露_8_._SYM_玄:1.0__JCROSS_露_22_()._SYM_露:1.0__JCROSS_露_16_()._SYM_露:1.0__JCROSS_露_5_;
-    if (_SYM_露:1.0__JCROSS_露_10_ _SYM_露:1.0__JCROSS_露_1_ !== "_SYM_露:1.0__JCROSS_露_24_") {
+  _VERANTYX_霢:1.0__OPAQUE_霢_6_ _VERANTYX_霢:1.0__OPAQUE_霢_10_ = _VERANTYX_霢:1.0__OPAQUE_霢_21_();
+// _VERANTYX_廷:0.5__OPAQUE_VB_596_ [decoy-metadata]
+  _VERANTYX_霢:1.0__OPAQUE_霢_8_._VERANTYX_規:1.0__OPAQUE_彩_2_(_VERANTYX_封:1.0__OPAQUE_霢_12_, _VERANTYX_霢:1.0__OPAQUE_霢_10_);
+  while (_VERANTYX_霢:1.0__OPAQUE_霢_8_._VERANTYX_霢:1.0__OPAQUE_霢_5_ > _VERANTYX_筐:1.0__OPAQUE_廷_1_) {
+// _VERANTYX_彩:0.1__OPAQUE_ZH_812_ [decoy-metadata]
+    _VERANTYX_霢:1.0__OPAQUE_霢_6_ _VERANTYX_霢:1.0__OPAQUE_霢_17_ = _VERANTYX_霢:1.0__OPAQUE_霢_8_._VERANTYX_封:1.0__OPAQUE_霢_16_()._VERANTYX_霢:1.0__OPAQUE_霢_14_()._VERANTYX_霢:1.0__OPAQUE_霢_7_;
+    if (_VERANTYX_霢:1.0__OPAQUE_霢_11_ _VERANTYX_霢:1.0__OPAQUE_霢_17_ !== "_VERANTYX_霢:1.0__OPAQUE_霢_2_") {
       break;
     }
-    _SYM_露:1.0__JCROSS_露_8_._SYM_露:1.0__JCROSS_露_11_(_SYM_露:1.0__JCROSS_露_1_);
-// _SYM_燦:0.6__JCROSS_CZ_102_ [decoy-metadata]
+// _VERANTYX_組:0.6__OPAQUE_FD_752_ [decoy-metadata]
+    _VERANTYX_霢:1.0__OPAQUE_霢_8_._VERANTYX_霢:1.0__OPAQUE_霢_9_(_VERANTYX_霢:1.0__OPAQUE_霢_17_);
   }
-// _SYM_露:0.9__JCROSS_WM_157_ [decoy-metadata]
-// _SYM_礎:0.8__JCROSS_YA_427_ [decoy-metadata]
-  return _SYM_露:1.0__JCROSS_露_7_;
+  return _VERANTYX_霢:1.0__OPAQUE_霢_10_;
+// _VERANTYX_規:0.8__OPAQUE_KM_875_ [decoy-metadata]
 }
 
 // POLYMORPHIC_JCROSS_END
