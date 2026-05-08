@@ -1,0 +1,85 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:6A13B0F8 ver:1778220306
+// ⚠️ One-time schema — expires after response
+
+// [metadata-stripped]
+// [metadata-stripped]
+// _ASTNODE_深:0.5__TOKEN_VA_706_ [decoy-metadata]
+// [metadata-stripped]
+// [metadata-stripped]
+
+_ASTNODE_霧:1.0__TOKEN_霧_16_ _ASTNODE_霧:1.0__TOKEN_霧_56_::_ASTNODE_霧:1.0__TOKEN_霧_10_::{_ASTNODE_墟:1.0__TOKEN_墟_14_, _ASTNODE_墟:1.0__TOKEN_墟_2_};
+_ASTNODE_霧:1.0__TOKEN_霧_16_ _ASTNODE_霧:1.0__TOKEN_霧_56_::_ASTNODE_霧:1.0__TOKEN_霧_48_::_ASTNODE_墟:1.0__TOKEN_墟_7_;
+_ASTNODE_霧:1.0__TOKEN_霧_16_ _ASTNODE_霧:1.0__TOKEN_霧_47_::_ASTNODE_霧:1.0__TOKEN_霧_46_::_ASTNODE_墟:1.0__TOKEN_墟_18_;
+_ASTNODE_霧:1.0__TOKEN_霧_16_ _ASTNODE_霧:1.0__TOKEN_霧_47_::_ASTNODE_霧:1.0__TOKEN_霧_24_::_ASTNODE_墟:1.0__TOKEN_墟_13_;
+_ASTNODE_霧:1.0__TOKEN_霧_16_ _ASTNODE_霧:1.0__TOKEN_霧_68_::_ASTNODE_霧:1.0__TOKEN_霧_24_::{_ASTNODE_墟:1.0__TOKEN_墟_32_, _ASTNODE_霧:1.0__TOKEN_霧_82_};
+
+_ASTNODE_霧:1.0__TOKEN_霧_8_ struct _ASTNODE_墟:1.0__TOKEN_墟_24_ {
+    _ASTNODE_霧:1.0__TOKEN_霧_8_ _ASTNODE_霧:1.0__TOKEN_霧_78_: _ASTNODE_霧:1.0__TOKEN_霧_13_,
+    _ASTNODE_霧:1.0__TOKEN_霧_8_ tx: _ASTNODE_霧:1.0__TOKEN_霧_82_::_ASTNODE_項:1.0__TOKEN_墟_33_<_ASTNODE_墟:1.0__TOKEN_墟_14_>,
+}
+
+_ASTNODE_霧:1.0__TOKEN_霧_8_ struct _ASTNODE_項:1.0__TOKEN_墟_22_ {
+// [metadata-stripped]
+// [metadata-stripped]
+    _ASTNODE_霧:1.0__TOKEN_霧_77_: _ASTNODE_墟:1.0__TOKEN_墟_13_<_ASTNODE_墟:1.0__TOKEN_墟_32_<_ASTNODE_墟:1.0__TOKEN_墟_18_<_ASTNODE_墟:1.0__TOKEN_墟_2_, _ASTNODE_墟:1.0__TOKEN_墟_24_>>>,
+}
+
+_ASTNODE_霧:1.0__TOKEN_霧_41_ _ASTNODE_項:1.0__TOKEN_墟_22_ {
+    _ASTNODE_霧:1.0__TOKEN_霧_8_ fn _ASTNODE_霧:1.0__TOKEN_霧_70_() -> _ASTNODE_墟:1.0__TOKEN_墟_23_ {
+        _ASTNODE_墟:1.0__TOKEN_墟_23_ {
+            _ASTNODE_霧:1.0__TOKEN_霧_77_: _ASTNODE_墟:1.0__TOKEN_墟_13_::_ASTNODE_霧:1.0__TOKEN_霧_70_(_ASTNODE_墟:1.0__TOKEN_墟_32_::_ASTNODE_霧:1.0__TOKEN_霧_70_(_ASTNODE_墟:1.0__TOKEN_墟_18_::_ASTNODE_霧:1.0__TOKEN_霧_70_())),
+        }
+    }
+
+// _ASTNODE_巌:0.3__TOKEN_LW_766_ [decoy-metadata]
+// [metadata-stripped]
+    _ASTNODE_霧:1.0__TOKEN_霧_8_ a_ASTNODE_霧:1.0__TOKEN_霧_24_ fn _ASTNODE_霧:1.0__TOKEN_霧_12_(&self, _ASTNODE_霧:1.0__TOKEN_霧_52_: _ASTNODE_墟:1.0__TOKEN_墟_2_, _ASTNODE_霧:1.0__TOKEN_霧_78_: _ASTNODE_霧:1.0__TOKEN_霧_13_) -> _ASTNODE_霧:1.0__TOKEN_霧_82_::_ASTNODE_項:1.0__TOKEN_墟_8_<_ASTNODE_墟:1.0__TOKEN_墟_14_> {
+        let (tx, rx) = _ASTNODE_霧:1.0__TOKEN_霧_82_::_ASTNODE_霧:1.0__TOKEN_霧_48_(1000); // _ASTNODE_墟:1.0__TOKEN_墟_39_ internal _ASTNODE_項:1.0__TOKEN_霧_79_ for UI _ASTNODE_霧:1.0__TOKEN_霧_39_
+        
+        let _ASTNODE_霧:1.0__TOKEN_霧_44_ _ASTNODE_霧:1.0__TOKEN_霧_5_ = self._ASTNODE_霧:1.0__TOKEN_霧_77_._ASTNODE_霧:1.0__TOKEN_霧_25_().await;
+        _ASTNODE_霧:1.0__TOKEN_霧_5_._ASTNODE_霧:1.0__TOKEN_霧_73_(_ASTNODE_霧:1.0__TOKEN_霧_52_, _ASTNODE_墟:1.0__TOKEN_墟_24_ { _ASTNODE_霧:1.0__TOKEN_霧_78_, tx });
+        
+        rx
+    }
+
+// [metadata-stripped]
+// [metadata-stripped]
+    _ASTNODE_霧:1.0__TOKEN_霧_8_ a_ASTNODE_霧:1.0__TOKEN_霧_24_ fn _ASTNODE_霧:1.0__TOKEN_霧_17_(&self, _ASTNODE_霧:1.0__TOKEN_霧_29_: _ASTNODE_墟:1.0__TOKEN_墟_7_) {
+        let _ASTNODE_霧:1.0__TOKEN_霧_77_ = self._ASTNODE_霧:1.0__TOKEN_霧_77_._ASTNODE_霧:1.0__TOKEN_霧_57_();
+        
+        _ASTNODE_霧:1.0__TOKEN_霧_68_::_ASTNODE_霧:1.0__TOKEN_霧_45_(a_ASTNODE_霧:1.0__TOKEN_霧_24_ _ASTNODE_霧:1.0__TOKEN_霧_3_ {
+            _ASTNODE_霧:1.0__TOKEN_霧_65_ {
+// [metadata-stripped]
+                _ASTNODE_霧:1.0__TOKEN_霧_30_ _ASTNODE_霧:1.0__TOKEN_霧_29_._ASTNODE_霧:1.0__TOKEN_霧_66_() {
+                    Ok(_ASTNODE_墟:1.0__TOKEN_墟_30_(_ASTNODE_霧:1.0__TOKEN_霧_36_)) => {
+                        let _ASTNODE_霧:1.0__TOKEN_霧_5_ = _ASTNODE_霧:1.0__TOKEN_霧_77_._ASTNODE_霧:1.0__TOKEN_霧_25_().await;
+                        if let _ASTNODE_墟:1.0__TOKEN_墟_30_(_ASTNODE_霧:1.0__TOKEN_霧_37_) = _ASTNODE_霧:1.0__TOKEN_霧_5_._ASTNODE_項:1.0__TOKEN_巌_1_(&_ASTNODE_霧:1.0__TOKEN_霧_36_._ASTNODE_霧:1.0__TOKEN_霧_81_) {
+// _ASTNODE_深:0.4__TOKEN_YV_345_ [decoy-metadata]
+                            if let _ASTNODE_墟:1.0__TOKEN_墟_3_(e) = _ASTNODE_霧:1.0__TOKEN_霧_37_.tx._ASTNODE_霧:1.0__TOKEN_霧_67_(_ASTNODE_霧:1.0__TOKEN_霧_36_).await {
+                                _ASTNODE_霧:1.0__TOKEN_霧_51_!("_ASTNODE_項:1.0__TOKEN_墟_6_ _ASTNODE_墟:1.0__TOKEN_墟_10_ _ASTNODE_墟:1.0__TOKEN_墟_26_: {}", e);
+                            }
+                        }
+                    }
+                    Ok(_ASTNODE_墟:1.0__TOKEN_墟_5_) => _ASTNODE_霧:1.0__TOKEN_霧_68_::_ASTNODE_霧:1.0__TOKEN_霧_6_::_ASTNODE_霧:1.0__TOKEN_霧_72_().await,
+// _ASTNODE_深:0.7__TOKEN_AZ_274_ [decoy-metadata]
+                    _ASTNODE_墟:1.0__TOKEN_墟_3_(_) => {
+// [metadata-stripped]
+                        break;
+                    }
+                }
+            }
+        });
+    }
+
+    _ASTNODE_霧:1.0__TOKEN_霧_8_ a_ASTNODE_霧:1.0__TOKEN_霧_24_ fn _ASTNODE_霧:1.0__TOKEN_霧_53_(&self, _ASTNODE_霧:1.0__TOKEN_霧_36_: _ASTNODE_墟:1.0__TOKEN_墟_14_) {
+        let _ASTNODE_霧:1.0__TOKEN_霧_5_ = self._ASTNODE_霧:1.0__TOKEN_霧_77_._ASTNODE_霧:1.0__TOKEN_霧_25_().await;
+        for (_, _ASTNODE_霧:1.0__TOKEN_霧_37_) in _ASTNODE_霧:1.0__TOKEN_霧_5_._ASTNODE_項:1.0__TOKEN_霧_38_() {
+            let _ = _ASTNODE_霧:1.0__TOKEN_霧_37_.tx._ASTNODE_霧:1.0__TOKEN_霧_67_(_ASTNODE_霧:1.0__TOKEN_霧_36_._ASTNODE_霧:1.0__TOKEN_霧_57_()).await;
+        }
+// _ASTNODE_巌:0.8__TOKEN_HY_705_ [decoy-metadata]
+    }
+}
+// _ASTNODE_項:0.3__TOKEN_XA_349_ [decoy-metadata]
+
+// POLYMORPHIC_JCROSS_END

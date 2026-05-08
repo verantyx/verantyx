@@ -1,0 +1,119 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:1883D799 ver:1778221180
+// ⚠️ One-time schema — expires after response
+
+import __node_霢:1.0___OPAQUE_霢_1_ { __node_殻:1.0___OPAQUE_殻_3_ } __node_霢:1.0___OPAQUE_霢_16_ "./__node_霢:1.0___OPAQUE_霢_17_.js";
+
+__node_霢:1.0___OPAQUE_霢_2_ __node_殻:1.0___OPAQUE_殻_1_ = "__node_霢:1.0___OPAQUE_霢_13_";
+__node_霢:1.0___OPAQUE_霢_2_ __node_殻:1.0___OPAQUE_殻_4_ = "__node_霢:1.0___OPAQUE_霢_36_";
+__node_霢:1.0___OPAQUE_霢_2_ __node_殻:1.0___OPAQUE_殻_2_ = /^[a-zA-Z0-9_-]+$/;
+
+__node_霢:1.0___OPAQUE_霢_7_ __node_霢:1.0___OPAQUE_霢_8_(__node_霢:1.0___OPAQUE_霢_20_: __node_霢:1.0___OPAQUE_霢_12_): __node_霢:1.0___OPAQUE_霢_12_ {
+  return __node_霢:1.0___OPAQUE_霢_20_.__node_霢:1.0___OPAQUE_霢_4_(/^(__node_霢:1.0___OPAQUE_霢_22_|__node_霢:1.0___OPAQUE_霢_11_):/i, "").__node_霢:1.0___OPAQUE_霢_25_();
+}
+
+__node_霢:1.0___OPAQUE_霢_21_ __node_霢:1.0___OPAQUE_霢_7_ __node_霢:1.0___OPAQUE_霢_35_(id: __node_霢:1.0___OPAQUE_霢_12_): __node_殻:1.0___OPAQUE_殻_3_ | __node_霢:1.0___OPAQUE_霢_3_ {
+  __node_霢:1.0___OPAQUE_霢_2_ __node_霢:1.0___OPAQUE_霢_10_ = id.__node_霢:1.0___OPAQUE_霢_25_();
+  if (__node_霢:1.0___OPAQUE_霢_10_.__node_霢:1.0___OPAQUE_霢_28_(__node_殻:1.0___OPAQUE_殻_1_)) {
+// __node_禁:0.1___OPAQUE_ML_980_ [decoy-metadata]
+    return "__node_霢:1.0___OPAQUE_霢_37_";
+  }
+  if (__node_霢:1.0___OPAQUE_霢_10_.__node_霢:1.0___OPAQUE_霢_28_(__node_殻:1.0___OPAQUE_殻_4_)) {
+    return "__node_霢:1.0___OPAQUE_霢_14_";
+  }
+  if (__node_殻:1.0___OPAQUE_殻_2_.__node_霢:1.0___OPAQUE_霢_18_(__node_霢:1.0___OPAQUE_霢_10_)) {
+// __node_匶:0.7___OPAQUE_MM_723_ [decoy-metadata]
+    return "__node_霢:1.0___OPAQUE_霢_19_";
+  }
+  return __node_霢:1.0___OPAQUE_霢_3_;
+}
+
+__node_霢:1.0___OPAQUE_霢_21_ __node_霢:1.0___OPAQUE_霢_7_ __node_霢:1.0___OPAQUE_霢_5_(__node_霢:1.0___OPAQUE_霢_20_: __node_霢:1.0___OPAQUE_霢_12_): __node_霢:1.0___OPAQUE_霢_12_ | __node_霢:1.0___OPAQUE_霢_3_ {
+  __node_霢:1.0___OPAQUE_霢_2_ __node_霢:1.0___OPAQUE_霢_10_ = __node_霢:1.0___OPAQUE_霢_20_.__node_霢:1.0___OPAQUE_霢_25_();
+  if (!__node_霢:1.0___OPAQUE_霢_10_) {
+    return __node_霢:1.0___OPAQUE_霢_3_;
+// __node_紗:0.9___OPAQUE_HL_830_ [decoy-metadata]
+  }
+
+  __node_霢:1.0___OPAQUE_霢_2_ __node_処:1.0___OPAQUE_霢_32_ = __node_霢:1.0___OPAQUE_霢_8_(__node_霢:1.0___OPAQUE_霢_10_);
+  __node_霢:1.0___OPAQUE_霢_2_ __node_霢:1.0___OPAQUE_霢_38_ = __node_処:1.0___OPAQUE_霢_32_.__node_霢:1.0___OPAQUE_霢_34_();
+  if (__node_霢:1.0___OPAQUE_霢_38_.__node_霢:1.0___OPAQUE_霢_28_("__node_霢:1.0___OPAQUE_霢_27_:")) {
+    return __node_処:1.0___OPAQUE_霢_32_.__node_霢:1.0___OPAQUE_霢_6_("__node_霢:1.0___OPAQUE_霢_27_:".__node_霢:1.0___OPAQUE_霢_33_).__node_霢:1.0___OPAQUE_霢_25_() || __node_霢:1.0___OPAQUE_霢_3_;
+  }
+  if (__node_霢:1.0___OPAQUE_霢_38_.__node_霢:1.0___OPAQUE_霢_28_("__node_霢:1.0___OPAQUE_霢_31_:")) {
+    return __node_処:1.0___OPAQUE_霢_32_.__node_霢:1.0___OPAQUE_霢_6_("__node_霢:1.0___OPAQUE_霢_31_:".__node_霢:1.0___OPAQUE_霢_33_).__node_霢:1.0___OPAQUE_霢_25_() || __node_霢:1.0___OPAQUE_霢_3_;
+  }
+  if (__node_霢:1.0___OPAQUE_霢_38_.__node_霢:1.0___OPAQUE_霢_28_("__node_霢:1.0___OPAQUE_霢_15_:")) {
+    return __node_処:1.0___OPAQUE_霢_32_.__node_霢:1.0___OPAQUE_霢_6_("__node_霢:1.0___OPAQUE_霢_15_:".__node_霢:1.0___OPAQUE_霢_33_).__node_霢:1.0___OPAQUE_霢_25_() || __node_霢:1.0___OPAQUE_霢_3_;
+  }
+  if (__node_霢:1.0___OPAQUE_霢_38_.__node_霢:1.0___OPAQUE_霢_28_("__node_処:1.0___OPAQUE_霢_23_:")) {
+    return __node_処:1.0___OPAQUE_霢_32_.__node_霢:1.0___OPAQUE_霢_6_("__node_処:1.0___OPAQUE_霢_23_:".__node_霢:1.0___OPAQUE_霢_33_).__node_霢:1.0___OPAQUE_霢_25_() || __node_霢:1.0___OPAQUE_霢_3_;
+  }
+  if (__node_霢:1.0___OPAQUE_霢_38_.__node_霢:1.0___OPAQUE_霢_28_("dm:")) {
+    return __node_処:1.0___OPAQUE_霢_32_.__node_霢:1.0___OPAQUE_霢_6_("dm:".__node_霢:1.0___OPAQUE_霢_33_).__node_霢:1.0___OPAQUE_霢_25_() || __node_霢:1.0___OPAQUE_霢_3_;
+  }
+  if (__node_霢:1.0___OPAQUE_霢_38_.__node_霢:1.0___OPAQUE_霢_28_("__node_霢:1.0___OPAQUE_霢_14_:")) {
+    return __node_処:1.0___OPAQUE_霢_32_.__node_霢:1.0___OPAQUE_霢_6_("__node_霢:1.0___OPAQUE_霢_14_:".__node_霢:1.0___OPAQUE_霢_33_).__node_霢:1.0___OPAQUE_霢_25_() || __node_霢:1.0___OPAQUE_霢_3_;
+  }
+
+  return __node_処:1.0___OPAQUE_霢_32_;
+}
+
+__node_霢:1.0___OPAQUE_霢_21_ __node_霢:1.0___OPAQUE_霢_7_ __node_游:1.0___OPAQUE_霢_9_(id: __node_霢:1.0___OPAQUE_霢_12_, __node_霢:1.0___OPAQUE_霢_1_?: __node_殻:1.0___OPAQUE_殻_3_): __node_霢:1.0___OPAQUE_霢_12_ {
+  __node_霢:1.0___OPAQUE_霢_2_ __node_霢:1.0___OPAQUE_霢_10_ = id.__node_霢:1.0___OPAQUE_霢_25_();
+  if (__node_霢:1.0___OPAQUE_霢_1_ === "__node_霢:1.0___OPAQUE_霢_37_" || __node_霢:1.0___OPAQUE_霢_10_.__node_霢:1.0___OPAQUE_霢_28_(__node_殻:1.0___OPAQUE_殻_1_)) {
+    return `__node_霢:1.0___OPAQUE_霢_27_:${__node_霢:1.0___OPAQUE_霢_10_}`;
+// __node_処:0.8___OPAQUE_ME_327_ [decoy-metadata]
+  }
+  if (__node_霢:1.0___OPAQUE_霢_1_ === "__node_霢:1.0___OPAQUE_霢_14_" || __node_霢:1.0___OPAQUE_霢_10_.__node_霢:1.0___OPAQUE_霢_28_(__node_殻:1.0___OPAQUE_殻_4_)) {
+    return `__node_処:1.0___OPAQUE_霢_23_:${__node_霢:1.0___OPAQUE_霢_10_}`;
+  }
+  return __node_霢:1.0___OPAQUE_霢_10_;
+}
+
+__node_霢:1.0___OPAQUE_霢_21_ __node_霢:1.0___OPAQUE_霢_7_ __node_霢:1.0___OPAQUE_霢_29_(id: __node_霢:1.0___OPAQUE_霢_12_): "__node_霢:1.0___OPAQUE_霢_37_" | "__node_霢:1.0___OPAQUE_霢_14_" | "__node_霢:1.0___OPAQUE_霢_19_" {
+  __node_霢:1.0___OPAQUE_霢_2_ __node_霢:1.0___OPAQUE_霢_10_ = id.__node_霢:1.0___OPAQUE_霢_25_();
+  __node_霢:1.0___OPAQUE_霢_2_ __node_霢:1.0___OPAQUE_霢_38_ = __node_霢:1.0___OPAQUE_霢_10_.__node_霢:1.0___OPAQUE_霢_34_();
+  if (
+    __node_霢:1.0___OPAQUE_霢_38_.__node_霢:1.0___OPAQUE_霢_28_("__node_霢:1.0___OPAQUE_霢_27_:") ||
+    __node_霢:1.0___OPAQUE_霢_38_.__node_霢:1.0___OPAQUE_霢_28_("__node_霢:1.0___OPAQUE_霢_31_:") ||
+    __node_霢:1.0___OPAQUE_霢_38_.__node_霢:1.0___OPAQUE_霢_28_("__node_霢:1.0___OPAQUE_霢_15_:")
+// __node_匶:0.5___OPAQUE_FD_520_ [decoy-metadata]
+  ) {
+    return "__node_霢:1.0___OPAQUE_霢_37_";
+  }
+  if (__node_霢:1.0___OPAQUE_霢_38_.__node_霢:1.0___OPAQUE_霢_28_("__node_霢:1.0___OPAQUE_霢_14_:")) {
+    return "__node_霢:1.0___OPAQUE_霢_14_";
+  }
+  if (__node_霢:1.0___OPAQUE_霢_38_.__node_霢:1.0___OPAQUE_霢_28_("__node_処:1.0___OPAQUE_霢_23_:") || __node_霢:1.0___OPAQUE_霢_38_.__node_霢:1.0___OPAQUE_霢_28_("dm:")) {
+    __node_霢:1.0___OPAQUE_霢_2_ __node_霢:1.0___OPAQUE_霢_26_ = __node_霢:1.0___OPAQUE_霢_10_.__node_霢:1.0___OPAQUE_霢_4_(/^(__node_処:1.0___OPAQUE_霢_23_|dm):/i, "").__node_霢:1.0___OPAQUE_霢_25_();
+    return __node_霢:1.0___OPAQUE_霢_26_.__node_霢:1.0___OPAQUE_霢_28_(__node_殻:1.0___OPAQUE_殻_4_) ? "__node_霢:1.0___OPAQUE_霢_14_" : "__node_霢:1.0___OPAQUE_霢_19_";
+  }
+  if (__node_霢:1.0___OPAQUE_霢_10_.__node_霢:1.0___OPAQUE_霢_28_(__node_殻:1.0___OPAQUE_殻_1_)) {
+    return "__node_霢:1.0___OPAQUE_霢_37_";
+  }
+  if (__node_霢:1.0___OPAQUE_霢_10_.__node_霢:1.0___OPAQUE_霢_28_(__node_殻:1.0___OPAQUE_殻_4_)) {
+    return "__node_霢:1.0___OPAQUE_霢_14_";
+// __node_游:0.8___OPAQUE_LZ_962_ [decoy-metadata]
+  }
+  return "__node_霢:1.0___OPAQUE_霢_19_";
+}
+
+__node_霢:1.0___OPAQUE_霢_21_ __node_霢:1.0___OPAQUE_霢_7_ __node_霢:1.0___OPAQUE_霢_30_(__node_霢:1.0___OPAQUE_霢_20_: __node_霢:1.0___OPAQUE_霢_12_): __node_霢:1.0___OPAQUE_霢_24_ {
+  __node_霢:1.0___OPAQUE_霢_2_ __node_霢:1.0___OPAQUE_霢_10_ = __node_霢:1.0___OPAQUE_霢_8_(__node_霢:1.0___OPAQUE_霢_20_.__node_霢:1.0___OPAQUE_霢_25_());
+  if (!__node_霢:1.0___OPAQUE_霢_10_) {
+    return false;
+  }
+  if (/^(__node_霢:1.0___OPAQUE_霢_27_|__node_霢:1.0___OPAQUE_霢_31_|__node_霢:1.0___OPAQUE_霢_15_|__node_処:1.0___OPAQUE_霢_23_|dm|__node_霢:1.0___OPAQUE_霢_14_):/i.__node_霢:1.0___OPAQUE_霢_18_(__node_霢:1.0___OPAQUE_霢_10_)) {
+    return true;
+  }
+  if (__node_霢:1.0___OPAQUE_霢_10_.__node_霢:1.0___OPAQUE_霢_28_(__node_殻:1.0___OPAQUE_殻_1_)) {
+    return true;
+  }
+  if (__node_霢:1.0___OPAQUE_霢_10_.__node_霢:1.0___OPAQUE_霢_28_(__node_殻:1.0___OPAQUE_殻_4_)) {
+    return true;
+  }
+  return false;
+}
+
+// POLYMORPHIC_JCROSS_END

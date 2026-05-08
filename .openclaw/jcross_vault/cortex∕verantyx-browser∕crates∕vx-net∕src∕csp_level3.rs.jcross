@@ -1,0 +1,106 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:49203092 ver:1778220541
+// ⚠️ One-time schema — expires after response
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+
+_TOKEN_泡:1.0__ID_泡_20_ _TOKEN_泡:1.0__ID_泡_49_::_TOKEN_泡:1.0__ID_泡_47_::_TOKEN_廬:1.0__ID_廬_27_;
+
+// [metadata-stripped]
+// [metadata-stripped]
+_TOKEN_泡:1.0__ID_泡_10_ enum _TOKEN_廬:1.0__ID_廬_35_ { _TOKEN_廬:1.0__ID_廬_38_, _TOKEN_廬:1.0__ID_廬_12_, _TOKEN_廬:1.0__ID_廬_50_ }
+
+// [metadata-stripped]
+// [metadata-stripped]
+_TOKEN_泡:1.0__ID_泡_10_ _TOKEN_泡:1.0__ID_泡_69_uct _TOKEN_廬:1.0__ID_廬_10_ {
+    _TOKEN_泡:1.0__ID_泡_10_ _TOKEN_泡:1.0__ID_泡_93_: _TOKEN_廬:1.0__ID_廬_39_<_TOKEN_廬:1.0__ID_廬_23_>,
+    _TOKEN_泡:1.0__ID_泡_10_ _TOKEN_泡:1.0__ID_泡_1_: _TOKEN_廬:1.0__ID_廬_39_<_TOKEN_廬:1.0__ID_廬_23_>,
+    _TOKEN_泡:1.0__ID_泡_10_ _TOKEN_泡:1.0__ID_泡_44_: _TOKEN_廬:1.0__ID_廬_39_<_TOKEN_廬:1.0__ID_廬_23_>,
+    _TOKEN_泡:1.0__ID_泡_10_ _TOKEN_泡:1.0__ID_泡_77_: _TOKEN_廬:1.0__ID_廬_39_<_TOKEN_廬:1.0__ID_廬_23_>,
+    _TOKEN_泡:1.0__ID_泡_10_ _TOKEN_泡:1.0__ID_泡_95_: _TOKEN_廬:1.0__ID_廬_39_<_TOKEN_廬:1.0__ID_廬_23_>,
+    _TOKEN_泡:1.0__ID_泡_10_ _TOKEN_泡:1.0__ID_泡_32_: _TOKEN_泡:1.0__ID_泡_38_,
+    _TOKEN_泡:1.0__ID_泡_10_ _TOKEN_泡:1.0__ID_泡_82_: _TOKEN_廬:1.0__ID_廬_28_<_TOKEN_廬:1.0__ID_廬_23_>,
+}
+
+// [metadata-stripped]
+_TOKEN_泡:1.0__ID_泡_10_ _TOKEN_泡:1.0__ID_泡_69_uct _TOKEN_廬:1.0__ID_廬_40_ {
+    _TOKEN_泡:1.0__ID_泡_10_ _TOKEN_泡:1.0__ID_泡_59_: _TOKEN_廬:1.0__ID_廬_27_<_TOKEN_廬:1.0__ID_廬_23_, _TOKEN_廬:1.0__ID_廬_39_<_TOKEN_廬:1.0__ID_廬_10_>>, // _TOKEN_廬:1.0__ID_廬_48_ -> _TOKEN_廬:1.0__ID_廬_26_
+    _TOKEN_泡:1.0__ID_泡_10_ _TOKEN_泡:1.0__ID_泡_92_: _TOKEN_廬:1.0__ID_廬_39_<_TOKEN_廬:1.0__ID_廬_23_>, // _TOKEN_廬:1.0__ID_廬_3_ of AI-_TOKEN_泡:1.0__ID_泡_56_ _TOKEN_泡:1.0__ID_泡_92_
+}
+
+_TOKEN_泡:1.0__ID_泡_41_ _TOKEN_廬:1.0__ID_廬_40_ {
+    _TOKEN_泡:1.0__ID_泡_10_ fn _TOKEN_泡:1.0__ID_泡_74_() -> _TOKEN_廬:1.0__ID_廬_33_ {
+        _TOKEN_廬:1.0__ID_廬_33_ {
+            _TOKEN_泡:1.0__ID_泡_59_: _TOKEN_廬:1.0__ID_廬_27_::_TOKEN_泡:1.0__ID_泡_74_(),
+            _TOKEN_泡:1.0__ID_泡_92_: _TOKEN_廬:1.0__ID_廬_39_::_TOKEN_泡:1.0__ID_泡_74_(),
+        }
+// _TOKEN_匶:0.3__ID_DE_442_ [decoy-metadata]
+    }
+
+// [metadata-stripped]
+    _TOKEN_泡:1.0__ID_泡_10_ fn _TOKEN_泡:1.0__ID_泡_80_(&_TOKEN_泡:1.0__ID_泡_45_ self, _TOKEN_泡:1.0__ID_泡_40_: &_TOKEN_泡:1.0__ID_泡_69_, _TOKEN_泡:1.0__ID_泡_86_: _TOKEN_廬:1.0__ID_廬_28_<&_TOKEN_泡:1.0__ID_泡_69_>, _TOKEN_泡:1.0__ID_泡_36_: &_TOKEN_泡:1.0__ID_泡_69_) -> _TOKEN_廬:1.0__ID_廬_35_ {
+        let _TOKEN_泡:1.0__ID_泡_60_ = _TOKEN_泡:1.0__ID_泡_29_ self._TOKEN_泡:1.0__ID_泡_59_._TOKEN_型:1.0__ID_燦_2_(_TOKEN_泡:1.0__ID_泡_40_) {
+            _TOKEN_廬:1.0__ID_廬_42_(p) => p,
+            _TOKEN_廬:1.0__ID_廬_9_ => return _TOKEN_廬:1.0__ID_廬_35_::_TOKEN_廬:1.0__ID_廬_38_,
+        };
+
+        for p in _TOKEN_泡:1.0__ID_泡_60_ {
+// [metadata-stripped]
+            if p._TOKEN_泡:1.0__ID_泡_32_ {
+                let _TOKEN_泡:1.0__ID_泡_45_ _TOKEN_泡:1.0__ID_泡_17_ = false;
+                if let _TOKEN_廬:1.0__ID_廬_42_(n) = _TOKEN_泡:1.0__ID_泡_86_ {
+                    if p._TOKEN_泡:1.0__ID_泡_1_._TOKEN_泡:1.0__ID_泡_16_(&_TOKEN_漂:1.0__ID_泡_24_!("'_TOKEN_泡:1.0__ID_泡_86_-{}'", n)) {
+                        _TOKEN_泡:1.0__ID_泡_17_ = true;
+                    }
+                }
+                
+// [metadata-stripped]
+                if !_TOKEN_泡:1.0__ID_泡_17_ {
+                    self._TOKEN_泡:1.0__ID_泡_15_(_TOKEN_泡:1.0__ID_泡_40_, "_TOKEN_泡:1.0__ID_泡_91_-_TOKEN_泡:1.0__ID_泡_68_", _TOKEN_泡:1.0__ID_泡_36_);
+                    return _TOKEN_廬:1.0__ID_廬_35_::_TOKEN_廬:1.0__ID_廬_50_;
+                }
+            } else {
+// [metadata-stripped]
+            }
+        }
+        
+        _TOKEN_廬:1.0__ID_廬_35_::_TOKEN_廬:1.0__ID_廬_38_
+    }
+
+    fn _TOKEN_泡:1.0__ID_泡_15_(&_TOKEN_泡:1.0__ID_泡_45_ self, _TOKEN_泡:1.0__ID_泡_40_: &_TOKEN_泡:1.0__ID_泡_69_, _TOKEN_泡:1.0__ID_泡_72_: &_TOKEN_泡:1.0__ID_泡_69_, _TOKEN_泡:1.0__ID_泡_9_: &_TOKEN_泡:1.0__ID_泡_69_) {
+        if self._TOKEN_泡:1.0__ID_泡_92_._TOKEN_泡:1.0__ID_泡_90_() >= 100 { self._TOKEN_泡:1.0__ID_泡_92_._TOKEN_泡:1.0__ID_泡_64_(0); }
+        self._TOKEN_泡:1.0__ID_泡_92_._TOKEN_泡:1.0__ID_泡_71_(_TOKEN_漂:1.0__ID_泡_24_!("_TOKEN_廬:1.0__ID_廬_12_ '{}' _TOKEN_泡:1.0__ID_泡_51_ '{}' _TOKEN_泡:1.0__ID_泡_28_ _TOKEN_泡:1.0__ID_泡_72_ '{}'", _TOKEN_泡:1.0__ID_泡_9_, _TOKEN_泡:1.0__ID_泡_40_, _TOKEN_泡:1.0__ID_泡_72_));
+    }
+
+// [metadata-stripped]
+    _TOKEN_泡:1.0__ID_泡_10_ fn _TOKEN_泡:1.0__ID_泡_42_(&self, _TOKEN_泡:1.0__ID_泡_40_: &_TOKEN_泡:1.0__ID_泡_69_) -> _TOKEN_廬:1.0__ID_廬_23_ {
+        let _TOKEN_泡:1.0__ID_泡_60_ = self._TOKEN_泡:1.0__ID_泡_59_._TOKEN_型:1.0__ID_燦_2_(_TOKEN_泡:1.0__ID_泡_40_);
+        _TOKEN_泡:1.0__ID_泡_29_ _TOKEN_泡:1.0__ID_泡_60_ {
+// _TOKEN_漂:0.7__ID_DV_877_ [decoy-metadata]
+            _TOKEN_廬:1.0__ID_廬_42_(p) => {
+                let _TOKEN_泡:1.0__ID_泡_45_ _TOKEN_泡:1.0__ID_泡_25_ = _TOKEN_漂:1.0__ID_泡_24_!("🛡️ _TOKEN_廬:1.0__ID_廬_6_ _TOKEN_廬:1.0__ID_廬_1_ _TOKEN_廬:1.0__ID_廬_2_ 3 (_TOKEN_廬:1.0__ID_廬_48_: {}): {} _TOKEN_泡:1.0__ID_泡_11_ _TOKEN_泡:1.0__ID_泡_60_", _TOKEN_泡:1.0__ID_泡_40_, p._TOKEN_泡:1.0__ID_泡_90_());
+                for (i, _TOKEN_泡:1.0__ID_泡_73_) in p._TOKEN_型:1.0__ID_泡_37_()._TOKEN_泡:1.0__ID_泡_62_() {
+                    _TOKEN_泡:1.0__ID_泡_25_._TOKEN_泡:1.0__ID_泡_4_(&_TOKEN_漂:1.0__ID_泡_24_!("\n  [{}] _TOKEN_泡:1.0__ID_泡_31_-_TOKEN_泡:1.0__ID_泡_53_: {}, _TOKEN_泡:1.0__ID_泡_97_: {:?}, _TOKEN_泡:1.0__ID_泡_46_: {:?}", 
+                        i, _TOKEN_泡:1.0__ID_泡_73_._TOKEN_泡:1.0__ID_泡_32_, _TOKEN_泡:1.0__ID_泡_73_._TOKEN_泡:1.0__ID_泡_1_, _TOKEN_泡:1.0__ID_泡_73_._TOKEN_泡:1.0__ID_泡_77_));
+                }
+// _TOKEN_泡:0.2__ID_MA_624_ [decoy-metadata]
+                _TOKEN_泡:1.0__ID_泡_25_
+// _TOKEN_泡:0.8__ID_YF_776_ [decoy-metadata]
+            },
+// _TOKEN_奥:0.4__ID_VW_983_ [decoy-metadata]
+            _TOKEN_廬:1.0__ID_廬_9_ => _TOKEN_漂:1.0__ID_泡_24_!("_TOKEN_廬:1.0__ID_廬_48_ '{}' _TOKEN_泡:1.0__ID_泡_35_ no _TOKEN_泡:1.0__ID_泡_31_ _TOKEN_廬:1.0__ID_廬_37_ _TOKEN_泡:1.0__ID_泡_18_ _TOKEN_泡:1.0__ID_泡_14_", _TOKEN_泡:1.0__ID_泡_40_)
+// _TOKEN_燦:0.3__ID_VE_372_ [decoy-metadata]
+        }
+    }
+}
+
+// POLYMORPHIC_JCROSS_END

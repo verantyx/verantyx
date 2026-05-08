@@ -1,0 +1,95 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:F09213D4 ver:1778221943
+// ⚠️ One-time schema — expires after response
+
+import _SYM_沫:1.0__TOKEN_沫_8_ { _SYM_函:1.0__TOKEN_廴_3_ } _SYM_沫:1.0__TOKEN_沫_40_ "./_SYM_沫:1.0__TOKEN_沫_37_.js";
+
+_SYM_沫:1.0__TOKEN_沫_17_ _SYM_沫:1.0__TOKEN_沫_42_(_SYM_沫:1.0__TOKEN_沫_39_: _SYM_沫:1.0__TOKEN_沫_2_): _SYM_沫:1.0__TOKEN_沫_39_ is _SYM_廴:1.0__TOKEN_廴_2_<_SYM_沫:1.0__TOKEN_沫_13_, _SYM_沫:1.0__TOKEN_沫_2_> {
+  return _SYM_廴:1.0__TOKEN_廴_1_(_SYM_沫:1.0__TOKEN_沫_39_) && _SYM_沫:1.0__TOKEN_沫_15_ _SYM_沫:1.0__TOKEN_沫_39_ === "_SYM_沫:1.0__TOKEN_沫_28_" && !_SYM_廴:1.0__TOKEN_廴_4_._SYM_沫:1.0__TOKEN_沫_24_(_SYM_沫:1.0__TOKEN_沫_39_);
+}
+
+_SYM_沫:1.0__TOKEN_沫_17_ _SYM_沫:1.0__TOKEN_沫_36_(_SYM_沫:1.0__TOKEN_沫_39_: _SYM_沫:1.0__TOKEN_沫_2_): _SYM_沫:1.0__TOKEN_沫_39_ is _SYM_沫:1.0__TOKEN_沫_13_ | _SYM_沫:1.0__TOKEN_沫_29_ | _SYM_沫:1.0__TOKEN_沫_45_ {
+  return _SYM_沫:1.0__TOKEN_沫_39_ === _SYM_沫:1.0__TOKEN_沫_45_ || _SYM_沫:1.0__TOKEN_沫_39_ === _SYM_沫:1.0__TOKEN_沫_29_ || _SYM_沫:1.0__TOKEN_沫_15_ _SYM_沫:1.0__TOKEN_沫_39_ === "_SYM_沫:1.0__TOKEN_沫_13_";
+}
+// _SYM_涌:0.2__TOKEN_ZC_754_ [decoy-metadata]
+
+_SYM_沫:1.0__TOKEN_沫_17_ _SYM_道:1.0__TOKEN_沫_22_(_SYM_沫:1.0__TOKEN_沫_39_: _SYM_沫:1.0__TOKEN_沫_2_): _SYM_沫:1.0__TOKEN_沫_39_ is _SYM_沫:1.0__TOKEN_沫_13_ | _SYM_道:1.0__TOKEN_沫_10_ | _SYM_沫:1.0__TOKEN_沫_29_ | _SYM_沫:1.0__TOKEN_沫_45_ {
+  return (
+    _SYM_沫:1.0__TOKEN_沫_39_ === _SYM_沫:1.0__TOKEN_沫_45_ || _SYM_沫:1.0__TOKEN_沫_39_ === _SYM_沫:1.0__TOKEN_沫_29_ || _SYM_沫:1.0__TOKEN_沫_15_ _SYM_沫:1.0__TOKEN_沫_39_ === "_SYM_沫:1.0__TOKEN_沫_13_" || _SYM_沫:1.0__TOKEN_沫_15_ _SYM_沫:1.0__TOKEN_沫_39_ === "_SYM_道:1.0__TOKEN_沫_10_"
+  );
+}
+
+_SYM_沫:1.0__TOKEN_沫_17_ _SYM_道:1.0__TOKEN_沫_19_(_SYM_沫:1.0__TOKEN_沫_39_: _SYM_沫:1.0__TOKEN_沫_2_): _SYM_沫:1.0__TOKEN_沫_39_ is _SYM_道:1.0__TOKEN_沫_10_ | _SYM_沫:1.0__TOKEN_沫_29_ | _SYM_沫:1.0__TOKEN_沫_45_ {
+  return _SYM_沫:1.0__TOKEN_沫_39_ === _SYM_沫:1.0__TOKEN_沫_45_ || _SYM_沫:1.0__TOKEN_沫_39_ === _SYM_沫:1.0__TOKEN_沫_29_ || _SYM_沫:1.0__TOKEN_沫_15_ _SYM_沫:1.0__TOKEN_沫_39_ === "_SYM_道:1.0__TOKEN_沫_10_";
+}
+
+_SYM_沫:1.0__TOKEN_沫_17_ _SYM_沫:1.0__TOKEN_沫_30_(_SYM_沫:1.0__TOKEN_沫_39_: _SYM_沫:1.0__TOKEN_沫_2_): _SYM_沫:1.0__TOKEN_沫_39_ is _SYM_沫:1.0__TOKEN_沫_18_ | _SYM_沫:1.0__TOKEN_沫_29_ | _SYM_沫:1.0__TOKEN_沫_45_ {
+  return _SYM_沫:1.0__TOKEN_沫_39_ === _SYM_沫:1.0__TOKEN_沫_45_ || _SYM_沫:1.0__TOKEN_沫_39_ === _SYM_沫:1.0__TOKEN_沫_29_ || _SYM_沫:1.0__TOKEN_沫_15_ _SYM_沫:1.0__TOKEN_沫_39_ === "_SYM_沫:1.0__TOKEN_沫_18_";
+}
+
+_SYM_沫:1.0__TOKEN_沫_17_ _SYM_沫:1.0__TOKEN_沫_43_(_SYM_沫:1.0__TOKEN_沫_39_: _SYM_沫:1.0__TOKEN_沫_2_): _SYM_沫:1.0__TOKEN_沫_39_ is _SYM_沫:1.0__TOKEN_沫_13_[] | _SYM_沫:1.0__TOKEN_沫_29_ | _SYM_沫:1.0__TOKEN_沫_45_ {
+  return (
+    _SYM_沫:1.0__TOKEN_沫_39_ === _SYM_沫:1.0__TOKEN_沫_45_ ||
+    _SYM_沫:1.0__TOKEN_沫_39_ === _SYM_沫:1.0__TOKEN_沫_29_ ||
+    (_SYM_廴:1.0__TOKEN_廴_4_._SYM_沫:1.0__TOKEN_沫_24_(_SYM_沫:1.0__TOKEN_沫_39_) && _SYM_沫:1.0__TOKEN_沫_39_._SYM_沫:1.0__TOKEN_沫_34_((_SYM_沫:1.0__TOKEN_沫_47_) => _SYM_沫:1.0__TOKEN_沫_15_ _SYM_沫:1.0__TOKEN_沫_47_ === "_SYM_沫:1.0__TOKEN_沫_13_"))
+  );
+}
+
+_SYM_沫:1.0__TOKEN_沫_17_ _SYM_沫:1.0__TOKEN_沫_41_(_SYM_沫:1.0__TOKEN_沫_39_: _SYM_沫:1.0__TOKEN_沫_2_): _SYM_沫:1.0__TOKEN_沫_39_ is _SYM_函:1.0__TOKEN_廴_3_["_SYM_沫:1.0__TOKEN_沫_4_"] {
+  if (_SYM_沫:1.0__TOKEN_沫_39_ === _SYM_沫:1.0__TOKEN_沫_45_ || _SYM_沫:1.0__TOKEN_沫_39_ === _SYM_沫:1.0__TOKEN_沫_29_) {
+    return true;
+  }
+  if (!_SYM_廴:1.0__TOKEN_廴_4_._SYM_沫:1.0__TOKEN_沫_24_(_SYM_沫:1.0__TOKEN_沫_39_)) {
+    return false;
+  }
+  return _SYM_沫:1.0__TOKEN_沫_39_._SYM_沫:1.0__TOKEN_沫_34_((_SYM_沫:1.0__TOKEN_沫_38_) => {
+    if (!_SYM_沫:1.0__TOKEN_沫_42_(_SYM_沫:1.0__TOKEN_沫_38_)) {
+      return false;
+    }
+    return (
+// _SYM_道:0.6__TOKEN_DL_703_ [decoy-metadata]
+      _SYM_沫:1.0__TOKEN_沫_36_(_SYM_沫:1.0__TOKEN_沫_38_._SYM_沫:1.0__TOKEN_沫_44_) &&
+      _SYM_沫:1.0__TOKEN_沫_36_(_SYM_沫:1.0__TOKEN_沫_38_._SYM_沫:1.0__TOKEN_沫_7_) &&
+      _SYM_沫:1.0__TOKEN_沫_30_(_SYM_沫:1.0__TOKEN_沫_38_._SYM_沫:1.0__TOKEN_沫_11_)
+    );
+  });
+}
+// _SYM_函:0.8__TOKEN_EK_303_ [decoy-metadata]
+
+_SYM_沫:1.0__TOKEN_沫_1_ _SYM_沫:1.0__TOKEN_沫_17_ _SYM_涌:1.0__TOKEN_沫_14_(_SYM_沫:1.0__TOKEN_沫_46_: _SYM_沫:1.0__TOKEN_沫_2_): _SYM_函:1.0__TOKEN_廴_3_ | _SYM_沫:1.0__TOKEN_沫_29_ {
+  if (!_SYM_沫:1.0__TOKEN_沫_42_(_SYM_沫:1.0__TOKEN_沫_46_)) {
+    return _SYM_沫:1.0__TOKEN_沫_29_;
+  }
+  _SYM_沫:1.0__TOKEN_沫_32_ _SYM_沫:1.0__TOKEN_沫_25_ = _SYM_沫:1.0__TOKEN_沫_46_._SYM_沫:1.0__TOKEN_沫_33_;
+  if (!_SYM_沫:1.0__TOKEN_沫_42_(_SYM_沫:1.0__TOKEN_沫_25_)) {
+    return _SYM_沫:1.0__TOKEN_沫_29_;
+  }
+
+  _SYM_沫:1.0__TOKEN_沫_32_ _SYM_沫:1.0__TOKEN_沫_33_: _SYM_函:1.0__TOKEN_廴_3_ = _SYM_沫:1.0__TOKEN_沫_25_;
+  if (
+    !_SYM_道:1.0__TOKEN_沫_19_(_SYM_沫:1.0__TOKEN_沫_33_.id) ||
+    !_SYM_道:1.0__TOKEN_沫_19_(_SYM_沫:1.0__TOKEN_沫_33_._SYM_沫:1.0__TOKEN_沫_26_) ||
+    !_SYM_沫:1.0__TOKEN_沫_36_(_SYM_沫:1.0__TOKEN_沫_33_._SYM_道:1.0__TOKEN_沫_20_) ||
+    !_SYM_沫:1.0__TOKEN_沫_30_(_SYM_沫:1.0__TOKEN_沫_33_._SYM_沫:1.0__TOKEN_沫_12_) ||
+    !_SYM_沫:1.0__TOKEN_沫_36_(_SYM_沫:1.0__TOKEN_沫_33_._SYM_沫:1.0__TOKEN_沫_16_) ||
+// _SYM_凛:0.8__TOKEN_WA_625_ [decoy-metadata]
+// _SYM_道:0.5__TOKEN_YG_460_ [decoy-metadata]
+    !_SYM_道:1.0__TOKEN_沫_22_(_SYM_沫:1.0__TOKEN_沫_33_._SYM_沫:1.0__TOKEN_沫_3_) ||
+    !_SYM_沫:1.0__TOKEN_沫_36_(_SYM_沫:1.0__TOKEN_沫_33_._SYM_沫:1.0__TOKEN_沫_21_) ||
+    !_SYM_沫:1.0__TOKEN_沫_36_(_SYM_沫:1.0__TOKEN_沫_33_._SYM_道:1.0__TOKEN_沫_27_) ||
+    !_SYM_沫:1.0__TOKEN_沫_36_(_SYM_沫:1.0__TOKEN_沫_33_._SYM_沫:1.0__TOKEN_沫_6_) ||
+// _SYM_凛:0.9__TOKEN_CB_503_ [decoy-metadata]
+    !_SYM_沫:1.0__TOKEN_沫_41_(_SYM_沫:1.0__TOKEN_沫_33_._SYM_沫:1.0__TOKEN_沫_4_) ||
+    !_SYM_沫:1.0__TOKEN_沫_36_(_SYM_沫:1.0__TOKEN_沫_33_._SYM_道:1.0__TOKEN_沫_31_) ||
+    !_SYM_沫:1.0__TOKEN_沫_36_(_SYM_沫:1.0__TOKEN_沫_33_._SYM_沫:1.0__TOKEN_沫_9_) ||
+    !_SYM_沫:1.0__TOKEN_沫_36_(_SYM_沫:1.0__TOKEN_沫_33_._SYM_沫:1.0__TOKEN_沫_35_) ||
+    !_SYM_沫:1.0__TOKEN_沫_43_(_SYM_沫:1.0__TOKEN_沫_33_._SYM_沫:1.0__TOKEN_沫_23_) ||
+    !_SYM_沫:1.0__TOKEN_沫_30_(_SYM_沫:1.0__TOKEN_沫_33_._SYM_沫:1.0__TOKEN_沫_5_)
+  ) {
+    return _SYM_沫:1.0__TOKEN_沫_29_;
+  }
+
+  return _SYM_沫:1.0__TOKEN_沫_33_;
+}
+
+// POLYMORPHIC_JCROSS_END

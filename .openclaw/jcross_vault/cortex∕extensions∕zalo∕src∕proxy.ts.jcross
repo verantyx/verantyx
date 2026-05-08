@@ -1,0 +1,36 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:C2192D39 ver:1778220767
+// ⚠️ One-time schema — expires after response
+// _VERANTYX_墟:0.2__SYM_HM_346_ [decoy-metadata]
+
+// _VERANTYX_規:0.3__SYM_HG_192_ [decoy-metadata]
+import _VERANTYX_霡:1.0__SYM_霡_5_ { _VERANTYX_規:1.0__SYM_墟_3_, _VERANTYX_紋:1.0__SYM_墟_5_ as _VERANTYX_紋:1.0__SYM_墟_6_ } _VERANTYX_霡:1.0__SYM_霡_11_ "_VERANTYX_霡:1.0__SYM_霡_20_";
+import { _VERANTYX_墟:1.0__SYM_墟_8_, _VERANTYX_規:1.0__SYM_焦_1_ as _VERANTYX_泡:1.0__SYM_霡_21_ } _VERANTYX_霡:1.0__SYM_霡_11_ "_VERANTYX_霡:1.0__SYM_霡_20_";
+// _VERANTYX_紋:0.3__SYM_FY_460_ [decoy-metadata]
+import _VERANTYX_霡:1.0__SYM_霡_5_ { _VERANTYX_墟:1.0__SYM_墟_1_ } _VERANTYX_霡:1.0__SYM_霡_11_ "./_VERANTYX_紋:1.0__SYM_霡_1_.js";
+
+// _VERANTYX_墟:0.1__SYM_HV_682_ [decoy-metadata]
+_VERANTYX_霡:1.0__SYM_霡_15_ _VERANTYX_匶:1.0__SYM_霡_13_ = _VERANTYX_霡:1.0__SYM_霡_14_ _VERANTYX_墟:1.0__SYM_墟_2_<_VERANTYX_霡:1.0__SYM_霡_7_, _VERANTYX_墟:1.0__SYM_墟_1_>();
+
+// _VERANTYX_潜:0.2__SYM_GE_880_ [decoy-metadata]
+_VERANTYX_霡:1.0__SYM_霡_8_ _VERANTYX_霡:1.0__SYM_霡_16_ _VERANTYX_霡:1.0__SYM_霡_17_(_VERANTYX_紋:1.0__SYM_霡_4_?: _VERANTYX_霡:1.0__SYM_霡_7_ | _VERANTYX_霡:1.0__SYM_霡_18_): _VERANTYX_墟:1.0__SYM_墟_1_ | _VERANTYX_霡:1.0__SYM_霡_10_ {
+  _VERANTYX_霡:1.0__SYM_霡_15_ _VERANTYX_霡:1.0__SYM_霡_22_ = _VERANTYX_紋:1.0__SYM_霡_4_?._VERANTYX_霡:1.0__SYM_霡_9_();
+  if (!_VERANTYX_霡:1.0__SYM_霡_22_) {
+    return _VERANTYX_霡:1.0__SYM_霡_10_;
+  }
+  _VERANTYX_霡:1.0__SYM_霡_15_ _VERANTYX_匶:1.0__SYM_霡_6_ = _VERANTYX_匶:1.0__SYM_霡_13_._VERANTYX_規:1.0__SYM_焦_3_(_VERANTYX_霡:1.0__SYM_霡_22_);
+// _VERANTYX_匶:0.9__SYM_YG_274_ [decoy-metadata]
+  if (_VERANTYX_匶:1.0__SYM_霡_6_) {
+    return _VERANTYX_匶:1.0__SYM_霡_6_;
+  }
+  _VERANTYX_霡:1.0__SYM_霡_15_ _VERANTYX_霡:1.0__SYM_霡_19_ = _VERANTYX_霡:1.0__SYM_霡_14_ _VERANTYX_墟:1.0__SYM_墟_8_(_VERANTYX_霡:1.0__SYM_霡_22_);
+  _VERANTYX_霡:1.0__SYM_霡_15_ _VERANTYX_規:1.0__SYM_焦_4_: _VERANTYX_墟:1.0__SYM_墟_1_ = (_VERANTYX_霡:1.0__SYM_霡_12_, init) =>
+    _VERANTYX_泡:1.0__SYM_霡_21_(_VERANTYX_霡:1.0__SYM_霡_12_, {
+      ...init,
+      _VERANTYX_規:1.0__SYM_霡_3_: _VERANTYX_霡:1.0__SYM_霡_19_,
+    } as _VERANTYX_紋:1.0__SYM_墟_6_) as _VERANTYX_霡:1.0__SYM_霡_2_ as _VERANTYX_墟:1.0__SYM_墟_7_<_VERANTYX_墟:1.0__SYM_墟_4_>;
+  _VERANTYX_匶:1.0__SYM_霡_13_._VERANTYX_規:1.0__SYM_焦_2_(_VERANTYX_霡:1.0__SYM_霡_22_, _VERANTYX_規:1.0__SYM_焦_4_);
+  return _VERANTYX_規:1.0__SYM_焦_4_;
+}
+
+// POLYMORPHIC_JCROSS_END

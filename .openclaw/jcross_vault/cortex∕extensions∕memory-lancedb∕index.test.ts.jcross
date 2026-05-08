@@ -1,0 +1,424 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:C5B0C0C2 ver:1778220732
+// ⚠️ One-time schema — expires after response
+
+/**
+ * _VERANTYX_廩:1.0__TOKEN_廩_22_ _VERANTYX_廩:1.0__TOKEN_廩_28_ _VERANTYX_廩:1.0__TOKEN_廩_23_ _VERANTYX_廩:1.0__TOKEN_廩_25_
+ *
+ * _VERANTYX_廩:1.0__TOKEN_廩_25_ _VERANTYX_露:1.0__TOKEN_露_171_ _VERANTYX_露:1.0__TOKEN_露_83_ _VERANTYX_露:1.0__TOKEN_露_109_ _VERANTYX_露:1.0__TOKEN_露_63_ _VERANTYX_露:1.0__TOKEN_露_194_:
+ * - _VERANTYX_廩:1.0__TOKEN_廩_28_ _VERANTYX_露:1.0__TOKEN_露_197_ _VERANTYX_露:1.0__TOKEN_露_95_ _VERANTYX_露:1.0__TOKEN_露_268_
+ * - _VERANTYX_廩:1.0__TOKEN_廩_22_ _VERANTYX_露:1.0__TOKEN_露_185_ _VERANTYX_露:1.0__TOKEN_露_95_ _VERANTYX_露:1.0__TOKEN_露_116_
+ * - _VERANTYX_廩:1.0__TOKEN_廩_9_-_VERANTYX_露:1.0__TOKEN_露_257_ _VERANTYX_露:1.0__TOKEN_露_267_ _VERANTYX_露:1.0__TOKEN_露_205_
+ * - _VERANTYX_廩:1.0__TOKEN_廩_9_-_VERANTYX_露:1.0__TOKEN_露_108_ _VERANTYX_露:1.0__TOKEN_露_137_
+ */
+
+im_VERANTYX_露:1.0__TOKEN_露_94_ fs _VERANTYX_露:1.0__TOKEN_露_252_ "_VERANTYX_露:1.0__TOKEN_露_243_:fs/_VERANTYX_露:1.0__TOKEN_露_81_";
+im_VERANTYX_露:1.0__TOKEN_露_94_ os _VERANTYX_露:1.0__TOKEN_露_252_ "_VERANTYX_露:1.0__TOKEN_露_243_:os";
+im_VERANTYX_露:1.0__TOKEN_露_94_ _VERANTYX_露:1.0__TOKEN_露_20_ _VERANTYX_露:1.0__TOKEN_露_252_ "_VERANTYX_露:1.0__TOKEN_露_243_:_VERANTYX_露:1.0__TOKEN_露_20_";
+im_VERANTYX_露:1.0__TOKEN_露_94_ { _VERANTYX_露:1.0__TOKEN_露_97_, _VERANTYX_露:1.0__TOKEN_露_104_, _VERANTYX_露:1.0__TOKEN_露_71_, _VERANTYX_脈:1.0__TOKEN_露_249_, _VERANTYX_露:1.0__TOKEN_露_13_, vi } _VERANTYX_露:1.0__TOKEN_露_252_ "_VERANTYX_露:1.0__TOKEN_露_130_";
+
+_VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_奥:1.0__TOKEN_廩_6_ = _VERANTYX_露:1.0__TOKEN_露_136_._VERANTYX_露:1.0__TOKEN_露_246_._VERANTYX_奥:1.0__TOKEN_廩_6_ ?? "_VERANTYX_露:1.0__TOKEN_露_104_-_VERANTYX_奥:1.0__TOKEN_露_100_";
+_VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_奥:1.0__TOKEN_廩_10_ = _VERANTYX_廩:1.0__TOKEN_廩_3_(_VERANTYX_露:1.0__TOKEN_露_136_._VERANTYX_露:1.0__TOKEN_露_246_._VERANTYX_奥:1.0__TOKEN_廩_6_);
+_VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_192_ = _VERANTYX_奥:1.0__TOKEN_廩_10_ && _VERANTYX_露:1.0__TOKEN_露_136_._VERANTYX_露:1.0__TOKEN_露_246_._VERANTYX_廩:1.0__TOKEN_廩_24_ === "1";
+_VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_193_ = _VERANTYX_露:1.0__TOKEN_露_192_ ? _VERANTYX_露:1.0__TOKEN_露_97_ : _VERANTYX_露:1.0__TOKEN_露_97_._VERANTYX_露:1.0__TOKEN_露_131_;
+
+_VERANTYX_露:1.0__TOKEN_露_59_ _VERANTYX_廩:1.0__TOKEN_廩_16_ = {
+  _VERANTYX_露:1.0__TOKEN_露_259_?: {
+    _VERANTYX_奥:1.0__TOKEN_露_206_?: _VERANTYX_露:1.0__TOKEN_露_142_;
+    _VERANTYX_露:1.0__TOKEN_露_254_?: _VERANTYX_露:1.0__TOKEN_露_142_;
+    _VERANTYX_露:1.0__TOKEN_露_1_?: _VERANTYX_謀:1.0__TOKEN_露_200_;
+  };
+  _VERANTYX_露:1.0__TOKEN_露_255_?: _VERANTYX_露:1.0__TOKEN_露_142_;
+  _VERANTYX_露:1.0__TOKEN_露_133_?: _VERANTYX_謀:1.0__TOKEN_露_200_;
+  _VERANTYX_露:1.0__TOKEN_露_43_?: _VERANTYX_露:1.0__TOKEN_露_201_;
+  _VERANTYX_露:1.0__TOKEN_露_211_?: _VERANTYX_露:1.0__TOKEN_露_201_;
+};
+
+_VERANTYX_露:1.0__TOKEN_露_10_ _VERANTYX_露:1.0__TOKEN_露_2_(_VERANTYX_露:1.0__TOKEN_露_17_: { _VERANTYX_露:1.0__TOKEN_露_119_: _VERANTYX_露:1.0__TOKEN_露_142_ }) {
+  let _VERANTYX_露:1.0__TOKEN_露_207_ = "";
+  let _VERANTYX_露:1.0__TOKEN_露_255_ = "";
+
+  _VERANTYX_脈:1.0__TOKEN_露_249_(async () => {
+    _VERANTYX_露:1.0__TOKEN_露_207_ = await fs._VERANTYX_露:1.0__TOKEN_露_46_(_VERANTYX_露:1.0__TOKEN_露_20_._VERANTYX_露:1.0__TOKEN_露_261_(os._VERANTYX_露:1.0__TOKEN_露_228_(), _VERANTYX_露:1.0__TOKEN_露_17_._VERANTYX_露:1.0__TOKEN_露_119_));
+    _VERANTYX_露:1.0__TOKEN_露_255_ = _VERANTYX_露:1.0__TOKEN_露_20_._VERANTYX_露:1.0__TOKEN_露_261_(_VERANTYX_露:1.0__TOKEN_露_207_, "_VERANTYX_露:1.0__TOKEN_露_34_");
+  });
+
+  _VERANTYX_露:1.0__TOKEN_露_13_(async () => {
+    if (_VERANTYX_露:1.0__TOKEN_露_207_) {
+      await fs.rm(_VERANTYX_露:1.0__TOKEN_露_207_, { _VERANTYX_露:1.0__TOKEN_露_165_: true, _VERANTYX_脈:1.0__TOKEN_露_123_: true });
+    }
+  });
+
+  return {
+    _VERANTYX_謀:1.0__TOKEN_燦_4_: () => _VERANTYX_露:1.0__TOKEN_露_207_,
+    _VERANTYX_謀:1.0__TOKEN_燦_3_: () => _VERANTYX_露:1.0__TOKEN_露_255_,
+  };
+}
+
+_VERANTYX_露:1.0__TOKEN_露_97_("_VERANTYX_露:1.0__TOKEN_露_83_ _VERANTYX_露:1.0__TOKEN_露_109_ _VERANTYX_露:1.0__TOKEN_露_196_", () => {
+// _VERANTYX_函:0.8__TOKEN_MF_914_ [decoy-metadata]
+  _VERANTYX_露:1.0__TOKEN_露_115_ { _VERANTYX_謀:1.0__TOKEN_燦_3_ } = _VERANTYX_露:1.0__TOKEN_露_2_({ _VERANTYX_露:1.0__TOKEN_露_119_: "_VERANTYX_露:1.0__TOKEN_露_236_-_VERANTYX_露:1.0__TOKEN_露_83_-_VERANTYX_露:1.0__TOKEN_露_104_-" });
+
+  async _VERANTYX_露:1.0__TOKEN_露_10_ _VERANTYX_露:1.0__TOKEN_露_125_(_VERANTYX_露:1.0__TOKEN_露_241_: _VERANTYX_廩:1.0__TOKEN_廩_18_<_VERANTYX_露:1.0__TOKEN_露_142_, _VERANTYX_露:1.0__TOKEN_露_210_> = {}) {
+    _VERANTYX_露:1.0__TOKEN_露_115_ { _VERANTYX_露:1.0__TOKEN_露_60_: _VERANTYX_露:1.0__TOKEN_露_242_ } = await im_VERANTYX_露:1.0__TOKEN_露_94_("./_VERANTYX_露:1.0__TOKEN_露_44_.js");
+    return _VERANTYX_露:1.0__TOKEN_露_242_._VERANTYX_露:1.0__TOKEN_露_15_?._VERANTYX_露:1.0__TOKEN_露_21_?.({
+      _VERANTYX_露:1.0__TOKEN_露_259_: {
+        _VERANTYX_奥:1.0__TOKEN_露_206_: _VERANTYX_奥:1.0__TOKEN_廩_6_,
+        _VERANTYX_露:1.0__TOKEN_露_254_: "_VERANTYX_露:1.0__TOKEN_露_164_-_VERANTYX_露:1.0__TOKEN_露_259_-3-_VERANTYX_露:1.0__TOKEN_露_126_",
+      },
+      _VERANTYX_露:1.0__TOKEN_露_255_: _VERANTYX_謀:1.0__TOKEN_燦_3_(),
+      ..._VERANTYX_露:1.0__TOKEN_露_241_,
+    }) as _VERANTYX_廩:1.0__TOKEN_廩_16_ | _VERANTYX_露:1.0__TOKEN_露_88_;
+  }
+
+  _VERANTYX_露:1.0__TOKEN_露_104_("_VERANTYX_露:1.0__TOKEN_露_83_ _VERANTYX_露:1.0__TOKEN_露_109_ _VERANTYX_露:1.0__TOKEN_露_213_ _VERANTYX_露:1.0__TOKEN_露_95_ _VERANTYX_露:1.0__TOKEN_露_230_ _VERANTYX_露:1.0__TOKEN_露_138_", async () => {
+// [metadata-stripped]
+    _VERANTYX_露:1.0__TOKEN_露_115_ { _VERANTYX_露:1.0__TOKEN_露_60_: _VERANTYX_露:1.0__TOKEN_露_242_ } = await im_VERANTYX_露:1.0__TOKEN_露_94_("./_VERANTYX_露:1.0__TOKEN_露_44_.js");
+
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_242_.id)._VERANTYX_露:1.0__TOKEN_露_85_("_VERANTYX_露:1.0__TOKEN_露_83_-_VERANTYX_露:1.0__TOKEN_露_34_");
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_242_._VERANTYX_露:1.0__TOKEN_露_107_)._VERANTYX_露:1.0__TOKEN_露_85_("_VERANTYX_廩:1.0__TOKEN_廩_22_ (_VERANTYX_廩:1.0__TOKEN_廩_4_)");
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_242_._VERANTYX_露:1.0__TOKEN_露_28_)._VERANTYX_露:1.0__TOKEN_露_85_("_VERANTYX_露:1.0__TOKEN_露_83_");
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_242_._VERANTYX_露:1.0__TOKEN_露_15_)._VERANTYX_露:1.0__TOKEN_露_245_();
+// [metadata-stripped]
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_242_._VERANTYX_謀:1.0__TOKEN_露_175_)._VERANTYX_露:1.0__TOKEN_露_204_(_VERANTYX_廩:1.0__TOKEN_廩_5_);
+  });
+
+  _VERANTYX_露:1.0__TOKEN_露_104_("_VERANTYX_露:1.0__TOKEN_露_105_ _VERANTYX_露:1.0__TOKEN_露_66_ _VERANTYX_露:1.0__TOKEN_露_233_ _VERANTYX_露:1.0__TOKEN_露_248_ _VERANTYX_露:1.0__TOKEN_露_105_", async () => {
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_105_ = await _VERANTYX_露:1.0__TOKEN_露_125_({
+      _VERANTYX_露:1.0__TOKEN_露_43_: true,
+      _VERANTYX_露:1.0__TOKEN_露_211_: true,
+    });
+
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_105_)._VERANTYX_露:1.0__TOKEN_露_245_();
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_105_?._VERANTYX_露:1.0__TOKEN_露_259_?._VERANTYX_奥:1.0__TOKEN_露_206_)._VERANTYX_露:1.0__TOKEN_露_85_(_VERANTYX_奥:1.0__TOKEN_廩_6_);
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_105_?._VERANTYX_露:1.0__TOKEN_露_255_)._VERANTYX_露:1.0__TOKEN_露_85_(_VERANTYX_謀:1.0__TOKEN_燦_3_());
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_105_?._VERANTYX_露:1.0__TOKEN_露_133_)._VERANTYX_露:1.0__TOKEN_露_85_(500);
+  });
+
+  _VERANTYX_露:1.0__TOKEN_露_104_("_VERANTYX_露:1.0__TOKEN_露_105_ _VERANTYX_露:1.0__TOKEN_露_66_ _VERANTYX_露:1.0__TOKEN_露_40_ _VERANTYX_露:1.0__TOKEN_露_246_ _VERANTYX_露:1.0__TOKEN_露_5_", async () => {
+    _VERANTYX_露:1.0__TOKEN_露_115_ { _VERANTYX_露:1.0__TOKEN_露_60_: _VERANTYX_露:1.0__TOKEN_露_242_ } = await im_VERANTYX_露:1.0__TOKEN_露_94_("./_VERANTYX_露:1.0__TOKEN_露_44_.js");
+
+// [metadata-stripped]
+    _VERANTYX_露:1.0__TOKEN_露_136_._VERANTYX_露:1.0__TOKEN_露_246_._VERANTYX_奥:1.0__TOKEN_廩_17_ = "_VERANTYX_露:1.0__TOKEN_露_104_-_VERANTYX_奥:1.0__TOKEN_露_100_-123";
+
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_105_ = _VERANTYX_露:1.0__TOKEN_露_242_._VERANTYX_露:1.0__TOKEN_露_15_?._VERANTYX_露:1.0__TOKEN_露_21_?.({
+      _VERANTYX_露:1.0__TOKEN_露_259_: {
+        _VERANTYX_奥:1.0__TOKEN_露_206_: "${_VERANTYX_奥:1.0__TOKEN_廩_17_}",
+      },
+      _VERANTYX_露:1.0__TOKEN_露_255_: _VERANTYX_謀:1.0__TOKEN_燦_3_(),
+    }) as _VERANTYX_廩:1.0__TOKEN_廩_16_ | _VERANTYX_露:1.0__TOKEN_露_88_;
+
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_105_?._VERANTYX_露:1.0__TOKEN_露_259_?._VERANTYX_奥:1.0__TOKEN_露_206_)._VERANTYX_露:1.0__TOKEN_露_85_("_VERANTYX_露:1.0__TOKEN_露_104_-_VERANTYX_奥:1.0__TOKEN_露_100_-123");
+
+    _VERANTYX_露:1.0__TOKEN_露_32_ _VERANTYX_露:1.0__TOKEN_露_136_._VERANTYX_露:1.0__TOKEN_露_246_._VERANTYX_奥:1.0__TOKEN_廩_17_;
+  });
+
+  _VERANTYX_露:1.0__TOKEN_露_104_("_VERANTYX_露:1.0__TOKEN_露_105_ _VERANTYX_露:1.0__TOKEN_露_66_ _VERANTYX_露:1.0__TOKEN_露_217_ _VERANTYX_露:1.0__TOKEN_露_132_ _VERANTYX_奥:1.0__TOKEN_露_206_", async () => {
+    _VERANTYX_露:1.0__TOKEN_露_115_ { _VERANTYX_露:1.0__TOKEN_露_60_: _VERANTYX_露:1.0__TOKEN_露_242_ } = await im_VERANTYX_露:1.0__TOKEN_露_94_("./_VERANTYX_露:1.0__TOKEN_露_44_.js");
+
+    _VERANTYX_露:1.0__TOKEN_露_71_(() => {
+      _VERANTYX_露:1.0__TOKEN_露_242_._VERANTYX_露:1.0__TOKEN_露_15_?._VERANTYX_露:1.0__TOKEN_露_21_?.({
+        _VERANTYX_露:1.0__TOKEN_露_259_: {},
+        _VERANTYX_露:1.0__TOKEN_露_255_: _VERANTYX_謀:1.0__TOKEN_燦_3_(),
+      });
+    })._VERANTYX_露:1.0__TOKEN_露_47_("_VERANTYX_露:1.0__TOKEN_露_259_._VERANTYX_奥:1.0__TOKEN_露_206_ is _VERANTYX_露:1.0__TOKEN_露_239_");
+  });
+
+  _VERANTYX_露:1.0__TOKEN_露_104_("_VERANTYX_露:1.0__TOKEN_露_105_ _VERANTYX_露:1.0__TOKEN_露_66_ _VERANTYX_露:1.0__TOKEN_露_265_ _VERANTYX_露:1.0__TOKEN_露_133_ _VERANTYX_露:1.0__TOKEN_露_157_", async () => {
+    _VERANTYX_露:1.0__TOKEN_露_115_ { _VERANTYX_露:1.0__TOKEN_露_60_: _VERANTYX_露:1.0__TOKEN_露_242_ } = await im_VERANTYX_露:1.0__TOKEN_露_94_("./_VERANTYX_露:1.0__TOKEN_露_44_.js");
+
+    _VERANTYX_露:1.0__TOKEN_露_71_(() => {
+      _VERANTYX_露:1.0__TOKEN_露_242_._VERANTYX_露:1.0__TOKEN_露_15_?._VERANTYX_露:1.0__TOKEN_露_21_?.({
+        _VERANTYX_露:1.0__TOKEN_露_259_: { _VERANTYX_奥:1.0__TOKEN_露_206_: _VERANTYX_奥:1.0__TOKEN_廩_6_ },
+        _VERANTYX_露:1.0__TOKEN_露_255_: _VERANTYX_謀:1.0__TOKEN_燦_3_(),
+        _VERANTYX_露:1.0__TOKEN_露_133_: 99,
+      });
+// _VERANTYX_脈:0.2__TOKEN_GD_843_ [decoy-metadata]
+    })._VERANTYX_露:1.0__TOKEN_露_47_("_VERANTYX_露:1.0__TOKEN_露_133_ _VERANTYX_露:1.0__TOKEN_露_30_ be _VERANTYX_露:1.0__TOKEN_露_106_ 100 _VERANTYX_露:1.0__TOKEN_露_95_ 10000");
+  });
+
+  _VERANTYX_露:1.0__TOKEN_露_104_("_VERANTYX_露:1.0__TOKEN_露_105_ _VERANTYX_露:1.0__TOKEN_露_66_ _VERANTYX_露:1.0__TOKEN_露_173_ _VERANTYX_露:1.0__TOKEN_露_133_ override", async () => {
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_105_ = await _VERANTYX_露:1.0__TOKEN_露_125_({
+      _VERANTYX_露:1.0__TOKEN_露_133_: 1800,
+    });
+
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_105_?._VERANTYX_露:1.0__TOKEN_露_133_)._VERANTYX_露:1.0__TOKEN_露_85_(1800);
+  });
+
+  _VERANTYX_露:1.0__TOKEN_露_104_("_VERANTYX_露:1.0__TOKEN_露_105_ _VERANTYX_露:1.0__TOKEN_露_66_ _VERANTYX_露:1.0__TOKEN_露_87_ _VERANTYX_露:1.0__TOKEN_露_43_ _VERANTYX_露:1.0__TOKEN_露_209_ by _VERANTYX_露:1.0__TOKEN_露_60_", async () => {
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_105_ = await _VERANTYX_露:1.0__TOKEN_露_125_();
+
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_105_?._VERANTYX_露:1.0__TOKEN_露_43_)._VERANTYX_露:1.0__TOKEN_露_85_(false);
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_105_?._VERANTYX_露:1.0__TOKEN_露_211_)._VERANTYX_露:1.0__TOKEN_露_85_(true);
+  });
+
+  _VERANTYX_露:1.0__TOKEN_露_104_("_VERANTYX_露:1.0__TOKEN_露_251_ _VERANTYX_露:1.0__TOKEN_露_31_ _VERANTYX_露:1.0__TOKEN_露_1_ to _VERANTYX_廩:1.0__TOKEN_廩_7_ _VERANTYX_露:1.0__TOKEN_露_214_ _VERANTYX_紋:1.0__TOKEN_廩_14_", async () => {
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_272_ = vi.fn(async () => ({
+      _VERANTYX_露:1.0__TOKEN_露_86_: [{ _VERANTYX_露:1.0__TOKEN_露_259_: [0.1, 0.2, 0.3] }],
+    }));
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_218_ = vi.fn(async () => []);
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_156_ = vi.fn(() => ({ _VERANTYX_露:1.0__TOKEN_露_218_ }));
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_270_ = vi.fn(() => ({ _VERANTYX_露:1.0__TOKEN_露_156_ }));
+// _VERANTYX_廩:0.1__TOKEN_YF_695_ [decoy-metadata]
+
+    vi._VERANTYX_露:1.0__TOKEN_露_256_();
+    vi._VERANTYX_露:1.0__TOKEN_露_49_("_VERANTYX_露:1.0__TOKEN_露_121_", () => ({
+      _VERANTYX_露:1.0__TOKEN_露_60_: class _VERANTYX_廩:1.0__TOKEN_廩_11_ {
+        _VERANTYX_露:1.0__TOKEN_露_214_ = { _VERANTYX_露:1.0__TOKEN_露_120_: _VERANTYX_露:1.0__TOKEN_露_272_ };
+      },
+    }));
+    vi._VERANTYX_露:1.0__TOKEN_露_49_("@_VERANTYX_露:1.0__TOKEN_露_34_/_VERANTYX_露:1.0__TOKEN_露_34_", () => ({
+      _VERANTYX_露:1.0__TOKEN_露_231_: vi.fn(async () => ({
+        _VERANTYX_露:1.0__TOKEN_露_99_: vi.fn(async () => ["_VERANTYX_露:1.0__TOKEN_露_186_"]),
+        _VERANTYX_露:1.0__TOKEN_露_260_: vi.fn(async () => ({
+          _VERANTYX_露:1.0__TOKEN_露_270_,
+          _VERANTYX_露:1.0__TOKEN_露_27_: vi.fn(async () => 0),
+          _VERANTYX_露:1.0__TOKEN_露_37_: vi.fn(async () => _VERANTYX_露:1.0__TOKEN_露_88_),
+          _VERANTYX_露:1.0__TOKEN_露_32_: vi.fn(async () => _VERANTYX_露:1.0__TOKEN_露_88_),
+        })),
+      })),
+    }));
+
+// _VERANTYX_函:0.4__TOKEN_FH_745_ [decoy-metadata]
+    try {
+      _VERANTYX_露:1.0__TOKEN_露_115_ { _VERANTYX_露:1.0__TOKEN_露_60_: _VERANTYX_露:1.0__TOKEN_露_242_ } = await im_VERANTYX_露:1.0__TOKEN_露_94_("./_VERANTYX_露:1.0__TOKEN_露_44_.js");
+// [metadata-stripped]
+      _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_223_: any[] = [];
+      _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_紋:1.0__TOKEN_露_52_ = {
+        id: "_VERANTYX_露:1.0__TOKEN_露_83_-_VERANTYX_露:1.0__TOKEN_露_34_",
+        _VERANTYX_露:1.0__TOKEN_露_107_: "_VERANTYX_廩:1.0__TOKEN_廩_22_ (_VERANTYX_廩:1.0__TOKEN_廩_4_)",
+        _VERANTYX_露:1.0__TOKEN_露_190_: "_VERANTYX_露:1.0__TOKEN_露_104_",
+        _VERANTYX_露:1.0__TOKEN_露_105_: {},
+        _VERANTYX_露:1.0__TOKEN_露_112_: {
+          _VERANTYX_露:1.0__TOKEN_露_259_: {
+            _VERANTYX_奥:1.0__TOKEN_露_206_: _VERANTYX_奥:1.0__TOKEN_廩_6_,
+            _VERANTYX_露:1.0__TOKEN_露_254_: "_VERANTYX_露:1.0__TOKEN_露_164_-_VERANTYX_露:1.0__TOKEN_露_259_-3-_VERANTYX_露:1.0__TOKEN_露_126_",
+            _VERANTYX_露:1.0__TOKEN_露_1_: 1024,
+          },
+          _VERANTYX_露:1.0__TOKEN_露_255_: _VERANTYX_謀:1.0__TOKEN_燦_3_(),
+          _VERANTYX_露:1.0__TOKEN_露_43_: false,
+          _VERANTYX_露:1.0__TOKEN_露_211_: false,
+        },
+        _VERANTYX_露:1.0__TOKEN_露_18_: {},
+        _VERANTYX_謀:1.0__TOKEN_露_78_: {
+          _VERANTYX_露:1.0__TOKEN_露_144_: vi.fn(),
+          _VERANTYX_露:1.0__TOKEN_露_7_: vi.fn(),
+          _VERANTYX_露:1.0__TOKEN_露_70_: vi.fn(),
+          _VERANTYX_露:1.0__TOKEN_露_232_: vi.fn(),
+        },
+// [metadata-stripped]
+        _VERANTYX_露:1.0__TOKEN_露_80_: (_VERANTYX_露:1.0__TOKEN_露_163_: any, _VERANTYX_露:1.0__TOKEN_露_184_: any) => {
+          _VERANTYX_露:1.0__TOKEN_露_223_._VERANTYX_露:1.0__TOKEN_露_92_({ _VERANTYX_露:1.0__TOKEN_露_163_, _VERANTYX_露:1.0__TOKEN_露_184_ });
+        },
+// [metadata-stripped]
+        _VERANTYX_露:1.0__TOKEN_露_149_: vi.fn(),
+// [metadata-stripped]
+        _VERANTYX_露:1.0__TOKEN_露_110_: vi.fn(),
+// [metadata-stripped]
+        on: vi.fn(),
+        _VERANTYX_露:1.0__TOKEN_露_212_: (p: _VERANTYX_露:1.0__TOKEN_露_142_) => p,
+      };
+
+// [metadata-stripped]
+      _VERANTYX_露:1.0__TOKEN_露_242_._VERANTYX_謀:1.0__TOKEN_露_175_(_VERANTYX_紋:1.0__TOKEN_露_52_ as any);
+      _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_178_ = _VERANTYX_露:1.0__TOKEN_露_223_._VERANTYX_露:1.0__TOKEN_露_151_((t) => t._VERANTYX_露:1.0__TOKEN_露_184_?._VERANTYX_露:1.0__TOKEN_露_107_ === "_VERANTYX_露:1.0__TOKEN_露_179_")?._VERANTYX_露:1.0__TOKEN_露_163_;
+      _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_178_)._VERANTYX_露:1.0__TOKEN_露_245_();
+      await _VERANTYX_露:1.0__TOKEN_露_178_._VERANTYX_露:1.0__TOKEN_露_24_("_VERANTYX_露:1.0__TOKEN_露_104_-_VERANTYX_露:1.0__TOKEN_露_74_-_VERANTYX_露:1.0__TOKEN_露_102_", { _VERANTYX_露:1.0__TOKEN_露_16_: "_VERANTYX_露:1.0__TOKEN_露_220_ _VERANTYX_露:1.0__TOKEN_露_1_" });
+
+      _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_272_)._VERANTYX_露:1.0__TOKEN_露_158_({
+        _VERANTYX_露:1.0__TOKEN_露_254_: "_VERANTYX_露:1.0__TOKEN_露_164_-_VERANTYX_露:1.0__TOKEN_露_259_-3-_VERANTYX_露:1.0__TOKEN_露_126_",
+        _VERANTYX_露:1.0__TOKEN_露_160_: "_VERANTYX_露:1.0__TOKEN_露_220_ _VERANTYX_露:1.0__TOKEN_露_1_",
+        _VERANTYX_露:1.0__TOKEN_露_1_: 1024,
+      });
+    } _VERANTYX_露:1.0__TOKEN_露_161_ {
+      vi._VERANTYX_露:1.0__TOKEN_露_77_("_VERANTYX_露:1.0__TOKEN_露_121_");
+      vi._VERANTYX_露:1.0__TOKEN_露_77_("@_VERANTYX_露:1.0__TOKEN_露_34_/_VERANTYX_露:1.0__TOKEN_露_34_");
+      vi._VERANTYX_露:1.0__TOKEN_露_256_();
+    }
+  });
+
+  _VERANTYX_露:1.0__TOKEN_露_104_("_VERANTYX_露:1.0__TOKEN_露_25_ _VERANTYX_露:1.0__TOKEN_露_152_ _VERANTYX_露:1.0__TOKEN_露_198_ _VERANTYX_露:1.0__TOKEN_露_108_ _VERANTYX_露:1.0__TOKEN_露_134_", async () => {
+    _VERANTYX_露:1.0__TOKEN_露_115_ { _VERANTYX_露:1.0__TOKEN_露_25_ } = await im_VERANTYX_露:1.0__TOKEN_露_94_("./_VERANTYX_露:1.0__TOKEN_露_44_.js");
+
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_25_("I _VERANTYX_謀:1.0__TOKEN_露_54_ _VERANTYX_露:1.0__TOKEN_露_140_ _VERANTYX_露:1.0__TOKEN_露_187_"))._VERANTYX_露:1.0__TOKEN_露_85_(true);
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_25_("_VERANTYX_謀:1.0__TOKEN_廩_26_ _VERANTYX_露:1.0__TOKEN_露_143_ my _VERANTYX_露:1.0__TOKEN_露_107_ is _VERANTYX_廩:1.0__TOKEN_廩_21_"))._VERANTYX_露:1.0__TOKEN_露_85_(true);
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_25_("My _VERANTYX_露:1.0__TOKEN_露_139_ is _VERANTYX_露:1.0__TOKEN_露_104_@_VERANTYX_露:1.0__TOKEN_露_180_._VERANTYX_露:1.0__TOKEN_露_253_"))._VERANTYX_露:1.0__TOKEN_露_85_(true);
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_25_("_VERANTYX_廩:1.0__TOKEN_廩_2_ me at +1234567890123"))._VERANTYX_露:1.0__TOKEN_露_85_(true);
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_25_("I _VERANTYX_露:1.0__TOKEN_露_127_ _VERANTYX_露:1.0__TOKEN_露_118_ _VERANTYX_露:1.0__TOKEN_露_226_ _VERANTYX_露:1.0__TOKEN_露_9_"))._VERANTYX_露:1.0__TOKEN_露_85_(true);
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_25_("x"))._VERANTYX_露:1.0__TOKEN_露_85_(false);
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_25_("<_VERANTYX_露:1.0__TOKEN_露_170_-_VERANTYX_露:1.0__TOKEN_露_186_>_VERANTYX_露:1.0__TOKEN_露_224_</_VERANTYX_露:1.0__TOKEN_露_170_-_VERANTYX_露:1.0__TOKEN_露_186_>"))._VERANTYX_露:1.0__TOKEN_露_85_(false);
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_25_("<_VERANTYX_露:1.0__TOKEN_露_172_>_VERANTYX_露:1.0__TOKEN_露_68_</_VERANTYX_露:1.0__TOKEN_露_172_>"))._VERANTYX_露:1.0__TOKEN_露_85_(false);
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_25_("_VERANTYX_廩:1.0__TOKEN_廩_19_ _VERANTYX_露:1.0__TOKEN_露_84_ _VERANTYX_露:1.0__TOKEN_露_103_ _VERANTYX_露:1.0__TOKEN_露_95_ _VERANTYX_謀:1.0__TOKEN_露_82_ _VERANTYX_露:1.0__TOKEN_露_169_ _VERANTYX_謀:1.0__TOKEN_露_162_"))._VERANTYX_露:1.0__TOKEN_露_85_(false);
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_25_("_VERANTYX_廩:1.0__TOKEN_廩_29_ is a _VERANTYX_露:1.0__TOKEN_露_48_ **_VERANTYX_露:1.0__TOKEN_露_23_**\n- _VERANTYX_露:1.0__TOKEN_露_41_"))._VERANTYX_露:1.0__TOKEN_露_85_(false);
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_148_ = `I _VERANTYX_露:1.0__TOKEN_露_127_ _VERANTYX_謀:1.0__TOKEN_露_54_ _VERANTYX_露:1.0__TOKEN_露_169_ _VERANTYX_露:1.0__TOKEN_露_50_. ${"x"._VERANTYX_露:1.0__TOKEN_露_111_(400)}`;
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_122_ = `I _VERANTYX_露:1.0__TOKEN_露_127_ _VERANTYX_謀:1.0__TOKEN_露_54_ _VERANTYX_露:1.0__TOKEN_露_169_ _VERANTYX_露:1.0__TOKEN_露_50_. ${"x"._VERANTYX_露:1.0__TOKEN_露_111_(600)}`;
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_25_(_VERANTYX_露:1.0__TOKEN_露_148_))._VERANTYX_露:1.0__TOKEN_露_85_(true);
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_25_(_VERANTYX_露:1.0__TOKEN_露_122_))._VERANTYX_露:1.0__TOKEN_露_85_(false);
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_55_ = `I _VERANTYX_露:1.0__TOKEN_露_127_ _VERANTYX_謀:1.0__TOKEN_露_54_ _VERANTYX_露:1.0__TOKEN_露_169_ _VERANTYX_露:1.0__TOKEN_露_50_. ${"x"._VERANTYX_露:1.0__TOKEN_露_111_(1200)}`;
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_113_ = `I _VERANTYX_露:1.0__TOKEN_露_127_ _VERANTYX_謀:1.0__TOKEN_露_54_ _VERANTYX_露:1.0__TOKEN_露_169_ _VERANTYX_露:1.0__TOKEN_露_50_. ${"x"._VERANTYX_露:1.0__TOKEN_露_111_(1600)}`;
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_25_(_VERANTYX_露:1.0__TOKEN_露_55_, { _VERANTYX_露:1.0__TOKEN_露_3_: 1500 }))._VERANTYX_露:1.0__TOKEN_露_85_(true);
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_25_(_VERANTYX_露:1.0__TOKEN_露_113_, { _VERANTYX_露:1.0__TOKEN_露_3_: 1500 }))._VERANTYX_露:1.0__TOKEN_露_85_(false);
+  });
+
+  _VERANTYX_露:1.0__TOKEN_露_104_("_VERANTYX_脈:1.0__TOKEN_露_89_ _VERANTYX_露:1.0__TOKEN_露_69_ _VERANTYX_露:1.0__TOKEN_露_83_ _VERANTYX_露:1.0__TOKEN_露_164_ _VERANTYX_露:1.0__TOKEN_露_95_ _VERANTYX_露:1.0__TOKEN_露_240_ _VERANTYX_露:1.0__TOKEN_露_42_ as _VERANTYX_露:1.0__TOKEN_露_117_", async () => {
+    _VERANTYX_露:1.0__TOKEN_露_115_ { _VERANTYX_脈:1.0__TOKEN_露_89_ } = await im_VERANTYX_露:1.0__TOKEN_露_94_("./_VERANTYX_露:1.0__TOKEN_露_44_.js");
+
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_75_ = _VERANTYX_脈:1.0__TOKEN_露_89_([
+      {
+        _VERANTYX_露:1.0__TOKEN_露_155_: "_VERANTYX_露:1.0__TOKEN_露_159_",
+        _VERANTYX_露:1.0__TOKEN_露_164_: "_VERANTYX_廩:1.0__TOKEN_廩_19_ _VERANTYX_露:1.0__TOKEN_露_84_ _VERANTYX_露:1.0__TOKEN_露_103_ <_VERANTYX_露:1.0__TOKEN_露_163_>_VERANTYX_露:1.0__TOKEN_露_90_</_VERANTYX_露:1.0__TOKEN_露_163_> & _VERANTYX_露:1.0__TOKEN_露_135_ _VERANTYX_露:1.0__TOKEN_露_188_",
+      },
+    ]);
+// _VERANTYX_紋:0.4__TOKEN_AV_911_ [decoy-metadata]
+
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_75_)._VERANTYX_露:1.0__TOKEN_露_215_("_VERANTYX_露:1.0__TOKEN_露_117_ _VERANTYX_露:1.0__TOKEN_露_199_ _VERANTYX_露:1.0__TOKEN_露_86_");
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_75_)._VERANTYX_露:1.0__TOKEN_露_215_("&lt;_VERANTYX_露:1.0__TOKEN_露_163_&gt;_VERANTYX_露:1.0__TOKEN_露_90_&lt;/_VERANTYX_露:1.0__TOKEN_露_163_&gt;");
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_75_)._VERANTYX_露:1.0__TOKEN_露_215_("&_VERANTYX_露:1.0__TOKEN_露_62_; _VERANTYX_露:1.0__TOKEN_露_135_ _VERANTYX_露:1.0__TOKEN_露_188_");
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_75_)._VERANTYX_露:1.0__TOKEN_露_79_._VERANTYX_露:1.0__TOKEN_露_215_("<_VERANTYX_露:1.0__TOKEN_露_163_>_VERANTYX_露:1.0__TOKEN_露_90_</_VERANTYX_露:1.0__TOKEN_露_163_>");
+  });
+
+  _VERANTYX_露:1.0__TOKEN_露_104_("_VERANTYX_露:1.0__TOKEN_露_221_ _VERANTYX_露:1.0__TOKEN_露_216_ _VERANTYX_露:1.0__TOKEN_露_181_-_VERANTYX_露:1.0__TOKEN_露_50_ _VERANTYX_函:1.0__TOKEN_露_56_", async () => {
+    _VERANTYX_露:1.0__TOKEN_露_115_ { _VERANTYX_露:1.0__TOKEN_露_221_ } = await im_VERANTYX_露:1.0__TOKEN_露_94_("./_VERANTYX_露:1.0__TOKEN_露_44_.js");
+
+    _VERANTYX_露:1.0__TOKEN_露_71_(
+      _VERANTYX_露:1.0__TOKEN_露_221_("_VERANTYX_廩:1.0__TOKEN_廩_19_ _VERANTYX_露:1.0__TOKEN_露_84_ _VERANTYX_露:1.0__TOKEN_露_103_ _VERANTYX_露:1.0__TOKEN_露_95_ _VERANTYX_露:1.0__TOKEN_露_24_ _VERANTYX_露:1.0__TOKEN_露_163_ _VERANTYX_露:1.0__TOKEN_露_90_"),
+    )._VERANTYX_露:1.0__TOKEN_露_85_(true);
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_221_("I _VERANTYX_謀:1.0__TOKEN_露_54_ _VERANTYX_露:1.0__TOKEN_露_96_ _VERANTYX_露:1.0__TOKEN_露_57_"))._VERANTYX_露:1.0__TOKEN_露_85_(false);
+  });
+
+  _VERANTYX_露:1.0__TOKEN_露_104_("_VERANTYX_露:1.0__TOKEN_露_176_ _VERANTYX_脈:1.0__TOKEN_露_203_ _VERANTYX_露:1.0__TOKEN_露_6_ _VERANTYX_露:1.0__TOKEN_露_8_ _VERANTYX_露:1.0__TOKEN_露_22_", async () => {
+    _VERANTYX_露:1.0__TOKEN_露_115_ { _VERANTYX_露:1.0__TOKEN_露_176_ } = await im_VERANTYX_露:1.0__TOKEN_露_94_("./_VERANTYX_露:1.0__TOKEN_露_44_.js");
+
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_176_("I _VERANTYX_謀:1.0__TOKEN_露_54_ _VERANTYX_露:1.0__TOKEN_露_140_ _VERANTYX_露:1.0__TOKEN_露_187_"))._VERANTYX_露:1.0__TOKEN_露_85_("_VERANTYX_露:1.0__TOKEN_露_73_");
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_176_("We _VERANTYX_露:1.0__TOKEN_露_146_ to _VERANTYX_露:1.0__TOKEN_露_247_ _VERANTYX_廩:1.0__TOKEN_廩_13_"))._VERANTYX_露:1.0__TOKEN_露_85_("_VERANTYX_露:1.0__TOKEN_露_141_");
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_176_("My _VERANTYX_露:1.0__TOKEN_露_139_ is _VERANTYX_露:1.0__TOKEN_露_104_@_VERANTYX_露:1.0__TOKEN_露_180_._VERANTYX_露:1.0__TOKEN_露_253_"))._VERANTYX_露:1.0__TOKEN_露_85_("_VERANTYX_露:1.0__TOKEN_露_237_");
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_176_("_VERANTYX_廩:1.0__TOKEN_廩_31_ _VERANTYX_謀:1.0__TOKEN_露_229_ is _VERANTYX_露:1.0__TOKEN_露_195_ on _VERANTYX_露:1.0__TOKEN_露_94_ 3000"))._VERANTYX_露:1.0__TOKEN_露_85_("_VERANTYX_露:1.0__TOKEN_露_159_");
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_176_("_VERANTYX_廩:1.0__TOKEN_廩_1_ _VERANTYX_露:1.0__TOKEN_露_45_"))._VERANTYX_露:1.0__TOKEN_露_85_("_VERANTYX_謀:1.0__TOKEN_露_51_");
+  });
+});
+
+// [metadata-stripped]
+_VERANTYX_露:1.0__TOKEN_露_193_("_VERANTYX_露:1.0__TOKEN_露_83_ _VERANTYX_露:1.0__TOKEN_露_109_ _VERANTYX_露:1.0__TOKEN_露_93_ _VERANTYX_露:1.0__TOKEN_露_189_", () => {
+  _VERANTYX_露:1.0__TOKEN_露_115_ { _VERANTYX_謀:1.0__TOKEN_燦_3_ } = _VERANTYX_露:1.0__TOKEN_露_2_({ _VERANTYX_露:1.0__TOKEN_露_119_: "_VERANTYX_露:1.0__TOKEN_露_236_-_VERANTYX_露:1.0__TOKEN_露_83_-_VERANTYX_露:1.0__TOKEN_露_93_-" });
+
+  _VERANTYX_露:1.0__TOKEN_露_104_("_VERANTYX_露:1.0__TOKEN_露_83_ _VERANTYX_露:1.0__TOKEN_露_29_ _VERANTYX_露:1.0__TOKEN_露_129_ _VERANTYX_露:1.0__TOKEN_露_238_-to-_VERANTYX_露:1.0__TOKEN_露_238_", async () => {
+    _VERANTYX_露:1.0__TOKEN_露_115_ { _VERANTYX_露:1.0__TOKEN_露_60_: _VERANTYX_露:1.0__TOKEN_露_242_ } = await im_VERANTYX_露:1.0__TOKEN_露_94_("./_VERANTYX_露:1.0__TOKEN_露_44_.js");
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_奥:1.0__TOKEN_露_38_ = _VERANTYX_露:1.0__TOKEN_露_136_._VERANTYX_露:1.0__TOKEN_露_246_._VERANTYX_奥:1.0__TOKEN_廩_6_ ?? "";
+
+// [metadata-stripped]
+// [metadata-stripped]
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_223_: any[] = [];
+// [metadata-stripped]
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_235_: any[] = [];
+// [metadata-stripped]
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_225_: any[] = [];
+// [metadata-stripped]
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_191_: _VERANTYX_廩:1.0__TOKEN_廩_18_<_VERANTYX_露:1.0__TOKEN_露_142_, any[]> = {};
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_58_: _VERANTYX_露:1.0__TOKEN_露_142_[] = [];
+
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_紋:1.0__TOKEN_露_52_ = {
+      id: "_VERANTYX_露:1.0__TOKEN_露_83_-_VERANTYX_露:1.0__TOKEN_露_34_",
+      _VERANTYX_露:1.0__TOKEN_露_107_: "_VERANTYX_廩:1.0__TOKEN_廩_22_ (_VERANTYX_廩:1.0__TOKEN_廩_4_)",
+      _VERANTYX_露:1.0__TOKEN_露_190_: "_VERANTYX_露:1.0__TOKEN_露_104_",
+      _VERANTYX_露:1.0__TOKEN_露_105_: {},
+      _VERANTYX_露:1.0__TOKEN_露_112_: {
+        _VERANTYX_露:1.0__TOKEN_露_259_: {
+          _VERANTYX_奥:1.0__TOKEN_露_206_: _VERANTYX_奥:1.0__TOKEN_露_38_,
+          _VERANTYX_露:1.0__TOKEN_露_254_: "_VERANTYX_露:1.0__TOKEN_露_164_-_VERANTYX_露:1.0__TOKEN_露_259_-3-_VERANTYX_露:1.0__TOKEN_露_126_",
+        },
+        _VERANTYX_露:1.0__TOKEN_露_255_: _VERANTYX_謀:1.0__TOKEN_燦_3_(),
+        _VERANTYX_露:1.0__TOKEN_露_43_: false,
+        _VERANTYX_露:1.0__TOKEN_露_211_: false,
+      },
+      _VERANTYX_露:1.0__TOKEN_露_18_: {},
+      _VERANTYX_謀:1.0__TOKEN_露_78_: {
+        _VERANTYX_露:1.0__TOKEN_露_144_: (_VERANTYX_露:1.0__TOKEN_露_264_: _VERANTYX_露:1.0__TOKEN_露_142_) => _VERANTYX_露:1.0__TOKEN_露_58_._VERANTYX_露:1.0__TOKEN_露_92_(`[_VERANTYX_露:1.0__TOKEN_露_144_] ${_VERANTYX_露:1.0__TOKEN_露_264_}`),
+        _VERANTYX_露:1.0__TOKEN_露_7_: (_VERANTYX_露:1.0__TOKEN_露_264_: _VERANTYX_露:1.0__TOKEN_露_142_) => _VERANTYX_露:1.0__TOKEN_露_58_._VERANTYX_露:1.0__TOKEN_露_92_(`[_VERANTYX_露:1.0__TOKEN_露_7_] ${_VERANTYX_露:1.0__TOKEN_露_264_}`),
+        _VERANTYX_露:1.0__TOKEN_露_70_: (_VERANTYX_露:1.0__TOKEN_露_264_: _VERANTYX_露:1.0__TOKEN_露_142_) => _VERANTYX_露:1.0__TOKEN_露_58_._VERANTYX_露:1.0__TOKEN_露_92_(`[_VERANTYX_露:1.0__TOKEN_露_70_] ${_VERANTYX_露:1.0__TOKEN_露_264_}`),
+        _VERANTYX_露:1.0__TOKEN_露_232_: (_VERANTYX_露:1.0__TOKEN_露_264_: _VERANTYX_露:1.0__TOKEN_露_142_) => _VERANTYX_露:1.0__TOKEN_露_58_._VERANTYX_露:1.0__TOKEN_露_92_(`[_VERANTYX_露:1.0__TOKEN_露_232_] ${_VERANTYX_露:1.0__TOKEN_露_264_}`),
+      },
+// [metadata-stripped]
+      _VERANTYX_露:1.0__TOKEN_露_80_: (_VERANTYX_露:1.0__TOKEN_露_163_: any, _VERANTYX_露:1.0__TOKEN_露_184_: any) => {
+        _VERANTYX_露:1.0__TOKEN_露_223_._VERANTYX_露:1.0__TOKEN_露_92_({ _VERANTYX_露:1.0__TOKEN_露_163_, _VERANTYX_露:1.0__TOKEN_露_184_ });
+      },
+// [metadata-stripped]
+      _VERANTYX_露:1.0__TOKEN_露_149_: (_VERANTYX_露:1.0__TOKEN_露_168_: any, _VERANTYX_露:1.0__TOKEN_露_184_: any) => {
+        _VERANTYX_露:1.0__TOKEN_露_235_._VERANTYX_露:1.0__TOKEN_露_92_({ _VERANTYX_露:1.0__TOKEN_露_168_, _VERANTYX_露:1.0__TOKEN_露_184_ });
+      },
+// [metadata-stripped]
+      _VERANTYX_露:1.0__TOKEN_露_110_: (_VERANTYX_露:1.0__TOKEN_露_250_: any) => {
+        _VERANTYX_露:1.0__TOKEN_露_225_._VERANTYX_露:1.0__TOKEN_露_92_(_VERANTYX_露:1.0__TOKEN_露_250_);
+      },
+// [metadata-stripped]
+      on: (_VERANTYX_露:1.0__TOKEN_露_128_: _VERANTYX_露:1.0__TOKEN_露_142_, _VERANTYX_謀:1.0__TOKEN_露_166_: any) => {
+        if (!_VERANTYX_露:1.0__TOKEN_露_191_[_VERANTYX_露:1.0__TOKEN_露_128_]) {
+          _VERANTYX_露:1.0__TOKEN_露_191_[_VERANTYX_露:1.0__TOKEN_露_128_] = [];
+        }
+        _VERANTYX_露:1.0__TOKEN_露_191_[_VERANTYX_露:1.0__TOKEN_露_128_]._VERANTYX_露:1.0__TOKEN_露_92_(_VERANTYX_謀:1.0__TOKEN_露_166_);
+      },
+      _VERANTYX_露:1.0__TOKEN_露_212_: (p: _VERANTYX_露:1.0__TOKEN_露_142_) => p,
+    };
+
+// [metadata-stripped]
+// [metadata-stripped]
+    _VERANTYX_露:1.0__TOKEN_露_242_._VERANTYX_謀:1.0__TOKEN_露_175_(_VERANTYX_紋:1.0__TOKEN_露_52_ as any);
+
+// [metadata-stripped]
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_223_._VERANTYX_露:1.0__TOKEN_露_234_)._VERANTYX_露:1.0__TOKEN_露_85_(3);
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_223_._VERANTYX_露:1.0__TOKEN_露_67_((t) => t._VERANTYX_露:1.0__TOKEN_露_184_?._VERANTYX_露:1.0__TOKEN_露_107_))._VERANTYX_露:1.0__TOKEN_露_215_("_VERANTYX_露:1.0__TOKEN_露_179_");
+// _VERANTYX_謀:0.8__TOKEN_VL_304_ [decoy-metadata]
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_223_._VERANTYX_露:1.0__TOKEN_露_67_((t) => t._VERANTYX_露:1.0__TOKEN_露_184_?._VERANTYX_露:1.0__TOKEN_露_107_))._VERANTYX_露:1.0__TOKEN_露_215_("_VERANTYX_露:1.0__TOKEN_露_90_");
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_223_._VERANTYX_露:1.0__TOKEN_露_67_((t) => t._VERANTYX_露:1.0__TOKEN_露_184_?._VERANTYX_露:1.0__TOKEN_露_107_))._VERANTYX_露:1.0__TOKEN_露_215_("_VERANTYX_脈:1.0__TOKEN_露_39_");
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_235_._VERANTYX_露:1.0__TOKEN_露_234_)._VERANTYX_露:1.0__TOKEN_露_85_(1);
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_225_._VERANTYX_露:1.0__TOKEN_露_234_)._VERANTYX_露:1.0__TOKEN_露_85_(1);
+
+// [metadata-stripped]
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_145_ = _VERANTYX_露:1.0__TOKEN_露_223_._VERANTYX_露:1.0__TOKEN_露_151_((t) => t._VERANTYX_露:1.0__TOKEN_露_184_?._VERANTYX_露:1.0__TOKEN_露_107_ === "_VERANTYX_露:1.0__TOKEN_露_90_")?._VERANTYX_露:1.0__TOKEN_露_163_;
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_178_ = _VERANTYX_露:1.0__TOKEN_露_223_._VERANTYX_露:1.0__TOKEN_露_151_((t) => t._VERANTYX_露:1.0__TOKEN_露_184_?._VERANTYX_露:1.0__TOKEN_露_107_ === "_VERANTYX_露:1.0__TOKEN_露_179_")?._VERANTYX_露:1.0__TOKEN_露_163_;
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_脈:1.0__TOKEN_露_227_ = _VERANTYX_露:1.0__TOKEN_露_223_._VERANTYX_露:1.0__TOKEN_露_151_((t) => t._VERANTYX_露:1.0__TOKEN_露_184_?._VERANTYX_露:1.0__TOKEN_露_107_ === "_VERANTYX_脈:1.0__TOKEN_露_39_")?._VERANTYX_露:1.0__TOKEN_露_163_;
+
+// [metadata-stripped]
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_64_ = await _VERANTYX_露:1.0__TOKEN_露_145_._VERANTYX_露:1.0__TOKEN_露_24_("_VERANTYX_露:1.0__TOKEN_露_104_-_VERANTYX_露:1.0__TOKEN_露_74_-1", {
+      _VERANTYX_露:1.0__TOKEN_露_164_: "_VERANTYX_廩:1.0__TOKEN_廩_31_ _VERANTYX_謀:1.0__TOKEN_露_182_ _VERANTYX_露:1.0__TOKEN_露_19_ _VERANTYX_露:1.0__TOKEN_露_140_ _VERANTYX_露:1.0__TOKEN_露_187_ for _VERANTYX_露:1.0__TOKEN_露_124_ _VERANTYX_露:1.0__TOKEN_露_53_",
+      _VERANTYX_露:1.0__TOKEN_露_76_: 0.8,
+      _VERANTYX_露:1.0__TOKEN_露_155_: "_VERANTYX_露:1.0__TOKEN_露_73_",
+    });
+
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_64_._VERANTYX_露:1.0__TOKEN_露_222_?._VERANTYX_露:1.0__TOKEN_露_101_)._VERANTYX_露:1.0__TOKEN_露_85_("_VERANTYX_露:1.0__TOKEN_露_98_");
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_64_._VERANTYX_露:1.0__TOKEN_露_222_?.id)._VERANTYX_露:1.0__TOKEN_露_245_();
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_167_ = _VERANTYX_露:1.0__TOKEN_露_64_._VERANTYX_露:1.0__TOKEN_露_222_?.id;
+
+// [metadata-stripped]
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_150_ = await _VERANTYX_露:1.0__TOKEN_露_178_._VERANTYX_露:1.0__TOKEN_露_24_("_VERANTYX_露:1.0__TOKEN_露_104_-_VERANTYX_露:1.0__TOKEN_露_74_-2", {
+      _VERANTYX_露:1.0__TOKEN_露_16_: "_VERANTYX_露:1.0__TOKEN_露_140_ _VERANTYX_露:1.0__TOKEN_露_187_ _VERANTYX_露:1.0__TOKEN_露_73_",
+      _VERANTYX_露:1.0__TOKEN_露_156_: 5,
+    });
+
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_150_._VERANTYX_露:1.0__TOKEN_露_222_?._VERANTYX_露:1.0__TOKEN_露_153_)._VERANTYX_露:1.0__TOKEN_露_266_(0);
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_150_._VERANTYX_露:1.0__TOKEN_露_222_?._VERANTYX_露:1.0__TOKEN_露_186_?.[0]?._VERANTYX_露:1.0__TOKEN_露_164_)._VERANTYX_露:1.0__TOKEN_露_215_("_VERANTYX_露:1.0__TOKEN_露_140_ _VERANTYX_露:1.0__TOKEN_露_187_");
+
+// [metadata-stripped]
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_露:1.0__TOKEN_露_271_ = await _VERANTYX_露:1.0__TOKEN_露_145_._VERANTYX_露:1.0__TOKEN_露_24_("_VERANTYX_露:1.0__TOKEN_露_104_-_VERANTYX_露:1.0__TOKEN_露_74_-3", {
+      _VERANTYX_露:1.0__TOKEN_露_164_: "_VERANTYX_廩:1.0__TOKEN_廩_31_ _VERANTYX_謀:1.0__TOKEN_露_182_ _VERANTYX_露:1.0__TOKEN_露_19_ _VERANTYX_露:1.0__TOKEN_露_140_ _VERANTYX_露:1.0__TOKEN_露_187_ for _VERANTYX_露:1.0__TOKEN_露_124_ _VERANTYX_露:1.0__TOKEN_露_53_",
+    });
+
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_露:1.0__TOKEN_露_271_._VERANTYX_露:1.0__TOKEN_露_222_?._VERANTYX_露:1.0__TOKEN_露_101_)._VERANTYX_露:1.0__TOKEN_露_85_("_VERANTYX_露:1.0__TOKEN_露_33_");
+
+// [metadata-stripped]
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_脈:1.0__TOKEN_露_262_ = await _VERANTYX_脈:1.0__TOKEN_露_227_._VERANTYX_露:1.0__TOKEN_露_24_("_VERANTYX_露:1.0__TOKEN_露_104_-_VERANTYX_露:1.0__TOKEN_露_74_-4", {
+      _VERANTYX_露:1.0__TOKEN_露_258_: _VERANTYX_露:1.0__TOKEN_露_167_,
+    });
+
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_脈:1.0__TOKEN_露_262_._VERANTYX_露:1.0__TOKEN_露_222_?._VERANTYX_露:1.0__TOKEN_露_101_)._VERANTYX_露:1.0__TOKEN_露_85_("_VERANTYX_露:1.0__TOKEN_露_36_");
+
+// [metadata-stripped]
+    _VERANTYX_露:1.0__TOKEN_露_115_ _VERANTYX_脈:1.0__TOKEN_露_183_ = await _VERANTYX_露:1.0__TOKEN_露_178_._VERANTYX_露:1.0__TOKEN_露_24_("_VERANTYX_露:1.0__TOKEN_露_104_-_VERANTYX_露:1.0__TOKEN_露_74_-5", {
+      _VERANTYX_露:1.0__TOKEN_露_16_: "_VERANTYX_露:1.0__TOKEN_露_140_ _VERANTYX_露:1.0__TOKEN_露_187_ _VERANTYX_露:1.0__TOKEN_露_73_",
+      _VERANTYX_露:1.0__TOKEN_露_156_: 5,
+    });
+
+    _VERANTYX_露:1.0__TOKEN_露_71_(_VERANTYX_脈:1.0__TOKEN_露_183_._VERANTYX_露:1.0__TOKEN_露_222_?._VERANTYX_露:1.0__TOKEN_露_153_)._VERANTYX_露:1.0__TOKEN_露_85_(0);
+  }, 60000); // 60s _VERANTYX_露:1.0__TOKEN_露_219_ for _VERANTYX_露:1.0__TOKEN_露_93_ _VERANTYX_紋:1.0__TOKEN_廩_14_ _VERANTYX_露:1.0__TOKEN_露_26_
+});
+
+// POLYMORPHIC_JCROSS_END

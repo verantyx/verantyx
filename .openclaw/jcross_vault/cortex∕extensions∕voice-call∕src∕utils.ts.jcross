@@ -1,0 +1,26 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:6E296B5F ver:1778222147
+// ⚠️ One-time schema — expires after response
+// _VERANTYX_匵:0.4___jcross_HE_308__ [decoy-metadata]
+// _VERANTYX_匵:0.3___jcross_VH_824__ [decoy-metadata]
+
+import os _VERANTYX_霮:1.0___jcross_霮_15__ "_VERANTYX_霮:1.0___jcross_霮_10__:os";
+import _VERANTYX_霮:1.0___jcross_霮_12__ _VERANTYX_霮:1.0___jcross_霮_15__ "_VERANTYX_霮:1.0___jcross_霮_10__:_VERANTYX_霮:1.0___jcross_霮_12__";
+
+_VERANTYX_霮:1.0___jcross_霮_7__ _VERANTYX_霮:1.0___jcross_霮_1__ _VERANTYX_霮:1.0___jcross_霮_11__(_VERANTYX_霮:1.0___jcross_霮_14__: _VERANTYX_霮:1.0___jcross_霮_9__): _VERANTYX_霮:1.0___jcross_霮_9__ {
+  _VERANTYX_霮:1.0___jcross_霮_6__ _VERANTYX_霮:1.0___jcross_霮_5__ = _VERANTYX_霮:1.0___jcross_霮_14__._VERANTYX_霮:1.0___jcross_霮_3__();
+// _VERANTYX_焦:0.6___jcross_EV_217__ [decoy-metadata]
+  if (!_VERANTYX_霮:1.0___jcross_霮_5__) {
+    return _VERANTYX_霮:1.0___jcross_霮_5__;
+// _VERANTYX_匵:0.9___jcross_LG_744__ [decoy-metadata]
+  }
+  if (_VERANTYX_霮:1.0___jcross_霮_5__._VERANTYX_霮:1.0___jcross_霮_8__("~")) {
+    _VERANTYX_霮:1.0___jcross_霮_6__ _VERANTYX_霮:1.0___jcross_霮_13__ = _VERANTYX_霮:1.0___jcross_霮_5__._VERANTYX_霮:1.0___jcross_霮_2__(/^~(?=$|[\\/])/, os._VERANTYX_霮:1.0___jcross_霮_4__());
+    return _VERANTYX_霮:1.0___jcross_霮_12__._VERANTYX_霮:1.0___jcross_霮_16__(_VERANTYX_霮:1.0___jcross_霮_13__);
+// _VERANTYX_格:0.1___jcross_EZ_788__ [decoy-metadata]
+// _VERANTYX_殻:0.2___jcross_AV_630__ [decoy-metadata]
+  }
+  return _VERANTYX_霮:1.0___jcross_霮_12__._VERANTYX_霮:1.0___jcross_霮_16__(_VERANTYX_霮:1.0___jcross_霮_5__);
+}
+
+// POLYMORPHIC_JCROSS_END

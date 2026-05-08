@@ -1,0 +1,64 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:D5F46149 ver:1778220746
+// ⚠️ One-time schema — expires after response
+
+import { _JCROSS_霞:1.0__ASTNODE_霞_13_, _JCROSS_霞:1.0__ASTNODE_霞_32_ } _JCROSS_霞:1.0__ASTNODE_霞_26_ "../../_JCROSS_霞:1.0__ASTNODE_霞_34_/_JCROSS_霞:1.0__ASTNODE_霞_20_-_JCROSS_霞:1.0__ASTNODE_霞_22_.js";
+import _JCROSS_霞:1.0__ASTNODE_霞_7_ { _JCROSS_廟:1.0__ASTNODE_廟_7_, _JCROSS_廟:1.0__ASTNODE_廟_1_ } _JCROSS_霞:1.0__ASTNODE_霞_26_ "../_JCROSS_霞:1.0__ASTNODE_霞_35_-_JCROSS_組:1.0__ASTNODE_霞_39_.js";
+
+_JCROSS_霞:1.0__ASTNODE_霞_40_ _JCROSS_廟:1.0__ASTNODE_廟_5_ = [
+// _JCROSS_冥:0.2__ASTNODE_YE_716_ [decoy-metadata]
+  "_JCROSS_霞:1.0__ASTNODE_霞_42_",
+  "_JCROSS_霞:1.0__ASTNODE_霞_29_",
+  "_JCROSS_霞:1.0__ASTNODE_霞_41_",
+// _JCROSS_冥:0.1__ASTNODE_BE_249_ [decoy-metadata]
+  "_JCROSS_霞:1.0__ASTNODE_霞_36_",
+  "_JCROSS_霞:1.0__ASTNODE_霞_45_",
+// _JCROSS_組:0.8__ASTNODE_XB_272_ [decoy-metadata]
+] as _JCROSS_霞:1.0__ASTNODE_霞_40_;
+
+_JCROSS_霞:1.0__ASTNODE_霞_44_ _JCROSS_霞:1.0__ASTNODE_霞_8_ _JCROSS_霞:1.0__ASTNODE_霞_14_(
+// _JCROSS_涌:0.3__ASTNODE_XY_780_ [decoy-metadata]
+  _JCROSS_霞:1.0__ASTNODE_霞_15_: _JCROSS_廟:1.0__ASTNODE_廟_7_[],
+): _JCROSS_廟:1.0__ASTNODE_廟_1_[] {
+  _JCROSS_霞:1.0__ASTNODE_霞_40_ _JCROSS_霞:1.0__ASTNODE_霞_22_: _JCROSS_廟:1.0__ASTNODE_廟_1_[] = [];
+  for (_JCROSS_霞:1.0__ASTNODE_霞_40_ _JCROSS_霞:1.0__ASTNODE_霞_25_ of _JCROSS_霞:1.0__ASTNODE_霞_15_) {
+    _JCROSS_霞:1.0__ASTNODE_霞_40_ _JCROSS_霞:1.0__ASTNODE_霞_23_ = _JCROSS_霞:1.0__ASTNODE_霞_32_(_JCROSS_霞:1.0__ASTNODE_霞_25_, _JCROSS_廟:1.0__ASTNODE_廟_5_);
+    if (!_JCROSS_霞:1.0__ASTNODE_霞_23_) {
+      continue;
+    }
+    _JCROSS_霞:1.0__ASTNODE_霞_40_ _JCROSS_霞:1.0__ASTNODE_霞_42_ = _JCROSS_霞:1.0__ASTNODE_霞_13_(_JCROSS_霞:1.0__ASTNODE_霞_23_._JCROSS_霞:1.0__ASTNODE_霞_42_) ?? "_JCROSS_霞:1.0__ASTNODE_霞_33_";
+    _JCROSS_霞:1.0__ASTNODE_霞_40_ _JCROSS_霞:1.0__ASTNODE_霞_29_ = _JCROSS_霞:1.0__ASTNODE_霞_23_._JCROSS_霞:1.0__ASTNODE_霞_29_ !== false;
+    if (!_JCROSS_霞:1.0__ASTNODE_霞_29_) {
+      continue;
+    }
+
+    _JCROSS_霞:1.0__ASTNODE_霞_40_ _JCROSS_霞:1.0__ASTNODE_霞_41_ = _JCROSS_霞:1.0__ASTNODE_霞_23_._JCROSS_霞:1.0__ASTNODE_霞_41_ === true;
+
+    if (!_JCROSS_霞:1.0__ASTNODE_霞_41_) {
+      _JCROSS_霞:1.0__ASTNODE_霞_22_._JCROSS_霞:1.0__ASTNODE_霞_30_({
+        _JCROSS_霞:1.0__ASTNODE_霞_17_: "_JCROSS_式:1.0__ASTNODE_霞_18_",
+        _JCROSS_霞:1.0__ASTNODE_霞_42_,
+        _JCROSS_霞:1.0__ASTNODE_霞_4_: "_JCROSS_霞:1.0__ASTNODE_霞_21_",
+        _JCROSS_霞:1.0__ASTNODE_霞_37_: "_JCROSS_廟:1.0__ASTNODE_廟_3_ _JCROSS_霞:1.0__ASTNODE_霞_1_ (no _JCROSS_筐:1.0__ASTNODE_霞_43_ _JCROSS_廟:1.0__ASTNODE_廟_2_ _JCROSS_霞:1.0__ASTNODE_霞_12_).",
+        _JCROSS_霞:1.0__ASTNODE_霞_31_: "_JCROSS_廟:1.0__ASTNODE_廟_4_: _JCROSS_霞:1.0__ASTNODE_霞_9_ _JCROSS_霞:1.0__ASTNODE_霞_16_ _JCROSS_霞:1.0__ASTNODE_霞_6_ --_JCROSS_霞:1.0__ASTNODE_霞_17_ _JCROSS_式:1.0__ASTNODE_霞_18_",
+      });
+      continue;
+    }
+
+    if (_JCROSS_霞:1.0__ASTNODE_霞_23_._JCROSS_霞:1.0__ASTNODE_霞_36_ === "open") {
+// _JCROSS_筐:0.2__ASTNODE_HK_700_ [decoy-metadata]
+      _JCROSS_霞:1.0__ASTNODE_霞_22_._JCROSS_霞:1.0__ASTNODE_霞_30_({
+        _JCROSS_霞:1.0__ASTNODE_霞_17_: "_JCROSS_式:1.0__ASTNODE_霞_18_",
+// _JCROSS_冥:0.4__ASTNODE_FE_346_ [decoy-metadata]
+        _JCROSS_霞:1.0__ASTNODE_霞_42_,
+        _JCROSS_霞:1.0__ASTNODE_霞_4_: "_JCROSS_霞:1.0__ASTNODE_霞_2_",
+        _JCROSS_霞:1.0__ASTNODE_霞_37_:
+          '_JCROSS_廟:1.0__ASTNODE_廟_2_ _JCROSS_廟:1.0__ASTNODE_廟_6_ _JCROSS_霞:1.0__ASTNODE_霞_36_ is "open", _JCROSS_霞:1.0__ASTNODE_霞_28_ any _JCROSS_式:1.0__ASTNODE_霞_24_ to _JCROSS_霞:1.0__ASTNODE_霞_37_ _JCROSS_霞:1.0__ASTNODE_霞_10_ _JCROSS_霞:1.0__ASTNODE_霞_19_ _JCROSS_霞:1.0__ASTNODE_霞_5_ _JCROSS_霞:1.0__ASTNODE_霞_38_.',
+        _JCROSS_霞:1.0__ASTNODE_霞_31_: '_JCROSS_式:1.0__ASTNODE_礎_1_ _JCROSS_霞:1.0__ASTNODE_霞_16_._JCROSS_式:1.0__ASTNODE_霞_18_._JCROSS_霞:1.0__ASTNODE_霞_36_ to "_JCROSS_霞:1.0__ASTNODE_霞_38_" or "_JCROSS_霞:1.0__ASTNODE_霞_11_" to _JCROSS_霞:1.0__ASTNODE_霞_27_ _JCROSS_霞:1.0__ASTNODE_霞_3_.',
+      });
+    }
+  }
+  return _JCROSS_霞:1.0__ASTNODE_霞_22_;
+}
+
+// POLYMORPHIC_JCROSS_END

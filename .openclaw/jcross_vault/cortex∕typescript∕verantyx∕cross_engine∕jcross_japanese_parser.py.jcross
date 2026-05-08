@@ -1,0 +1,982 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:9F5FC5A3 ver:1778220243
+// ⚠️ One-time schema — expires after response
+
+// [metadata-stripped]
+"""
+._ASTNODE_霾:1.0__OPAQUE_霾_101_ _ASTNODE_庠:1.0__OPAQUE_庠_17_ _ASTNODE_計:1.0__OPAQUE_庠_7_ (_ASTNODE_庠:1.0__OPAQUE_庠_32_ 2.5)
+完全日本語サポートのパーサー
+
+日本語キーワード:
+- 関数 (_ASTNODE_庠:1.0__OPAQUE_庠_46_)
+- 返す (_ASTNODE_庠:1.0__OPAQUE_庠_29_)
+- もし (IF)
+- そうでなければ (_ASTNODE_庠:1.0__OPAQUE_庠_12_)
+- 各〜IN (_ASTNODE_庠:1.0__OPAQUE_庠_4_〜IN)
+- 繰り返し (_ASTNODE_庠:1.0__OPAQUE_庠_34_)
+- 中断 (_ASTNODE_庠:1.0__OPAQUE_庠_6_)
+- 表示 (_ASTNODE_庠:1.0__OPAQUE_庠_33_)
+"""
+
+import re
+import _ASTNODE_霾:1.0__OPAQUE_霾_114_
+_ASTNODE_霾:1.0__OPAQUE_霾_69_ _ASTNODE_霾:1.0__OPAQUE_霾_153_ import _ASTNODE_庠:1.0__OPAQUE_庠_44_
+_ASTNODE_霾:1.0__OPAQUE_霾_69_ _ASTNODE_霾:1.0__OPAQUE_霾_63_ import _ASTNODE_庠:1.0__OPAQUE_庠_39_, _ASTNODE_庠:1.0__OPAQUE_庠_47_, _ASTNODE_庠:1.0__OPAQUE_庠_26_, _ASTNODE_庠:1.0__OPAQUE_庠_27_
+
+
+class _ASTNODE_計:1.0__OPAQUE_庠_24_:
+    """完全日本語対応._ASTNODE_霾:1.0__OPAQUE_霾_101_パーサー"""
+
+    _ASTNODE_霾:1.0__OPAQUE_霾_130_ _ASTNODE_霾:1.0__OPAQUE_霾_125_(self):
+        self._ASTNODE_霾:1.0__OPAQUE_霾_151_ = {}
+        self._ASTNODE_霾:1.0__OPAQUE_霾_146_ = {}
+        self._ASTNODE_霾:1.0__OPAQUE_霾_106_ = _ASTNODE_庠:1.0__OPAQUE_庠_28_
+        self._ASTNODE_霾:1.0__OPAQUE_霾_143_ = _ASTNODE_庠:1.0__OPAQUE_庠_18_
+        self._ASTNODE_霾:1.0__OPAQUE_霾_191_ = _ASTNODE_庠:1.0__OPAQUE_庠_18_
+        self._ASTNODE_函:1.0__OPAQUE_霾_2_ = _ASTNODE_庠:1.0__OPAQUE_庠_28_
+        self._ASTNODE_霾:1.0__OPAQUE_霾_49_()
+
+    _ASTNODE_霾:1.0__OPAQUE_霾_130_ _ASTNODE_霾:1.0__OPAQUE_霾_49_(self):
+        """日本語組み込み関数を初期化"""
+        import _ASTNODE_霾:1.0__OPAQUE_霾_183_
+        import _ASTNODE_霾:1.0__OPAQUE_霾_5_
+
+// [metadata-stripped]
+        _ASTNODE_霾:1.0__OPAQUE_霾_186_ = {
+// [metadata-stripped]
+            '長さ': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_78_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0]) if _ASTNODE_霾:1.0__OPAQUE_霾_58_ else 0,
+            '絶対値': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_103_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0]) if _ASTNODE_霾:1.0__OPAQUE_霾_58_ else 0,
+            '現在時刻': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_123_(_ASTNODE_霾:1.0__OPAQUE_霾_183_._ASTNODE_霾:1.0__OPAQUE_霾_183_()),
+            '含む': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: (_ASTNODE_霾:1.0__OPAQUE_霾_58_[1] in _ASTNODE_霾:1.0__OPAQUE_霾_58_[0]) if _ASTNODE_霾:1.0__OPAQUE_霾_78_(_ASTNODE_霾:1.0__OPAQUE_霾_58_) >= 2 else _ASTNODE_庠:1.0__OPAQUE_庠_18_,
+            '大文字': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_58_[0]._ASTNODE_計:1.0__OPAQUE_霾_24_() if _ASTNODE_霾:1.0__OPAQUE_霾_58_ _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0], _ASTNODE_霾:1.0__OPAQUE_霾_137_) else "",
+            '小文字': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_58_[0]._ASTNODE_計:1.0__OPAQUE_霾_152_() if _ASTNODE_霾:1.0__OPAQUE_霾_58_ _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0], _ASTNODE_霾:1.0__OPAQUE_霾_137_) else "",
+            '分割': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_58_[0]._ASTNODE_霾:1.0__OPAQUE_霾_136_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[1]) if _ASTNODE_霾:1.0__OPAQUE_霾_78_(_ASTNODE_霾:1.0__OPAQUE_霾_58_) >= 2 _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0], _ASTNODE_霾:1.0__OPAQUE_霾_137_) else [],
+            '結合': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_58_[1]._ASTNODE_霾:1.0__OPAQUE_霾_77_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0]) if _ASTNODE_霾:1.0__OPAQUE_霾_78_(_ASTNODE_霾:1.0__OPAQUE_霾_58_) >= 2 _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0], _ASTNODE_霾:1.0__OPAQUE_霾_51_) else "",
+            '最小': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_165_(_ASTNODE_霾:1.0__OPAQUE_霾_58_) if _ASTNODE_霾:1.0__OPAQUE_霾_78_(_ASTNODE_霾:1.0__OPAQUE_霾_58_) > 1 else (_ASTNODE_霾:1.0__OPAQUE_霾_165_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0]) if _ASTNODE_霾:1.0__OPAQUE_霾_58_ _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0], _ASTNODE_霾:1.0__OPAQUE_霾_51_) else 0),
+            '最大': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_177_(_ASTNODE_霾:1.0__OPAQUE_霾_58_) if _ASTNODE_霾:1.0__OPAQUE_霾_78_(_ASTNODE_霾:1.0__OPAQUE_霾_58_) > 1 else (_ASTNODE_霾:1.0__OPAQUE_霾_177_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0]) if _ASTNODE_霾:1.0__OPAQUE_霾_58_ _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0], _ASTNODE_霾:1.0__OPAQUE_霾_51_) else 0),
+            '合計': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_62_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0]) if _ASTNODE_霾:1.0__OPAQUE_霾_58_ _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0], _ASTNODE_霾:1.0__OPAQUE_霾_51_) else 0,
+            '文字列': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_137_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0]) if _ASTNODE_霾:1.0__OPAQUE_霾_58_ else "",
+            '整数': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_123_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0]) if _ASTNODE_霾:1.0__OPAQUE_霾_58_ else 0,
+            '浮動小数': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_108_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0]) if _ASTNODE_霾:1.0__OPAQUE_霾_58_ else 0.0,
+            '平方根': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_5_._ASTNODE_霾:1.0__OPAQUE_霾_50_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0]) if _ASTNODE_霾:1.0__OPAQUE_霾_58_ else 0,
+            '四捨五入': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_70_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0], _ASTNODE_霾:1.0__OPAQUE_霾_58_[1]) if _ASTNODE_霾:1.0__OPAQUE_霾_78_(_ASTNODE_霾:1.0__OPAQUE_霾_58_) >= 2 else _ASTNODE_霾:1.0__OPAQUE_霾_70_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0]) if _ASTNODE_霾:1.0__OPAQUE_霾_58_ else 0,
+            '表示': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_95_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0]) if _ASTNODE_霾:1.0__OPAQUE_霾_58_ else _ASTNODE_庠:1.0__OPAQUE_庠_28_,
+
+// [metadata-stripped]
+            '経路探索': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_119_('_ASTNODE_計:1.0__OPAQUE_霾_99_')._ASTNODE_計:1.0__OPAQUE_庠_9_(self._ASTNODE_霾:1.0__OPAQUE_霾_151_._ASTNODE_計:1.0__OPAQUE_曠_2_('_ASTNODE_庠:1.0__OPAQUE_庠_21_._ASTNODE_霾:1.0__OPAQUE_霾_147_', []))._ASTNODE_計:1.0__OPAQUE_曠_1_(
+                self._ASTNODE_霾:1.0__OPAQUE_霾_151_._ASTNODE_計:1.0__OPAQUE_曠_2_('_ASTNODE_計:1.0__OPAQUE_庠_48_', []),
+                _ASTNODE_霾:1.0__OPAQUE_霾_58_[0] if _ASTNODE_霾:1.0__OPAQUE_霾_78_(_ASTNODE_霾:1.0__OPAQUE_霾_58_) > 0 else [],
+                _ASTNODE_霾:1.0__OPAQUE_霾_58_[1] if _ASTNODE_霾:1.0__OPAQUE_霾_78_(_ASTNODE_霾:1.0__OPAQUE_霾_58_) > 1 else []
+            ),
+            '位置検索': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_138_(([r, c] for r, _ASTNODE_霾:1.0__OPAQUE_霾_134_ in _ASTNODE_霾:1.0__OPAQUE_霾_198_(self._ASTNODE_霾:1.0__OPAQUE_霾_151_._ASTNODE_計:1.0__OPAQUE_曠_2_('_ASTNODE_庠:1.0__OPAQUE_庠_21_._ASTNODE_霾:1.0__OPAQUE_霾_147_', [])) for c, _ASTNODE_霾:1.0__OPAQUE_霾_157_ in _ASTNODE_霾:1.0__OPAQUE_霾_198_(_ASTNODE_霾:1.0__OPAQUE_霾_134_) if _ASTNODE_霾:1.0__OPAQUE_霾_157_ == _ASTNODE_霾:1.0__OPAQUE_霾_58_[0]), []),
+
+// [metadata-stripped]
+            '_ASTNODE_庠:1.0__OPAQUE_庠_13_': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_78_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0]) if _ASTNODE_霾:1.0__OPAQUE_霾_58_ else 0,
+            '_ASTNODE_霾:1.0__OPAQUE_霾_78_': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_78_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0]) if _ASTNODE_霾:1.0__OPAQUE_霾_58_ else 0,
+            '_ASTNODE_庠:1.0__OPAQUE_庠_36_': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_103_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0]) if _ASTNODE_霾:1.0__OPAQUE_霾_58_ else 0,
+            '_ASTNODE_庠:1.0__OPAQUE_庠_2_': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_123_(_ASTNODE_霾:1.0__OPAQUE_霾_183_._ASTNODE_霾:1.0__OPAQUE_霾_183_()),
+            '_ASTNODE_庠:1.0__OPAQUE_庠_51_': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: (_ASTNODE_霾:1.0__OPAQUE_霾_58_[1] in _ASTNODE_霾:1.0__OPAQUE_霾_58_[0]) if _ASTNODE_霾:1.0__OPAQUE_霾_78_(_ASTNODE_霾:1.0__OPAQUE_霾_58_) >= 2 else _ASTNODE_庠:1.0__OPAQUE_庠_18_,
+            '_ASTNODE_計:1.0__OPAQUE_庠_49_': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_58_[0]._ASTNODE_計:1.0__OPAQUE_霾_24_() if _ASTNODE_霾:1.0__OPAQUE_霾_58_ _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0], _ASTNODE_霾:1.0__OPAQUE_霾_137_) else "",
+            '_ASTNODE_計:1.0__OPAQUE_庠_10_': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_58_[0]._ASTNODE_計:1.0__OPAQUE_霾_152_() if _ASTNODE_霾:1.0__OPAQUE_霾_58_ _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0], _ASTNODE_霾:1.0__OPAQUE_霾_137_) else "",
+            '_ASTNODE_庠:1.0__OPAQUE_庠_42_': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_58_[0]._ASTNODE_霾:1.0__OPAQUE_霾_136_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[1]) if _ASTNODE_霾:1.0__OPAQUE_霾_78_(_ASTNODE_霾:1.0__OPAQUE_霾_58_) >= 2 _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0], _ASTNODE_霾:1.0__OPAQUE_霾_137_) else [],
+            '_ASTNODE_庠:1.0__OPAQUE_庠_37_': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_137_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0]) if _ASTNODE_霾:1.0__OPAQUE_霾_58_ else "",
+            '_ASTNODE_庠:1.0__OPAQUE_庠_45_': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_123_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0]) if _ASTNODE_霾:1.0__OPAQUE_霾_58_ else 0,
+            '_ASTNODE_庠:1.0__OPAQUE_庠_22_': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_108_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0]) if _ASTNODE_霾:1.0__OPAQUE_霾_58_ else 0.0,
+            '_ASTNODE_庠:1.0__OPAQUE_庠_25_': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_5_._ASTNODE_霾:1.0__OPAQUE_霾_50_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0]) if _ASTNODE_霾:1.0__OPAQUE_霾_58_ else 0,
+            '_ASTNODE_庠:1.0__OPAQUE_庠_3_': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: _ASTNODE_霾:1.0__OPAQUE_霾_70_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0], _ASTNODE_霾:1.0__OPAQUE_霾_58_[1]) if _ASTNODE_霾:1.0__OPAQUE_霾_78_(_ASTNODE_霾:1.0__OPAQUE_霾_58_) >= 2 else _ASTNODE_霾:1.0__OPAQUE_霾_70_(_ASTNODE_霾:1.0__OPAQUE_霾_58_[0]) if _ASTNODE_霾:1.0__OPAQUE_霾_58_ else 0,
+            '_ASTNODE_庠:1.0__OPAQUE_庠_50_._ASTNODE_函:1.0__OPAQUE_霾_83_': _ASTNODE_霾:1.0__OPAQUE_霾_126_ _ASTNODE_霾:1.0__OPAQUE_霾_58_: self._ASTNODE_函:1.0__OPAQUE_霾_83_(),
+        }
+
+        self._ASTNODE_霾:1.0__OPAQUE_霾_161_ = _ASTNODE_霾:1.0__OPAQUE_霾_186_
+
+    _ASTNODE_霾:1.0__OPAQUE_霾_130_ _ASTNODE_函:1.0__OPAQUE_霾_57_(self, _ASTNODE_函:1.0__OPAQUE_霾_96_: _ASTNODE_霾:1.0__OPAQUE_霾_137_) -> _ASTNODE_庠:1.0__OPAQUE_庠_26_:
+        """
+        ._ASTNODE_霾:1.0__OPAQUE_霾_101_ファイルを実行
+
+        _ASTNODE_庠:1.0__OPAQUE_庠_35_:
+            _ASTNODE_函:1.0__OPAQUE_霾_96_: ._ASTNODE_霾:1.0__OPAQUE_霾_101_ファイルのパス
+
+        _ASTNODE_庠:1.0__OPAQUE_庠_31_:
+            実行結果
+        """
+        _ASTNODE_霾:1.0__OPAQUE_霾_95_(f"🚀 日本語._ASTNODE_霾:1.0__OPAQUE_霾_101_実行: {_ASTNODE_函:1.0__OPAQUE_霾_96_}")
+
+        self._ASTNODE_函:1.0__OPAQUE_霾_2_ = _ASTNODE_函:1.0__OPAQUE_霾_96_
+        _ASTNODE_霾:1.0__OPAQUE_霾_128_ open(_ASTNODE_函:1.0__OPAQUE_霾_96_, 'r', _ASTNODE_霾:1.0__OPAQUE_霾_3_='_ASTNODE_霾:1.0__OPAQUE_霾_140_-8') as f:
+            _ASTNODE_霾:1.0__OPAQUE_霾_107_ = f._ASTNODE_霾:1.0__OPAQUE_霾_45_()
+
+// [metadata-stripped]
+        try:
+            _ASTNODE_霾:1.0__OPAQUE_霾_199_ = self._ASTNODE_霾:1.0__OPAQUE_霾_111_(_ASTNODE_霾:1.0__OPAQUE_霾_107_)
+            _ASTNODE_霾:1.0__OPAQUE_霾_95_("✅ 実行完了")
+            return _ASTNODE_霾:1.0__OPAQUE_霾_199_
+        _ASTNODE_霾:1.0__OPAQUE_霾_189_ _ASTNODE_庠:1.0__OPAQUE_庠_23_ as e:
+            _ASTNODE_霾:1.0__OPAQUE_霾_95_(f"❌ エラー: {e}")
+            import _ASTNODE_霾:1.0__OPAQUE_霾_185_
+            _ASTNODE_霾:1.0__OPAQUE_霾_185_._ASTNODE_霾:1.0__OPAQUE_霾_116_()
+            return _ASTNODE_庠:1.0__OPAQUE_庠_28_
+
+    _ASTNODE_霾:1.0__OPAQUE_霾_130_ _ASTNODE_霾:1.0__OPAQUE_霾_111_(self, _ASTNODE_霾:1.0__OPAQUE_霾_107_: _ASTNODE_霾:1.0__OPAQUE_霾_137_) -> _ASTNODE_庠:1.0__OPAQUE_庠_26_:
+        """ソースコードを実行"""
+        _ASTNODE_霾:1.0__OPAQUE_霾_173_ = _ASTNODE_霾:1.0__OPAQUE_霾_107_._ASTNODE_霾:1.0__OPAQUE_霾_136_('\n')
+        _ASTNODE_霾:1.0__OPAQUE_霾_19_ = []
+
+// [metadata-stripped]
+        for _ASTNODE_霾:1.0__OPAQUE_霾_42_ in _ASTNODE_霾:1.0__OPAQUE_霾_173_:
+            _ASTNODE_霾:1.0__OPAQUE_霾_35_ = _ASTNODE_霾:1.0__OPAQUE_霾_42_._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+            if _ASTNODE_霾:1.0__OPAQUE_霾_170_ _ASTNODE_霾:1.0__OPAQUE_霾_35_ or _ASTNODE_霾:1.0__OPAQUE_霾_35_._ASTNODE_霾:1.0__OPAQUE_霾_89_('//'):
+                _ASTNODE_霾:1.0__OPAQUE_霾_19_._ASTNODE_霾:1.0__OPAQUE_霾_132_(_ASTNODE_霾:1.0__OPAQUE_霾_35_)
+                continue
+                
+// [metadata-stripped]
+            if (_ASTNODE_霾:1.0__OPAQUE_霾_35_._ASTNODE_霾:1.0__OPAQUE_霾_89_('関数 ') or _ASTNODE_霾:1.0__OPAQUE_霾_35_._ASTNODE_霾:1.0__OPAQUE_霾_89_('_ASTNODE_庠:1.0__OPAQUE_庠_1_ ') or _ASTNODE_霾:1.0__OPAQUE_霾_35_._ASTNODE_霾:1.0__OPAQUE_霾_89_('_ASTNODE_庠:1.0__OPAQUE_庠_46_ ')) _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_35_._ASTNODE_霾:1.0__OPAQUE_霾_201_('}') _ASTNODE_霾:1.0__OPAQUE_霾_81_ '{' in _ASTNODE_霾:1.0__OPAQUE_霾_35_:
+                import re
+                _ASTNODE_霾:1.0__OPAQUE_霾_155_ = re._ASTNODE_霾:1.0__OPAQUE_霾_155_(r'\{\s*(もし|IF|各|繰り返し|返す|_ASTNODE_庠:1.0__OPAQUE_庠_29_)', r'{\n\1', _ASTNODE_霾:1.0__OPAQUE_霾_35_)
+                _ASTNODE_霾:1.0__OPAQUE_霾_155_ = re._ASTNODE_霾:1.0__OPAQUE_霾_155_(r'\}\s*(もし|IF|各|繰り返し|返す|_ASTNODE_庠:1.0__OPAQUE_庠_29_|そうでなければ)', r'}\n\1', _ASTNODE_霾:1.0__OPAQUE_霾_155_)
+                _ASTNODE_霾:1.0__OPAQUE_霾_155_ = re._ASTNODE_霾:1.0__OPAQUE_霾_155_(r'(?:返す|_ASTNODE_庠:1.0__OPAQUE_庠_29_)\s+([^}]+?)\s*\}', r'返す \1\n}', _ASTNODE_霾:1.0__OPAQUE_霾_155_)
+                _ASTNODE_霾:1.0__OPAQUE_霾_155_ = re._ASTNODE_霾:1.0__OPAQUE_霾_155_(r'\s*\}\s*\}', r'\n}\n}', _ASTNODE_霾:1.0__OPAQUE_霾_155_)
+                
+                for _ASTNODE_霾:1.0__OPAQUE_霾_30_ in _ASTNODE_霾:1.0__OPAQUE_霾_155_._ASTNODE_霾:1.0__OPAQUE_霾_136_('\n'):
+                    if _ASTNODE_霾:1.0__OPAQUE_霾_30_._ASTNODE_霾:1.0__OPAQUE_霾_104_():
+                        _ASTNODE_霾:1.0__OPAQUE_霾_19_._ASTNODE_霾:1.0__OPAQUE_霾_132_(_ASTNODE_霾:1.0__OPAQUE_霾_30_._ASTNODE_霾:1.0__OPAQUE_霾_104_())
+                continue
+                
+            _ASTNODE_霾:1.0__OPAQUE_霾_19_._ASTNODE_霾:1.0__OPAQUE_霾_132_(_ASTNODE_霾:1.0__OPAQUE_霾_35_)
+
+        i = 0
+        while i < _ASTNODE_霾:1.0__OPAQUE_霾_78_(_ASTNODE_霾:1.0__OPAQUE_霾_19_):
+            _ASTNODE_霾:1.0__OPAQUE_霾_42_ = _ASTNODE_霾:1.0__OPAQUE_霾_19_[i]._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+
+// [metadata-stripped]
+            if _ASTNODE_霾:1.0__OPAQUE_霾_170_ _ASTNODE_霾:1.0__OPAQUE_霾_42_ or _ASTNODE_霾:1.0__OPAQUE_霾_42_._ASTNODE_霾:1.0__OPAQUE_霾_89_('//'):
+                i += 1
+                continue
+
+// [metadata-stripped]
+            i = self._ASTNODE_霾:1.0__OPAQUE_霾_4_(_ASTNODE_霾:1.0__OPAQUE_霾_19_, i)
+
+            if self._ASTNODE_霾:1.0__OPAQUE_霾_143_:
+                break
+
+        return self._ASTNODE_霾:1.0__OPAQUE_霾_106_
+
+    _ASTNODE_霾:1.0__OPAQUE_霾_130_ _ASTNODE_霾:1.0__OPAQUE_霾_4_(self, _ASTNODE_霾:1.0__OPAQUE_霾_19_: _ASTNODE_庠:1.0__OPAQUE_庠_47_[_ASTNODE_霾:1.0__OPAQUE_霾_137_], _ASTNODE_霾:1.0__OPAQUE_霾_192_: _ASTNODE_霾:1.0__OPAQUE_霾_123_) -> _ASTNODE_霾:1.0__OPAQUE_霾_123_:
+        """文を実行し、次の行番号を返す"""
+        _ASTNODE_霾:1.0__OPAQUE_霾_42_ = _ASTNODE_霾:1.0__OPAQUE_霾_19_[_ASTNODE_霾:1.0__OPAQUE_霾_192_]._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+
+// [metadata-stripped]
+        if _ASTNODE_霾:1.0__OPAQUE_霾_42_._ASTNODE_霾:1.0__OPAQUE_霾_89_('表示('):
+            self._ASTNODE_霾:1.0__OPAQUE_霾_193_(_ASTNODE_霾:1.0__OPAQUE_霾_42_)
+            return _ASTNODE_霾:1.0__OPAQUE_霾_192_ + 1
+
+// [metadata-stripped]
+        if _ASTNODE_霾:1.0__OPAQUE_霾_42_._ASTNODE_霾:1.0__OPAQUE_霾_89_('_ASTNODE_庠:1.0__OPAQUE_庠_15_ ') _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_42_._ASTNODE_霾:1.0__OPAQUE_霾_201_('{'):
+            return self._ASTNODE_霾:1.0__OPAQUE_霾_184_(_ASTNODE_霾:1.0__OPAQUE_霾_19_, _ASTNODE_霾:1.0__OPAQUE_霾_192_)
+        if _ASTNODE_霾:1.0__OPAQUE_霾_42_._ASTNODE_霾:1.0__OPAQUE_霾_89_('_ASTNODE_庠:1.0__OPAQUE_庠_40_ ') _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_42_._ASTNODE_霾:1.0__OPAQUE_霾_201_('{'):
+            return self._ASTNODE_霾:1.0__OPAQUE_霾_168_(_ASTNODE_霾:1.0__OPAQUE_霾_19_, _ASTNODE_霾:1.0__OPAQUE_霾_192_)
+// [metadata-stripped]
+        if _ASTNODE_霾:1.0__OPAQUE_霾_42_._ASTNODE_霾:1.0__OPAQUE_霾_89_('_ASTNODE_庠:1.0__OPAQUE_庠_38_ ') _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_42_._ASTNODE_霾:1.0__OPAQUE_霾_201_('{'):
+            return self._ASTNODE_霾:1.0__OPAQUE_霾_10_(_ASTNODE_霾:1.0__OPAQUE_霾_19_, _ASTNODE_霾:1.0__OPAQUE_霾_192_)
+// [metadata-stripped]
+        if _ASTNODE_霾:1.0__OPAQUE_霾_42_._ASTNODE_霾:1.0__OPAQUE_霾_89_('関数 ') or _ASTNODE_霾:1.0__OPAQUE_霾_42_._ASTNODE_霾:1.0__OPAQUE_霾_89_('_ASTNODE_庠:1.0__OPAQUE_庠_1_ ') or _ASTNODE_霾:1.0__OPAQUE_霾_42_._ASTNODE_霾:1.0__OPAQUE_霾_89_('_ASTNODE_庠:1.0__OPAQUE_庠_46_ '):
+            return self._ASTNODE_霾:1.0__OPAQUE_霾_60_(_ASTNODE_霾:1.0__OPAQUE_霾_19_, _ASTNODE_霾:1.0__OPAQUE_霾_192_)
+
+// [metadata-stripped]
+        if _ASTNODE_霾:1.0__OPAQUE_霾_42_._ASTNODE_霾:1.0__OPAQUE_霾_89_('もし ') or _ASTNODE_霾:1.0__OPAQUE_霾_42_._ASTNODE_霾:1.0__OPAQUE_霾_89_('IF '):
+            return self._ASTNODE_漂:1.0__OPAQUE_霾_59_(_ASTNODE_霾:1.0__OPAQUE_霾_19_, _ASTNODE_霾:1.0__OPAQUE_霾_192_)
+
+// [metadata-stripped]
+        if _ASTNODE_霾:1.0__OPAQUE_霾_42_ == '繰り返し {':
+            return self._ASTNODE_漂:1.0__OPAQUE_霾_92_(_ASTNODE_霾:1.0__OPAQUE_霾_19_, _ASTNODE_霾:1.0__OPAQUE_霾_192_)
+
+// [metadata-stripped]
+        if _ASTNODE_霾:1.0__OPAQUE_霾_42_._ASTNODE_霾:1.0__OPAQUE_霾_89_('各') _ASTNODE_霾:1.0__OPAQUE_霾_81_ ' IN ' in _ASTNODE_霾:1.0__OPAQUE_霾_42_:
+            return self._ASTNODE_漂:1.0__OPAQUE_霾_73_(_ASTNODE_霾:1.0__OPAQUE_霾_19_, _ASTNODE_霾:1.0__OPAQUE_霾_192_)
+
+// [metadata-stripped]
+        if _ASTNODE_霾:1.0__OPAQUE_霾_42_._ASTNODE_霾:1.0__OPAQUE_霾_89_('返す ') or _ASTNODE_霾:1.0__OPAQUE_霾_42_._ASTNODE_霾:1.0__OPAQUE_霾_89_('_ASTNODE_庠:1.0__OPAQUE_庠_29_ '):
+            self._ASTNODE_霾:1.0__OPAQUE_霾_17_(_ASTNODE_霾:1.0__OPAQUE_霾_42_)
+            return _ASTNODE_霾:1.0__OPAQUE_霾_192_ + 1
+
+// [metadata-stripped]
+        if _ASTNODE_霾:1.0__OPAQUE_霾_42_ == '中断':
+            self._ASTNODE_霾:1.0__OPAQUE_霾_191_ = _ASTNODE_庠:1.0__OPAQUE_庠_8_
+            return _ASTNODE_霾:1.0__OPAQUE_霾_192_ + 1
+
+// [metadata-stripped]
+        import re as _ASTNODE_霾:1.0__OPAQUE_霾_154_
+        _ASTNODE_霾:1.0__OPAQUE_霾_36_ = _ASTNODE_霾:1.0__OPAQUE_霾_154_._ASTNODE_霾:1.0__OPAQUE_霾_149_(r'(.+?)\s+に\s+追加\((.+)\)', _ASTNODE_霾:1.0__OPAQUE_霾_42_)
+        if _ASTNODE_霾:1.0__OPAQUE_霾_36_:
+            _ASTNODE_霾:1.0__OPAQUE_霾_142_ = _ASTNODE_霾:1.0__OPAQUE_霾_36_._ASTNODE_霾:1.0__OPAQUE_霾_195_(1)._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+            _ASTNODE_霾:1.0__OPAQUE_霾_197_ = _ASTNODE_霾:1.0__OPAQUE_霾_36_._ASTNODE_霾:1.0__OPAQUE_霾_195_(2)._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+            _ASTNODE_霾:1.0__OPAQUE_霾_53_ = self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_197_)
+            _ASTNODE_霾:1.0__OPAQUE_霾_117_ = self._ASTNODE_霾:1.0__OPAQUE_霾_151_._ASTNODE_計:1.0__OPAQUE_曠_2_(_ASTNODE_霾:1.0__OPAQUE_霾_142_)
+            if _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_117_, _ASTNODE_霾:1.0__OPAQUE_霾_51_):
+                _ASTNODE_霾:1.0__OPAQUE_霾_117_._ASTNODE_霾:1.0__OPAQUE_霾_132_(_ASTNODE_霾:1.0__OPAQUE_霾_53_)
+            return _ASTNODE_霾:1.0__OPAQUE_霾_192_ + 1
+
+// [metadata-stripped]
+        if '=' in _ASTNODE_霾:1.0__OPAQUE_霾_42_ _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_170_ any(op in _ASTNODE_霾:1.0__OPAQUE_霾_42_ for op in ['==', '!=', '>=', '<=', '>',' <']):
+            self._ASTNODE_霾:1.0__OPAQUE_霾_16_(_ASTNODE_霾:1.0__OPAQUE_霾_42_)
+            return _ASTNODE_霾:1.0__OPAQUE_霾_192_ + 1
+
+// [metadata-stripped]
+        self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_42_)
+        return _ASTNODE_霾:1.0__OPAQUE_霾_192_ + 1
+// _ASTNODE_霾:0.1__OPAQUE_WD_248_ [decoy-metadata]
+
+    _ASTNODE_霾:1.0__OPAQUE_霾_130_ _ASTNODE_霾:1.0__OPAQUE_霾_193_(self, _ASTNODE_霾:1.0__OPAQUE_霾_42_: _ASTNODE_霾:1.0__OPAQUE_霾_137_):
+        """表示文を実行"""
+// [metadata-stripped]
+        _ASTNODE_霾:1.0__OPAQUE_霾_149_ = re._ASTNODE_霾:1.0__OPAQUE_霾_149_(r'表示\((.*)\)', _ASTNODE_霾:1.0__OPAQUE_霾_42_)
+        if _ASTNODE_霾:1.0__OPAQUE_霾_149_:
+            _ASTNODE_霾:1.0__OPAQUE_霾_164_ = _ASTNODE_霾:1.0__OPAQUE_霾_149_._ASTNODE_霾:1.0__OPAQUE_霾_195_(1)
+            _ASTNODE_霾:1.0__OPAQUE_霾_53_ = self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_164_)
+            _ASTNODE_霾:1.0__OPAQUE_霾_95_(_ASTNODE_霾:1.0__OPAQUE_霾_53_)
+
+    _ASTNODE_霾:1.0__OPAQUE_霾_130_ _ASTNODE_霾:1.0__OPAQUE_霾_16_(self, _ASTNODE_霾:1.0__OPAQUE_霾_42_: _ASTNODE_霾:1.0__OPAQUE_霾_137_):
+        """代入を実行"""
+// [metadata-stripped]
+        if '.' in _ASTNODE_霾:1.0__OPAQUE_霾_42_._ASTNODE_霾:1.0__OPAQUE_霾_136_('=')[0]:
+            _ASTNODE_霾:1.0__OPAQUE_霾_179_ = _ASTNODE_霾:1.0__OPAQUE_霾_42_._ASTNODE_霾:1.0__OPAQUE_霾_136_('=', 1)
+            _ASTNODE_霾:1.0__OPAQUE_霾_18_ = _ASTNODE_霾:1.0__OPAQUE_霾_179_[0]._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+            _ASTNODE_霾:1.0__OPAQUE_霾_97_ = _ASTNODE_霾:1.0__OPAQUE_霾_179_[1]._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+
+// _ASTNODE_計:0.1__OPAQUE_MF_269_ [decoy-metadata]
+// [metadata-stripped]
+            _ASTNODE_霾:1.0__OPAQUE_霾_76_ = _ASTNODE_霾:1.0__OPAQUE_霾_18_._ASTNODE_霾:1.0__OPAQUE_霾_136_('.')
+            _ASTNODE_霾:1.0__OPAQUE_霾_187_ = _ASTNODE_霾:1.0__OPAQUE_霾_76_[0]
+
+            if _ASTNODE_霾:1.0__OPAQUE_霾_187_ _ASTNODE_霾:1.0__OPAQUE_霾_170_ in self._ASTNODE_霾:1.0__OPAQUE_霾_151_:
+                return
+
+            _ASTNODE_霾:1.0__OPAQUE_霾_90_ = self._ASTNODE_霾:1.0__OPAQUE_霾_151_[_ASTNODE_霾:1.0__OPAQUE_霾_187_]
+
+// [metadata-stripped]
+            for _ASTNODE_霾:1.0__OPAQUE_霾_6_ in _ASTNODE_霾:1.0__OPAQUE_霾_76_[1:-1]:
+                if _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_90_, _ASTNODE_霾:1.0__OPAQUE_霾_87_) _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_6_ in _ASTNODE_霾:1.0__OPAQUE_霾_90_:
+                    _ASTNODE_霾:1.0__OPAQUE_霾_90_ = _ASTNODE_霾:1.0__OPAQUE_霾_90_[_ASTNODE_霾:1.0__OPAQUE_霾_6_]
+                else:
+                    return
+
+// [metadata-stripped]
+            _ASTNODE_霾:1.0__OPAQUE_霾_54_ = _ASTNODE_霾:1.0__OPAQUE_霾_76_[-1]
+            _ASTNODE_霾:1.0__OPAQUE_霾_53_ = self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_97_)
+
+            if _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_90_, _ASTNODE_霾:1.0__OPAQUE_霾_87_):
+                _ASTNODE_霾:1.0__OPAQUE_霾_90_[_ASTNODE_霾:1.0__OPAQUE_霾_54_] = _ASTNODE_霾:1.0__OPAQUE_霾_53_
+        else:
+// [metadata-stripped]
+            _ASTNODE_霾:1.0__OPAQUE_霾_179_ = _ASTNODE_霾:1.0__OPAQUE_霾_42_._ASTNODE_霾:1.0__OPAQUE_霾_136_('=', 1)
+            _ASTNODE_霾:1.0__OPAQUE_霾_22_ = _ASTNODE_霾:1.0__OPAQUE_霾_179_[0]._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+            _ASTNODE_霾:1.0__OPAQUE_霾_197_ = _ASTNODE_霾:1.0__OPAQUE_霾_179_[1]._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+            _ASTNODE_霾:1.0__OPAQUE_霾_53_ = self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_197_)
+            self._ASTNODE_霾:1.0__OPAQUE_霾_151_[_ASTNODE_霾:1.0__OPAQUE_霾_22_] = _ASTNODE_霾:1.0__OPAQUE_霾_53_
+
+    _ASTNODE_霾:1.0__OPAQUE_霾_130_ _ASTNODE_霾:1.0__OPAQUE_霾_60_(self, _ASTNODE_霾:1.0__OPAQUE_霾_19_: _ASTNODE_庠:1.0__OPAQUE_庠_47_[_ASTNODE_霾:1.0__OPAQUE_霾_137_], _ASTNODE_霾:1.0__OPAQUE_霾_192_: _ASTNODE_霾:1.0__OPAQUE_霾_123_) -> _ASTNODE_霾:1.0__OPAQUE_霾_123_:
+        """関数定義を実行"""
+        _ASTNODE_霾:1.0__OPAQUE_霾_42_ = _ASTNODE_霾:1.0__OPAQUE_霾_19_[_ASTNODE_霾:1.0__OPAQUE_霾_192_]._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+
+// [metadata-stripped]
+        _ASTNODE_霾:1.0__OPAQUE_霾_149_ = re._ASTNODE_霾:1.0__OPAQUE_霾_149_(r'(?:関数|_ASTNODE_庠:1.0__OPAQUE_庠_1_|_ASTNODE_庠:1.0__OPAQUE_庠_46_)\s+(\w+)\((.*?)\)\s*{', _ASTNODE_霾:1.0__OPAQUE_霾_42_)
+        if _ASTNODE_霾:1.0__OPAQUE_霾_170_ _ASTNODE_霾:1.0__OPAQUE_霾_149_:
+            return _ASTNODE_霾:1.0__OPAQUE_霾_192_ + 1
+
+        _ASTNODE_霾:1.0__OPAQUE_霾_118_ = _ASTNODE_霾:1.0__OPAQUE_霾_149_._ASTNODE_霾:1.0__OPAQUE_霾_195_(1)
+        _ASTNODE_霾:1.0__OPAQUE_霾_121_ = _ASTNODE_霾:1.0__OPAQUE_霾_149_._ASTNODE_霾:1.0__OPAQUE_霾_195_(2)
+        _ASTNODE_霾:1.0__OPAQUE_霾_127_ = [p._ASTNODE_霾:1.0__OPAQUE_霾_104_() for p in _ASTNODE_霾:1.0__OPAQUE_霾_121_._ASTNODE_霾:1.0__OPAQUE_霾_136_(',') if p._ASTNODE_霾:1.0__OPAQUE_霾_104_()]
+
+// [metadata-stripped]
+        _ASTNODE_霾:1.0__OPAQUE_霾_188_ = _ASTNODE_霾:1.0__OPAQUE_霾_192_ + 1
+        _ASTNODE_霾:1.0__OPAQUE_霾_32_ = self._ASTNODE_霾:1.0__OPAQUE_霾_64_(_ASTNODE_霾:1.0__OPAQUE_霾_19_, _ASTNODE_霾:1.0__OPAQUE_霾_192_)
+
+// [metadata-stripped]
+        self._ASTNODE_霾:1.0__OPAQUE_霾_146_[_ASTNODE_霾:1.0__OPAQUE_霾_118_] = {
+            '_ASTNODE_霾:1.0__OPAQUE_霾_127_': _ASTNODE_霾:1.0__OPAQUE_霾_127_,
+            '_ASTNODE_霾:1.0__OPAQUE_霾_182_': _ASTNODE_霾:1.0__OPAQUE_霾_19_[_ASTNODE_霾:1.0__OPAQUE_霾_188_:_ASTNODE_霾:1.0__OPAQUE_霾_32_],
+            '_ASTNODE_霾:1.0__OPAQUE_霾_65_': _ASTNODE_霾:1.0__OPAQUE_霾_188_,
+            '_ASTNODE_霾:1.0__OPAQUE_霾_166_': _ASTNODE_霾:1.0__OPAQUE_霾_32_
+        }
+
+// [metadata-stripped]
+        _ASTNODE_霾:1.0__OPAQUE_霾_130_ _ASTNODE_霾:1.0__OPAQUE_霾_12_(_ASTNODE_霾:1.0__OPAQUE_霾_144_, _ASTNODE_霾:1.0__OPAQUE_霾_52_, _ASTNODE_霾:1.0__OPAQUE_霾_141_):
+            _ASTNODE_霾:1.0__OPAQUE_霾_130_ func(_ASTNODE_霾:1.0__OPAQUE_霾_58_):
+// [metadata-stripped]
+                _ASTNODE_霾:1.0__OPAQUE_霾_172_ = _ASTNODE_霾:1.0__OPAQUE_霾_87_(self._ASTNODE_霾:1.0__OPAQUE_霾_151_)  # グローバル変数をコピー
+                for i, _ASTNODE_霾:1.0__OPAQUE_霾_15_ in _ASTNODE_霾:1.0__OPAQUE_霾_198_(_ASTNODE_霾:1.0__OPAQUE_霾_52_):
+                    if i < _ASTNODE_霾:1.0__OPAQUE_霾_78_(_ASTNODE_霾:1.0__OPAQUE_霾_58_):
+                        _ASTNODE_霾:1.0__OPAQUE_霾_172_[_ASTNODE_霾:1.0__OPAQUE_霾_15_] = _ASTNODE_霾:1.0__OPAQUE_霾_58_[i]
+
+// [metadata-stripped]
+                _ASTNODE_霾:1.0__OPAQUE_霾_200_ = self._ASTNODE_霾:1.0__OPAQUE_霾_151_
+                self._ASTNODE_霾:1.0__OPAQUE_霾_151_ = _ASTNODE_霾:1.0__OPAQUE_霾_172_
+
+// [metadata-stripped]
+                _ASTNODE_霾:1.0__OPAQUE_霾_98_ = self._ASTNODE_霾:1.0__OPAQUE_霾_143_
+                _ASTNODE_霾:1.0__OPAQUE_霾_124_ = self._ASTNODE_霾:1.0__OPAQUE_霾_106_
+                self._ASTNODE_霾:1.0__OPAQUE_霾_143_ = _ASTNODE_庠:1.0__OPAQUE_庠_18_
+                self._ASTNODE_霾:1.0__OPAQUE_霾_106_ = _ASTNODE_庠:1.0__OPAQUE_庠_28_
+
+// [metadata-stripped]
+                i = 0
+                while i < _ASTNODE_霾:1.0__OPAQUE_霾_78_(_ASTNODE_霾:1.0__OPAQUE_霾_141_):
+                    if self._ASTNODE_霾:1.0__OPAQUE_霾_143_:
+                        break
+                    i = self._ASTNODE_霾:1.0__OPAQUE_霾_4_(_ASTNODE_霾:1.0__OPAQUE_霾_141_, i)
+
+                _ASTNODE_霾:1.0__OPAQUE_霾_199_ = self._ASTNODE_霾:1.0__OPAQUE_霾_106_
+
+// [metadata-stripped]
+                self._ASTNODE_霾:1.0__OPAQUE_霾_151_ = _ASTNODE_霾:1.0__OPAQUE_霾_200_
+                self._ASTNODE_霾:1.0__OPAQUE_霾_143_ = _ASTNODE_霾:1.0__OPAQUE_霾_98_
+                self._ASTNODE_霾:1.0__OPAQUE_霾_106_ = _ASTNODE_霾:1.0__OPAQUE_霾_124_
+
+                return _ASTNODE_霾:1.0__OPAQUE_霾_199_
+
+            return func
+
+// [metadata-stripped]
+        self._ASTNODE_霾:1.0__OPAQUE_霾_151_[_ASTNODE_霾:1.0__OPAQUE_霾_118_] = _ASTNODE_霾:1.0__OPAQUE_霾_12_(_ASTNODE_霾:1.0__OPAQUE_霾_118_, _ASTNODE_霾:1.0__OPAQUE_霾_127_, _ASTNODE_霾:1.0__OPAQUE_霾_19_[_ASTNODE_霾:1.0__OPAQUE_霾_188_:_ASTNODE_霾:1.0__OPAQUE_霾_32_])
+
+        return _ASTNODE_霾:1.0__OPAQUE_霾_32_ + 1
+
+    _ASTNODE_霾:1.0__OPAQUE_霾_130_ _ASTNODE_漂:1.0__OPAQUE_霾_59_(self, _ASTNODE_霾:1.0__OPAQUE_霾_19_: _ASTNODE_庠:1.0__OPAQUE_庠_47_[_ASTNODE_霾:1.0__OPAQUE_霾_137_], _ASTNODE_霾:1.0__OPAQUE_霾_192_: _ASTNODE_霾:1.0__OPAQUE_霾_123_) -> _ASTNODE_霾:1.0__OPAQUE_霾_123_:
+        """もし文を実行"""
+        _ASTNODE_霾:1.0__OPAQUE_霾_42_ = _ASTNODE_霾:1.0__OPAQUE_霾_19_[_ASTNODE_霾:1.0__OPAQUE_霾_192_]._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+
+// [metadata-stripped]
+        _ASTNODE_霾:1.0__OPAQUE_霾_149_ = re._ASTNODE_霾:1.0__OPAQUE_霾_149_(r'(?:もし|IF)\s+(.+?)\s*{', _ASTNODE_霾:1.0__OPAQUE_霾_42_)
+        if _ASTNODE_霾:1.0__OPAQUE_霾_170_ _ASTNODE_霾:1.0__OPAQUE_霾_149_:
+            return _ASTNODE_霾:1.0__OPAQUE_霾_192_ + 1
+
+        _ASTNODE_霾:1.0__OPAQUE_霾_9_ = _ASTNODE_霾:1.0__OPAQUE_霾_149_._ASTNODE_霾:1.0__OPAQUE_霾_195_(1)
+        _ASTNODE_霾:1.0__OPAQUE_霾_115_ = self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_9_)
+
+// [metadata-stripped]
+        _ASTNODE_漂:1.0__OPAQUE_霾_44_ = self._ASTNODE_霾:1.0__OPAQUE_霾_64_(_ASTNODE_霾:1.0__OPAQUE_霾_19_, _ASTNODE_霾:1.0__OPAQUE_霾_192_)
+
+// [metadata-stripped]
+        _ASTNODE_霾:1.0__OPAQUE_霾_85_ = _ASTNODE_庠:1.0__OPAQUE_庠_28_
+        if _ASTNODE_漂:1.0__OPAQUE_霾_44_ < _ASTNODE_霾:1.0__OPAQUE_霾_78_(_ASTNODE_霾:1.0__OPAQUE_霾_19_) _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_19_[_ASTNODE_漂:1.0__OPAQUE_霾_44_]._ASTNODE_霾:1.0__OPAQUE_霾_104_()._ASTNODE_霾:1.0__OPAQUE_霾_89_('} そうでなければ'):
+            _ASTNODE_霾:1.0__OPAQUE_霾_85_ = _ASTNODE_漂:1.0__OPAQUE_霾_44_
+// [metadata-stripped]
+            if _ASTNODE_霾:1.0__OPAQUE_霾_19_[_ASTNODE_霾:1.0__OPAQUE_霾_85_]._ASTNODE_霾:1.0__OPAQUE_霾_104_() == '} そうでなければ {':
+                _ASTNODE_霾:1.0__OPAQUE_霾_133_ = self._ASTNODE_霾:1.0__OPAQUE_霾_64_(_ASTNODE_霾:1.0__OPAQUE_霾_19_, _ASTNODE_霾:1.0__OPAQUE_霾_85_)
+            else:
+                _ASTNODE_霾:1.0__OPAQUE_霾_133_ = _ASTNODE_霾:1.0__OPAQUE_霾_85_ + 1
+
+        if _ASTNODE_霾:1.0__OPAQUE_霾_115_:
+// [metadata-stripped]
+            i = _ASTNODE_霾:1.0__OPAQUE_霾_192_ + 1
+            while i < _ASTNODE_漂:1.0__OPAQUE_霾_44_:
+                if self._ASTNODE_霾:1.0__OPAQUE_霾_143_ or self._ASTNODE_霾:1.0__OPAQUE_霾_191_:
+                    break
+                i = self._ASTNODE_霾:1.0__OPAQUE_霾_4_(_ASTNODE_霾:1.0__OPAQUE_霾_19_, i)
+            return _ASTNODE_霾:1.0__OPAQUE_霾_133_ + 1 if _ASTNODE_霾:1.0__OPAQUE_霾_85_ else _ASTNODE_漂:1.0__OPAQUE_霾_44_ + 1
+        else:
+// [metadata-stripped]
+            if _ASTNODE_霾:1.0__OPAQUE_霾_85_:
+                i = _ASTNODE_霾:1.0__OPAQUE_霾_85_ + 1
+                while i < _ASTNODE_霾:1.0__OPAQUE_霾_133_:
+                    if self._ASTNODE_霾:1.0__OPAQUE_霾_143_ or self._ASTNODE_霾:1.0__OPAQUE_霾_191_:
+                        break
+                    i = self._ASTNODE_霾:1.0__OPAQUE_霾_4_(_ASTNODE_霾:1.0__OPAQUE_霾_19_, i)
+                return _ASTNODE_霾:1.0__OPAQUE_霾_133_ + 1
+            return _ASTNODE_漂:1.0__OPAQUE_霾_44_ + 1
+
+    _ASTNODE_霾:1.0__OPAQUE_霾_130_ _ASTNODE_漂:1.0__OPAQUE_霾_92_(self, _ASTNODE_霾:1.0__OPAQUE_霾_19_: _ASTNODE_庠:1.0__OPAQUE_庠_47_[_ASTNODE_霾:1.0__OPAQUE_霾_137_], _ASTNODE_霾:1.0__OPAQUE_霾_192_: _ASTNODE_霾:1.0__OPAQUE_霾_123_) -> _ASTNODE_霾:1.0__OPAQUE_霾_123_:
+        """繰り返し文を実行"""
+        _ASTNODE_霾:1.0__OPAQUE_霾_190_ = self._ASTNODE_霾:1.0__OPAQUE_霾_64_(_ASTNODE_霾:1.0__OPAQUE_霾_19_, _ASTNODE_霾:1.0__OPAQUE_霾_192_)
+
+        while _ASTNODE_庠:1.0__OPAQUE_庠_8_:
+            if self._ASTNODE_霾:1.0__OPAQUE_霾_143_:
+                break
+
+// [metadata-stripped]
+            i = _ASTNODE_霾:1.0__OPAQUE_霾_192_ + 1
+            while i < _ASTNODE_霾:1.0__OPAQUE_霾_190_:
+                if self._ASTNODE_霾:1.0__OPAQUE_霾_143_ or self._ASTNODE_霾:1.0__OPAQUE_霾_191_:
+                    break
+                i = self._ASTNODE_霾:1.0__OPAQUE_霾_4_(_ASTNODE_霾:1.0__OPAQUE_霾_19_, i)
+
+            if self._ASTNODE_霾:1.0__OPAQUE_霾_191_:
+                self._ASTNODE_霾:1.0__OPAQUE_霾_191_ = _ASTNODE_庠:1.0__OPAQUE_庠_18_
+                break
+
+        return _ASTNODE_霾:1.0__OPAQUE_霾_190_ + 1
+
+    _ASTNODE_霾:1.0__OPAQUE_霾_130_ _ASTNODE_漂:1.0__OPAQUE_霾_73_(self, _ASTNODE_霾:1.0__OPAQUE_霾_19_: _ASTNODE_庠:1.0__OPAQUE_庠_47_[_ASTNODE_霾:1.0__OPAQUE_霾_137_], _ASTNODE_霾:1.0__OPAQUE_霾_192_: _ASTNODE_霾:1.0__OPAQUE_霾_123_) -> _ASTNODE_霾:1.0__OPAQUE_霾_123_:
+        """各〜IN文を実行"""
+        _ASTNODE_霾:1.0__OPAQUE_霾_42_ = _ASTNODE_霾:1.0__OPAQUE_霾_19_[_ASTNODE_霾:1.0__OPAQUE_霾_192_]._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+
+// [metadata-stripped]
+        _ASTNODE_霾:1.0__OPAQUE_霾_149_ = re._ASTNODE_霾:1.0__OPAQUE_霾_149_(r'各(\S+)\s+IN\s+(.+?)\s*{', _ASTNODE_霾:1.0__OPAQUE_霾_42_)
+        if _ASTNODE_霾:1.0__OPAQUE_霾_170_ _ASTNODE_霾:1.0__OPAQUE_霾_149_:
+            return _ASTNODE_霾:1.0__OPAQUE_霾_192_ + 1
+
+        _ASTNODE_霾:1.0__OPAQUE_霾_26_ = _ASTNODE_霾:1.0__OPAQUE_霾_149_._ASTNODE_霾:1.0__OPAQUE_霾_195_(1)
+        _ASTNODE_霾:1.0__OPAQUE_霾_41_ = _ASTNODE_霾:1.0__OPAQUE_霾_149_._ASTNODE_霾:1.0__OPAQUE_霾_195_(2)
+        _ASTNODE_霾:1.0__OPAQUE_霾_129_ = self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_41_)
+
+        _ASTNODE_霾:1.0__OPAQUE_霾_190_ = self._ASTNODE_霾:1.0__OPAQUE_霾_64_(_ASTNODE_霾:1.0__OPAQUE_霾_19_, _ASTNODE_霾:1.0__OPAQUE_霾_192_)
+
+// _ASTNODE_計:0.3__OPAQUE_BD_756_ [decoy-metadata]
+        if _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_129_, _ASTNODE_霾:1.0__OPAQUE_霾_51_):
+            for _ASTNODE_霾:1.0__OPAQUE_霾_39_ in _ASTNODE_霾:1.0__OPAQUE_霾_129_:
+                if self._ASTNODE_霾:1.0__OPAQUE_霾_143_ or self._ASTNODE_霾:1.0__OPAQUE_霾_191_:
+                    break
+
+                self._ASTNODE_霾:1.0__OPAQUE_霾_151_[_ASTNODE_霾:1.0__OPAQUE_霾_26_] = _ASTNODE_霾:1.0__OPAQUE_霾_39_
+
+// [metadata-stripped]
+                i = _ASTNODE_霾:1.0__OPAQUE_霾_192_ + 1
+                while i < _ASTNODE_霾:1.0__OPAQUE_霾_190_:
+                    if self._ASTNODE_霾:1.0__OPAQUE_霾_143_ or self._ASTNODE_霾:1.0__OPAQUE_霾_191_:
+                        break
+                    i = self._ASTNODE_霾:1.0__OPAQUE_霾_4_(_ASTNODE_霾:1.0__OPAQUE_霾_19_, i)
+
+        if self._ASTNODE_霾:1.0__OPAQUE_霾_191_:
+            self._ASTNODE_霾:1.0__OPAQUE_霾_191_ = _ASTNODE_庠:1.0__OPAQUE_庠_18_
+
+        return _ASTNODE_霾:1.0__OPAQUE_霾_190_ + 1
+
+    _ASTNODE_霾:1.0__OPAQUE_霾_130_ _ASTNODE_霾:1.0__OPAQUE_霾_17_(self, _ASTNODE_霾:1.0__OPAQUE_霾_42_: _ASTNODE_霾:1.0__OPAQUE_霾_137_):
+        """返す文を実行"""
+        _ASTNODE_霾:1.0__OPAQUE_霾_149_ = re._ASTNODE_霾:1.0__OPAQUE_霾_149_(r'(?:返す|_ASTNODE_庠:1.0__OPAQUE_庠_29_)\s+(.+)', _ASTNODE_霾:1.0__OPAQUE_霾_42_)
+        if _ASTNODE_霾:1.0__OPAQUE_霾_149_:
+            _ASTNODE_霾:1.0__OPAQUE_霾_164_ = _ASTNODE_霾:1.0__OPAQUE_霾_149_._ASTNODE_霾:1.0__OPAQUE_霾_195_(1)
+            self._ASTNODE_霾:1.0__OPAQUE_霾_106_ = self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_164_)
+            self._ASTNODE_霾:1.0__OPAQUE_霾_143_ = _ASTNODE_庠:1.0__OPAQUE_庠_8_
+
+    _ASTNODE_霾:1.0__OPAQUE_霾_130_ _ASTNODE_霾:1.0__OPAQUE_霾_91_(self, _ASTNODE_霾:1.0__OPAQUE_霾_164_: _ASTNODE_霾:1.0__OPAQUE_霾_137_) -> _ASTNODE_庠:1.0__OPAQUE_庠_26_:
+        """式を評価"""
+        _ASTNODE_霾:1.0__OPAQUE_霾_164_ = _ASTNODE_霾:1.0__OPAQUE_霾_164_._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+
+// [metadata-stripped]
+        if _ASTNODE_霾:1.0__OPAQUE_霾_164_._ASTNODE_霾:1.0__OPAQUE_霾_89_('(') _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_164_._ASTNODE_霾:1.0__OPAQUE_霾_201_(')') _ASTNODE_霾:1.0__OPAQUE_霾_81_ '(' _ASTNODE_霾:1.0__OPAQUE_霾_170_ in _ASTNODE_霾:1.0__OPAQUE_霾_164_[1:-1]:
+            return self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_164_[1:-1])
+
+// [metadata-stripped]
+        if _ASTNODE_霾:1.0__OPAQUE_霾_164_._ASTNODE_霾:1.0__OPAQUE_霾_89_('"') _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_164_._ASTNODE_霾:1.0__OPAQUE_霾_201_('"'):
+            return _ASTNODE_霾:1.0__OPAQUE_霾_164_[1:-1]
+
+// [metadata-stripped]
+        try:
+            if '.' in _ASTNODE_霾:1.0__OPAQUE_霾_164_:
+                return _ASTNODE_霾:1.0__OPAQUE_霾_108_(_ASTNODE_霾:1.0__OPAQUE_霾_164_)
+            return _ASTNODE_霾:1.0__OPAQUE_霾_123_(_ASTNODE_霾:1.0__OPAQUE_霾_164_)
+        _ASTNODE_霾:1.0__OPAQUE_霾_189_ _ASTNODE_庠:1.0__OPAQUE_庠_19_:
+            _ASTNODE_霾:1.0__OPAQUE_霾_148_
+
+// [metadata-stripped]
+        if _ASTNODE_霾:1.0__OPAQUE_霾_164_ == '真':
+            return _ASTNODE_庠:1.0__OPAQUE_庠_8_
+        if _ASTNODE_霾:1.0__OPAQUE_霾_164_ == '偽':
+            return _ASTNODE_庠:1.0__OPAQUE_庠_18_
+
+// [metadata-stripped]
+        if _ASTNODE_霾:1.0__OPAQUE_霾_164_._ASTNODE_霾:1.0__OPAQUE_霾_89_('[') _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_164_._ASTNODE_霾:1.0__OPAQUE_霾_201_(']'):
+            return self._ASTNODE_霾:1.0__OPAQUE_霾_100_(_ASTNODE_霾:1.0__OPAQUE_霾_164_)
+
+// [metadata-stripped]
+        if _ASTNODE_霾:1.0__OPAQUE_霾_164_._ASTNODE_霾:1.0__OPAQUE_霾_89_('{') _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_164_._ASTNODE_霾:1.0__OPAQUE_霾_201_('}'):
+            return self._ASTNODE_霾:1.0__OPAQUE_霾_37_(_ASTNODE_霾:1.0__OPAQUE_霾_164_)
+
+// [metadata-stripped]
+        if '(' in _ASTNODE_霾:1.0__OPAQUE_霾_164_ _ASTNODE_霾:1.0__OPAQUE_霾_81_ ')' in _ASTNODE_霾:1.0__OPAQUE_霾_164_:
+// [metadata-stripped]
+            import re as _ASTNODE_霾:1.0__OPAQUE_霾_160_
+            if _ASTNODE_霾:1.0__OPAQUE_霾_160_._ASTNODE_霾:1.0__OPAQUE_霾_149_(r'[\w\_ASTNODE_霾:1.0__OPAQUE_霾_178_-\_ASTNODE_霾:1.0__OPAQUE_霾_79_]+\(', _ASTNODE_霾:1.0__OPAQUE_霾_164_):
+                _ASTNODE_霾:1.0__OPAQUE_霾_199_ = self._ASTNODE_霾:1.0__OPAQUE_霾_33_(_ASTNODE_霾:1.0__OPAQUE_霾_164_)
+                if _ASTNODE_霾:1.0__OPAQUE_霾_199_ is _ASTNODE_霾:1.0__OPAQUE_霾_170_ _ASTNODE_庠:1.0__OPAQUE_庠_28_:
+                    return _ASTNODE_霾:1.0__OPAQUE_霾_199_
+// [metadata-stripped]
+
+// [metadata-stripped]
+        for op in [' または ', ' OR ']:
+            if op in _ASTNODE_霾:1.0__OPAQUE_霾_164_:
+                _ASTNODE_霾:1.0__OPAQUE_霾_179_ = _ASTNODE_霾:1.0__OPAQUE_霾_164_._ASTNODE_霾:1.0__OPAQUE_霾_136_(op, 1)
+                return self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_179_[0]._ASTNODE_霾:1.0__OPAQUE_霾_104_()) or self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_179_[1]._ASTNODE_霾:1.0__OPAQUE_霾_104_())
+
+// [metadata-stripped]
+        for op in [' そして ', ' かつ ', ' _ASTNODE_庠:1.0__OPAQUE_庠_20_ ']:
+            if op in _ASTNODE_霾:1.0__OPAQUE_霾_164_:
+                _ASTNODE_霾:1.0__OPAQUE_霾_179_ = _ASTNODE_霾:1.0__OPAQUE_霾_164_._ASTNODE_霾:1.0__OPAQUE_霾_136_(op, 1)
+                _ASTNODE_霾:1.0__OPAQUE_霾_135_ = self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_179_[0]._ASTNODE_霾:1.0__OPAQUE_霾_104_())
+                if _ASTNODE_霾:1.0__OPAQUE_霾_170_ _ASTNODE_霾:1.0__OPAQUE_霾_135_:
+                    return _ASTNODE_庠:1.0__OPAQUE_庠_18_
+                return _ASTNODE_霾:1.0__OPAQUE_霾_8_(self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_179_[1]._ASTNODE_霾:1.0__OPAQUE_霾_104_()))
+
+// [metadata-stripped]
+        for op in ['>=', '<=', '==', '!=']:
+            if op in _ASTNODE_霾:1.0__OPAQUE_霾_164_:
+                return self._ASTNODE_霾:1.0__OPAQUE_霾_176_(_ASTNODE_霾:1.0__OPAQUE_霾_164_, op)
+
+// [metadata-stripped]
+        for op in ['>', '<']:
+            if op in _ASTNODE_霾:1.0__OPAQUE_霾_164_ _ASTNODE_霾:1.0__OPAQUE_霾_81_ '>=' _ASTNODE_霾:1.0__OPAQUE_霾_170_ in _ASTNODE_霾:1.0__OPAQUE_霾_164_ _ASTNODE_霾:1.0__OPAQUE_霾_81_ '<=' _ASTNODE_霾:1.0__OPAQUE_霾_170_ in _ASTNODE_霾:1.0__OPAQUE_霾_164_:
+                return self._ASTNODE_霾:1.0__OPAQUE_霾_176_(_ASTNODE_霾:1.0__OPAQUE_霾_164_, op)
+
+// [metadata-stripped]
+        for op in ['%', '+', '-', '*', '/']:
+            if op in _ASTNODE_霾:1.0__OPAQUE_霾_164_ _ASTNODE_霾:1.0__OPAQUE_霾_81_ self._ASTNODE_霾:1.0__OPAQUE_霾_174_(_ASTNODE_霾:1.0__OPAQUE_霾_164_, op):
+                return self._ASTNODE_霾:1.0__OPAQUE_霾_176_(_ASTNODE_霾:1.0__OPAQUE_霾_164_, op)
+
+// [metadata-stripped]
+        if '[' in _ASTNODE_霾:1.0__OPAQUE_霾_164_ _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_164_._ASTNODE_霾:1.0__OPAQUE_霾_201_(']'):
+            import re
+            _ASTNODE_霾:1.0__OPAQUE_霾_149_ = re._ASTNODE_霾:1.0__OPAQUE_霾_149_(r'^(.*)\[([^\[\]]+)\]$', _ASTNODE_霾:1.0__OPAQUE_霾_164_)
+            if _ASTNODE_霾:1.0__OPAQUE_霾_149_:
+                _ASTNODE_霾:1.0__OPAQUE_霾_7_ = _ASTNODE_霾:1.0__OPAQUE_霾_149_._ASTNODE_霾:1.0__OPAQUE_霾_195_(1)._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+                _ASTNODE_霾:1.0__OPAQUE_霾_38_ = _ASTNODE_霾:1.0__OPAQUE_霾_149_._ASTNODE_霾:1.0__OPAQUE_霾_195_(2)._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+
+// _ASTNODE_庠:0.7__OPAQUE_GV_763_ [decoy-metadata]
+                _ASTNODE_霾:1.0__OPAQUE_霾_90_ = self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_7_)
+                _ASTNODE_霾:1.0__OPAQUE_霾_145_ = self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_38_)
+
+                if _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_90_, (_ASTNODE_霾:1.0__OPAQUE_霾_51_, _ASTNODE_霾:1.0__OPAQUE_霾_87_)):
+                    try:
+                        return _ASTNODE_霾:1.0__OPAQUE_霾_90_[_ASTNODE_霾:1.0__OPAQUE_霾_145_]
+                    _ASTNODE_霾:1.0__OPAQUE_霾_189_ (_ASTNODE_沈:1.0__OPAQUE_庠_5_, _ASTNODE_庠:1.0__OPAQUE_庠_11_, _ASTNODE_庠:1.0__OPAQUE_庠_30_):
+                        return _ASTNODE_庠:1.0__OPAQUE_庠_28_
+
+// [metadata-stripped]
+        if _ASTNODE_霾:1.0__OPAQUE_霾_164_ in self._ASTNODE_霾:1.0__OPAQUE_霾_151_:
+            return self._ASTNODE_霾:1.0__OPAQUE_霾_151_[_ASTNODE_霾:1.0__OPAQUE_霾_164_]
+
+// [metadata-stripped]
+        if '.' in _ASTNODE_霾:1.0__OPAQUE_霾_164_ _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_170_ _ASTNODE_霾:1.0__OPAQUE_霾_164_._ASTNODE_霾:1.0__OPAQUE_霾_89_('"'):
+            _ASTNODE_霾:1.0__OPAQUE_霾_179_ = _ASTNODE_霾:1.0__OPAQUE_霾_164_._ASTNODE_霾:1.0__OPAQUE_霾_136_('.')
+            _ASTNODE_霾:1.0__OPAQUE_霾_90_ = self._ASTNODE_霾:1.0__OPAQUE_霾_151_._ASTNODE_計:1.0__OPAQUE_曠_2_(_ASTNODE_霾:1.0__OPAQUE_霾_179_[0])
+
+            for _ASTNODE_霾:1.0__OPAQUE_霾_6_ in _ASTNODE_霾:1.0__OPAQUE_霾_179_[1:]:
+                if _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_90_, _ASTNODE_霾:1.0__OPAQUE_霾_87_):
+                    _ASTNODE_霾:1.0__OPAQUE_霾_90_ = _ASTNODE_霾:1.0__OPAQUE_霾_90_._ASTNODE_計:1.0__OPAQUE_曠_2_(_ASTNODE_霾:1.0__OPAQUE_霾_6_)
+                else:
+                    break
+
+            return _ASTNODE_霾:1.0__OPAQUE_霾_90_
+
+// [metadata-stripped]
+        return self._ASTNODE_霾:1.0__OPAQUE_霾_151_._ASTNODE_計:1.0__OPAQUE_曠_2_(_ASTNODE_霾:1.0__OPAQUE_霾_164_, _ASTNODE_霾:1.0__OPAQUE_霾_164_)
+
+    _ASTNODE_霾:1.0__OPAQUE_霾_130_ _ASTNODE_霾:1.0__OPAQUE_霾_174_(self, _ASTNODE_霾:1.0__OPAQUE_霾_164_: _ASTNODE_霾:1.0__OPAQUE_霾_137_, op: _ASTNODE_霾:1.0__OPAQUE_霾_137_) -> _ASTNODE_霾:1.0__OPAQUE_霾_8_:
+        """括弧の外に演算子があるか確認"""
+        _ASTNODE_霾:1.0__OPAQUE_霾_34_ = 0
+        i = 0
+        while i < _ASTNODE_霾:1.0__OPAQUE_霾_78_(_ASTNODE_霾:1.0__OPAQUE_霾_164_):
+            ch = _ASTNODE_霾:1.0__OPAQUE_霾_164_[i]
+            if ch in '([{':
+                _ASTNODE_霾:1.0__OPAQUE_霾_34_ += 1
+            _ASTNODE_漂:1.0__OPAQUE_霾_48_ ch in ')]}':
+                _ASTNODE_霾:1.0__OPAQUE_霾_34_ -= 1
+            _ASTNODE_漂:1.0__OPAQUE_霾_48_ _ASTNODE_霾:1.0__OPAQUE_霾_34_ == 0 _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_164_[i:i+_ASTNODE_霾:1.0__OPAQUE_霾_78_(op)] == op:
+// [metadata-stripped]
+                if i > 0:  # 先頭でなければ二項演算子として有効
+                    return _ASTNODE_庠:1.0__OPAQUE_庠_8_
+            i += 1
+        return _ASTNODE_庠:1.0__OPAQUE_庠_18_
+
+    _ASTNODE_霾:1.0__OPAQUE_霾_130_ _ASTNODE_霾:1.0__OPAQUE_霾_67_(self, _ASTNODE_霾:1.0__OPAQUE_霾_164_: _ASTNODE_霾:1.0__OPAQUE_霾_137_, op: _ASTNODE_霾:1.0__OPAQUE_霾_137_):
+        """括弧の外の最後の演算子で分割（左結合のため）"""
+        _ASTNODE_霾:1.0__OPAQUE_霾_34_ = 0
+        _ASTNODE_霾:1.0__OPAQUE_霾_110_ = -1
+        i = 0
+        while i < _ASTNODE_霾:1.0__OPAQUE_霾_78_(_ASTNODE_霾:1.0__OPAQUE_霾_164_):
+            ch = _ASTNODE_霾:1.0__OPAQUE_霾_164_[i]
+            if ch in '([{':
+                _ASTNODE_霾:1.0__OPAQUE_霾_34_ += 1
+            _ASTNODE_漂:1.0__OPAQUE_霾_48_ ch in ')]}':
+                _ASTNODE_霾:1.0__OPAQUE_霾_34_ -= 1
+            _ASTNODE_漂:1.0__OPAQUE_霾_48_ _ASTNODE_霾:1.0__OPAQUE_霾_34_ == 0 _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_164_[i:i+_ASTNODE_霾:1.0__OPAQUE_霾_78_(op)] == op:
+                if i > 0:
+                    _ASTNODE_霾:1.0__OPAQUE_霾_110_ = i
+            i += 1
+        if _ASTNODE_霾:1.0__OPAQUE_霾_110_ == -1:
+            return _ASTNODE_庠:1.0__OPAQUE_庠_28_
+        return _ASTNODE_霾:1.0__OPAQUE_霾_164_[:_ASTNODE_霾:1.0__OPAQUE_霾_110_]._ASTNODE_霾:1.0__OPAQUE_霾_104_(), _ASTNODE_霾:1.0__OPAQUE_霾_164_[_ASTNODE_霾:1.0__OPAQUE_霾_110_+_ASTNODE_霾:1.0__OPAQUE_霾_78_(op):]._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+
+    _ASTNODE_霾:1.0__OPAQUE_霾_130_ _ASTNODE_霾:1.0__OPAQUE_霾_176_(self, _ASTNODE_霾:1.0__OPAQUE_霾_164_: _ASTNODE_霾:1.0__OPAQUE_霾_137_, op: _ASTNODE_霾:1.0__OPAQUE_霾_137_) -> _ASTNODE_庠:1.0__OPAQUE_庠_26_:
+        """二項演算を評価"""
+// [metadata-stripped]
+        if op in ['>=', '<=', '==', '!=', '>', '<']:
+            _ASTNODE_霾:1.0__OPAQUE_霾_179_ = _ASTNODE_霾:1.0__OPAQUE_霾_164_._ASTNODE_霾:1.0__OPAQUE_霾_136_(op, 1)
+            if _ASTNODE_霾:1.0__OPAQUE_霾_78_(_ASTNODE_霾:1.0__OPAQUE_霾_179_) != 2:
+                return _ASTNODE_庠:1.0__OPAQUE_庠_28_
+
+            _ASTNODE_霾:1.0__OPAQUE_霾_1_ = self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_179_[0]._ASTNODE_霾:1.0__OPAQUE_霾_104_())
+            _ASTNODE_霾:1.0__OPAQUE_霾_47_ = self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_179_[1]._ASTNODE_霾:1.0__OPAQUE_霾_104_())
+
+// [metadata-stripped]
+            if _ASTNODE_霾:1.0__OPAQUE_霾_1_ is _ASTNODE_庠:1.0__OPAQUE_庠_28_ _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_47_ is _ASTNODE_庠:1.0__OPAQUE_庠_28_:
+                return _ASTNODE_庠:1.0__OPAQUE_庠_8_ if op in ['==', '>=', '<='] else _ASTNODE_庠:1.0__OPAQUE_庠_18_
+            if _ASTNODE_霾:1.0__OPAQUE_霾_1_ is _ASTNODE_庠:1.0__OPAQUE_庠_28_:
+                _ASTNODE_霾:1.0__OPAQUE_霾_1_ = 0
+            if _ASTNODE_霾:1.0__OPAQUE_霾_47_ is _ASTNODE_庠:1.0__OPAQUE_庠_28_:
+                _ASTNODE_霾:1.0__OPAQUE_霾_47_ = 0
+
+            if op == '>':
+                return _ASTNODE_霾:1.0__OPAQUE_霾_1_ > _ASTNODE_霾:1.0__OPAQUE_霾_47_
+            _ASTNODE_漂:1.0__OPAQUE_霾_48_ op == '<':
+                return _ASTNODE_霾:1.0__OPAQUE_霾_1_ < _ASTNODE_霾:1.0__OPAQUE_霾_47_
+            _ASTNODE_漂:1.0__OPAQUE_霾_48_ op == '>=':
+                return _ASTNODE_霾:1.0__OPAQUE_霾_1_ >= _ASTNODE_霾:1.0__OPAQUE_霾_47_
+            _ASTNODE_漂:1.0__OPAQUE_霾_48_ op == '<=':
+                return _ASTNODE_霾:1.0__OPAQUE_霾_1_ <= _ASTNODE_霾:1.0__OPAQUE_霾_47_
+            _ASTNODE_漂:1.0__OPAQUE_霾_48_ op == '==':
+                return _ASTNODE_霾:1.0__OPAQUE_霾_1_ == _ASTNODE_霾:1.0__OPAQUE_霾_47_
+            _ASTNODE_漂:1.0__OPAQUE_霾_48_ op == '!=':
+                return _ASTNODE_霾:1.0__OPAQUE_霾_1_ != _ASTNODE_霾:1.0__OPAQUE_霾_47_
+
+// [metadata-stripped]
+        _ASTNODE_霾:1.0__OPAQUE_霾_131_ = self._ASTNODE_霾:1.0__OPAQUE_霾_67_(_ASTNODE_霾:1.0__OPAQUE_霾_164_, op)
+        if _ASTNODE_霾:1.0__OPAQUE_霾_131_ is _ASTNODE_庠:1.0__OPAQUE_庠_28_:
+            _ASTNODE_霾:1.0__OPAQUE_霾_179_ = _ASTNODE_霾:1.0__OPAQUE_霾_164_._ASTNODE_霾:1.0__OPAQUE_霾_136_(op, 1)
+            if _ASTNODE_霾:1.0__OPAQUE_霾_78_(_ASTNODE_霾:1.0__OPAQUE_霾_179_) != 2:
+                return _ASTNODE_庠:1.0__OPAQUE_庠_28_
+            _ASTNODE_霾:1.0__OPAQUE_霾_84_, _ASTNODE_霾:1.0__OPAQUE_霾_196_ = _ASTNODE_霾:1.0__OPAQUE_霾_179_[0]._ASTNODE_霾:1.0__OPAQUE_霾_104_(), _ASTNODE_霾:1.0__OPAQUE_霾_179_[1]._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+        else:
+            _ASTNODE_霾:1.0__OPAQUE_霾_84_, _ASTNODE_霾:1.0__OPAQUE_霾_196_ = _ASTNODE_霾:1.0__OPAQUE_霾_131_
+
+        _ASTNODE_霾:1.0__OPAQUE_霾_1_ = self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_84_)
+        _ASTNODE_霾:1.0__OPAQUE_霾_47_ = self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_196_)
+
+// [metadata-stripped]
+        if op == '+':
+// [metadata-stripped]
+            if _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_1_, _ASTNODE_霾:1.0__OPAQUE_霾_51_) _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_47_, _ASTNODE_霾:1.0__OPAQUE_霾_51_):
+                return _ASTNODE_霾:1.0__OPAQUE_霾_1_ + _ASTNODE_霾:1.0__OPAQUE_霾_47_
+            if _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_1_, _ASTNODE_霾:1.0__OPAQUE_霾_137_) or _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_47_, _ASTNODE_霾:1.0__OPAQUE_霾_137_):
+                return _ASTNODE_霾:1.0__OPAQUE_霾_137_(_ASTNODE_霾:1.0__OPAQUE_霾_1_) + _ASTNODE_霾:1.0__OPAQUE_霾_137_(_ASTNODE_霾:1.0__OPAQUE_霾_47_)
+
+// [metadata-stripped]
+        if _ASTNODE_霾:1.0__OPAQUE_霾_1_ is _ASTNODE_庠:1.0__OPAQUE_庠_28_:
+            _ASTNODE_霾:1.0__OPAQUE_霾_1_ = 0
+        if _ASTNODE_霾:1.0__OPAQUE_霾_47_ is _ASTNODE_庠:1.0__OPAQUE_庠_28_:
+            _ASTNODE_霾:1.0__OPAQUE_霾_47_ = 0
+
+// [metadata-stripped]
+        if _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_1_, _ASTNODE_霾:1.0__OPAQUE_霾_137_):
+            try:
+                _ASTNODE_霾:1.0__OPAQUE_霾_1_ = _ASTNODE_霾:1.0__OPAQUE_霾_108_(_ASTNODE_霾:1.0__OPAQUE_霾_1_) if '.' in _ASTNODE_霾:1.0__OPAQUE_霾_1_ else _ASTNODE_霾:1.0__OPAQUE_霾_123_(_ASTNODE_霾:1.0__OPAQUE_霾_1_)
+            _ASTNODE_霾:1.0__OPAQUE_霾_189_:
+                _ASTNODE_霾:1.0__OPAQUE_霾_148_
+
+        if _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_47_, _ASTNODE_霾:1.0__OPAQUE_霾_137_):
+            try:
+                _ASTNODE_霾:1.0__OPAQUE_霾_47_ = _ASTNODE_霾:1.0__OPAQUE_霾_108_(_ASTNODE_霾:1.0__OPAQUE_霾_47_) if '.' in _ASTNODE_霾:1.0__OPAQUE_霾_47_ else _ASTNODE_霾:1.0__OPAQUE_霾_123_(_ASTNODE_霾:1.0__OPAQUE_霾_47_)
+            _ASTNODE_霾:1.0__OPAQUE_霾_189_:
+                _ASTNODE_霾:1.0__OPAQUE_霾_148_
+
+        if op == '+':
+            return _ASTNODE_霾:1.0__OPAQUE_霾_1_ + _ASTNODE_霾:1.0__OPAQUE_霾_47_
+        _ASTNODE_漂:1.0__OPAQUE_霾_48_ op == '-':
+            return _ASTNODE_霾:1.0__OPAQUE_霾_1_ - _ASTNODE_霾:1.0__OPAQUE_霾_47_
+        _ASTNODE_漂:1.0__OPAQUE_霾_48_ op == '*':
+            return _ASTNODE_霾:1.0__OPAQUE_霾_1_ * _ASTNODE_霾:1.0__OPAQUE_霾_47_
+        _ASTNODE_漂:1.0__OPAQUE_霾_48_ op == '/':
+            if _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_1_, (_ASTNODE_霾:1.0__OPAQUE_霾_123_, _ASTNODE_霾:1.0__OPAQUE_霾_108_)) _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_47_, (_ASTNODE_霾:1.0__OPAQUE_霾_123_, _ASTNODE_霾:1.0__OPAQUE_霾_108_)):
+                return _ASTNODE_霾:1.0__OPAQUE_霾_1_ / _ASTNODE_霾:1.0__OPAQUE_霾_47_ if _ASTNODE_霾:1.0__OPAQUE_霾_47_ != 0 else 0
+            return 0
+        _ASTNODE_漂:1.0__OPAQUE_霾_48_ op == '%':
+            if _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_1_, (_ASTNODE_霾:1.0__OPAQUE_霾_123_, _ASTNODE_霾:1.0__OPAQUE_霾_108_)) _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_47_, (_ASTNODE_霾:1.0__OPAQUE_霾_123_, _ASTNODE_霾:1.0__OPAQUE_霾_108_)) _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_47_ != 0:
+                return _ASTNODE_霾:1.0__OPAQUE_霾_123_(_ASTNODE_霾:1.0__OPAQUE_霾_1_) % _ASTNODE_霾:1.0__OPAQUE_霾_123_(_ASTNODE_霾:1.0__OPAQUE_霾_47_)
+            return 0
+
+        return _ASTNODE_庠:1.0__OPAQUE_庠_28_
+
+    _ASTNODE_霾:1.0__OPAQUE_霾_130_ _ASTNODE_霾:1.0__OPAQUE_霾_100_(self, _ASTNODE_霾:1.0__OPAQUE_霾_164_: _ASTNODE_霾:1.0__OPAQUE_霾_137_) -> _ASTNODE_霾:1.0__OPAQUE_霾_51_:
+        """リストリテラルをパース"""
+// [metadata-stripped]
+        _ASTNODE_霾:1.0__OPAQUE_霾_74_ = _ASTNODE_霾:1.0__OPAQUE_霾_164_[1:-1]._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+        if _ASTNODE_霾:1.0__OPAQUE_霾_170_ _ASTNODE_霾:1.0__OPAQUE_霾_74_:
+            return []
+
+        _ASTNODE_霾:1.0__OPAQUE_霾_199_ = []
+// [metadata-stripped]
+        _ASTNODE_霾:1.0__OPAQUE_霾_82_ = []
+        _ASTNODE_霾:1.0__OPAQUE_霾_21_ = ""
+        _ASTNODE_霾:1.0__OPAQUE_霾_34_ = 0
+
+        for _ASTNODE_霾:1.0__OPAQUE_霾_102_ in _ASTNODE_霾:1.0__OPAQUE_霾_74_:
+            if _ASTNODE_霾:1.0__OPAQUE_霾_102_ in '{[':
+                _ASTNODE_霾:1.0__OPAQUE_霾_34_ += 1
+                _ASTNODE_霾:1.0__OPAQUE_霾_21_ += _ASTNODE_霾:1.0__OPAQUE_霾_102_
+            _ASTNODE_漂:1.0__OPAQUE_霾_48_ _ASTNODE_霾:1.0__OPAQUE_霾_102_ in '}]':
+                _ASTNODE_霾:1.0__OPAQUE_霾_34_ -= 1
+                _ASTNODE_霾:1.0__OPAQUE_霾_21_ += _ASTNODE_霾:1.0__OPAQUE_霾_102_
+            _ASTNODE_漂:1.0__OPAQUE_霾_48_ _ASTNODE_霾:1.0__OPAQUE_霾_102_ == ',' _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_34_ == 0:
+                _ASTNODE_霾:1.0__OPAQUE_霾_82_._ASTNODE_霾:1.0__OPAQUE_霾_132_(_ASTNODE_霾:1.0__OPAQUE_霾_21_._ASTNODE_霾:1.0__OPAQUE_霾_104_())
+                _ASTNODE_霾:1.0__OPAQUE_霾_21_ = ""
+            else:
+                _ASTNODE_霾:1.0__OPAQUE_霾_21_ += _ASTNODE_霾:1.0__OPAQUE_霾_102_
+
+        if _ASTNODE_霾:1.0__OPAQUE_霾_21_._ASTNODE_霾:1.0__OPAQUE_霾_104_():
+            _ASTNODE_霾:1.0__OPAQUE_霾_82_._ASTNODE_霾:1.0__OPAQUE_霾_132_(_ASTNODE_霾:1.0__OPAQUE_霾_21_._ASTNODE_霾:1.0__OPAQUE_霾_104_())
+
+// [metadata-stripped]
+        for _ASTNODE_霾:1.0__OPAQUE_霾_25_ in _ASTNODE_霾:1.0__OPAQUE_霾_82_:
+            _ASTNODE_霾:1.0__OPAQUE_霾_53_ = self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_25_)
+            _ASTNODE_霾:1.0__OPAQUE_霾_199_._ASTNODE_霾:1.0__OPAQUE_霾_132_(_ASTNODE_霾:1.0__OPAQUE_霾_53_)
+
+        return _ASTNODE_霾:1.0__OPAQUE_霾_199_
+
+    _ASTNODE_霾:1.0__OPAQUE_霾_130_ _ASTNODE_霾:1.0__OPAQUE_霾_37_(self, _ASTNODE_霾:1.0__OPAQUE_霾_164_: _ASTNODE_霾:1.0__OPAQUE_霾_137_) -> _ASTNODE_霾:1.0__OPAQUE_霾_87_:
+        """辞書リテラルをパース"""
+// [metadata-stripped]
+        _ASTNODE_霾:1.0__OPAQUE_霾_74_ = _ASTNODE_霾:1.0__OPAQUE_霾_164_[1:-1]._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+        if _ASTNODE_霾:1.0__OPAQUE_霾_170_ _ASTNODE_霾:1.0__OPAQUE_霾_74_:
+            return {}
+
+        _ASTNODE_霾:1.0__OPAQUE_霾_199_ = {}
+// [metadata-stripped]
+// [metadata-stripped]
+        _ASTNODE_霾:1.0__OPAQUE_霾_23_ = []
+        _ASTNODE_霾:1.0__OPAQUE_霾_21_ = ""
+        _ASTNODE_霾:1.0__OPAQUE_霾_34_ = 0
+
+        for _ASTNODE_霾:1.0__OPAQUE_霾_102_ in _ASTNODE_霾:1.0__OPAQUE_霾_74_:
+            if _ASTNODE_霾:1.0__OPAQUE_霾_102_ in '{[':
+                _ASTNODE_霾:1.0__OPAQUE_霾_34_ += 1
+                _ASTNODE_霾:1.0__OPAQUE_霾_21_ += _ASTNODE_霾:1.0__OPAQUE_霾_102_
+            _ASTNODE_漂:1.0__OPAQUE_霾_48_ _ASTNODE_霾:1.0__OPAQUE_霾_102_ in '}]':
+                _ASTNODE_霾:1.0__OPAQUE_霾_34_ -= 1
+                _ASTNODE_霾:1.0__OPAQUE_霾_21_ += _ASTNODE_霾:1.0__OPAQUE_霾_102_
+            _ASTNODE_漂:1.0__OPAQUE_霾_48_ _ASTNODE_霾:1.0__OPAQUE_霾_102_ == ',' _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_34_ == 0:
+                _ASTNODE_霾:1.0__OPAQUE_霾_23_._ASTNODE_霾:1.0__OPAQUE_霾_132_(_ASTNODE_霾:1.0__OPAQUE_霾_21_._ASTNODE_霾:1.0__OPAQUE_霾_104_())
+                _ASTNODE_霾:1.0__OPAQUE_霾_21_ = ""
+            else:
+                _ASTNODE_霾:1.0__OPAQUE_霾_21_ += _ASTNODE_霾:1.0__OPAQUE_霾_102_
+
+        if _ASTNODE_霾:1.0__OPAQUE_霾_21_._ASTNODE_霾:1.0__OPAQUE_霾_104_():
+            _ASTNODE_霾:1.0__OPAQUE_霾_23_._ASTNODE_霾:1.0__OPAQUE_霾_132_(_ASTNODE_霾:1.0__OPAQUE_霾_21_._ASTNODE_霾:1.0__OPAQUE_霾_104_())
+
+// [metadata-stripped]
+        for _ASTNODE_霾:1.0__OPAQUE_霾_156_ in _ASTNODE_霾:1.0__OPAQUE_霾_23_:
+            if ':' _ASTNODE_霾:1.0__OPAQUE_霾_170_ in _ASTNODE_霾:1.0__OPAQUE_霾_156_:
+                continue
+
+// [metadata-stripped]
+            _ASTNODE_霾:1.0__OPAQUE_霾_55_ = _ASTNODE_霾:1.0__OPAQUE_霾_156_._ASTNODE_霾:1.0__OPAQUE_霾_145_(':')
+            _ASTNODE_沈:1.0__OPAQUE_霾_120_ = _ASTNODE_霾:1.0__OPAQUE_霾_156_[:_ASTNODE_霾:1.0__OPAQUE_霾_55_]._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+            _ASTNODE_霾:1.0__OPAQUE_霾_197_ = _ASTNODE_霾:1.0__OPAQUE_霾_156_[_ASTNODE_霾:1.0__OPAQUE_霾_55_+1:]._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+
+// [metadata-stripped]
+            if _ASTNODE_沈:1.0__OPAQUE_霾_120_._ASTNODE_霾:1.0__OPAQUE_霾_89_('"') or _ASTNODE_沈:1.0__OPAQUE_霾_120_._ASTNODE_霾:1.0__OPAQUE_霾_89_("'"):
+                _ASTNODE_沈:1.0__OPAQUE_霾_120_ = _ASTNODE_沈:1.0__OPAQUE_霾_120_[1:-1]  # 文字列リテラルの場合
+// [metadata-stripped]
+
+// [metadata-stripped]
+            _ASTNODE_霾:1.0__OPAQUE_霾_53_ = self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_197_)
+            _ASTNODE_霾:1.0__OPAQUE_霾_199_[_ASTNODE_沈:1.0__OPAQUE_霾_120_] = _ASTNODE_霾:1.0__OPAQUE_霾_53_
+
+        return _ASTNODE_霾:1.0__OPAQUE_霾_199_
+
+    _ASTNODE_霾:1.0__OPAQUE_霾_130_ _ASTNODE_霾:1.0__OPAQUE_霾_33_(self, _ASTNODE_霾:1.0__OPAQUE_霾_164_: _ASTNODE_霾:1.0__OPAQUE_霾_137_) -> _ASTNODE_庠:1.0__OPAQUE_庠_26_:
+        """関数呼び出しを実行"""
+        _ASTNODE_霾:1.0__OPAQUE_霾_149_ = re._ASTNODE_霾:1.0__OPAQUE_霾_149_(r'^([\w\.]+)\((.*)\)$', _ASTNODE_霾:1.0__OPAQUE_霾_164_, re._ASTNODE_庠:1.0__OPAQUE_庠_14_)
+        if _ASTNODE_霾:1.0__OPAQUE_霾_170_ _ASTNODE_霾:1.0__OPAQUE_霾_149_:
+            return _ASTNODE_庠:1.0__OPAQUE_庠_28_
+
+        _ASTNODE_霾:1.0__OPAQUE_霾_118_ = _ASTNODE_霾:1.0__OPAQUE_霾_149_._ASTNODE_霾:1.0__OPAQUE_霾_195_(1)
+        _ASTNODE_霾:1.0__OPAQUE_霾_194_ = _ASTNODE_霾:1.0__OPAQUE_霾_149_._ASTNODE_霾:1.0__OPAQUE_霾_195_(2)
+
+// [metadata-stripped]
+        _ASTNODE_霾:1.0__OPAQUE_霾_58_ = []
+        if _ASTNODE_霾:1.0__OPAQUE_霾_194_._ASTNODE_霾:1.0__OPAQUE_霾_104_():
+// [metadata-stripped]
+            _ASTNODE_霾:1.0__OPAQUE_霾_163_ = self._ASTNODE_霾:1.0__OPAQUE_霾_180_(_ASTNODE_霾:1.0__OPAQUE_霾_194_)
+            for _ASTNODE_霾:1.0__OPAQUE_霾_94_ in _ASTNODE_霾:1.0__OPAQUE_霾_163_:
+                _ASTNODE_霾:1.0__OPAQUE_霾_199_ = self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_94_._ASTNODE_霾:1.0__OPAQUE_霾_104_())
+                _ASTNODE_霾:1.0__OPAQUE_霾_58_._ASTNODE_霾:1.0__OPAQUE_霾_132_(_ASTNODE_霾:1.0__OPAQUE_霾_199_)
+
+// [metadata-stripped]
+        if _ASTNODE_霾:1.0__OPAQUE_霾_118_ in self._ASTNODE_霾:1.0__OPAQUE_霾_161_:
+            return self._ASTNODE_霾:1.0__OPAQUE_霾_161_[_ASTNODE_霾:1.0__OPAQUE_霾_118_](_ASTNODE_霾:1.0__OPAQUE_霾_58_)
+
+// [metadata-stripped]
+        if _ASTNODE_霾:1.0__OPAQUE_霾_118_ in self._ASTNODE_霾:1.0__OPAQUE_霾_146_:
+            func = self._ASTNODE_霾:1.0__OPAQUE_霾_146_[_ASTNODE_霾:1.0__OPAQUE_霾_118_]
+
+// [metadata-stripped]
+            _ASTNODE_霾:1.0__OPAQUE_霾_150_ = {}
+            for i, _ASTNODE_霾:1.0__OPAQUE_霾_15_ in _ASTNODE_霾:1.0__OPAQUE_霾_198_(func['_ASTNODE_霾:1.0__OPAQUE_霾_127_']):
+                if i < _ASTNODE_霾:1.0__OPAQUE_霾_78_(_ASTNODE_霾:1.0__OPAQUE_霾_58_):
+                    _ASTNODE_霾:1.0__OPAQUE_霾_150_[_ASTNODE_霾:1.0__OPAQUE_霾_15_] = _ASTNODE_霾:1.0__OPAQUE_霾_58_[i]
+                    self._ASTNODE_霾:1.0__OPAQUE_霾_151_[_ASTNODE_霾:1.0__OPAQUE_霾_15_] = _ASTNODE_霾:1.0__OPAQUE_霾_58_[i]
+
+// [metadata-stripped]
+            _ASTNODE_霾:1.0__OPAQUE_霾_98_ = self._ASTNODE_霾:1.0__OPAQUE_霾_143_
+            _ASTNODE_霾:1.0__OPAQUE_霾_124_ = self._ASTNODE_霾:1.0__OPAQUE_霾_106_
+            self._ASTNODE_霾:1.0__OPAQUE_霾_143_ = _ASTNODE_庠:1.0__OPAQUE_庠_18_
+            self._ASTNODE_霾:1.0__OPAQUE_霾_106_ = _ASTNODE_庠:1.0__OPAQUE_庠_28_
+
+            i = 0
+            while i < _ASTNODE_霾:1.0__OPAQUE_霾_78_(func['_ASTNODE_霾:1.0__OPAQUE_霾_182_']):
+                if self._ASTNODE_霾:1.0__OPAQUE_霾_143_:
+                    break
+                i = self._ASTNODE_霾:1.0__OPAQUE_霾_4_(func['_ASTNODE_霾:1.0__OPAQUE_霾_182_'], i)
+
+            _ASTNODE_霾:1.0__OPAQUE_霾_199_ = self._ASTNODE_霾:1.0__OPAQUE_霾_106_
+
+// [metadata-stripped]
+            self._ASTNODE_霾:1.0__OPAQUE_霾_143_ = _ASTNODE_霾:1.0__OPAQUE_霾_98_
+            self._ASTNODE_霾:1.0__OPAQUE_霾_106_ = _ASTNODE_霾:1.0__OPAQUE_霾_124_
+            for _ASTNODE_霾:1.0__OPAQUE_霾_15_ in _ASTNODE_霾:1.0__OPAQUE_霾_150_:
+                if _ASTNODE_霾:1.0__OPAQUE_霾_15_ in self._ASTNODE_霾:1.0__OPAQUE_霾_151_:
+                    _ASTNODE_霾:1.0__OPAQUE_霾_68_ self._ASTNODE_霾:1.0__OPAQUE_霾_151_[_ASTNODE_霾:1.0__OPAQUE_霾_15_]
+
+            return _ASTNODE_霾:1.0__OPAQUE_霾_199_
+
+        return _ASTNODE_庠:1.0__OPAQUE_庠_28_
+
+    _ASTNODE_霾:1.0__OPAQUE_霾_130_ _ASTNODE_霾:1.0__OPAQUE_霾_180_(self, _ASTNODE_霾:1.0__OPAQUE_霾_194_: _ASTNODE_霾:1.0__OPAQUE_霾_137_) -> _ASTNODE_庠:1.0__OPAQUE_庠_47_[_ASTNODE_霾:1.0__OPAQUE_霾_137_]:
+        """関数引数を分割（ネストを考慮）"""
+        _ASTNODE_霾:1.0__OPAQUE_霾_179_ = []
+        _ASTNODE_霾:1.0__OPAQUE_霾_21_ = ""
+        _ASTNODE_霾:1.0__OPAQUE_霾_34_ = 0
+
+        for _ASTNODE_霾:1.0__OPAQUE_霾_102_ in _ASTNODE_霾:1.0__OPAQUE_霾_194_:
+            if _ASTNODE_霾:1.0__OPAQUE_霾_102_ in '([{':
+                _ASTNODE_霾:1.0__OPAQUE_霾_34_ += 1
+                _ASTNODE_霾:1.0__OPAQUE_霾_21_ += _ASTNODE_霾:1.0__OPAQUE_霾_102_
+            _ASTNODE_漂:1.0__OPAQUE_霾_48_ _ASTNODE_霾:1.0__OPAQUE_霾_102_ in ')]}':
+                _ASTNODE_霾:1.0__OPAQUE_霾_34_ -= 1
+                _ASTNODE_霾:1.0__OPAQUE_霾_21_ += _ASTNODE_霾:1.0__OPAQUE_霾_102_
+            _ASTNODE_漂:1.0__OPAQUE_霾_48_ _ASTNODE_霾:1.0__OPAQUE_霾_102_ == ',' _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_34_ == 0:
+                _ASTNODE_霾:1.0__OPAQUE_霾_179_._ASTNODE_霾:1.0__OPAQUE_霾_132_(_ASTNODE_霾:1.0__OPAQUE_霾_21_._ASTNODE_霾:1.0__OPAQUE_霾_104_())
+                _ASTNODE_霾:1.0__OPAQUE_霾_21_ = ""
+            else:
+                _ASTNODE_霾:1.0__OPAQUE_霾_21_ += _ASTNODE_霾:1.0__OPAQUE_霾_102_
+
+        if _ASTNODE_霾:1.0__OPAQUE_霾_21_._ASTNODE_霾:1.0__OPAQUE_霾_104_():
+            _ASTNODE_霾:1.0__OPAQUE_霾_179_._ASTNODE_霾:1.0__OPAQUE_霾_132_(_ASTNODE_霾:1.0__OPAQUE_霾_21_._ASTNODE_霾:1.0__OPAQUE_霾_104_())
+
+        return _ASTNODE_霾:1.0__OPAQUE_霾_179_
+
+    _ASTNODE_霾:1.0__OPAQUE_霾_130_ _ASTNODE_霾:1.0__OPAQUE_霾_64_(self, _ASTNODE_霾:1.0__OPAQUE_霾_19_: _ASTNODE_庠:1.0__OPAQUE_庠_47_[_ASTNODE_霾:1.0__OPAQUE_霾_137_], _ASTNODE_霾:1.0__OPAQUE_霾_192_: _ASTNODE_霾:1.0__OPAQUE_霾_123_) -> _ASTNODE_霾:1.0__OPAQUE_霾_123_:
+        """対応する}を見つける"""
+        _ASTNODE_霾:1.0__OPAQUE_霾_34_ = 1
+        i = _ASTNODE_霾:1.0__OPAQUE_霾_192_ + 1
+
+        while i < _ASTNODE_霾:1.0__OPAQUE_霾_78_(_ASTNODE_霾:1.0__OPAQUE_霾_19_) _ASTNODE_霾:1.0__OPAQUE_霾_81_ _ASTNODE_霾:1.0__OPAQUE_霾_34_ > 0:
+            _ASTNODE_霾:1.0__OPAQUE_霾_42_ = _ASTNODE_霾:1.0__OPAQUE_霾_19_[i]._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+
+// [metadata-stripped]
+            if _ASTNODE_霾:1.0__OPAQUE_霾_42_._ASTNODE_霾:1.0__OPAQUE_霾_89_('//'):
+                i += 1
+                continue
+
+            _ASTNODE_霾:1.0__OPAQUE_霾_34_ += _ASTNODE_霾:1.0__OPAQUE_霾_42_._ASTNODE_霾:1.0__OPAQUE_霾_28_('{')
+            _ASTNODE_霾:1.0__OPAQUE_霾_34_ -= _ASTNODE_霾:1.0__OPAQUE_霾_42_._ASTNODE_霾:1.0__OPAQUE_霾_28_('}')
+
+            if _ASTNODE_霾:1.0__OPAQUE_霾_34_ == 0:
+                return i
+
+            i += 1
+// _ASTNODE_曠:0.1__OPAQUE_VM_966_ [decoy-metadata]
+
+        return i
+
+
+
+    _ASTNODE_霾:1.0__OPAQUE_霾_130_ _ASTNODE_霾:1.0__OPAQUE_霾_184_(self, _ASTNODE_霾:1.0__OPAQUE_霾_19_, _ASTNODE_霾:1.0__OPAQUE_霾_192_):
+        _ASTNODE_霾:1.0__OPAQUE_霾_169_ = self._ASTNODE_霾:1.0__OPAQUE_霾_64_(_ASTNODE_霾:1.0__OPAQUE_霾_19_, _ASTNODE_霾:1.0__OPAQUE_霾_192_)
+        i = _ASTNODE_霾:1.0__OPAQUE_霾_192_ + 1
+        while i < _ASTNODE_霾:1.0__OPAQUE_霾_169_:
+            if self._ASTNODE_霾:1.0__OPAQUE_霾_143_ or self._ASTNODE_霾:1.0__OPAQUE_霾_191_: break
+            i = self._ASTNODE_霾:1.0__OPAQUE_霾_4_(_ASTNODE_霾:1.0__OPAQUE_霾_19_, i)
+        return _ASTNODE_霾:1.0__OPAQUE_霾_169_ + 1
+
+    _ASTNODE_霾:1.0__OPAQUE_霾_130_ _ASTNODE_霾:1.0__OPAQUE_霾_168_(self, _ASTNODE_霾:1.0__OPAQUE_霾_19_, _ASTNODE_霾:1.0__OPAQUE_霾_192_):
+        _ASTNODE_霾:1.0__OPAQUE_霾_42_ = _ASTNODE_霾:1.0__OPAQUE_霾_19_[_ASTNODE_霾:1.0__OPAQUE_霾_192_]._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+        _ASTNODE_霾:1.0__OPAQUE_霾_122_ = re._ASTNODE_霾:1.0__OPAQUE_霾_149_(r'_ASTNODE_庠:1.0__OPAQUE_庠_40_\s+(\w+)\s*{', _ASTNODE_霾:1.0__OPAQUE_霾_42_)._ASTNODE_霾:1.0__OPAQUE_霾_195_(1)
+        _ASTNODE_霾:1.0__OPAQUE_霾_169_ = self._ASTNODE_霾:1.0__OPAQUE_霾_64_(_ASTNODE_霾:1.0__OPAQUE_霾_19_, _ASTNODE_霾:1.0__OPAQUE_霾_192_)
+        _ASTNODE_霾:1.0__OPAQUE_霾_13_ = {}
+        for i in _ASTNODE_霾:1.0__OPAQUE_霾_162_(_ASTNODE_霾:1.0__OPAQUE_霾_192_ + 1, _ASTNODE_霾:1.0__OPAQUE_霾_169_):
+            ln = _ASTNODE_霾:1.0__OPAQUE_霾_19_[i]._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+            if _ASTNODE_霾:1.0__OPAQUE_霾_170_ ln or ln._ASTNODE_霾:1.0__OPAQUE_霾_89_('//'): continue
+            if ':' in ln:
+                k, v = ln._ASTNODE_霾:1.0__OPAQUE_霾_136_(':', 1)
+                k = k._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+                if k._ASTNODE_霾:1.0__OPAQUE_霾_89_('"') or k._ASTNODE_霾:1.0__OPAQUE_霾_89_("'"): k = k[1:-1]
+                _ASTNODE_霾:1.0__OPAQUE_霾_13_[k] = self._ASTNODE_霾:1.0__OPAQUE_霾_91_(v._ASTNODE_霾:1.0__OPAQUE_霾_104_())
+        self._ASTNODE_霾:1.0__OPAQUE_霾_151_[_ASTNODE_霾:1.0__OPAQUE_霾_122_] = _ASTNODE_霾:1.0__OPAQUE_霾_13_
+        return _ASTNODE_霾:1.0__OPAQUE_霾_169_ + 1
+
+    _ASTNODE_霾:1.0__OPAQUE_霾_130_ _ASTNODE_霾:1.0__OPAQUE_霾_10_(self, _ASTNODE_霾:1.0__OPAQUE_霾_19_, _ASTNODE_霾:1.0__OPAQUE_霾_192_):
+        _ASTNODE_霾:1.0__OPAQUE_霾_42_ = _ASTNODE_霾:1.0__OPAQUE_霾_19_[_ASTNODE_霾:1.0__OPAQUE_霾_192_]._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+        _ASTNODE_霾:1.0__OPAQUE_霾_202_ = re._ASTNODE_霾:1.0__OPAQUE_霾_149_(r'_ASTNODE_庠:1.0__OPAQUE_庠_38_\s+(.+?)\s*{', _ASTNODE_霾:1.0__OPAQUE_霾_42_)._ASTNODE_霾:1.0__OPAQUE_霾_195_(1)._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+        _ASTNODE_霾:1.0__OPAQUE_霾_175_ = self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_202_)
+        _ASTNODE_霾:1.0__OPAQUE_霾_169_ = self._ASTNODE_霾:1.0__OPAQUE_霾_64_(_ASTNODE_霾:1.0__OPAQUE_霾_19_, _ASTNODE_霾:1.0__OPAQUE_霾_192_)
+        i = _ASTNODE_霾:1.0__OPAQUE_霾_192_ + 1
+        while i < _ASTNODE_霾:1.0__OPAQUE_霾_169_:
+            ln = _ASTNODE_霾:1.0__OPAQUE_霾_19_[i]._ASTNODE_霾:1.0__OPAQUE_霾_104_()
+            if _ASTNODE_霾:1.0__OPAQUE_霾_170_ ln or ln._ASTNODE_霾:1.0__OPAQUE_霾_89_('//'):
+                i += 1; continue
+            if '->' in ln:
+                _ASTNODE_霾:1.0__OPAQUE_霾_171_, _ASTNODE_霾:1.0__OPAQUE_霾_86_ = [x._ASTNODE_霾:1.0__OPAQUE_霾_104_() for x in ln._ASTNODE_霾:1.0__OPAQUE_霾_136_('->', 1)]
+                _ASTNODE_霾:1.0__OPAQUE_霾_27_ = _ASTNODE_庠:1.0__OPAQUE_庠_18_
+                if _ASTNODE_霾:1.0__OPAQUE_霾_171_ == '_ASTNODE_庠:1.0__OPAQUE_庠_43_': _ASTNODE_霾:1.0__OPAQUE_霾_27_ = _ASTNODE_庠:1.0__OPAQUE_庠_8_
+                _ASTNODE_漂:1.0__OPAQUE_霾_48_ _ASTNODE_霾:1.0__OPAQUE_霾_171_._ASTNODE_霾:1.0__OPAQUE_霾_89_('_ASTNODE_庠:1.0__OPAQUE_庠_51_ '):
+                    _ASTNODE_霾:1.0__OPAQUE_霾_58_ = self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_171_[9:]._ASTNODE_霾:1.0__OPAQUE_霾_104_())
+                    _ASTNODE_霾:1.0__OPAQUE_霾_27_ = any(_ASTNODE_霾:1.0__OPAQUE_霾_137_(_ASTNODE_霾:1.0__OPAQUE_霾_94_) in _ASTNODE_霾:1.0__OPAQUE_霾_137_(_ASTNODE_霾:1.0__OPAQUE_霾_175_) for _ASTNODE_霾:1.0__OPAQUE_霾_94_ in _ASTNODE_霾:1.0__OPAQUE_霾_58_) if _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_58_, _ASTNODE_霾:1.0__OPAQUE_霾_51_) else _ASTNODE_霾:1.0__OPAQUE_霾_137_(_ASTNODE_霾:1.0__OPAQUE_霾_58_) in _ASTNODE_霾:1.0__OPAQUE_霾_137_(_ASTNODE_霾:1.0__OPAQUE_霾_175_)
+                _ASTNODE_漂:1.0__OPAQUE_霾_48_ _ASTNODE_霾:1.0__OPAQUE_霾_171_._ASTNODE_霾:1.0__OPAQUE_霾_89_('_ASTNODE_庠:1.0__OPAQUE_庠_16_ '):
+                    _ASTNODE_霾:1.0__OPAQUE_霾_58_ = self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_171_[4:]._ASTNODE_霾:1.0__OPAQUE_霾_104_())
+                    _ASTNODE_霾:1.0__OPAQUE_霾_27_ = any(_ASTNODE_霾:1.0__OPAQUE_霾_94_ in _ASTNODE_霾:1.0__OPAQUE_霾_175_ for _ASTNODE_霾:1.0__OPAQUE_霾_94_ in _ASTNODE_霾:1.0__OPAQUE_霾_58_) if _ASTNODE_霾:1.0__OPAQUE_霾_46_(_ASTNODE_霾:1.0__OPAQUE_霾_58_, _ASTNODE_霾:1.0__OPAQUE_霾_51_) else _ASTNODE_霾:1.0__OPAQUE_霾_58_ in _ASTNODE_霾:1.0__OPAQUE_霾_175_
+                else:
+                    _ASTNODE_霾:1.0__OPAQUE_霾_27_ = (self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_171_) == _ASTNODE_霾:1.0__OPAQUE_霾_175_)
+                
+                if _ASTNODE_霾:1.0__OPAQUE_霾_27_:
+                    if _ASTNODE_霾:1.0__OPAQUE_霾_86_ == '{':
+                        _ASTNODE_霾:1.0__OPAQUE_霾_139_ = self._ASTNODE_霾:1.0__OPAQUE_霾_64_(_ASTNODE_霾:1.0__OPAQUE_霾_19_, i)
+                        j = i + 1
+                        while j < _ASTNODE_霾:1.0__OPAQUE_霾_139_:
+                            if self._ASTNODE_霾:1.0__OPAQUE_霾_143_ or self._ASTNODE_霾:1.0__OPAQUE_霾_191_: break
+                            j = self._ASTNODE_霾:1.0__OPAQUE_霾_4_(_ASTNODE_霾:1.0__OPAQUE_霾_19_, j)
+                        return _ASTNODE_霾:1.0__OPAQUE_霾_169_ + 1
+                    else:
+                        self._ASTNODE_霾:1.0__OPAQUE_霾_106_ = self._ASTNODE_霾:1.0__OPAQUE_霾_91_(_ASTNODE_霾:1.0__OPAQUE_霾_86_)
+                        self._ASTNODE_霾:1.0__OPAQUE_霾_143_ = _ASTNODE_庠:1.0__OPAQUE_庠_8_
+                        return _ASTNODE_霾:1.0__OPAQUE_霾_169_ + 1
+            i += 1
+        return _ASTNODE_霾:1.0__OPAQUE_霾_169_ + 1
+
+    _ASTNODE_霾:1.0__OPAQUE_霾_130_ _ASTNODE_函:1.0__OPAQUE_霾_83_(self):
+        if _ASTNODE_霾:1.0__OPAQUE_霾_170_ self._ASTNODE_函:1.0__OPAQUE_霾_2_: return _ASTNODE_庠:1.0__OPAQUE_庠_28_
+        _ASTNODE_霾:1.0__OPAQUE_霾_128_ open(self._ASTNODE_函:1.0__OPAQUE_霾_2_, 'r', _ASTNODE_霾:1.0__OPAQUE_霾_3_='_ASTNODE_霾:1.0__OPAQUE_霾_140_-8') as f:
+            _ASTNODE_霾:1.0__OPAQUE_霾_19_ = f._ASTNODE_霾:1.0__OPAQUE_霾_45_()._ASTNODE_霾:1.0__OPAQUE_霾_136_('\n')
+        _ASTNODE_霾:1.0__OPAQUE_霾_88_, i, _ASTNODE_霾:1.0__OPAQUE_霾_40_ = [], 0, _ASTNODE_霾:1.0__OPAQUE_霾_119_('_ASTNODE_霾:1.0__OPAQUE_霾_29_')
+        while i < _ASTNODE_霾:1.0__OPAQUE_霾_78_(_ASTNODE_霾:1.0__OPAQUE_霾_19_):
+            _ASTNODE_霾:1.0__OPAQUE_霾_42_ = _ASTNODE_霾:1.0__OPAQUE_霾_19_[i]
+            _ASTNODE_霾:1.0__OPAQUE_霾_149_ = re._ASTNODE_霾:1.0__OPAQUE_霾_149_(r'_ASTNODE_庠:1.0__OPAQUE_庠_40_\s+(\w+)\s*{', _ASTNODE_霾:1.0__OPAQUE_霾_42_._ASTNODE_霾:1.0__OPAQUE_霾_104_())
+            if _ASTNODE_霾:1.0__OPAQUE_霾_149_:
+// _ASTNODE_函:0.1__OPAQUE_WM_406_ [decoy-metadata]
+                _ASTNODE_霾:1.0__OPAQUE_霾_122_ = _ASTNODE_霾:1.0__OPAQUE_霾_149_._ASTNODE_霾:1.0__OPAQUE_霾_195_(1)
+                _ASTNODE_霾:1.0__OPAQUE_霾_88_._ASTNODE_霾:1.0__OPAQUE_霾_132_(_ASTNODE_霾:1.0__OPAQUE_霾_42_)
+                _ASTNODE_霾:1.0__OPAQUE_霾_169_ = self._ASTNODE_霾:1.0__OPAQUE_霾_64_(_ASTNODE_霾:1.0__OPAQUE_霾_19_, i)
+                _ASTNODE_霾:1.0__OPAQUE_霾_13_ = self._ASTNODE_霾:1.0__OPAQUE_霾_151_._ASTNODE_計:1.0__OPAQUE_曠_2_(_ASTNODE_霾:1.0__OPAQUE_霾_122_, {})
+                for k, v in _ASTNODE_霾:1.0__OPAQUE_霾_13_._ASTNODE_霾:1.0__OPAQUE_霾_158_():
+                    _ASTNODE_霾:1.0__OPAQUE_霾_72_ = _ASTNODE_霾:1.0__OPAQUE_霾_40_._ASTNODE_霾:1.0__OPAQUE_霾_159_(v, _ASTNODE_霾:1.0__OPAQUE_霾_11_=_ASTNODE_庠:1.0__OPAQUE_庠_18_)
+                    _ASTNODE_霾:1.0__OPAQUE_霾_88_._ASTNODE_霾:1.0__OPAQUE_霾_132_(f"        {k}: {_ASTNODE_霾:1.0__OPAQUE_霾_72_}")
+                _ASTNODE_霾:1.0__OPAQUE_霾_88_._ASTNODE_霾:1.0__OPAQUE_霾_132_("    }")
+                i = _ASTNODE_霾:1.0__OPAQUE_霾_169_
+            else:
+                _ASTNODE_霾:1.0__OPAQUE_霾_88_._ASTNODE_霾:1.0__OPAQUE_霾_132_(_ASTNODE_霾:1.0__OPAQUE_霾_42_)
+            i += 1
+        _ASTNODE_霾:1.0__OPAQUE_霾_128_ open(self._ASTNODE_函:1.0__OPAQUE_霾_2_, 'w', _ASTNODE_霾:1.0__OPAQUE_霾_3_='_ASTNODE_霾:1.0__OPAQUE_霾_140_-8') as f:
+            f._ASTNODE_霾:1.0__OPAQUE_霾_43_('\n'._ASTNODE_霾:1.0__OPAQUE_霾_77_(_ASTNODE_霾:1.0__OPAQUE_霾_88_))
+        return _ASTNODE_庠:1.0__OPAQUE_庠_8_
+
+
+if _ASTNODE_霾:1.0__OPAQUE_霾_80_ == '_ASTNODE_霾:1.0__OPAQUE_霾_66_':
+
+    if _ASTNODE_霾:1.0__OPAQUE_霾_78_(_ASTNODE_霾:1.0__OPAQUE_霾_114_._ASTNODE_霾:1.0__OPAQUE_霾_31_) < 2:
+        _ASTNODE_霾:1.0__OPAQUE_霾_95_("使い方: _ASTNODE_霾:1.0__OPAQUE_霾_105_ _ASTNODE_計:1.0__OPAQUE_霾_20_.py <_ASTNODE_函:1.0__OPAQUE_霾_181_._ASTNODE_霾:1.0__OPAQUE_霾_101_>")
+        _ASTNODE_霾:1.0__OPAQUE_霾_114_._ASTNODE_霾:1.0__OPAQUE_霾_113_(1)
+
+    _ASTNODE_計:1.0__OPAQUE_霾_93_ = _ASTNODE_計:1.0__OPAQUE_庠_24_()
+    _ASTNODE_計:1.0__OPAQUE_霾_93_._ASTNODE_函:1.0__OPAQUE_霾_57_(_ASTNODE_霾:1.0__OPAQUE_霾_114_._ASTNODE_霾:1.0__OPAQUE_霾_31_[1])
+
+
+// POLYMORPHIC_JCROSS_END

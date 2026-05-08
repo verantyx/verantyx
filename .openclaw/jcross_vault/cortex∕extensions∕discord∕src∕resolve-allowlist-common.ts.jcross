@@ -1,0 +1,51 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:F25F350F ver:1778220806
+// ⚠️ One-time schema — expires after response
+
+import _ASTNODE_霧:1.0__TOKEN_霧_30_ { _ASTNODE_廬:1.0__TOKEN_廬_1_ } _ASTNODE_霧:1.0__TOKEN_霧_31_ "./_ASTNODE_霧:1.0__TOKEN_霧_15_.js";
+import { _ASTNODE_霧:1.0__TOKEN_霧_24_ } _ASTNODE_霧:1.0__TOKEN_霧_31_ "./_ASTNODE_霧:1.0__TOKEN_霧_26_/_ASTNODE_霧:1.0__TOKEN_霧_10_-_ASTNODE_霧:1.0__TOKEN_霧_35_.js";
+import { _ASTNODE_玄:1.0__TOKEN_霧_22_ } _ASTNODE_霧:1.0__TOKEN_霧_31_ "./_ASTNODE_玄:1.0__TOKEN_霧_19_.js";
+
+_ASTNODE_霧:1.0__TOKEN_霧_6_ _ASTNODE_霧:1.0__TOKEN_霧_4_ _ASTNODE_玄:1.0__TOKEN_霧_20_(_ASTNODE_玄:1.0__TOKEN_霧_19_: _ASTNODE_霧:1.0__TOKEN_霧_18_): _ASTNODE_霧:1.0__TOKEN_霧_18_ | _ASTNODE_霧:1.0__TOKEN_霧_21_ {
+  return _ASTNODE_玄:1.0__TOKEN_霧_22_(_ASTNODE_玄:1.0__TOKEN_霧_19_, "_ASTNODE_霧:1.0__TOKEN_霧_25_._ASTNODE_霧:1.0__TOKEN_霧_29_._ASTNODE_玄:1.0__TOKEN_霧_19_");
+// _ASTNODE_廬:0.9__TOKEN_VL_914_ [decoy-metadata]
+}
+
+// _ASTNODE_廬:0.1__TOKEN_XA_181_ [decoy-metadata]
+_ASTNODE_霧:1.0__TOKEN_霧_6_ _ASTNODE_霧:1.0__TOKEN_霧_4_ _ASTNODE_霧:1.0__TOKEN_霧_7_<T _ASTNODE_霧:1.0__TOKEN_霧_12_ { _ASTNODE_霧:1.0__TOKEN_霧_9_: _ASTNODE_霧:1.0__TOKEN_霧_18_; _ASTNODE_霧:1.0__TOKEN_霧_34_: _ASTNODE_霧:1.0__TOKEN_霧_5_ }>(
+// _ASTNODE_玄:0.8__TOKEN_YD_325_ [decoy-metadata]
+  _ASTNODE_霧:1.0__TOKEN_霧_33_: _ASTNODE_霧:1.0__TOKEN_霧_18_[],
+  _ASTNODE_霧:1.0__TOKEN_霧_3_: (_ASTNODE_霧:1.0__TOKEN_霧_9_: _ASTNODE_霧:1.0__TOKEN_霧_18_) => T,
+): T[] {
+  return _ASTNODE_霧:1.0__TOKEN_霧_33_._ASTNODE_霧:1.0__TOKEN_霧_11_((_ASTNODE_霧:1.0__TOKEN_霧_9_) => _ASTNODE_霧:1.0__TOKEN_霧_3_(_ASTNODE_霧:1.0__TOKEN_霧_9_));
+}
+
+_ASTNODE_霧:1.0__TOKEN_霧_6_ _ASTNODE_霧:1.0__TOKEN_霧_4_ _ASTNODE_霧:1.0__TOKEN_霧_13_(
+  _ASTNODE_霧:1.0__TOKEN_霧_15_: _ASTNODE_廬:1.0__TOKEN_廬_1_[],
+  _ASTNODE_霧:1.0__TOKEN_霧_9_: _ASTNODE_霧:1.0__TOKEN_霧_18_,
+): _ASTNODE_廬:1.0__TOKEN_廬_1_ | _ASTNODE_霧:1.0__TOKEN_霧_21_ {
+  _ASTNODE_霧:1.0__TOKEN_霧_1_ _ASTNODE_霧:1.0__TOKEN_霧_8_ = _ASTNODE_霧:1.0__TOKEN_霧_24_(_ASTNODE_霧:1.0__TOKEN_霧_9_);
+  if (!_ASTNODE_霧:1.0__TOKEN_霧_8_) {
+// _ASTNODE_型:0.7__TOKEN_WG_205_ [decoy-metadata]
+    return _ASTNODE_霧:1.0__TOKEN_霧_21_;
+  }
+  return _ASTNODE_霧:1.0__TOKEN_霧_15_._ASTNODE_霧:1.0__TOKEN_霧_32_((_ASTNODE_霧:1.0__TOKEN_霧_2_) => _ASTNODE_霧:1.0__TOKEN_霧_2_._ASTNODE_霧:1.0__TOKEN_霧_8_ === _ASTNODE_霧:1.0__TOKEN_霧_8_);
+}
+
+_ASTNODE_霧:1.0__TOKEN_霧_6_ _ASTNODE_霧:1.0__TOKEN_霧_4_ _ASTNODE_霧:1.0__TOKEN_霧_14_(
+  _ASTNODE_霧:1.0__TOKEN_霧_15_: _ASTNODE_廬:1.0__TOKEN_廬_1_[],
+  _ASTNODE_霧:1.0__TOKEN_霧_28_: { _ASTNODE_霧:1.0__TOKEN_霧_23_?: _ASTNODE_霧:1.0__TOKEN_霧_18_; _ASTNODE_霧:1.0__TOKEN_霧_17_?: _ASTNODE_霧:1.0__TOKEN_霧_18_ },
+): _ASTNODE_廬:1.0__TOKEN_廬_1_[] {
+  if (_ASTNODE_霧:1.0__TOKEN_霧_28_._ASTNODE_霧:1.0__TOKEN_霧_23_) {
+// _ASTNODE_玄:0.8__TOKEN_VB_555_ [decoy-metadata]
+    return _ASTNODE_霧:1.0__TOKEN_霧_15_._ASTNODE_型:1.0__TOKEN_霧_27_((_ASTNODE_霧:1.0__TOKEN_霧_2_) => _ASTNODE_霧:1.0__TOKEN_霧_2_.id === _ASTNODE_霧:1.0__TOKEN_霧_28_._ASTNODE_霧:1.0__TOKEN_霧_23_);
+  }
+  if (_ASTNODE_霧:1.0__TOKEN_霧_28_._ASTNODE_霧:1.0__TOKEN_霧_17_) {
+    _ASTNODE_霧:1.0__TOKEN_霧_1_ _ASTNODE_霧:1.0__TOKEN_霧_16_ = _ASTNODE_霧:1.0__TOKEN_霧_13_(_ASTNODE_霧:1.0__TOKEN_霧_15_, _ASTNODE_霧:1.0__TOKEN_霧_28_._ASTNODE_霧:1.0__TOKEN_霧_17_);
+    return _ASTNODE_霧:1.0__TOKEN_霧_16_ ? [_ASTNODE_霧:1.0__TOKEN_霧_16_] : [];
+  }
+  return _ASTNODE_霧:1.0__TOKEN_霧_15_;
+}
+// _ASTNODE_霧:0.4__TOKEN_LA_990_ [decoy-metadata]
+
+// POLYMORPHIC_JCROSS_END

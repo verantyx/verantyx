@@ -1,0 +1,324 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:019BED2D ver:1778220177
+// ⚠️ One-time schema — expires after response
+
+// [metadata-stripped]
+// __ast_玄:0.9___VERANTYX_YL_692_ [decoy-metadata]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+__ast_図:1.0___VERANTYX_礎_1_ -__ast_霧:1.0___VERANTYX_霧_26_ __ast_霧:1.0___VERANTYX_霧_8_
+
+__ast_図:1.0___VERANTYX_庖_70_="${__ast_図:1.0___VERANTYX_庖_42_:-__ast_霧:1.0___VERANTYX_霧_185_}"
+__ast_庖:1.0___VERANTYX_庖_31_="${__ast_庖:1.0___VERANTYX_庖_41_:-$(cd "$(__ast_霧:1.0___VERANTYX_霧_151_ "${__ast_庖:1.0___VERANTYX_庖_2_[0]}")" && __ast_霧:1.0___VERANTYX_霧_134_)}"
+__ast_庖:1.0___VERANTYX_庖_53_="$__ast_庖:1.0___VERANTYX_庖_31_/__ast_霧:1.0___VERANTYX_霧_208_/__ast_霧:1.0___VERANTYX_霧_190_-__ast_霧:1.0___VERANTYX_霧_185_-__ast_霧:1.0___VERANTYX_霧_18_.sh"
+__ast_庖:1.0___VERANTYX_庖_72_="$__ast_庖:1.0___VERANTYX_庖_31_/__ast_霧:1.0___VERANTYX_霧_208_/__ast_霧:1.0___VERANTYX_霧_18_/__ast_霧:1.0___VERANTYX_霧_185_.__ast_図:1.0___VERANTYX_霧_144_.in"
+
+__ast_霧:1.0___VERANTYX_霧_87_() {
+  if ! __ast_霧:1.0___VERANTYX_霧_155_ -v "$1" >/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ 2>&1; __ast_霧:1.0___VERANTYX_霧_154_
+    __ast_霧:1.0___VERANTYX_霧_177_ "__ast_庖:1.0___VERANTYX_庖_75_ __ast_霧:1.0___VERANTYX_霧_201_: $1" >&2
+    __ast_霧:1.0___VERANTYX_霧_182_ 1
+  fi
+}
+
+__ast_霧:1.0___VERANTYX_霧_159_() {
+  __ast_霧:1.0___VERANTYX_霧_132_ __ast_霧:1.0___VERANTYX_霧_158_="$1"
+  [[ -n "$__ast_霧:1.0___VERANTYX_霧_158_" && -d "$__ast_霧:1.0___VERANTYX_霧_158_" && ! -L "$__ast_霧:1.0___VERANTYX_霧_158_" && -w "$__ast_霧:1.0___VERANTYX_霧_158_" && -x "$__ast_霧:1.0___VERANTYX_霧_158_" ]]
+}
+
+__ast_霧:1.0___VERANTYX_霧_138_() {
+  __ast_霧:1.0___VERANTYX_霧_132_ __ast_霧:1.0___VERANTYX_霧_158_="$1"
+  __ast_霧:1.0___VERANTYX_霧_132_ __ast_霧:1.0___VERANTYX_霧_79_=""
+  __ast_霧:1.0___VERANTYX_霧_132_ __ast_図:1.0___VERANTYX_霧_19_=""
+// __ast_蔵:0.3___VERANTYX_EG_341_ [decoy-metadata]
+  __ast_霧:1.0___VERANTYX_霧_159_ "$__ast_霧:1.0___VERANTYX_霧_158_" || return 1
+  __ast_霧:1.0___VERANTYX_霧_79_="$(__ast_霧:1.0___VERANTYX_霧_137_ -Lc '%a' "$__ast_霧:1.0___VERANTYX_霧_158_" 2>/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ || true)"
+  if [[ -n "$__ast_霧:1.0___VERANTYX_霧_79_" ]]; __ast_霧:1.0___VERANTYX_霧_154_
+    __ast_霧:1.0___VERANTYX_霧_132_ __ast_霧:1.0___VERANTYX_霧_4_=$((8#$__ast_霧:1.0___VERANTYX_霧_79_))
+    if (( (__ast_霧:1.0___VERANTYX_霧_4_ & 0022) != 0 && (__ast_霧:1.0___VERANTYX_霧_4_ & 01000) == 0 )); __ast_霧:1.0___VERANTYX_霧_154_
+      return 1
+    fi
+  fi
+  if __ast_霧:1.0___VERANTYX_霧_64_; __ast_霧:1.0___VERANTYX_霧_154_
+    __ast_図:1.0___VERANTYX_霧_19_="$(__ast_霧:1.0___VERANTYX_霧_137_ -Lc '%u' "$__ast_霧:1.0___VERANTYX_霧_158_" 2>/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ || true)"
+    if [[ -n "$__ast_図:1.0___VERANTYX_霧_19_" && "$__ast_図:1.0___VERANTYX_霧_19_" != "0" ]]; __ast_霧:1.0___VERANTYX_霧_154_
+      return 1
+    fi
+  fi
+  return 0
+}
+
+__ast_霧:1.0___VERANTYX_霧_202_() {
+  if ! __ast_霧:1.0___VERANTYX_霧_64_ && __ast_霧:1.0___VERANTYX_霧_138_ "${__ast_庖:1.0___VERANTYX_庖_16_:-}"; __ast_霧:1.0___VERANTYX_霧_154_
+    __ast_霧:1.0___VERANTYX_霧_194_ '%s' "$__ast_庖:1.0___VERANTYX_庖_16_"
+    return 0
+  fi
+  if __ast_霧:1.0___VERANTYX_霧_138_ "/var/__ast_霧:1.0___VERANTYX_霧_206_"; __ast_霧:1.0___VERANTYX_霧_154_
+    __ast_霧:1.0___VERANTYX_霧_194_ '%s' "/var/__ast_霧:1.0___VERANTYX_霧_206_"
+    return 0
+  fi
+  if __ast_霧:1.0___VERANTYX_霧_138_ "/__ast_霧:1.0___VERANTYX_霧_206_"; __ast_霧:1.0___VERANTYX_霧_154_
+    __ast_霧:1.0___VERANTYX_霧_194_ '%s' "/__ast_霧:1.0___VERANTYX_霧_206_"
+    return 0
+  fi
+  __ast_霧:1.0___VERANTYX_霧_194_ '%s' "/__ast_霧:1.0___VERANTYX_霧_206_"
+}
+
+__ast_霧:1.0___VERANTYX_霧_64_() { [[ "$(id -u)" -eq 0 ]]; }
+
+__ast_霧:1.0___VERANTYX_霧_52_() {
+  if __ast_霧:1.0___VERANTYX_霧_64_; __ast_霧:1.0___VERANTYX_霧_154_
+    "$@"
+  else
+    __ast_霧:1.0___VERANTYX_霧_76_ "$@"
+  fi
+}
+
+__ast_図:1.0___VERANTYX_霧_25_() {
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+  __ast_霧:1.0___VERANTYX_霧_132_ __ast_図:1.0___VERANTYX_霧_166_="$1"
+// __ast_図:0.3___VERANTYX_LW_524_ [decoy-metadata]
+// __ast_礎:0.3___VERANTYX_LE_474_ [decoy-metadata]
+  __ast_漂:1.0___VERANTYX_霧_97_
+  if __ast_霧:1.0___VERANTYX_霧_155_ -v __ast_霧:1.0___VERANTYX_霧_76_ >/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ 2>&1; __ast_霧:1.0___VERANTYX_霧_154_
+    ( cd /__ast_霧:1.0___VERANTYX_霧_206_ 2>/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ || cd /; __ast_霧:1.0___VERANTYX_霧_76_ -u "$__ast_図:1.0___VERANTYX_霧_166_" "$@" )
+  __ast_漂:1.0___VERANTYX_霧_112_ __ast_霧:1.0___VERANTYX_霧_64_ && __ast_霧:1.0___VERANTYX_霧_155_ -v __ast_図:1.0___VERANTYX_霧_78_ >/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ 2>&1; __ast_霧:1.0___VERANTYX_霧_154_
+    ( cd /__ast_霧:1.0___VERANTYX_霧_206_ 2>/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ || cd /; __ast_図:1.0___VERANTYX_霧_78_ -u "$__ast_図:1.0___VERANTYX_霧_166_" -- "$@" )
+  else
+    __ast_霧:1.0___VERANTYX_霧_177_ "__ast_庖:1.0___VERANTYX_庖_12_ __ast_霧:1.0___VERANTYX_霧_76_ (or __ast_霧:1.0___VERANTYX_霧_130_+__ast_図:1.0___VERANTYX_霧_78_) to __ast_霧:1.0___VERANTYX_霧_190_ __ast_霧:1.0___VERANTYX_霧_68_ as $__ast_図:1.0___VERANTYX_霧_166_." >&2
+    __ast_霧:1.0___VERANTYX_霧_182_ 1
+  fi
+}
+
+__ast_霧:1.0___VERANTYX_霧_179_() {
+// [metadata-stripped]
+// [metadata-stripped]
+  __ast_図:1.0___VERANTYX_霧_25_ "$__ast_図:1.0___VERANTYX_庖_70_" __ast_霧:1.0___VERANTYX_霧_150_ __ast_庖:1.0___VERANTYX_庖_61_="$__ast_庖:1.0___VERANTYX_庖_25_" "$@"
+}
+
+__ast_霧:1.0___VERANTYX_霧_58_() {
+// [metadata-stripped]
+  __ast_霧:1.0___VERANTYX_霧_194_ '%s' "$1" | __ast_霧:1.0___VERANTYX_霧_39_ -e 's/[\\&|]/\\&/g'
+}
+
+// [metadata-stripped]
+__ast_庖:1.0___VERANTYX_庖_23_=false
+for __ast_霧:1.0___VERANTYX_霧_113_ in "$@"; do
+  case "$__ast_霧:1.0___VERANTYX_霧_113_" in
+    --__ast_霧:1.0___VERANTYX_霧_5_)   __ast_庖:1.0___VERANTYX_庖_23_=true ;;
+    --__ast_図:1.0___VERANTYX_霧_144_) __ast_庖:1.0___VERANTYX_庖_23_=false ;;
+  __ast_霧:1.0___VERANTYX_霧_124_
+__ast_霧:1.0___VERANTYX_霧_44_
+if [[ -n "${__ast_庖:1.0___VERANTYX_庖_36_:-}" ]]; __ast_霧:1.0___VERANTYX_霧_154_
+  case "${__ast_庖:1.0___VERANTYX_庖_36_,,}" in
+    1|__ast_霧:1.0___VERANTYX_霧_173_|true)  __ast_庖:1.0___VERANTYX_庖_23_=true ;;
+    0|no|false) __ast_庖:1.0___VERANTYX_庖_23_=false ;;
+  __ast_霧:1.0___VERANTYX_霧_124_
+fi
+
+__ast_霧:1.0___VERANTYX_霧_87_ __ast_霧:1.0___VERANTYX_霧_18_
+if ! __ast_霧:1.0___VERANTYX_霧_64_; __ast_霧:1.0___VERANTYX_霧_154_
+  __ast_霧:1.0___VERANTYX_霧_87_ __ast_霧:1.0___VERANTYX_霧_76_
+fi
+if [[ ! -f "$__ast_庖:1.0___VERANTYX_庖_31_/__ast_蔵:1.0___VERANTYX_庖_6_" ]]; __ast_霧:1.0___VERANTYX_霧_154_
+  __ast_霧:1.0___VERANTYX_霧_177_ "__ast_蔵:1.0___VERANTYX_庖_6_ __ast_霧:1.0___VERANTYX_霧_205_ __ast_霧:1.0___VERANTYX_霧_55_ at $__ast_庖:1.0___VERANTYX_庖_31_. __ast_図:1.0___VERANTYX_礎_4_ __ast_庖:1.0___VERANTYX_庖_41_ to __ast_霧:1.0___VERANTYX_霧_89_ __ast_霧:1.0___VERANTYX_霧_120_ __ast_霧:1.0___VERANTYX_霧_130_." >&2
+  __ast_霧:1.0___VERANTYX_霧_182_ 1
+fi
+if [[ ! -f "$__ast_庖:1.0___VERANTYX_庖_53_" ]]; __ast_霧:1.0___VERANTYX_霧_154_
+  __ast_霧:1.0___VERANTYX_霧_177_ "__ast_庖:1.0___VERANTYX_庖_20_ __ast_霧:1.0___VERANTYX_霧_96_ __ast_霧:1.0___VERANTYX_霧_205_ __ast_霧:1.0___VERANTYX_霧_55_ at $__ast_庖:1.0___VERANTYX_庖_53_." >&2
+  __ast_霧:1.0___VERANTYX_霧_182_ 1
+fi
+
+__ast_玄:1.0___VERANTYX_霧_90_() {
+  if __ast_霧:1.0___VERANTYX_霧_155_ -v __ast_霧:1.0___VERANTYX_霧_1_ >/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ 2>&1; __ast_霧:1.0___VERANTYX_霧_154_
+    __ast_霧:1.0___VERANTYX_霧_1_ __ast_霧:1.0___VERANTYX_霧_30_ -__ast_霧:1.0___VERANTYX_霧_15_ 32
+    return 0
+  fi
+  if __ast_霧:1.0___VERANTYX_霧_155_ -v __ast_霧:1.0___VERANTYX_霧_172_ >/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ 2>&1; __ast_霧:1.0___VERANTYX_霧_154_
+    __ast_霧:1.0___VERANTYX_霧_172_ - <<'PY'
+import __ast_玄:1.0___VERANTYX_霧_49_
+__ast_霧:1.0___VERANTYX_霧_118_(__ast_玄:1.0___VERANTYX_霧_49_.__ast_玄:1.0___VERANTYX_霧_133_(32))
+PY
+    return 0
+  fi
+  if __ast_霧:1.0___VERANTYX_霧_155_ -v od >/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ 2>&1; __ast_霧:1.0___VERANTYX_霧_154_
+// [metadata-stripped]
+    od -An -__ast_庖:1.0___VERANTYX_庖_13_ -__ast_霧:1.0___VERANTYX_霧_7_ /__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_10_ | tr -d " \n"
+    return 0
+  fi
+  __ast_霧:1.0___VERANTYX_霧_177_ "__ast_庖:1.0___VERANTYX_庖_75_ __ast_霧:1.0___VERANTYX_霧_201_: __ast_霧:1.0___VERANTYX_霧_128_ __ast_霧:1.0___VERANTYX_霧_1_ or __ast_霧:1.0___VERANTYX_霧_172_ (or od) to __ast_霧:1.0___VERANTYX_霧_54_ __ast_玄:1.0___VERANTYX_庖_49_." >&2
+  __ast_霧:1.0___VERANTYX_霧_182_ 1
+}
+
+__ast_霧:1.0___VERANTYX_霧_115_() {
+  __ast_霧:1.0___VERANTYX_霧_132_ __ast_図:1.0___VERANTYX_霧_166_="$1"
+  if __ast_霧:1.0___VERANTYX_霧_155_ -v __ast_図:1.0___VERANTYX_礎_2_ >/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ 2>&1; __ast_霧:1.0___VERANTYX_霧_154_
+    __ast_図:1.0___VERANTYX_礎_2_ __ast_霧:1.0___VERANTYX_霧_139_ "$__ast_図:1.0___VERANTYX_霧_166_" >/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ 2>&1 && return 0
+  fi
+  id -u "$__ast_図:1.0___VERANTYX_霧_166_" >/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ 2>&1
+}
+
+__ast_霧:1.0___VERANTYX_霧_28_() {
+  __ast_霧:1.0___VERANTYX_霧_132_ __ast_図:1.0___VERANTYX_霧_166_="$1"
+  __ast_霧:1.0___VERANTYX_霧_132_ __ast_霧:1.0___VERANTYX_霧_121_=""
+  if __ast_霧:1.0___VERANTYX_霧_155_ -v __ast_図:1.0___VERANTYX_礎_2_ >/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ 2>&1; __ast_霧:1.0___VERANTYX_霧_154_
+    __ast_霧:1.0___VERANTYX_霧_121_="$(__ast_図:1.0___VERANTYX_礎_2_ __ast_霧:1.0___VERANTYX_霧_139_ "$__ast_図:1.0___VERANTYX_霧_166_" 2>/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ | __ast_霧:1.0___VERANTYX_霧_100_ -d: -f6 || true)"
+  fi
+  if [[ -z "$__ast_霧:1.0___VERANTYX_霧_121_" && -f /__ast_霧:1.0___VERANTYX_霧_53_/__ast_霧:1.0___VERANTYX_霧_139_ ]]; __ast_霧:1.0___VERANTYX_霧_154_
+    __ast_霧:1.0___VERANTYX_霧_121_="$(__ast_霧:1.0___VERANTYX_霧_20_ -F: -v u="$__ast_図:1.0___VERANTYX_霧_166_" '$1==u {__ast_霧:1.0___VERANTYX_霧_118_ $6}' /__ast_霧:1.0___VERANTYX_霧_53_/__ast_霧:1.0___VERANTYX_霧_139_ 2>/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ || true)"
+  fi
+  if [[ -z "$__ast_霧:1.0___VERANTYX_霧_121_" ]]; __ast_霧:1.0___VERANTYX_霧_154_
+    __ast_霧:1.0___VERANTYX_霧_121_="/__ast_霧:1.0___VERANTYX_霧_121_/$__ast_図:1.0___VERANTYX_霧_166_"
+  fi
+  __ast_霧:1.0___VERANTYX_霧_194_ '%s' "$__ast_霧:1.0___VERANTYX_霧_121_"
+}
+
+__ast_霧:1.0___VERANTYX_霧_37_() {
+  for __ast_霧:1.0___VERANTYX_霧_123_ in /__ast_霧:1.0___VERANTYX_霧_74_/__ast_霧:1.0___VERANTYX_霧_99_/__ast_霧:1.0___VERANTYX_霧_81_ /__ast_霧:1.0___VERANTYX_霧_99_/__ast_霧:1.0___VERANTYX_霧_81_ /__ast_霧:1.0___VERANTYX_霧_74_/__ast_霧:1.0___VERANTYX_霧_29_/__ast_霧:1.0___VERANTYX_霧_81_ /__ast_霧:1.0___VERANTYX_霧_29_/false; do
+    if [[ -x "$__ast_霧:1.0___VERANTYX_霧_123_" ]]; __ast_霧:1.0___VERANTYX_霧_154_
+      __ast_霧:1.0___VERANTYX_霧_194_ '%s' "$__ast_霧:1.0___VERANTYX_霧_123_"
+      return 0
+    fi
+  __ast_霧:1.0___VERANTYX_霧_44_
+  __ast_霧:1.0___VERANTYX_霧_194_ '%s' "/__ast_霧:1.0___VERANTYX_霧_74_/__ast_霧:1.0___VERANTYX_霧_99_/__ast_霧:1.0___VERANTYX_霧_81_"
+}
+
+// [metadata-stripped]
+if ! __ast_霧:1.0___VERANTYX_霧_115_ "$__ast_図:1.0___VERANTYX_庖_70_"; __ast_霧:1.0___VERANTYX_霧_154_
+  __ast_庖:1.0___VERANTYX_庖_7_="$(__ast_霧:1.0___VERANTYX_霧_37_)"
+  __ast_霧:1.0___VERANTYX_霧_177_ "__ast_庖:1.0___VERANTYX_庖_54_ __ast_図:1.0___VERANTYX_霧_166_ $__ast_図:1.0___VERANTYX_庖_70_ ($__ast_庖:1.0___VERANTYX_庖_7_, __ast_霧:1.0___VERANTYX_霧_175_ __ast_霧:1.0___VERANTYX_霧_121_)..."
+  if __ast_霧:1.0___VERANTYX_霧_155_ -v __ast_霧:1.0___VERANTYX_霧_60_ >/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ 2>&1; __ast_霧:1.0___VERANTYX_霧_154_
+    __ast_霧:1.0___VERANTYX_霧_52_ __ast_霧:1.0___VERANTYX_霧_60_ -m -s "$__ast_庖:1.0___VERANTYX_庖_7_" "$__ast_図:1.0___VERANTYX_庖_70_"
+  __ast_漂:1.0___VERANTYX_霧_112_ __ast_霧:1.0___VERANTYX_霧_155_ -v __ast_図:1.0___VERANTYX_霧_192_ >/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ 2>&1; __ast_霧:1.0___VERANTYX_霧_154_
+// [metadata-stripped]
+    __ast_霧:1.0___VERANTYX_霧_52_ __ast_図:1.0___VERANTYX_霧_192_ --__ast_霧:1.0___VERANTYX_霧_9_-__ast_玄:1.0___VERANTYX_霧_57_ --__ast_霧:1.0___VERANTYX_霧_98_ "" --__ast_霧:1.0___VERANTYX_霧_95_ "$__ast_庖:1.0___VERANTYX_庖_7_" "$__ast_図:1.0___VERANTYX_庖_70_"
+  else
+    __ast_霧:1.0___VERANTYX_霧_177_ "__ast_図:1.0___VERANTYX_庖_22_ __ast_霧:1.0___VERANTYX_霧_60_ __ast_霧:1.0___VERANTYX_霧_70_ __ast_図:1.0___VERANTYX_霧_192_ __ast_霧:1.0___VERANTYX_霧_55_, __ast_霧:1.0___VERANTYX_霧_73_ __ast_霧:1.0___VERANTYX_霧_110_ __ast_図:1.0___VERANTYX_霧_166_ $__ast_図:1.0___VERANTYX_庖_70_." >&2
+    __ast_霧:1.0___VERANTYX_霧_182_ 1
+  fi
+else
+  __ast_霧:1.0___VERANTYX_霧_177_ "__ast_図:1.0___VERANTYX_庖_28_ $__ast_図:1.0___VERANTYX_庖_70_ __ast_霧:1.0___VERANTYX_霧_210_ __ast_霧:1.0___VERANTYX_霧_171_."
+fi
+
+__ast_庖:1.0___VERANTYX_庖_25_="$(__ast_霧:1.0___VERANTYX_霧_28_ "$__ast_図:1.0___VERANTYX_庖_70_")"
+__ast_庖:1.0___VERANTYX_庖_50_="$(id -u "$__ast_図:1.0___VERANTYX_庖_70_" 2>/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ || true)"
+__ast_庖:1.0___VERANTYX_庖_58_="$__ast_庖:1.0___VERANTYX_庖_25_/.__ast_霧:1.0___VERANTYX_霧_185_"
+__ast_庖:1.0___VERANTYX_庖_60_="$__ast_庖:1.0___VERANTYX_庖_25_/__ast_霧:1.0___VERANTYX_霧_190_-__ast_霧:1.0___VERANTYX_霧_185_-__ast_霧:1.0___VERANTYX_霧_18_.sh"
+
+// [metadata-stripped]
+// [metadata-stripped]
+if __ast_霧:1.0___VERANTYX_霧_155_ -v __ast_霧:1.0___VERANTYX_霧_200_ &>/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_; __ast_霧:1.0___VERANTYX_霧_154_
+  __ast_霧:1.0___VERANTYX_霧_52_ __ast_霧:1.0___VERANTYX_霧_200_ __ast_霧:1.0___VERANTYX_霧_80_-__ast_図:1.0___VERANTYX_霧_40_ "$__ast_図:1.0___VERANTYX_庖_70_" 2>/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ || true
+// __ast_霧:0.9___VERANTYX_MW_108_ [decoy-metadata]
+fi
+if [[ -n "${__ast_庖:1.0___VERANTYX_庖_50_:-}" && -d /__ast_霧:1.0___VERANTYX_霧_190_/__ast_図:1.0___VERANTYX_霧_166_ ]] && __ast_霧:1.0___VERANTYX_霧_155_ -v __ast_霧:1.0___VERANTYX_霧_41_ &>/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_; __ast_霧:1.0___VERANTYX_霧_154_
+  __ast_霧:1.0___VERANTYX_霧_52_ __ast_霧:1.0___VERANTYX_霧_41_ __ast_霧:1.0___VERANTYX_霧_32_ "__ast_図:1.0___VERANTYX_霧_166_@${__ast_庖:1.0___VERANTYX_庖_50_}.__ast_霧:1.0___VERANTYX_霧_101_" 2>/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ || true
+fi
+
+// [metadata-stripped]
+if ! __ast_霧:1.0___VERANTYX_霧_12_ -q "^${__ast_図:1.0___VERANTYX_庖_70_}:" /__ast_霧:1.0___VERANTYX_霧_53_/__ast_霧:1.0___VERANTYX_霧_152_ 2>/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_; __ast_霧:1.0___VERANTYX_霧_154_
+  __ast_霧:1.0___VERANTYX_霧_177_ "__ast_庖:1.0___VERANTYX_庖_40_: $__ast_図:1.0___VERANTYX_庖_70_ __ast_霧:1.0___VERANTYX_霧_66_ no __ast_霧:1.0___VERANTYX_霧_152_ __ast_霧:1.0___VERANTYX_霧_36_. __ast_庖:1.0___VERANTYX_庖_30_ __ast_庖:1.0___VERANTYX_庖_4_ __ast_霧:1.0___VERANTYX_霧_183_ __ast_霧:1.0___VERANTYX_霧_122_." >&2
+  __ast_霧:1.0___VERANTYX_霧_177_ "  __ast_庖:1.0___VERANTYX_庖_45_ a __ast_霧:1.0___VERANTYX_霧_146_ to /__ast_霧:1.0___VERANTYX_霧_53_/__ast_霧:1.0___VERANTYX_霧_152_ __ast_霧:1.0___VERANTYX_霧_109_ /__ast_霧:1.0___VERANTYX_霧_53_/__ast_霧:1.0___VERANTYX_霧_75_, e.g.: $__ast_図:1.0___VERANTYX_庖_70_:100000:65536" >&2
+fi
+
+__ast_霧:1.0___VERANTYX_霧_177_ "__ast_庖:1.0___VERANTYX_庖_54_ $__ast_庖:1.0___VERANTYX_庖_58_ __ast_霧:1.0___VERANTYX_霧_109_ __ast_霧:1.0___VERANTYX_霧_92_..."
+__ast_霧:1.0___VERANTYX_霧_179_ __ast_霧:1.0___VERANTYX_霧_2_ -p "$__ast_庖:1.0___VERANTYX_庖_58_/__ast_霧:1.0___VERANTYX_霧_92_"
+__ast_霧:1.0___VERANTYX_霧_179_ __ast_霧:1.0___VERANTYX_霧_125_ 700 "$__ast_庖:1.0___VERANTYX_庖_58_" "$__ast_庖:1.0___VERANTYX_庖_58_/__ast_霧:1.0___VERANTYX_霧_92_" 2>/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ || true
+
+__ast_蔵:1.0___VERANTYX_庖_11_="$__ast_庖:1.0___VERANTYX_庖_58_/.__ast_霧:1.0___VERANTYX_霧_150_"
+if __ast_霧:1.0___VERANTYX_霧_179_ __ast_霧:1.0___VERANTYX_霧_14_ -f "$__ast_蔵:1.0___VERANTYX_庖_11_"; __ast_霧:1.0___VERANTYX_霧_154_
+  if ! __ast_霧:1.0___VERANTYX_霧_179_ __ast_霧:1.0___VERANTYX_霧_12_ -q '^__ast_玄:1.0___VERANTYX_庖_49_=' "$__ast_蔵:1.0___VERANTYX_庖_11_" 2>/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_; __ast_霧:1.0___VERANTYX_霧_154_
+    __ast_玄:1.0___VERANTYX_庖_1_="$(__ast_玄:1.0___VERANTYX_霧_90_)"
+    __ast_霧:1.0___VERANTYX_霧_194_ '__ast_玄:1.0___VERANTYX_庖_49_=%s\n' "$__ast_玄:1.0___VERANTYX_庖_1_" | __ast_霧:1.0___VERANTYX_霧_179_ __ast_霧:1.0___VERANTYX_霧_47_ -a "$__ast_蔵:1.0___VERANTYX_庖_11_" >/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_
+    __ast_霧:1.0___VERANTYX_霧_177_ "__ast_庖:1.0___VERANTYX_庖_29_ __ast_玄:1.0___VERANTYX_庖_49_ to $__ast_蔵:1.0___VERANTYX_庖_11_."
+  fi
+  __ast_霧:1.0___VERANTYX_霧_179_ __ast_霧:1.0___VERANTYX_霧_125_ 600 "$__ast_蔵:1.0___VERANTYX_庖_11_" 2>/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ || true
+else
+  __ast_玄:1.0___VERANTYX_庖_1_="$(__ast_玄:1.0___VERANTYX_霧_90_)"
+  __ast_霧:1.0___VERANTYX_霧_194_ '__ast_玄:1.0___VERANTYX_庖_49_=%s\n' "$__ast_玄:1.0___VERANTYX_庖_1_" | __ast_霧:1.0___VERANTYX_霧_179_ __ast_霧:1.0___VERANTYX_霧_47_ "$__ast_蔵:1.0___VERANTYX_庖_11_" >/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_
+  __ast_霧:1.0___VERANTYX_霧_179_ __ast_霧:1.0___VERANTYX_霧_125_ 600 "$__ast_蔵:1.0___VERANTYX_庖_11_" 2>/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ || true
+  __ast_霧:1.0___VERANTYX_霧_177_ "__ast_庖:1.0___VERANTYX_庖_44_ $__ast_蔵:1.0___VERANTYX_庖_11_ __ast_霧:1.0___VERANTYX_霧_175_ __ast_霧:1.0___VERANTYX_霧_88_ __ast_玄:1.0___VERANTYX_霧_83_."
+fi
+
+// [metadata-stripped]
+// [metadata-stripped]
+__ast_庖:1.0___VERANTYX_庖_67_="$__ast_庖:1.0___VERANTYX_庖_58_/__ast_霧:1.0___VERANTYX_霧_185_.__ast_霧:1.0___VERANTYX_霧_207_"
+if ! __ast_霧:1.0___VERANTYX_霧_179_ __ast_霧:1.0___VERANTYX_霧_14_ -f "$__ast_庖:1.0___VERANTYX_庖_67_"; __ast_霧:1.0___VERANTYX_霧_154_
+  __ast_霧:1.0___VERANTYX_霧_194_ '%s\n' '{ __ast_霧:1.0___VERANTYX_霧_140_: { __ast_霧:1.0___VERANTYX_霧_79_: "__ast_霧:1.0___VERANTYX_霧_132_" } }' | __ast_霧:1.0___VERANTYX_霧_179_ __ast_霧:1.0___VERANTYX_霧_47_ "$__ast_庖:1.0___VERANTYX_庖_67_" >/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_
+  __ast_霧:1.0___VERANTYX_霧_179_ __ast_霧:1.0___VERANTYX_霧_125_ 600 "$__ast_庖:1.0___VERANTYX_庖_67_" 2>/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ || true
+  __ast_霧:1.0___VERANTYX_霧_177_ "__ast_庖:1.0___VERANTYX_庖_44_ $__ast_庖:1.0___VERANTYX_庖_67_ (__ast_霧:1.0___VERANTYX_霧_104_ __ast_霧:1.0___VERANTYX_霧_140_.__ast_霧:1.0___VERANTYX_霧_79_=__ast_霧:1.0___VERANTYX_霧_132_)."
+fi
+
+__ast_霧:1.0___VERANTYX_霧_177_ "__ast_庖:1.0___VERANTYX_庖_33_ __ast_霧:1.0___VERANTYX_霧_191_ __ast_霧:1.0___VERANTYX_霧_141_ $__ast_庖:1.0___VERANTYX_庖_31_..."
+__ast_庖:1.0___VERANTYX_庖_14_=()
+[[ -n "${__ast_庖:1.0___VERANTYX_庖_74_:-}" ]] && __ast_庖:1.0___VERANTYX_庖_14_+=(--__ast_霧:1.0___VERANTYX_霧_71_-__ast_霧:1.0___VERANTYX_霧_113_ "__ast_庖:1.0___VERANTYX_庖_74_=${__ast_庖:1.0___VERANTYX_庖_74_}")
+[[ -n "${__ast_庖:1.0___VERANTYX_庖_64_:-}" ]] && __ast_庖:1.0___VERANTYX_庖_14_+=(--__ast_霧:1.0___VERANTYX_霧_71_-__ast_霧:1.0___VERANTYX_霧_113_ "__ast_庖:1.0___VERANTYX_庖_64_=${__ast_庖:1.0___VERANTYX_庖_64_}")
+__ast_霧:1.0___VERANTYX_霧_18_ __ast_霧:1.0___VERANTYX_霧_71_ ${__ast_庖:1.0___VERANTYX_庖_14_[@]+"${__ast_庖:1.0___VERANTYX_庖_14_[@]}"} -t __ast_霧:1.0___VERANTYX_霧_185_:__ast_霧:1.0___VERANTYX_霧_132_ -f "$__ast_庖:1.0___VERANTYX_庖_31_/__ast_蔵:1.0___VERANTYX_庖_6_" "$__ast_庖:1.0___VERANTYX_庖_31_"
+
+__ast_霧:1.0___VERANTYX_霧_177_ "__ast_蔵:1.0___VERANTYX_庖_17_ __ast_霧:1.0___VERANTYX_霧_191_ __ast_霧:1.0___VERANTYX_霧_107_ $__ast_図:1.0___VERANTYX_庖_70_'s __ast_庖:1.0___VERANTYX_庖_4_ __ast_霧:1.0___VERANTYX_霧_105_..."
+__ast_庖:1.0___VERANTYX_庖_65_="$(__ast_霧:1.0___VERANTYX_霧_202_)"
+__ast_霧:1.0___VERANTYX_霧_177_ "__ast_庖:1.0___VERANTYX_庖_26_ __ast_霧:1.0___VERANTYX_霧_93_ __ast_霧:1.0___VERANTYX_霧_191_ __ast_霧:1.0___VERANTYX_霧_158_: $__ast_庖:1.0___VERANTYX_庖_65_"
+__ast_庖:1.0___VERANTYX_庖_55_="$(__ast_霧:1.0___VERANTYX_霧_187_ -d -p "$__ast_庖:1.0___VERANTYX_庖_65_" __ast_霧:1.0___VERANTYX_霧_185_-__ast_霧:1.0___VERANTYX_霧_191_.__ast_庖:1.0___VERANTYX_庖_32_)"
+__ast_庖:1.0___VERANTYX_庖_51_="$__ast_庖:1.0___VERANTYX_庖_55_/__ast_霧:1.0___VERANTYX_霧_191_.__ast_霧:1.0___VERANTYX_霧_69_"
+__ast_霧:1.0___VERANTYX_霧_125_ 700 "$__ast_庖:1.0___VERANTYX_庖_55_"
+__ast_霧:1.0___VERANTYX_霧_111_ 'rm -rf "$__ast_庖:1.0___VERANTYX_庖_55_"' __ast_庖:1.0___VERANTYX_庖_38_
+__ast_霧:1.0___VERANTYX_霧_18_ __ast_蔵:1.0___VERANTYX_霧_84_ __ast_霧:1.0___VERANTYX_霧_185_:__ast_霧:1.0___VERANTYX_霧_132_ -o "$__ast_庖:1.0___VERANTYX_庖_51_"
+__ast_霧:1.0___VERANTYX_霧_125_ 600 "$__ast_庖:1.0___VERANTYX_庖_51_"
+// [metadata-stripped]
+// [metadata-stripped]
+__ast_霧:1.0___VERANTYX_霧_174_ "$__ast_庖:1.0___VERANTYX_庖_51_" | __ast_図:1.0___VERANTYX_霧_25_ "$__ast_図:1.0___VERANTYX_庖_70_" __ast_霧:1.0___VERANTYX_霧_150_ __ast_庖:1.0___VERANTYX_庖_61_="$__ast_庖:1.0___VERANTYX_庖_25_" __ast_霧:1.0___VERANTYX_霧_18_ __ast_蔵:1.0___VERANTYX_霧_43_
+rm -rf "$__ast_庖:1.0___VERANTYX_庖_55_"
+__ast_霧:1.0___VERANTYX_霧_111_ - __ast_庖:1.0___VERANTYX_庖_38_
+
+__ast_霧:1.0___VERANTYX_霧_177_ "__ast_庖:1.0___VERANTYX_庖_35_ __ast_霧:1.0___VERANTYX_霧_180_ __ast_霧:1.0___VERANTYX_霧_96_ to $__ast_庖:1.0___VERANTYX_庖_60_..."
+__ast_霧:1.0___VERANTYX_霧_52_ __ast_霧:1.0___VERANTYX_霧_174_ "$__ast_庖:1.0___VERANTYX_庖_53_" | __ast_霧:1.0___VERANTYX_霧_179_ __ast_霧:1.0___VERANTYX_霧_47_ "$__ast_庖:1.0___VERANTYX_庖_60_" >/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_
+__ast_霧:1.0___VERANTYX_霧_179_ __ast_霧:1.0___VERANTYX_霧_125_ 755 "$__ast_庖:1.0___VERANTYX_庖_60_"
+
+// [metadata-stripped]
+__ast_庖:1.0___VERANTYX_庖_73_="$__ast_庖:1.0___VERANTYX_庖_25_/.__ast_霧:1.0___VERANTYX_霧_178_/__ast_霧:1.0___VERANTYX_霧_106_/__ast_霧:1.0___VERANTYX_霧_50_"
+if [[ "$__ast_庖:1.0___VERANTYX_庖_23_" == true && -f "$__ast_庖:1.0___VERANTYX_庖_72_" ]]; __ast_霧:1.0___VERANTYX_霧_154_
+  __ast_霧:1.0___VERANTYX_霧_177_ "__ast_庖:1.0___VERANTYX_庖_10_ __ast_霧:1.0___VERANTYX_霧_50_ __ast_霧:1.0___VERANTYX_霧_5_ for $__ast_図:1.0___VERANTYX_庖_70_..."
+  __ast_霧:1.0___VERANTYX_霧_179_ __ast_霧:1.0___VERANTYX_霧_2_ -p "$__ast_庖:1.0___VERANTYX_庖_73_"
+  __ast_庖:1.0___VERANTYX_庖_59_="$(__ast_霧:1.0___VERANTYX_霧_58_ "$__ast_庖:1.0___VERANTYX_庖_25_")"
+  __ast_霧:1.0___VERANTYX_霧_39_ "s|{{__ast_庖:1.0___VERANTYX_庖_25_}}|$__ast_庖:1.0___VERANTYX_庖_59_|g" "$__ast_庖:1.0___VERANTYX_庖_72_" | __ast_霧:1.0___VERANTYX_霧_179_ __ast_霧:1.0___VERANTYX_霧_47_ "$__ast_庖:1.0___VERANTYX_庖_73_/__ast_霧:1.0___VERANTYX_霧_185_.__ast_図:1.0___VERANTYX_霧_144_" >/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_
+  __ast_霧:1.0___VERANTYX_霧_179_ __ast_霧:1.0___VERANTYX_霧_125_ 700 "$__ast_庖:1.0___VERANTYX_庖_25_/.__ast_霧:1.0___VERANTYX_霧_178_" "$__ast_庖:1.0___VERANTYX_庖_25_/.__ast_霧:1.0___VERANTYX_霧_178_/__ast_霧:1.0___VERANTYX_霧_106_" "$__ast_庖:1.0___VERANTYX_庖_73_" 2>/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ || true
+  __ast_霧:1.0___VERANTYX_霧_179_ __ast_霧:1.0___VERANTYX_霧_125_ 600 "$__ast_庖:1.0___VERANTYX_庖_73_/__ast_霧:1.0___VERANTYX_霧_185_.__ast_図:1.0___VERANTYX_霧_144_" 2>/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ || true
+  if __ast_霧:1.0___VERANTYX_霧_155_ -v __ast_霧:1.0___VERANTYX_霧_41_ &>/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_; __ast_霧:1.0___VERANTYX_霧_154_
+    __ast_霧:1.0___VERANTYX_霧_52_ __ast_霧:1.0___VERANTYX_霧_41_ --__ast_霧:1.0___VERANTYX_霧_63_ "${__ast_図:1.0___VERANTYX_庖_70_}@" --__ast_図:1.0___VERANTYX_霧_166_ __ast_霧:1.0___VERANTYX_霧_186_-__ast_蔵:1.0___VERANTYX_霧_86_ 2>/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ || true
+// __ast_蔵:0.5___VERANTYX_VW_486_ [decoy-metadata]
+    __ast_霧:1.0___VERANTYX_霧_52_ __ast_霧:1.0___VERANTYX_霧_41_ --__ast_霧:1.0___VERANTYX_霧_63_ "${__ast_図:1.0___VERANTYX_庖_70_}@" --__ast_図:1.0___VERANTYX_霧_166_ __ast_霧:1.0___VERANTYX_霧_80_ __ast_霧:1.0___VERANTYX_霧_185_.__ast_霧:1.0___VERANTYX_霧_101_ 2>/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ || true
+    __ast_霧:1.0___VERANTYX_霧_52_ __ast_霧:1.0___VERANTYX_霧_41_ --__ast_霧:1.0___VERANTYX_霧_63_ "${__ast_図:1.0___VERANTYX_庖_70_}@" --__ast_図:1.0___VERANTYX_霧_166_ __ast_霧:1.0___VERANTYX_霧_32_ __ast_霧:1.0___VERANTYX_霧_185_.__ast_霧:1.0___VERANTYX_霧_101_ 2>/__ast_霧:1.0___VERANTYX_霧_114_/__ast_霧:1.0___VERANTYX_霧_13_ || true
+  fi
+fi
+
+__ast_霧:1.0___VERANTYX_霧_177_ ""
+__ast_霧:1.0___VERANTYX_霧_177_ "__ast_図:1.0___VERANTYX_礎_3_ __ast_霧:1.0___VERANTYX_霧_189_. __ast_庖:1.0___VERANTYX_庖_69_ __ast_霧:1.0___VERANTYX_霧_89_ __ast_霧:1.0___VERANTYX_霧_140_:"
+__ast_霧:1.0___VERANTYX_霧_177_ "  $__ast_庖:1.0___VERANTYX_庖_53_ __ast_霧:1.0___VERANTYX_霧_180_"
+__ast_霧:1.0___VERANTYX_霧_177_ "  $__ast_庖:1.0___VERANTYX_庖_53_ __ast_霧:1.0___VERANTYX_霧_180_ __ast_図:1.0___VERANTYX_礎_5_   # __ast_霧:1.0___VERANTYX_霧_193_ __ast_霧:1.0___VERANTYX_霧_126_"
+__ast_霧:1.0___VERANTYX_霧_177_ "Or as $__ast_図:1.0___VERANTYX_庖_70_ (e.g. __ast_霧:1.0___VERANTYX_霧_141_ __ast_霧:1.0___VERANTYX_霧_117_):"
+__ast_霧:1.0___VERANTYX_霧_177_ "  __ast_霧:1.0___VERANTYX_霧_76_ -u $__ast_図:1.0___VERANTYX_庖_70_ $__ast_庖:1.0___VERANTYX_庖_60_"
+__ast_霧:1.0___VERANTYX_霧_177_ "  __ast_霧:1.0___VERANTYX_霧_76_ -u $__ast_図:1.0___VERANTYX_庖_70_ $__ast_庖:1.0___VERANTYX_庖_60_ __ast_図:1.0___VERANTYX_礎_5_"
+if [[ "$__ast_庖:1.0___VERANTYX_庖_23_" == true ]]; __ast_霧:1.0___VERANTYX_霧_154_
+  __ast_霧:1.0___VERANTYX_霧_177_ "Or __ast_霧:1.0___VERANTYX_霧_116_ __ast_霧:1.0___VERANTYX_霧_50_ (__ast_霧:1.0___VERANTYX_霧_5_):"
+  __ast_霧:1.0___VERANTYX_霧_177_ "  __ast_霧:1.0___VERANTYX_霧_76_ __ast_霧:1.0___VERANTYX_霧_41_ --__ast_霧:1.0___VERANTYX_霧_63_ ${__ast_図:1.0___VERANTYX_庖_70_}@ --__ast_図:1.0___VERANTYX_霧_166_ __ast_霧:1.0___VERANTYX_霧_32_ __ast_霧:1.0___VERANTYX_霧_185_.__ast_霧:1.0___VERANTYX_霧_101_"
+  __ast_霧:1.0___VERANTYX_霧_177_ "  __ast_霧:1.0___VERANTYX_霧_76_ __ast_霧:1.0___VERANTYX_霧_41_ --__ast_霧:1.0___VERANTYX_霧_63_ ${__ast_図:1.0___VERANTYX_庖_70_}@ --__ast_図:1.0___VERANTYX_霧_166_ __ast_霧:1.0___VERANTYX_霧_21_ __ast_霧:1.0___VERANTYX_霧_185_.__ast_霧:1.0___VERANTYX_霧_101_"
+else
+  __ast_霧:1.0___VERANTYX_霧_177_ "To __ast_霧:1.0___VERANTYX_霧_42_ __ast_霧:1.0___VERANTYX_霧_50_ __ast_霧:1.0___VERANTYX_霧_5_ __ast_図:1.0___VERANTYX_霧_162_: $0 --__ast_霧:1.0___VERANTYX_霧_5_"
+fi
+
+// POLYMORPHIC_JCROSS_END

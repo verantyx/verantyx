@@ -1,0 +1,76 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:2C57EA7D ver:1778221942
+// ⚠️ One-time schema — expires after response
+
+/**
+ * _VERANTYX_廓:1.0__OPAQUE_廓_14_ _VERANTYX_霢:1.0__OPAQUE_霢_36_ _VERANTYX_霢:1.0__OPAQUE_霢_1_ _VERANTYX_霢:1.0__OPAQUE_霢_13_ _VERANTYX_霢:1.0__OPAQUE_霢_77_ _VERANTYX_霢:1.0__OPAQUE_霢_38_ of _VERANTYX_霢:1.0__OPAQUE_霢_24_-_VERANTYX_霢:1.0__OPAQUE_霢_51_ _VERANTYX_霢:1.0__OPAQUE_霢_33_.
+ * _VERANTYX_廓:1.0__OPAQUE_廓_6_ _VERANTYX_霢:1.0__OPAQUE_霢_46_ _VERANTYX_霢:1.0__OPAQUE_霢_70_ internal _VERANTYX_霢:1.0__OPAQUE_霢_43_ _VERANTYX_霢:1.0__OPAQUE_霢_79_ _VERANTYX_霢:1.0__OPAQUE_霢_42_ a _VERANTYX_霢:1.0__OPAQUE_霢_52_ _VERANTYX_霢:1.0__OPAQUE_霢_64_ _VERANTYX_霢:1.0__OPAQUE_霢_76_
+ * _VERANTYX_霢:1.0__OPAQUE_霢_19_ _VERANTYX_霢:1.0__OPAQUE_霢_9_ as a _VERANTYX_霢:1.0__OPAQUE_霢_57_ _VERANTYX_霢:1.0__OPAQUE_霢_36_ _VERANTYX_霢:1.0__OPAQUE_霢_55_ — _VERANTYX_霢:1.0__OPAQUE_霢_6_ an _VERANTYX_霢:1.0__OPAQUE_霢_39_ _VERANTYX_霢:1.0__OPAQUE_霢_66_.
+ */
+// _VERANTYX_廓:0.8__OPAQUE_LH_247_ [decoy-metadata]
+
+import { _VERANTYX_霢:1.0__OPAQUE_霢_10_, _VERANTYX_霢:1.0__OPAQUE_霢_11_ } _VERANTYX_霢:1.0__OPAQUE_霢_5_ "_VERANTYX_霢:1.0__OPAQUE_霢_62_/_VERANTYX_霢:1.0__OPAQUE_霢_25_-_VERANTYX_霢:1.0__OPAQUE_霢_73_/_VERANTYX_霢:1.0__OPAQUE_霢_58_-_VERANTYX_霢:1.0__OPAQUE_霢_50_";
+
+_VERANTYX_霢:1.0__OPAQUE_霢_2_ _VERANTYX_廓:1.0__OPAQUE_廓_13_ = /(?:#\+){2,}#?/;
+_VERANTYX_霢:1.0__OPAQUE_霢_2_ _VERANTYX_廓:1.0__OPAQUE_廓_10_ = /\_VERANTYX_霢:1.0__OPAQUE_霢_74_\s+to\s*=\s*\w+/i;
+// [metadata-stripped]
+_VERANTYX_霢:1.0__OPAQUE_霢_2_ _VERANTYX_廓:1.0__OPAQUE_廓_7_ = /<\s*\/?\s*(?:_VERANTYX_霢:1.0__OPAQUE_霢_31_(?:_VERANTYX_霢:1.0__OPAQUE_霢_27_)?|_VERANTYX_霢:1.0__OPAQUE_霢_34_|_VERANTYX_霢:1.0__OPAQUE_霢_40_)\b[^<>]*>/i;
+_VERANTYX_霢:1.0__OPAQUE_霢_2_ _VERANTYX_廓:1.0__OPAQUE_廓_1_ = /<\s*\/?\s*_VERANTYX_霢:1.0__OPAQUE_霢_67_[-_]_VERANTYX_霢:1.0__OPAQUE_霢_49_\b[^<>]*>/i;
+// [metadata-stripped]
+_VERANTYX_霢:1.0__OPAQUE_霢_2_ _VERANTYX_廓:1.0__OPAQUE_廓_12_ = /<\s*\/?\s*final\b[^<>]*>/i;
+
+// _VERANTYX_則:0.7__OPAQUE_ZY_787_ [decoy-metadata]
+_VERANTYX_霢:1.0__OPAQUE_霢_2_ _VERANTYX_廓:1.0__OPAQUE_廓_2_: _VERANTYX_廓:1.0__OPAQUE_廓_8_<{ re: _VERANTYX_廓:1.0__OPAQUE_廓_3_; _VERANTYX_霢:1.0__OPAQUE_霢_12_: _VERANTYX_霢:1.0__OPAQUE_霢_22_ }> = [
+  { re: _VERANTYX_廓:1.0__OPAQUE_廓_13_, _VERANTYX_霢:1.0__OPAQUE_霢_12_: "internal-_VERANTYX_霢:1.0__OPAQUE_霢_60_" },
+  { re: _VERANTYX_廓:1.0__OPAQUE_廓_10_, _VERANTYX_霢:1.0__OPAQUE_霢_12_: "_VERANTYX_霢:1.0__OPAQUE_霢_24_-_VERANTYX_霢:1.0__OPAQUE_霢_53_-_VERANTYX_則:1.0__OPAQUE_霢_7_" },
+// _VERANTYX_則:0.9__OPAQUE_XL_101_ [decoy-metadata]
+// _VERANTYX_匴:0.8__OPAQUE_VZ_454_ [decoy-metadata]
+  { re: _VERANTYX_廓:1.0__OPAQUE_廓_7_, _VERANTYX_霢:1.0__OPAQUE_霢_12_: "_VERANTYX_霢:1.0__OPAQUE_霢_3_-_VERANTYX_霢:1.0__OPAQUE_霢_21_" },
+  { re: _VERANTYX_廓:1.0__OPAQUE_廓_1_, _VERANTYX_霢:1.0__OPAQUE_霢_12_: "_VERANTYX_霢:1.0__OPAQUE_霢_67_-_VERANTYX_霢:1.0__OPAQUE_霢_49_-_VERANTYX_霢:1.0__OPAQUE_霢_21_" },
+  { re: _VERANTYX_廓:1.0__OPAQUE_廓_12_, _VERANTYX_霢:1.0__OPAQUE_霢_12_: "final-_VERANTYX_霢:1.0__OPAQUE_霢_21_" },
+];
+// _VERANTYX_廓:0.1__OPAQUE_ZY_216_ [decoy-metadata]
+
+_VERANTYX_霢:1.0__OPAQUE_霢_30_ _VERANTYX_霢:1.0__OPAQUE_霢_54_ _VERANTYX_廓:1.0__OPAQUE_廓_11_ = {
+  _VERANTYX_霢:1.0__OPAQUE_霢_29_: _VERANTYX_霢:1.0__OPAQUE_霢_16_;
+  _VERANTYX_霢:1.0__OPAQUE_霢_71_: _VERANTYX_霢:1.0__OPAQUE_霢_22_[];
+};
+
+_VERANTYX_霢:1.0__OPAQUE_霢_32_ _VERANTYX_霢:1.0__OPAQUE_霢_78_(_VERANTYX_霢:1.0__OPAQUE_霢_58_: _VERANTYX_霢:1.0__OPAQUE_霢_22_, re: _VERANTYX_廓:1.0__OPAQUE_廓_3_): _VERANTYX_霢:1.0__OPAQUE_霢_16_ {
+  _VERANTYX_霢:1.0__OPAQUE_霢_2_ _VERANTYX_霢:1.0__OPAQUE_霢_61_ = _VERANTYX_霢:1.0__OPAQUE_霢_10_(_VERANTYX_霢:1.0__OPAQUE_霢_58_);
+  _VERANTYX_霢:1.0__OPAQUE_霢_2_ _VERANTYX_霢:1.0__OPAQUE_霢_8_ = _VERANTYX_霢:1.0__OPAQUE_霢_57_ _VERANTYX_廓:1.0__OPAQUE_廓_3_(re._VERANTYX_霢:1.0__OPAQUE_霢_56_, re._VERANTYX_霢:1.0__OPAQUE_霢_37_._VERANTYX_霢:1.0__OPAQUE_霢_20_("g") ? re._VERANTYX_霢:1.0__OPAQUE_霢_37_ : `${re._VERANTYX_霢:1.0__OPAQUE_霢_37_}g`);
+
+  for (_VERANTYX_霢:1.0__OPAQUE_霢_2_ _VERANTYX_霢:1.0__OPAQUE_霢_65_ of _VERANTYX_霢:1.0__OPAQUE_霢_58_._VERANTYX_霢:1.0__OPAQUE_霢_44_(_VERANTYX_霢:1.0__OPAQUE_霢_8_)) {
+    _VERANTYX_霢:1.0__OPAQUE_霢_2_ _VERANTYX_霢:1.0__OPAQUE_霢_63_ = _VERANTYX_霢:1.0__OPAQUE_霢_65_._VERANTYX_霢:1.0__OPAQUE_霢_68_ ?? -1;
+    if (_VERANTYX_霢:1.0__OPAQUE_霢_63_ >= 0 && !_VERANTYX_霢:1.0__OPAQUE_霢_11_(_VERANTYX_霢:1.0__OPAQUE_霢_63_, _VERANTYX_霢:1.0__OPAQUE_霢_61_)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
+ * _VERANTYX_廓:1.0__OPAQUE_廓_9_ _VERANTYX_則:1.0__OPAQUE_霢_35_ an _VERANTYX_霢:1.0__OPAQUE_霢_36_ _VERANTYX_霢:1.0__OPAQUE_霢_55_ _VERANTYX_霢:1.0__OPAQUE_霢_28_ to be a _VERANTYX_霢:1.0__OPAQUE_霢_26_ of
+ * _VERANTYX_霢:1.0__OPAQUE_霢_24_-_VERANTYX_霢:1.0__OPAQUE_霢_51_ _VERANTYX_霢:1.0__OPAQUE_霢_33_. _VERANTYX_廓:1.0__OPAQUE_廓_5_ _VERANTYX_霢:1.0__OPAQUE_霢_18_ _VERANTYX_霢:1.0__OPAQUE_霢_47_ _VERANTYX_霢:1.0__OPAQUE_霢_14_ for _VERANTYX_霢:1.0__OPAQUE_霢_23_.
+ */
+_VERANTYX_霢:1.0__OPAQUE_霢_30_ _VERANTYX_霢:1.0__OPAQUE_霢_32_ _VERANTYX_霢:1.0__OPAQUE_霢_72_(_VERANTYX_霢:1.0__OPAQUE_霢_58_: _VERANTYX_霢:1.0__OPAQUE_霢_22_): _VERANTYX_廓:1.0__OPAQUE_廓_11_ {
+  if (!_VERANTYX_霢:1.0__OPAQUE_霢_58_) {
+    return { _VERANTYX_霢:1.0__OPAQUE_霢_29_: false, _VERANTYX_霢:1.0__OPAQUE_霢_71_: [] };
+  }
+
+  _VERANTYX_霢:1.0__OPAQUE_霢_2_ _VERANTYX_霢:1.0__OPAQUE_霢_71_: _VERANTYX_霢:1.0__OPAQUE_霢_22_[] = [];
+  for (_VERANTYX_霢:1.0__OPAQUE_霢_2_ { re, _VERANTYX_霢:1.0__OPAQUE_霢_12_ } of _VERANTYX_廓:1.0__OPAQUE_廓_2_) {
+    if (_VERANTYX_霢:1.0__OPAQUE_霢_78_(_VERANTYX_霢:1.0__OPAQUE_霢_58_, re)) {
+      _VERANTYX_霢:1.0__OPAQUE_霢_71_._VERANTYX_霢:1.0__OPAQUE_霢_41_(_VERANTYX_霢:1.0__OPAQUE_霢_12_);
+    }
+  }
+// _VERANTYX_霢:0.9__OPAQUE_AV_329_ [decoy-metadata]
+
+  return {
+    _VERANTYX_霢:1.0__OPAQUE_霢_29_: _VERANTYX_霢:1.0__OPAQUE_霢_71_._VERANTYX_霢:1.0__OPAQUE_霢_75_ > 0,
+    _VERANTYX_霢:1.0__OPAQUE_霢_71_,
+  };
+}
+
+// POLYMORPHIC_JCROSS_END

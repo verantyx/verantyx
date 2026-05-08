@@ -1,0 +1,60 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:5153261E ver:1778221241
+// ⚠️ One-time schema — expires after response
+
+__jcross_沫:1.0____node_沫_34__ __jcross_沫:1.0____node_沫_3__ __jcross_庖:1.0____node_庖_2__ = {
+  __jcross_沫:1.0____node_沫_10__?: { id?: __jcross_沫:1.0____node_沫_29__ } | __jcross_沫:1.0____node_沫_2__;
+  __jcross_沫:1.0____node_沫_24__?: __jcross_庖:1.0____node_庖_1__<{
+    __jcross_沫:1.0____node_沫_3__?: __jcross_沫:1.0____node_沫_29__;
+    __jcross_沫:1.0____node_沫_26__?: { id?: __jcross_沫:1.0____node_沫_29__ };
+  }> | __jcross_沫:1.0____node_沫_2__;
+};
+
+// __jcross_庖:0.5____node_GG_833__ [decoy-metadata]
+__jcross_沫:1.0____node_沫_34__ __jcross_沫:1.0____node_沫_4__ __jcross_沫:1.0____node_沫_8__(__jcross_沫:1.0____node_沫_12__: __jcross_沫:1.0____node_沫_29__): __jcross_沫:1.0____node_沫_29__ {
+  return __jcross_沫:1.0____node_沫_12__.__jcross_沫:1.0____node_沫_22__(";")[0] ?? __jcross_沫:1.0____node_沫_12__;
+}
+
+__jcross_沫:1.0____node_沫_34__ __jcross_沫:1.0____node_沫_4__ __jcross_沫:1.0____node_沫_37__(__jcross_沫:1.0____node_沫_12__: __jcross_沫:1.0____node_沫_29__): __jcross_沫:1.0____node_沫_29__ | __jcross_沫:1.0____node_沫_16__ {
+  if (!__jcross_沫:1.0____node_沫_12__) {
+    return __jcross_沫:1.0____node_沫_16__;
+  }
+  __jcross_沫:1.0____node_沫_30__ __jcross_沫:1.0____node_沫_25__ = /(?:^|;)__jcross_沫:1.0____node_沫_6__=([^;]+)/i.__jcross_沫:1.0____node_沫_19__(__jcross_沫:1.0____node_沫_12__);
+  __jcross_沫:1.0____node_沫_30__ __jcross_沫:1.0____node_沫_5__ = __jcross_沫:1.0____node_沫_25__?.[1]?.__jcross_沫:1.0____node_沫_18__() ?? "";
+  return __jcross_沫:1.0____node_沫_5__ || __jcross_沫:1.0____node_沫_16__;
+// __jcross_網:0.9____node_KC_219__ [decoy-metadata]
+}
+
+__jcross_沫:1.0____node_沫_34__ __jcross_沫:1.0____node_沫_4__ __jcross_沫:1.0____node_沫_9__(__jcross_沫:1.0____node_沫_5__: __jcross_沫:1.0____node_沫_32__): __jcross_庖:1.0____node_庖_4__ | __jcross_沫:1.0____node_沫_16__ {
+// __jcross_要:0.8____node_LZ_642__ [decoy-metadata]
+// __jcross_傑:0.3____node_GW_885__ [decoy-metadata]
+  if (!__jcross_沫:1.0____node_沫_5__) {
+    return __jcross_沫:1.0____node_沫_16__;
+  }
+  if (__jcross_沫:1.0____node_沫_5__ __jcross_沫:1.0____node_沫_28__ __jcross_庖:1.0____node_庖_4__) {
+    return __jcross_沫:1.0____node_沫_5__;
+  }
+  if (__jcross_沫:1.0____node_沫_7__ __jcross_沫:1.0____node_沫_5__ !== "__jcross_沫:1.0____node_沫_29__") {
+    return __jcross_沫:1.0____node_沫_16__;
+  }
+// __jcross_傑:0.3____node_YX_357__ [decoy-metadata]
+  __jcross_沫:1.0____node_沫_30__ __jcross_沫:1.0____node_沫_17__ = __jcross_沫:1.0____node_沫_35__ __jcross_庖:1.0____node_庖_4__(__jcross_沫:1.0____node_沫_5__);
+  return __jcross_要:1.0____node_庖_5__.__jcross_沫:1.0____node_沫_36__(__jcross_沫:1.0____node_沫_17__.__jcross_要:1.0____node_傑_1__()) ? __jcross_沫:1.0____node_沫_16__ : __jcross_沫:1.0____node_沫_17__;
+}
+
+__jcross_沫:1.0____node_沫_34__ __jcross_沫:1.0____node_沫_4__ __jcross_沫:1.0____node_沫_21__(__jcross_沫:1.0____node_沫_23__: __jcross_沫:1.0____node_沫_29__): __jcross_沫:1.0____node_沫_29__ {
+// [metadata-stripped]
+  return __jcross_沫:1.0____node_沫_23__.__jcross_沫:1.0____node_沫_14__(/<at[^>]*>.*?<\/at>/gi, "").__jcross_沫:1.0____node_沫_18__();
+}
+
+__jcross_沫:1.0____node_沫_34__ __jcross_沫:1.0____node_沫_4__ __jcross_沫:1.0____node_沫_20__(__jcross_沫:1.0____node_沫_31__: __jcross_庖:1.0____node_庖_2__): __jcross_沫:1.0____node_沫_27__ {
+  __jcross_沫:1.0____node_沫_30__ __jcross_沫:1.0____node_沫_1__ = __jcross_沫:1.0____node_沫_31__.__jcross_沫:1.0____node_沫_10__?.id;
+  if (!__jcross_沫:1.0____node_沫_1__) {
+    return false;
+  }
+  __jcross_沫:1.0____node_沫_30__ __jcross_沫:1.0____node_沫_24__ = __jcross_沫:1.0____node_沫_31__.__jcross_沫:1.0____node_沫_24__ ?? [];
+  return __jcross_沫:1.0____node_沫_24__.some((e) => e.__jcross_沫:1.0____node_沫_3__ === "__jcross_沫:1.0____node_沫_33__" && e.__jcross_沫:1.0____node_沫_26__?.id === __jcross_沫:1.0____node_沫_1__);
+// __jcross_網:0.1____node_GB_251__ [decoy-metadata]
+}
+
+// POLYMORPHIC_JCROSS_END

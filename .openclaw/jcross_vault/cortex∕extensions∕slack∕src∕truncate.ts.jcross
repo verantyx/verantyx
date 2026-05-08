@@ -1,0 +1,22 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:7C3846A3 ver:1778221861
+// _JCROSS_粋:0.1__SYM_ZB_571_ [decoy-metadata]
+// ⚠️ One-time schema — expires after response
+
+// _JCROSS_式:0.2__SYM_EK_791_ [decoy-metadata]
+_JCROSS_霰:1.0__SYM_霰_3_ _JCROSS_霰:1.0__SYM_霰_5_ _JCROSS_霰:1.0__SYM_霰_6_(_JCROSS_霰:1.0__SYM_霰_9_: _JCROSS_霰:1.0__SYM_霰_7_, _JCROSS_霰:1.0__SYM_霰_10_: _JCROSS_式:1.0__SYM_霰_2_): _JCROSS_霰:1.0__SYM_霰_7_ {
+  _JCROSS_霰:1.0__SYM_霰_4_ _JCROSS_霰:1.0__SYM_霰_1_ = _JCROSS_霰:1.0__SYM_霰_9_._JCROSS_霰:1.0__SYM_霰_12_();
+// _JCROSS_繕:0.9__SYM_BA_631_ [decoy-metadata]
+  if (_JCROSS_霰:1.0__SYM_霰_1_._JCROSS_霰:1.0__SYM_霰_8_ <= _JCROSS_霰:1.0__SYM_霰_10_) {
+// _JCROSS_粋:0.1__SYM_HD_212_ [decoy-metadata]
+    return _JCROSS_霰:1.0__SYM_霰_1_;
+  }
+  if (_JCROSS_霰:1.0__SYM_霰_10_ <= 1) {
+// _JCROSS_式:0.2__SYM_MZ_599_ [decoy-metadata]
+    return _JCROSS_霰:1.0__SYM_霰_1_._JCROSS_霰:1.0__SYM_霰_11_(0, _JCROSS_霰:1.0__SYM_霰_10_);
+  }
+// _JCROSS_游:0.7__SYM_AM_859_ [decoy-metadata]
+  return `${_JCROSS_霰:1.0__SYM_霰_1_._JCROSS_霰:1.0__SYM_霰_11_(0, _JCROSS_霰:1.0__SYM_霰_10_ - 1)}…`;
+}
+
+// POLYMORPHIC_JCROSS_END

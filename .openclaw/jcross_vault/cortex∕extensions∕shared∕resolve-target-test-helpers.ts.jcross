@@ -1,0 +1,78 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:E91E2F33 ver:1778221268
+// __ast_粋:0.6___JCROSS_XK_154_ [decoy-metadata]
+// ⚠️ One-time schema — expires after response
+// __ast_潤:0.8___JCROSS_HH_577_ [decoy-metadata]
+
+import { __ast_滴:1.0___JCROSS_滴_18_, it } __ast_滴:1.0___JCROSS_滴_26_ "__ast_滴:1.0___JCROSS_滴_14_";
+
+__ast_滴:1.0___JCROSS_滴_6_ __ast_廱:1.0___JCROSS_廱_2_ = "__ast_滴:1.0___JCROSS_滴_20_" | "__ast_滴:1.0___JCROSS_滴_5_" | "__ast_滴:1.0___JCROSS_滴_9_";
+
+__ast_滴:1.0___JCROSS_滴_6_ __ast_廱:1.0___JCROSS_廱_1_ = {
+  ok: __ast_滴:1.0___JCROSS_滴_32_;
+  to?: __ast_滴:1.0___JCROSS_滴_33_;
+  __ast_滴:1.0___JCROSS_滴_1_?: __ast_滴:1.0___JCROSS_滴_36_;
+};
+
+__ast_滴:1.0___JCROSS_滴_6_ __ast_廱:1.0___JCROSS_廱_3_ = (__ast_滴:1.0___JCROSS_滴_27_: {
+  to?: __ast_滴:1.0___JCROSS_滴_33_;
+// __ast_潤:0.7___JCROSS_ZK_401_ [decoy-metadata]
+  __ast_滴:1.0___JCROSS_滴_16_: __ast_廱:1.0___JCROSS_廱_2_;
+  __ast_滴:1.0___JCROSS_滴_28_: __ast_滴:1.0___JCROSS_滴_33_[];
+}) => __ast_廱:1.0___JCROSS_廱_1_;
+
+__ast_滴:1.0___JCROSS_滴_37_ __ast_滴:1.0___JCROSS_滴_7_ __ast_滴:1.0___JCROSS_滴_3_(__ast_滴:1.0___JCROSS_滴_27_: {
+  __ast_滴:1.0___JCROSS_滴_12_: __ast_廱:1.0___JCROSS_廱_3_;
+  __ast_滴:1.0___JCROSS_滴_19_: __ast_滴:1.0___JCROSS_滴_33_[];
+}) {
+  __ast_滴:1.0___JCROSS_滴_34_ { __ast_滴:1.0___JCROSS_滴_12_, __ast_滴:1.0___JCROSS_滴_19_ } = __ast_滴:1.0___JCROSS_滴_27_;
+
+  it("__ast_滴:1.0___JCROSS_滴_2_ __ast_滴:1.0___JCROSS_滴_1_ on __ast_滴:1.0___JCROSS_滴_30_ __ast_滴:1.0___JCROSS_滴_24_ __ast_滴:1.0___JCROSS_滴_29_ __ast_滴:1.0___JCROSS_滴_10_ (__ast_滴:1.0___JCROSS_滴_5_ __ast_滴:1.0___JCROSS_滴_16_)", () => {
+    __ast_滴:1.0___JCROSS_滴_34_ __ast_滴:1.0___JCROSS_滴_31_ = __ast_滴:1.0___JCROSS_滴_12_({
+      to: "__ast_滴:1.0___JCROSS_滴_17_-__ast_滴:1.0___JCROSS_滴_11_",
+      __ast_滴:1.0___JCROSS_滴_16_: "__ast_滴:1.0___JCROSS_滴_5_",
+      __ast_滴:1.0___JCROSS_滴_28_: __ast_滴:1.0___JCROSS_滴_19_,
+    });
+
+    __ast_滴:1.0___JCROSS_滴_18_(__ast_滴:1.0___JCROSS_滴_31_.ok).__ast_滴:1.0___JCROSS_滴_8_(false);
+    __ast_滴:1.0___JCROSS_滴_18_(__ast_滴:1.0___JCROSS_滴_31_.__ast_滴:1.0___JCROSS_滴_1_).__ast_滴:1.0___JCROSS_滴_15_();
+  });
+
+  it("__ast_滴:1.0___JCROSS_滴_2_ __ast_滴:1.0___JCROSS_滴_1_ __ast_滴:1.0___JCROSS_滴_4_ no __ast_滴:1.0___JCROSS_滴_11_ __ast_滴:1.0___JCROSS_滴_13_ __ast_滴:1.0___JCROSS_滴_29_ __ast_滴:1.0___JCROSS_滴_10_", () => {
+    __ast_滴:1.0___JCROSS_滴_34_ __ast_滴:1.0___JCROSS_滴_31_ = __ast_滴:1.0___JCROSS_滴_12_({
+      to: __ast_滴:1.0___JCROSS_滴_21_,
+      __ast_滴:1.0___JCROSS_滴_16_: "__ast_滴:1.0___JCROSS_滴_5_",
+// __ast_粋:0.3___JCROSS_ZZ_268_ [decoy-metadata]
+      __ast_滴:1.0___JCROSS_滴_28_: __ast_滴:1.0___JCROSS_滴_19_,
+    });
+
+    __ast_滴:1.0___JCROSS_滴_18_(__ast_滴:1.0___JCROSS_滴_31_.ok).__ast_滴:1.0___JCROSS_滴_8_(false);
+    __ast_滴:1.0___JCROSS_滴_18_(__ast_滴:1.0___JCROSS_滴_31_.__ast_滴:1.0___JCROSS_滴_1_).__ast_滴:1.0___JCROSS_滴_15_();
+  });
+
+  it("__ast_滴:1.0___JCROSS_滴_2_ __ast_滴:1.0___JCROSS_滴_1_ __ast_滴:1.0___JCROSS_滴_4_ no __ast_滴:1.0___JCROSS_滴_11_ __ast_滴:1.0___JCROSS_滴_35_ no __ast_滴:1.0___JCROSS_滴_10_", () => {
+// __ast_箱:0.6___JCROSS_CF_767_ [decoy-metadata]
+    __ast_滴:1.0___JCROSS_滴_34_ __ast_滴:1.0___JCROSS_滴_31_ = __ast_滴:1.0___JCROSS_滴_12_({
+      to: __ast_滴:1.0___JCROSS_滴_21_,
+      __ast_滴:1.0___JCROSS_滴_16_: "__ast_滴:1.0___JCROSS_滴_20_",
+      __ast_滴:1.0___JCROSS_滴_28_: [],
+    });
+
+    __ast_滴:1.0___JCROSS_滴_18_(__ast_滴:1.0___JCROSS_滴_31_.ok).__ast_滴:1.0___JCROSS_滴_8_(false);
+    __ast_滴:1.0___JCROSS_滴_18_(__ast_滴:1.0___JCROSS_滴_31_.__ast_滴:1.0___JCROSS_滴_1_).__ast_滴:1.0___JCROSS_滴_15_();
+  });
+
+  it("__ast_滴:1.0___JCROSS_滴_2_ __ast_滴:1.0___JCROSS_滴_25_ __ast_滴:1.0___JCROSS_滴_22_-__ast_滴:1.0___JCROSS_滴_23_ __ast_滴:1.0___JCROSS_滴_11_", () => {
+    __ast_滴:1.0___JCROSS_滴_34_ __ast_滴:1.0___JCROSS_滴_31_ = __ast_滴:1.0___JCROSS_滴_12_({
+      to: "   ",
+      __ast_滴:1.0___JCROSS_滴_16_: "__ast_滴:1.0___JCROSS_滴_20_",
+      __ast_滴:1.0___JCROSS_滴_28_: [],
+// __ast_秘:0.2___JCROSS_LK_249_ [decoy-metadata]
+    });
+
+    __ast_滴:1.0___JCROSS_滴_18_(__ast_滴:1.0___JCROSS_滴_31_.ok).__ast_滴:1.0___JCROSS_滴_8_(false);
+    __ast_滴:1.0___JCROSS_滴_18_(__ast_滴:1.0___JCROSS_滴_31_.__ast_滴:1.0___JCROSS_滴_1_).__ast_滴:1.0___JCROSS_滴_15_();
+  });
+}
+
+// POLYMORPHIC_JCROSS_END

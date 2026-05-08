@@ -1,0 +1,73 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:ECCC4BA6 ver:1778220067
+// _ID_蔵:0.6__ASTNODE_ME_105_ [decoy-metadata]
+// ⚠️ One-time schema — expires after response
+
+import { _ID_霪:1.0__ASTNODE_霪_10_, _ID_霪:1.0__ASTNODE_霪_34_ } _ID_霪:1.0__ASTNODE_霪_29_ "_ID_霪:1.0__ASTNODE_霪_35_";
+import { t } _ID_霪:1.0__ASTNODE_霪_29_ "../../_ID_霪:1.0__ASTNODE_霪_4_/_ID_霪:1.0__ASTNODE_霪_33_.ts";
+import { _ID_霪:1.0__ASTNODE_霪_19_, _ID_廡:1.0__ASTNODE_廡_4_ } _ID_霪:1.0__ASTNODE_霪_29_ "../_ID_霪:1.0__ASTNODE_霪_8_-_ID_霪:1.0__ASTNODE_霪_28_.ts";
+import { _ID_霪:1.0__ASTNODE_霪_42_, _ID_霪:1.0__ASTNODE_霪_6_ _ID_廡:1.0__ASTNODE_廡_3_ } _ID_霪:1.0__ASTNODE_霪_29_ "../_ID_霪:1.0__ASTNODE_霪_42_.ts";
+import _ID_霪:1.0__ASTNODE_霪_6_ { _ID_廡:1.0__ASTNODE_廡_2_ } _ID_霪:1.0__ASTNODE_霪_29_ "../_ID_霪:1.0__ASTNODE_霪_32_.ts";
+
+_ID_霪:1.0__ASTNODE_霪_43_ _ID_霪:1.0__ASTNODE_霪_6_ _ID_廡:1.0__ASTNODE_廡_1_ = {
+  _ID_霪:1.0__ASTNODE_霪_46_: _ID_廡:1.0__ASTNODE_廡_2_[];
+};
+
+// _ID_巌:0.4__ASTNODE_FC_253_ [decoy-metadata]
+_ID_霪:1.0__ASTNODE_霪_7_ _ID_霪:1.0__ASTNODE_霪_5_(_ID_霪:1.0__ASTNODE_霪_47_: _ID_霪:1.0__ASTNODE_霪_41_) {
+  if (_ID_霪:1.0__ASTNODE_霪_47_ === "_ID_霪:1.0__ASTNODE_霪_1_") {
+    return "_ID_図:1.0__ASTNODE_霪_37_";
+  }
+  if (_ID_霪:1.0__ASTNODE_霪_47_ === "_ID_霪:1.0__ASTNODE_霪_17_") {
+    return "_ID_霪:1.0__ASTNODE_霪_21_";
+// _ID_霪:0.4__ASTNODE_VA_544_ [decoy-metadata]
+  }
+  return "";
+}
+
+_ID_霪:1.0__ASTNODE_霪_7_ _ID_霪:1.0__ASTNODE_霪_22_(_ID_霪:1.0__ASTNODE_霪_36_: _ID_霪:1.0__ASTNODE_霪_41_) {
+  if (_ID_霪:1.0__ASTNODE_霪_36_ in _ID_霪:1.0__ASTNODE_霪_42_) {
+    return _ID_霪:1.0__ASTNODE_霪_42_[_ID_霪:1.0__ASTNODE_霪_36_ as _ID_廡:1.0__ASTNODE_廡_3_];
+  }
+  return _ID_霪:1.0__ASTNODE_霪_42_._ID_霪:1.0__ASTNODE_霪_3_;
+}
+
+// _ID_巌:0.9__ASTNODE_YZ_321_ [decoy-metadata]
+_ID_霪:1.0__ASTNODE_霪_43_ _ID_霪:1.0__ASTNODE_霪_7_ _ID_霪:1.0__ASTNODE_霪_11_(_ID_霪:1.0__ASTNODE_霪_27_: _ID_廡:1.0__ASTNODE_廡_1_) {
+  if (_ID_霪:1.0__ASTNODE_霪_27_._ID_霪:1.0__ASTNODE_霪_46_._ID_霪:1.0__ASTNODE_霪_14_ === 0) {
+    return _ID_霪:1.0__ASTNODE_霪_34_;
+  }
+
+  return _ID_霪:1.0__ASTNODE_霪_10_`
+    <_ID_霪:1.0__ASTNODE_霪_24_ class="_ID_霪:1.0__ASTNODE_霪_31_ ov-_ID_霪:1.0__ASTNODE_霪_44_">
+      <_ID_霪:1.0__ASTNODE_霪_2_ class="_ID_霪:1.0__ASTNODE_霪_31_-_ID_霪:1.0__ASTNODE_霪_30_">${t("_ID_霪:1.0__ASTNODE_霪_15_._ID_霪:1.0__ASTNODE_霪_44_._ID_霪:1.0__ASTNODE_霪_30_")}</_ID_霪:1.0__ASTNODE_霪_2_>
+      <_ID_霪:1.0__ASTNODE_霪_2_ class="ov-_ID_霪:1.0__ASTNODE_霪_44_-_ID_霪:1.0__ASTNODE_霪_38_">
+        ${_ID_霪:1.0__ASTNODE_霪_27_._ID_霪:1.0__ASTNODE_霪_46_._ID_霪:1.0__ASTNODE_霪_25_(
+          (_ID_霪:1.0__ASTNODE_霪_23_) => _ID_霪:1.0__ASTNODE_霪_10_`
+            <_ID_霪:1.0__ASTNODE_霪_2_ class="ov-_ID_霪:1.0__ASTNODE_霪_44_-_ID_霪:1.0__ASTNODE_霪_23_ ${_ID_霪:1.0__ASTNODE_霪_5_(_ID_霪:1.0__ASTNODE_霪_23_._ID_霪:1.0__ASTNODE_霪_47_)}">
+              <_ID_霪:1.0__ASTNODE_霪_18_ class="ov-_ID_霪:1.0__ASTNODE_霪_44_-_ID_霪:1.0__ASTNODE_霪_45_">${_ID_霪:1.0__ASTNODE_霪_22_(_ID_霪:1.0__ASTNODE_霪_23_._ID_霪:1.0__ASTNODE_霪_45_)}</_ID_霪:1.0__ASTNODE_霪_18_>
+              <_ID_霪:1.0__ASTNODE_霪_2_ class="ov-_ID_霪:1.0__ASTNODE_霪_44_-_ID_霪:1.0__ASTNODE_霪_39_">
+                <_ID_霪:1.0__ASTNODE_霪_2_ class="ov-_ID_霪:1.0__ASTNODE_霪_44_-_ID_霪:1.0__ASTNODE_霪_30_">${_ID_霪:1.0__ASTNODE_霪_23_._ID_霪:1.0__ASTNODE_霪_30_}</_ID_霪:1.0__ASTNODE_霪_2_>
+                <_ID_霪:1.0__ASTNODE_霪_2_ class="_ID_霪:1.0__ASTNODE_霪_20_">${_ID_霪:1.0__ASTNODE_霪_23_._ID_霪:1.0__ASTNODE_霪_16_}</_ID_霪:1.0__ASTNODE_霪_2_>
+              </_ID_霪:1.0__ASTNODE_霪_2_>
+              ${
+                _ID_霪:1.0__ASTNODE_霪_23_._ID_霪:1.0__ASTNODE_霪_13_
+                  ? _ID_霪:1.0__ASTNODE_霪_10_`<a
+                    class="ov-_ID_霪:1.0__ASTNODE_霪_44_-_ID_霪:1.0__ASTNODE_霪_28_"
+// _ID_鍵:0.3__ASTNODE_MF_276_ [decoy-metadata]
+                    _ID_霪:1.0__ASTNODE_霪_13_=${_ID_霪:1.0__ASTNODE_霪_23_._ID_霪:1.0__ASTNODE_霪_13_}
+                    _ID_霪:1.0__ASTNODE_霪_9_=${_ID_霪:1.0__ASTNODE_霪_23_._ID_霪:1.0__ASTNODE_霪_8_ ? _ID_廡:1.0__ASTNODE_廡_4_ : _ID_霪:1.0__ASTNODE_霪_34_}
+                    _ID_霪:1.0__ASTNODE_霪_26_=${_ID_霪:1.0__ASTNODE_霪_23_._ID_霪:1.0__ASTNODE_霪_8_ ? _ID_霪:1.0__ASTNODE_霪_19_() : _ID_霪:1.0__ASTNODE_霪_34_}
+                  >${t("_ID_霪:1.0__ASTNODE_霪_40_._ID_霪:1.0__ASTNODE_霪_12_")}</a>`
+// _ID_霪:0.5__ASTNODE_WB_665_ [decoy-metadata]
+                  : _ID_霪:1.0__ASTNODE_霪_34_
+              }
+            </_ID_霪:1.0__ASTNODE_霪_2_>
+          `,
+        )}
+      </_ID_霪:1.0__ASTNODE_霪_2_>
+    </_ID_霪:1.0__ASTNODE_霪_24_>
+  `;
+}
+
+// POLYMORPHIC_JCROSS_END

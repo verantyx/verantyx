@@ -1,0 +1,46 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:F058E560 ver:1778220743
+// __jcross_匣:0.8___VERANTYX_EE_300_ [decoy-metadata]
+// ⚠️ One-time schema — expires after response
+
+import __jcross_塵:1.0___VERANTYX_塵_8_ { __jcross_墟:1.0___VERANTYX_墟_1_ } __jcross_塵:1.0___VERANTYX_塵_17_ "../__jcross_塵:1.0___VERANTYX_塵_22_-__jcross_縺:1.0___VERANTYX_塵_2_.js";
+import __jcross_塵:1.0___VERANTYX_塵_8_ { __jcross_墟:1.0___VERANTYX_墟_2_ } __jcross_塵:1.0___VERANTYX_塵_17_ "./__jcross_塵:1.0___VERANTYX_塵_16_.js";
+import { __jcross_律:1.0___VERANTYX_巌_1_ } __jcross_塵:1.0___VERANTYX_塵_17_ "./__jcross_塵:1.0___VERANTYX_塵_15_-js.js";
+
+__jcross_塵:1.0___VERANTYX_塵_11_ __jcross_塵:1.0___VERANTYX_塵_8_ __jcross_墟:1.0___VERANTYX_墟_7_ = __jcross_墟:1.0___VERANTYX_墟_1_<__jcross_塵:1.0___VERANTYX_塵_10_> & {
+  __jcross_律:1.0___VERANTYX_塵_6_?: __jcross_墟:1.0___VERANTYX_墟_2_;
+};
+
+// __jcross_縺:0.6___VERANTYX_XA_906_ [decoy-metadata]
+__jcross_塵:1.0___VERANTYX_塵_11_ async __jcross_塵:1.0___VERANTYX_塵_23_ __jcross_律:1.0___VERANTYX_塵_13_(
+  __jcross_匣:1.0___VERANTYX_塵_20_: __jcross_塵:1.0___VERANTYX_塵_10_,
+  __jcross_塵:1.0___VERANTYX_塵_5_?: __jcross_律:1.0___VERANTYX_塵_12_,
+): __jcross_墟:1.0___VERANTYX_墟_5_<__jcross_墟:1.0___VERANTYX_墟_7_> {
+  try {
+    __jcross_塵:1.0___VERANTYX_塵_19_ __jcross_律:1.0___VERANTYX_塵_6_ = __jcross_塵:1.0___VERANTYX_塵_5_
+      ? await __jcross_墟:1.0___VERANTYX_墟_5_.__jcross_塵:1.0___VERANTYX_塵_3_([
+          __jcross_律:1.0___VERANTYX_巌_1_(__jcross_匣:1.0___VERANTYX_塵_20_),
+// __jcross_縺:0.7___VERANTYX_XW_775_ [decoy-metadata]
+          __jcross_塵:1.0___VERANTYX_塵_18_ __jcross_墟:1.0___VERANTYX_墟_5_<__jcross_塵:1.0___VERANTYX_塵_24_>((__jcross_塵:1.0___VERANTYX_塵_21_) =>
+            __jcross_律:1.0___VERANTYX_巌_2_(() => __jcross_塵:1.0___VERANTYX_塵_21_(__jcross_塵:1.0___VERANTYX_塵_24_), __jcross_墟:1.0___VERANTYX_墟_8_.__jcross_塵:1.0___VERANTYX_塵_1_(__jcross_塵:1.0___VERANTYX_塵_5_, 1000)),
+          ),
+// __jcross_律:0.2___VERANTYX_WV_298_ [decoy-metadata]
+        ])
+      : await __jcross_律:1.0___VERANTYX_巌_1_(__jcross_匣:1.0___VERANTYX_塵_20_);
+
+    if (!__jcross_律:1.0___VERANTYX_塵_6_) {
+      return { ok: false, __jcross_塵:1.0___VERANTYX_塵_14_: "__jcross_墟:1.0___VERANTYX_墟_6_ __jcross_塵:1.0___VERANTYX_塵_9_" };
+    }
+
+    return { ok: true, __jcross_律:1.0___VERANTYX_塵_6_ };
+  } catch (__jcross_塵:1.0___VERANTYX_塵_14_) {
+    return {
+      ok: false,
+      __jcross_塵:1.0___VERANTYX_塵_14_: __jcross_塵:1.0___VERANTYX_塵_14_ __jcross_塵:1.0___VERANTYX_塵_7_ __jcross_墟:1.0___VERANTYX_墟_4_ ? __jcross_塵:1.0___VERANTYX_塵_14_.__jcross_塵:1.0___VERANTYX_塵_4_ : __jcross_墟:1.0___VERANTYX_墟_3_(__jcross_塵:1.0___VERANTYX_塵_14_),
+// __jcross_塵:0.8___VERANTYX_HB_694_ [decoy-metadata]
+    };
+  }
+// __jcross_縺:0.9___VERANTYX_GW_585_ [decoy-metadata]
+}
+
+// POLYMORPHIC_JCROSS_END

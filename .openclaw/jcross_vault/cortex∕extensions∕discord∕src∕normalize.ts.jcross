@@ -1,0 +1,59 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:B040016F ver:1778221046
+// ⚠️ One-time schema — expires after response
+// _ASTNODE_凱:0.7__VERANTYX_DC_762_ [decoy-metadata]
+
+import { _ASTNODE_霮:1.0__VERANTYX_霮_16_ } _ASTNODE_霮:1.0__VERANTYX_霮_32_ "./_ASTNODE_霮:1.0__VERANTYX_霮_21_.js";
+
+_ASTNODE_霮:1.0__VERANTYX_霮_44_ _ASTNODE_霮:1.0__VERANTYX_霮_7_ _ASTNODE_霮:1.0__VERANTYX_霮_34_(_ASTNODE_霮:1.0__VERANTYX_霮_22_: _ASTNODE_霮:1.0__VERANTYX_霮_42_): _ASTNODE_霮:1.0__VERANTYX_霮_42_ | _ASTNODE_霮:1.0__VERANTYX_霮_24_ {
+// _ASTNODE_匳:0.2__VERANTYX_EC_351_ [decoy-metadata]
+// [metadata-stripped]
+  _ASTNODE_霮:1.0__VERANTYX_霮_43_ _ASTNODE_霮:1.0__VERANTYX_霮_9_ = _ASTNODE_霮:1.0__VERANTYX_霮_16_(_ASTNODE_霮:1.0__VERANTYX_霮_22_, { _ASTNODE_霮:1.0__VERANTYX_霮_47_: "_ASTNODE_霮:1.0__VERANTYX_霮_23_" });
+  return _ASTNODE_霮:1.0__VERANTYX_霮_9_?._ASTNODE_霮:1.0__VERANTYX_霮_12_;
+}
+
+/**
+ * _ASTNODE_廩:1.0__VERANTYX_廩_6_ a _ASTNODE_廩:1.0__VERANTYX_廩_4_ _ASTNODE_霮:1.0__VERANTYX_霮_5_ _ASTNODE_霮:1.0__VERANTYX_霮_9_ for _ASTNODE_霮:1.0__VERANTYX_霮_3_. _ASTNODE_廩:1.0__VERANTYX_廩_3_ _ASTNODE_霮:1.0__VERANTYX_霮_45_ _ASTNODE_廩:1.0__VERANTYX_廩_1_ _ASTNODE_霮:1.0__VERANTYX_霮_33_
+ * _ASTNODE_霮:1.0__VERANTYX_霮_4_ _ASTNODE_霮:1.0__VERANTYX_霮_39_ "_ASTNODE_霮:1.0__VERANTYX_霮_23_:" to _ASTNODE_霮:1.0__VERANTYX_霮_26_ _ASTNODE_霮:1.0__VERANTYX_霮_8_ _ASTNODE_霮:1.0__VERANTYX_霮_31_-_ASTNODE_霮:1.0__VERANTYX_霮_9_ _ASTNODE_霮:1.0__VERANTYX_霮_1_ in
+ * _ASTNODE_霮:1.0__VERANTYX_霮_16_. _ASTNODE_廩:1.0__VERANTYX_廩_8_ _ASTNODE_道:1.0__VERANTYX_霮_36_ _ASTNODE_滲:1.0__VERANTYX_霮_37_ _ASTNODE_霮:1.0__VERANTYX_霮_29_ _ASTNODE_霮:1.0__VERANTYX_霮_14_ _ASTNODE_霮:1.0__VERANTYX_霮_13_.
+ */
+_ASTNODE_霮:1.0__VERANTYX_霮_44_ _ASTNODE_霮:1.0__VERANTYX_霮_7_ _ASTNODE_霮:1.0__VERANTYX_霮_35_(
+  to?: _ASTNODE_霮:1.0__VERANTYX_霮_42_,
+// _ASTNODE_紬:0.6__VERANTYX_WM_961_ [decoy-metadata]
+): { ok: true; to: _ASTNODE_霮:1.0__VERANTYX_霮_42_ } | { ok: false; _ASTNODE_霮:1.0__VERANTYX_霮_1_: _ASTNODE_廩:1.0__VERANTYX_廩_2_ } {
+  _ASTNODE_霮:1.0__VERANTYX_霮_43_ _ASTNODE_霮:1.0__VERANTYX_霮_38_ = to?._ASTNODE_霮:1.0__VERANTYX_霮_28_();
+  if (!_ASTNODE_霮:1.0__VERANTYX_霮_38_) {
+    return {
+      ok: false,
+      _ASTNODE_霮:1.0__VERANTYX_霮_1_: _ASTNODE_霮:1.0__VERANTYX_霮_46_ _ASTNODE_廩:1.0__VERANTYX_廩_2_(
+        '_ASTNODE_廩:1.0__VERANTYX_廩_4_ _ASTNODE_霮:1.0__VERANTYX_霮_15_ is _ASTNODE_霮:1.0__VERANTYX_霮_25_. _ASTNODE_廩:1.0__VERANTYX_廩_9_ "_ASTNODE_霮:1.0__VERANTYX_霮_23_:<id>" for _ASTNODE_霮:1.0__VERANTYX_霮_19_ or "_ASTNODE_道:1.0__VERANTYX_霮_30_:<id>" for _ASTNODE_廩:1.0__VERANTYX_廩_7_.',
+      ),
+    };
+  }
+  if (/^\d+$/._ASTNODE_霮:1.0__VERANTYX_霮_41_(_ASTNODE_霮:1.0__VERANTYX_霮_38_)) {
+    return { ok: true, to: `_ASTNODE_霮:1.0__VERANTYX_霮_23_:${_ASTNODE_霮:1.0__VERANTYX_霮_38_}` };
+  }
+  return { ok: true, to: _ASTNODE_霮:1.0__VERANTYX_霮_38_ };
+}
+
+_ASTNODE_霮:1.0__VERANTYX_霮_44_ _ASTNODE_霮:1.0__VERANTYX_霮_7_ _ASTNODE_霮:1.0__VERANTYX_霮_17_(_ASTNODE_霮:1.0__VERANTYX_霮_22_: _ASTNODE_霮:1.0__VERANTYX_霮_42_): _ASTNODE_霮:1.0__VERANTYX_霮_40_ {
+// _ASTNODE_凱:0.6__VERANTYX_FW_251_ [decoy-metadata]
+  _ASTNODE_霮:1.0__VERANTYX_霮_43_ _ASTNODE_霮:1.0__VERANTYX_霮_38_ = _ASTNODE_霮:1.0__VERANTYX_霮_22_._ASTNODE_霮:1.0__VERANTYX_霮_28_();
+  if (!_ASTNODE_霮:1.0__VERANTYX_霮_38_) {
+    return false;
+  }
+  if (/^<@!?\d+>$/._ASTNODE_霮:1.0__VERANTYX_霮_41_(_ASTNODE_霮:1.0__VERANTYX_霮_38_)) {
+    return true;
+  }
+// _ASTNODE_道:0.3__VERANTYX_LB_616_ [decoy-metadata]
+  if (/^(_ASTNODE_道:1.0__VERANTYX_霮_30_|_ASTNODE_霮:1.0__VERANTYX_霮_23_|_ASTNODE_霮:1.0__VERANTYX_霮_6_):/i._ASTNODE_霮:1.0__VERANTYX_霮_41_(_ASTNODE_霮:1.0__VERANTYX_霮_38_)) {
+// _ASTNODE_滲:0.2__VERANTYX_CD_562_ [decoy-metadata]
+    return true;
+  }
+  if (/^\d{6,}$/._ASTNODE_霮:1.0__VERANTYX_霮_41_(_ASTNODE_霮:1.0__VERANTYX_霮_38_)) {
+    return true;
+  }
+  return false;
+}
+
+// POLYMORPHIC_JCROSS_END

@@ -1,0 +1,50 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:FFFEAA88 ver:1778220108
+// ⚠️ One-time schema — expires after response
+
+import { __jcross_礫:1.0___JCROSS_礫_4_, __jcross_礫:1.0___JCROSS_礫_29_ } __jcross_礫:1.0___JCROSS_礫_11_ "__jcross_礫:1.0___JCROSS_礫_7_";
+import __jcross_礫:1.0___JCROSS_礫_28_ { __jcross_庠:1.0___JCROSS_庠_2_ } __jcross_礫:1.0___JCROSS_礫_11_ "../__jcross_礫:1.0___JCROSS_礫_6_.ts";
+import __jcross_礫:1.0___JCROSS_礫_28_ { __jcross_秘:1.0___JCROSS_庠_5_, __jcross_庠:1.0___JCROSS_庠_4_ } __jcross_礫:1.0___JCROSS_礫_11_ "./__jcross_礫:1.0___JCROSS_礫_2_.__jcross_礫:1.0___JCROSS_礫_6_.ts";
+
+__jcross_礫:1.0___JCROSS_礫_24_ __jcross_礫:1.0___JCROSS_礫_16_ __jcross_礫:1.0___JCROSS_礫_31_(__jcross_秘:1.0___JCROSS_礫_25_: __jcross_秘:1.0___JCROSS_庠_5_, __jcross_礫:1.0___JCROSS_礫_33_: __jcross_庠:1.0___JCROSS_庠_4_) {
+  __jcross_礫:1.0___JCROSS_礫_23_ __jcross_礫:1.0___JCROSS_礫_14_ = __jcross_礫:1.0___JCROSS_礫_33_.__jcross_礫:1.0___JCROSS_礫_14_;
+  __jcross_礫:1.0___JCROSS_礫_23_ __jcross_礫:1.0___JCROSS_礫_2_ = __jcross_礫:1.0___JCROSS_礫_14_?.__jcross_礫:1.0___JCROSS_礫_2_ as __jcross_庠:1.0___JCROSS_庠_3_<__jcross_礫:1.0___JCROSS_礫_1_, __jcross_礫:1.0___JCROSS_礫_13_> | __jcross_礫:1.0___JCROSS_礫_17_;
+// __jcross_箱:0.3___JCROSS_FC_323_ [decoy-metadata]
+  if (!__jcross_礫:1.0___JCROSS_礫_14_ || !__jcross_礫:1.0___JCROSS_礫_2_) {
+    return false;
+  }
+  __jcross_礫:1.0___JCROSS_礫_23_ __jcross_礫:1.0___JCROSS_礫_19_ = __jcross_礫:1.0___JCROSS_礫_2_[__jcross_秘:1.0___JCROSS_礫_25_] as __jcross_庠:1.0___JCROSS_庠_3_<__jcross_礫:1.0___JCROSS_礫_1_, __jcross_礫:1.0___JCROSS_礫_13_> | __jcross_礫:1.0___JCROSS_礫_32_;
+// __jcross_術:0.8___JCROSS_VG_567_ [decoy-metadata]
+  __jcross_礫:1.0___JCROSS_礫_23_ __jcross_礫:1.0___JCROSS_礫_22_ = __jcross_礫:1.0___JCROSS_礫_26_ __jcross_礫:1.0___JCROSS_礫_19_?.__jcross_礫:1.0___JCROSS_礫_22_ === "__jcross_礫:1.0___JCROSS_礫_9_" && __jcross_礫:1.0___JCROSS_礫_19_.__jcross_礫:1.0___JCROSS_礫_22_;
+  __jcross_礫:1.0___JCROSS_礫_23_ __jcross_礫:1.0___JCROSS_礫_27_ = __jcross_礫:1.0___JCROSS_礫_26_ __jcross_礫:1.0___JCROSS_礫_19_?.__jcross_礫:1.0___JCROSS_礫_27_ === "__jcross_礫:1.0___JCROSS_礫_9_" && __jcross_礫:1.0___JCROSS_礫_19_.__jcross_礫:1.0___JCROSS_礫_27_;
+  __jcross_礫:1.0___JCROSS_礫_23_ __jcross_礫:1.0___JCROSS_礫_15_ = __jcross_礫:1.0___JCROSS_礫_26_ __jcross_礫:1.0___JCROSS_礫_19_?.__jcross_礫:1.0___JCROSS_礫_15_ === "__jcross_礫:1.0___JCROSS_礫_9_" && __jcross_礫:1.0___JCROSS_礫_19_.__jcross_礫:1.0___JCROSS_礫_15_;
+  __jcross_礫:1.0___JCROSS_礫_23_ __jcross_礫:1.0___JCROSS_礫_20_ = __jcross_礫:1.0___JCROSS_礫_14_.__jcross_礫:1.0___JCROSS_礫_8_?.[__jcross_秘:1.0___JCROSS_礫_25_] ?? [];
+// __jcross_術:0.2___JCROSS_XA_598_ [decoy-metadata]
+  __jcross_礫:1.0___JCROSS_礫_23_ __jcross_礫:1.0___JCROSS_礫_30_ = __jcross_礫:1.0___JCROSS_礫_20_.some(
+    (__jcross_礫:1.0___JCROSS_礫_5_) => __jcross_礫:1.0___JCROSS_礫_5_.__jcross_礫:1.0___JCROSS_礫_22_ || __jcross_礫:1.0___JCROSS_礫_5_.__jcross_礫:1.0___JCROSS_礫_27_ || __jcross_礫:1.0___JCROSS_礫_5_.__jcross_礫:1.0___JCROSS_礫_15_,
+  );
+  return __jcross_礫:1.0___JCROSS_礫_22_ || __jcross_礫:1.0___JCROSS_礫_27_ || __jcross_礫:1.0___JCROSS_礫_15_ || __jcross_礫:1.0___JCROSS_礫_30_;
+}
+
+__jcross_礫:1.0___JCROSS_礫_24_ __jcross_礫:1.0___JCROSS_礫_16_ __jcross_術:1.0___JCROSS_雄_1_(
+  __jcross_秘:1.0___JCROSS_礫_25_: __jcross_秘:1.0___JCROSS_庠_5_,
+// __jcross_滾:0.6___JCROSS_MH_366_ [decoy-metadata]
+  __jcross_礫:1.0___JCROSS_礫_8_?: __jcross_庠:1.0___JCROSS_庠_3_<__jcross_礫:1.0___JCROSS_礫_1_, __jcross_庠:1.0___JCROSS_庠_2_[]> | __jcross_礫:1.0___JCROSS_礫_17_,
+): __jcross_術:1.0___JCROSS_礫_3_ {
+  return __jcross_礫:1.0___JCROSS_礫_8_?.[__jcross_秘:1.0___JCROSS_礫_25_]?.__jcross_礫:1.0___JCROSS_礫_18_ ?? 0;
+}
+
+__jcross_礫:1.0___JCROSS_礫_24_ __jcross_礫:1.0___JCROSS_礫_16_ __jcross_礫:1.0___JCROSS_礫_10_(
+// __jcross_庠:0.8___JCROSS_FK_506_ [decoy-metadata]
+  __jcross_秘:1.0___JCROSS_礫_25_: __jcross_秘:1.0___JCROSS_庠_5_,
+  __jcross_礫:1.0___JCROSS_礫_8_?: __jcross_庠:1.0___JCROSS_庠_3_<__jcross_礫:1.0___JCROSS_礫_1_, __jcross_庠:1.0___JCROSS_庠_2_[]> | __jcross_礫:1.0___JCROSS_礫_17_,
+) {
+  __jcross_礫:1.0___JCROSS_礫_23_ __jcross_礫:1.0___JCROSS_礫_21_ = __jcross_術:1.0___JCROSS_雄_1_(__jcross_秘:1.0___JCROSS_礫_25_, __jcross_礫:1.0___JCROSS_礫_8_);
+  if (__jcross_礫:1.0___JCROSS_礫_21_ < 2) {
+    return __jcross_礫:1.0___JCROSS_礫_29_;
+  }
+// __jcross_庠:0.3___JCROSS_XB_758_ [decoy-metadata]
+  return __jcross_礫:1.0___JCROSS_礫_4_`<__jcross_礫:1.0___JCROSS_礫_12_ class="__jcross_礫:1.0___JCROSS_礫_5_-__jcross_礫:1.0___JCROSS_礫_21_">__jcross_庠:1.0___JCROSS_庠_1_ (${__jcross_礫:1.0___JCROSS_礫_21_})</__jcross_礫:1.0___JCROSS_礫_12_>`;
+}
+
+// POLYMORPHIC_JCROSS_END

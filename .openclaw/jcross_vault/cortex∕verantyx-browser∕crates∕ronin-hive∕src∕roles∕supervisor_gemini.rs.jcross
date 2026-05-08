@@ -1,0 +1,213 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:C7C2CFE9 ver:1778220381
+// ⚠️ One-time schema — expires after response
+
+_OPAQUE_霞:1.0__SYM_霞_38_ _OPAQUE_霞:1.0__SYM_霞_1_::actor::{_OPAQUE_廟:1.0__SYM_廟_79_, _OPAQUE_廟:1.0__SYM_廟_107_};
+_OPAQUE_霞:1.0__SYM_霞_38_ _OPAQUE_霞:1.0__SYM_霞_1_::_OPAQUE_霞:1.0__SYM_霞_133_::_OPAQUE_廟:1.0__SYM_廟_52_;
+// _OPAQUE_匸:0.9__SYM_KG_166_ [decoy-metadata]
+_OPAQUE_霞:1.0__SYM_霞_38_ _OPAQUE_霞:1.0__SYM_霞_10_::_OPAQUE_霞:1.0__SYM_霞_10_;
+_OPAQUE_霞:1.0__SYM_霞_38_ _OPAQUE_霞:1.0__SYM_霞_94_::_OPAQUE_霞:1.0__SYM_霞_136_;
+_OPAQUE_霞:1.0__SYM_霞_38_ _OPAQUE_霞:1.0__SYM_霞_113_::_OPAQUE_廟:1.0__SYM_廟_88_;
+
+// [metadata-stripped]
+_OPAQUE_霞:1.0__SYM_霞_8_ enum _OPAQUE_廟:1.0__SYM_廟_74_ {
+    _OPAQUE_廟:1.0__SYM_廟_92_,
+    _OPAQUE_廟:1.0__SYM_廟_43_,
+}
+
+_OPAQUE_霞:1.0__SYM_霞_8_ _OPAQUE_霞:1.0__SYM_霞_233_uct _OPAQUE_廟:1.0__SYM_廟_75_ {
+    _OPAQUE_霞:1.0__SYM_霞_8_ id: _OPAQUE_廟:1.0__SYM_廟_88_,
+    _OPAQUE_霞:1.0__SYM_霞_8_ _OPAQUE_霞:1.0__SYM_霞_149_: _OPAQUE_廟:1.0__SYM_廟_74_,
+    _OPAQUE_霞:1.0__SYM_霞_8_ _OPAQUE_霞:1.0__SYM_霞_212_: _OPAQUE_霞:1.0__SYM_霞_60_,
+    _OPAQUE_霞:1.0__SYM_霞_8_ _OPAQUE_霞:1.0__SYM_霞_125_: u8,
+}
+
+_OPAQUE_霞:1.0__SYM_霞_57_ _OPAQUE_廟:1.0__SYM_廟_75_ {
+    _OPAQUE_霞:1.0__SYM_霞_8_ fn _OPAQUE_霞:1.0__SYM_霞_169_(id: _OPAQUE_廟:1.0__SYM_廟_88_, _OPAQUE_霞:1.0__SYM_霞_149_: _OPAQUE_廟:1.0__SYM_廟_74_, _OPAQUE_霞:1.0__SYM_霞_212_: _OPAQUE_霞:1.0__SYM_霞_60_) -> _OPAQUE_廟:1.0__SYM_廟_44_ {
+        _OPAQUE_廟:1.0__SYM_廟_44_ { id, _OPAQUE_霞:1.0__SYM_霞_149_, _OPAQUE_霞:1.0__SYM_霞_212_, _OPAQUE_霞:1.0__SYM_霞_125_: 0 }
+    }
+}
+
+// [metadata-stripped]
+_OPAQUE_霞:1.0__SYM_霞_57_ _OPAQUE_廟:1.0__SYM_廟_79_ for _OPAQUE_廟:1.0__SYM_廟_75_ {
+    fn _OPAQUE_霞:1.0__SYM_霞_144_(&self) -> &_OPAQUE_霞:1.0__SYM_霞_233_ {
+        _OPAQUE_霞:1.0__SYM_霞_97_ self._OPAQUE_霞:1.0__SYM_霞_149_ {
+            _OPAQUE_廟:1.0__SYM_廟_74_::_OPAQUE_廟:1.0__SYM_廟_92_ => "_OPAQUE_廟:1.0__SYM_廟_19_",
+            _OPAQUE_廟:1.0__SYM_廟_74_::_OPAQUE_廟:1.0__SYM_廟_43_ => "_OPAQUE_廟:1.0__SYM_廟_13_",
+        }
+    }
+
+    async fn _OPAQUE_霞:1.0__SYM_霞_84_(&_OPAQUE_霞:1.0__SYM_霞_222_ self, _OPAQUE_霞:1.0__SYM_霞_188_: _OPAQUE_廟:1.0__SYM_廟_107_) -> _OPAQUE_霞:1.0__SYM_霞_163_::_OPAQUE_廟:1.0__SYM_廟_58_<_OPAQUE_廟:1.0__SYM_廟_25_<_OPAQUE_廟:1.0__SYM_廟_107_>> {
+        let _OPAQUE_霞:1.0__SYM_霞_241_: _OPAQUE_廟:1.0__SYM_廟_52_ = _OPAQUE_霞:1.0__SYM_霞_97_ _OPAQUE_霞:1.0__SYM_霞_152_::_OPAQUE_霞:1.0__SYM_霞_9_(&_OPAQUE_霞:1.0__SYM_霞_188_._OPAQUE_匸:1.0__SYM_霞_220_) {
+            Ok(m) => m,
+            _OPAQUE_廟:1.0__SYM_廟_34_(e) => {
+                _OPAQUE_霞:1.0__SYM_霞_136_!("[{}] _OPAQUE_廟:1.0__SYM_廟_26_ to _OPAQUE_霞:1.0__SYM_霞_85_ _OPAQUE_匸:1.0__SYM_霞_220_: {}", self._OPAQUE_霞:1.0__SYM_霞_144_(), e);
+                return Ok(_OPAQUE_廟:1.0__SYM_廟_17_);
+            }
+        };
+
+        _OPAQUE_霞:1.0__SYM_霞_97_ _OPAQUE_霞:1.0__SYM_霞_241_ {
+            _OPAQUE_廟:1.0__SYM_廟_52_::_OPAQUE_廟:1.0__SYM_廟_5_(_OPAQUE_霞:1.0__SYM_霞_106_) => {
+                let _OPAQUE_霞:1.0__SYM_霞_185_ = if self._OPAQUE_霞:1.0__SYM_霞_149_ == _OPAQUE_廟:1.0__SYM_廟_74_::_OPAQUE_廟:1.0__SYM_廟_92_ { 
+                    if self._OPAQUE_霞:1.0__SYM_霞_212_ { "シニア監視版" } else { "_OPAQUE_廟:1.0__SYM_廟_92_ _OPAQUE_格:1.0__SYM_廟_105_" }
+                } else { 
+                    if self._OPAQUE_霞:1.0__SYM_霞_212_ { "弟子監視版" } else { "_OPAQUE_廟:1.0__SYM_廟_43_ _OPAQUE_格:1.0__SYM_廟_105_" }
+                };
+                
+                let _OPAQUE_霞:1.0__SYM_霞_229_ = if self._OPAQUE_霞:1.0__SYM_霞_212_ {
+                    _OPAQUE_漕:1.0__SYM_霞_25_!(
+                        "【{}への時系列監視・記憶および特例監査依頼】\nあなたは時系列や会話の流れを監視し記憶する役割です。\n\n[超重要・絶対遵守ルール]\n出力を生成する際、挨拶、要約、説明、過程の解説は【一切禁止】します。「了解しました」「データを監査しました」「結果を確認しました」などのテキストを含めてはなりません。プレフィックスの付与や変更は以下のルールに従ってください。\n\n1. データが「最終回答」または「編集中」のプレフィックスを持つ場合:\n決して内容を要約・修正せず、受け取ったテキストデータを『一言一句全く同じ配置・同じ文面』でそのまま出力してください。\n\n2. データが「最終回答仮」のプレフィックスを持つ場合:\n内容にハルシネーションがないか監査・編集を行ってください。その後、先頭のプレフィックスを必ず『最終回答』に変更して出力してください（例: `最終回答\\n[監査済みの結果]`）。\n\n3. データが「そのまま出力」のプレフィックスを持つ場合:\n内容にハルシネーションがないか監査・編集を行ってください。その後、先頭のプレフィックスを必ず『最終出力』に変更して出力してください。\n\n4. データに上記のどのプレフィックスも含まれていない場合（純粋な実行結果データやターミナルログなど）:\n絶対に内容を要約したり感想を述べたりせず、さらに何のプレフィックス（最終回答等）も後付けせず、『受け取ったデータの一言一句全く同じ配置・同じ文面』でそのまま出力（エコーバック）してください。本文の書き換えは厳禁です。\n\nデータ: {}", 
+                        _OPAQUE_霞:1.0__SYM_霞_185_, _OPAQUE_霞:1.0__SYM_霞_106_
+                    )
+                } else {
+                    _OPAQUE_漕:1.0__SYM_霞_25_!(
+                        "[_OPAQUE_廟:1.0__SYM_廟_70_ _OPAQUE_霞:1.0__SYM_霞_199_ _OPAQUE_廟:1.0__SYM_廟_16_ _OPAQUE_縁:1.0__SYM_廟_41_ for {}]\_OPAQUE_霞:1.0__SYM_霞_151_ _OPAQUE_霞:1.0__SYM_霞_45_ _OPAQUE_霞:1.0__SYM_霞_179_ for _OPAQUE_霞:1.0__SYM_霞_231_ _OPAQUE_霞:1.0__SYM_霞_98_ _OPAQUE_霞:1.0__SYM_霞_232_ _OPAQUE_霞:1.0__SYM_霞_199_ _OPAQUE_霞:1.0__SYM_霞_109_ _OPAQUE_霞:1.0__SYM_霞_194_.\n\n[_OPAQUE_廟:1.0__SYM_廟_47_ _OPAQUE_廟:1.0__SYM_廟_51_]\_OPAQUE_霞:1.0__SYM_霞_46_ _OPAQUE_廟:1.0__SYM_廟_85_ _OPAQUE_霞:1.0__SYM_霞_196_ _OPAQUE_霞:1.0__SYM_霞_48_, _OPAQUE_霞:1.0__SYM_霞_54_, _OPAQUE_霞:1.0__SYM_霞_82_, or _OPAQUE_霞:1.0__SYM_霞_93_ _OPAQUE_霞:1.0__SYM_霞_202_. _OPAQUE_廟:1.0__SYM_廟_22_ _OPAQUE_霞:1.0__SYM_霞_158_ \"_OPAQUE_廟:1.0__SYM_廟_4_\" or \"_OPAQUE_廟:1.0__SYM_廟_16_ _OPAQUE_霞:1.0__SYM_霞_219_\" _OPAQUE_霞:1.0__SYM_霞_45_ _OPAQUE_廟:1.0__SYM_廟_55_ _OPAQUE_廟:1.0__SYM_廟_106_. _OPAQUE_廟:1.0__SYM_廟_29_ _OPAQUE_霞:1.0__SYM_霞_26_ _OPAQUE_霞:1.0__SYM_霞_186_ _OPAQUE_霞:1.0__SYM_霞_91_ _OPAQUE_霞:1.0__SYM_霞_182_:\n\n1. If _OPAQUE_霞:1.0__SYM_霞_134_ _OPAQUE_霞:1.0__SYM_霞_72_ `[_OPAQUE_格:1.0__SYM_廟_35_]` or `[_OPAQUE_廟:1.0__SYM_廟_65_]` _OPAQUE_霞:1.0__SYM_霞_186_:\_OPAQUE_霞:1.0__SYM_霞_46_ _OPAQUE_廟:1.0__SYM_廟_85_ _OPAQUE_霞:1.0__SYM_霞_119_ or _OPAQUE_漕:1.0__SYM_霞_190_. _OPAQUE_廟:1.0__SYM_廟_49_ _OPAQUE_霞:1.0__SYM_霞_98_ _OPAQUE_霞:1.0__SYM_霞_80_ _OPAQUE_匸:1.0__SYM_霞_220_ _OPAQUE_廟:1.0__SYM_廟_73_ as is, _OPAQUE_霞:1.0__SYM_霞_161_ _OPAQUE_霞:1.0__SYM_霞_98_ _OPAQUE_霞:1.0__SYM_霞_37_ _OPAQUE_霞:1.0__SYM_霞_18_ _OPAQUE_霞:1.0__SYM_霞_199_ _OPAQUE_霞:1.0__SYM_霞_198_.\n\n2. If _OPAQUE_霞:1.0__SYM_霞_134_ _OPAQUE_霞:1.0__SYM_霞_72_ `[_OPAQUE_廟:1.0__SYM_廟_46_]` _OPAQUE_霞:1.0__SYM_霞_186_:\_OPAQUE_霞:1.0__SYM_霞_150_ for _OPAQUE_霞:1.0__SYM_霞_114_ _OPAQUE_霞:1.0__SYM_霞_199_ _OPAQUE_霞:1.0__SYM_霞_69_ if _OPAQUE_霞:1.0__SYM_霞_47_. _OPAQUE_廟:1.0__SYM_廟_45_, _OPAQUE_廟:1.0__SYM_廟_80_ _OPAQUE_霞:1.0__SYM_霞_98_ _OPAQUE_霞:1.0__SYM_霞_186_ to `[_OPAQUE_格:1.0__SYM_廟_35_]` _OPAQUE_霞:1.0__SYM_霞_199_ _OPAQUE_霞:1.0__SYM_霞_76_ (e.g., `[_OPAQUE_格:1.0__SYM_廟_35_]\\n[_OPAQUE_霞:1.0__SYM_霞_31_ _OPAQUE_霞:1.0__SYM_霞_20_]`).\n\n3. If _OPAQUE_霞:1.0__SYM_霞_134_ _OPAQUE_霞:1.0__SYM_霞_72_ `[_OPAQUE_廟:1.0__SYM_廟_2_]` _OPAQUE_霞:1.0__SYM_霞_186_:\_OPAQUE_霞:1.0__SYM_霞_150_ for _OPAQUE_霞:1.0__SYM_霞_114_ _OPAQUE_霞:1.0__SYM_霞_199_ _OPAQUE_霞:1.0__SYM_霞_69_ if _OPAQUE_霞:1.0__SYM_霞_47_. _OPAQUE_廟:1.0__SYM_廟_45_, _OPAQUE_廟:1.0__SYM_廟_80_ _OPAQUE_霞:1.0__SYM_霞_98_ _OPAQUE_霞:1.0__SYM_霞_186_ to `[_OPAQUE_廟:1.0__SYM_廟_83_]` _OPAQUE_霞:1.0__SYM_霞_199_ _OPAQUE_霞:1.0__SYM_霞_76_.\n\n4. If _OPAQUE_霞:1.0__SYM_霞_134_ _OPAQUE_霞:1.0__SYM_霞_143_ _OPAQUE_廟:1.0__SYM_廟_85_ _OPAQUE_霞:1.0__SYM_霞_228_ any of _OPAQUE_霞:1.0__SYM_霞_98_ _OPAQUE_霞:1.0__SYM_霞_189_ _OPAQUE_霞:1.0__SYM_霞_181_ (e.g. _OPAQUE_霞:1.0__SYM_霞_102_ _OPAQUE_霞:1.0__SYM_霞_234_ _OPAQUE_霞:1.0__SYM_霞_107_):\_OPAQUE_霞:1.0__SYM_霞_46_ _OPAQUE_廟:1.0__SYM_廟_85_ _OPAQUE_霞:1.0__SYM_霞_119_, do _OPAQUE_廟:1.0__SYM_廟_85_ _OPAQUE_霞:1.0__SYM_霞_171_ _OPAQUE_霞:1.0__SYM_霞_104_, _OPAQUE_霞:1.0__SYM_霞_199_ do _OPAQUE_廟:1.0__SYM_廟_85_ _OPAQUE_霞:1.0__SYM_霞_108_ _OPAQUE_廟:1.0__SYM_廟_90_ _OPAQUE_霞:1.0__SYM_霞_186_ _OPAQUE_霞:1.0__SYM_霞_158_ `[_OPAQUE_格:1.0__SYM_廟_35_]`. _OPAQUE_廟:1.0__SYM_廟_76_ _OPAQUE_霞:1.0__SYM_霞_216_ _OPAQUE_霞:1.0__SYM_霞_98_ _OPAQUE_廟:1.0__SYM_廟_42_ _OPAQUE_霞:1.0__SYM_霞_168_ _OPAQUE_霞:1.0__SYM_霞_51_ _OPAQUE_霞:1.0__SYM_霞_21_ a _OPAQUE_霞:1.0__SYM_霞_49_ _OPAQUE_格:1.0__SYM_霞_15_. _OPAQUE_廟:1.0__SYM_廟_20_ _OPAQUE_霞:1.0__SYM_霞_224_.\n\_OPAQUE_霞:1.0__SYM_霞_89_: {}", 
+                        _OPAQUE_霞:1.0__SYM_霞_185_, _OPAQUE_霞:1.0__SYM_霞_106_
+                    )
+                };
+
+                let _OPAQUE_霞:1.0__SYM_霞_11_ = if self._OPAQUE_霞:1.0__SYM_霞_212_ { "サブタスク" } else { "_OPAQUE_廟:1.0__SYM_廟_15_" };
+                let _OPAQUE_霞:1.0__SYM_霞_86_ = _OPAQUE_漕:1.0__SYM_霞_25_!("===============================\n{}\n===============================", _OPAQUE_霞:1.0__SYM_霞_229_._OPAQUE_霞:1.0__SYM_霞_124_());
+                let _OPAQUE_霞:1.0__SYM_霞_142_ = if self._OPAQUE_霞:1.0__SYM_霞_212_ { _OPAQUE_漕:1.0__SYM_霞_25_!("これから【{}】版に送ります。クリップボードに保存します...", _OPAQUE_霞:1.0__SYM_霞_185_) } else { _OPAQUE_漕:1.0__SYM_霞_25_!("_OPAQUE_廟:1.0__SYM_廟_53_ to {}. _OPAQUE_廟:1.0__SYM_廟_72_ to _OPAQUE_霞:1.0__SYM_霞_111_...", _OPAQUE_霞:1.0__SYM_霞_185_) };
+                let _OPAQUE_匸:1.0__SYM_霞_4_ = if self._OPAQUE_霞:1.0__SYM_霞_212_ { "保存しました！内容は以下の通りです:" } else { "_OPAQUE_匸:1.0__SYM_廟_10_! _OPAQUE_廟:1.0__SYM_廟_7_ _OPAQUE_霞:1.0__SYM_霞_65_:" };
+
+                _OPAQUE_霞:1.0__SYM_霞_180_!("\n{}", _OPAQUE_霞:1.0__SYM_霞_32_::_OPAQUE_霞:1.0__SYM_霞_115_(_OPAQUE_漕:1.0__SYM_霞_25_!("╭─ [ _OPAQUE_廟:1.0__SYM_廟_28_: {} {} ] ──────────────────", _OPAQUE_霞:1.0__SYM_霞_185_, _OPAQUE_霞:1.0__SYM_霞_11_))._OPAQUE_霞:1.0__SYM_霞_30_()._OPAQUE_霞:1.0__SYM_霞_99_());
+                _OPAQUE_霞:1.0__SYM_霞_180_!("{} 📝 {}", _OPAQUE_霞:1.0__SYM_霞_32_::_OPAQUE_霞:1.0__SYM_霞_115_("│")._OPAQUE_霞:1.0__SYM_霞_30_()._OPAQUE_霞:1.0__SYM_霞_99_(), _OPAQUE_霞:1.0__SYM_霞_142_);
+
+                let _ = _OPAQUE_霞:1.0__SYM_霞_1_::_OPAQUE_霞:1.0__SYM_霞_35_::_OPAQUE_霞:1.0__SYM_霞_193_::_OPAQUE_廟:1.0__SYM_廟_18_::_OPAQUE_格:1.0__SYM_燦_3_(&_OPAQUE_霞:1.0__SYM_霞_86_).a_OPAQUE_霞:1.0__SYM_霞_177_;
+                _OPAQUE_霞:1.0__SYM_霞_210_::_OPAQUE_霞:1.0__SYM_霞_29_::_OPAQUE_霞:1.0__SYM_霞_33_(_OPAQUE_霞:1.0__SYM_霞_210_::_OPAQUE_霞:1.0__SYM_霞_29_::_OPAQUE_廟:1.0__SYM_廟_101_::_OPAQUE_霞:1.0__SYM_霞_116_(500)).a_OPAQUE_霞:1.0__SYM_霞_177_;
+
+                _OPAQUE_霞:1.0__SYM_霞_180_!("{} ✔ {}", _OPAQUE_霞:1.0__SYM_霞_32_::_OPAQUE_霞:1.0__SYM_霞_115_("│")._OPAQUE_霞:1.0__SYM_霞_160_()._OPAQUE_霞:1.0__SYM_霞_99_(), _OPAQUE_匸:1.0__SYM_霞_4_);
+                _OPAQUE_霞:1.0__SYM_霞_180_!("{} {}", _OPAQUE_霞:1.0__SYM_霞_32_::_OPAQUE_霞:1.0__SYM_霞_115_("│")._OPAQUE_霞:1.0__SYM_霞_160_(), _OPAQUE_霞:1.0__SYM_霞_32_::_OPAQUE_霞:1.0__SYM_霞_115_(_OPAQUE_霞:1.0__SYM_霞_86_._OPAQUE_霞:1.0__SYM_霞_126_()._OPAQUE_霞:1.0__SYM_霞_16_(150)._OPAQUE_霞:1.0__SYM_霞_27_::<_OPAQUE_廟:1.0__SYM_廟_48_>() + "...")._OPAQUE_霞:1.0__SYM_霞_208_());
+                _OPAQUE_霞:1.0__SYM_霞_180_!("{}", _OPAQUE_霞:1.0__SYM_霞_32_::_OPAQUE_霞:1.0__SYM_霞_115_("╰─────────────────────────────────────────────────────")._OPAQUE_霞:1.0__SYM_霞_30_()._OPAQUE_霞:1.0__SYM_霞_99_());
+
+                let (_OPAQUE_霞:1.0__SYM_霞_157_, _OPAQUE_霞:1.0__SYM_霞_225_) = if self._OPAQUE_霞:1.0__SYM_霞_149_ == _OPAQUE_廟:1.0__SYM_廟_74_::_OPAQUE_廟:1.0__SYM_廟_92_ { 
+                    if self._OPAQUE_霞:1.0__SYM_霞_212_ { ("【中央のシニア用ウィンドウ】", "_OPAQUE_霞:1.0__SYM_霞_28_") } else { ("[_OPAQUE_廟:1.0__SYM_廟_37_ _OPAQUE_廟:1.0__SYM_廟_92_ _OPAQUE_廟:1.0__SYM_廟_95_]", "_OPAQUE_霞:1.0__SYM_霞_28_") }
+                } else { 
+                    if self._OPAQUE_霞:1.0__SYM_霞_212_ { ("【右側の弟子用ウィンドウ】", "_OPAQUE_霞:1.0__SYM_霞_223_") } else { ("[_OPAQUE_廟:1.0__SYM_廟_63_ _OPAQUE_廟:1.0__SYM_廟_43_ _OPAQUE_廟:1.0__SYM_廟_95_]", "_OPAQUE_霞:1.0__SYM_霞_223_") }
+                };
+
+                let _OPAQUE_霞:1.0__SYM_霞_128_ = _OPAQUE_霞:1.0__SYM_霞_103_::_OPAQUE_霞:1.0__SYM_霞_188_::_OPAQUE_霞:1.0__SYM_霞_146_()._OPAQUE_霞:1.0__SYM_霞_145_(|_| _OPAQUE_霞:1.0__SYM_霞_103_::_OPAQUE_霞:1.0__SYM_霞_41_::_OPAQUE_廟:1.0__SYM_廟_39_::_OPAQUE_霞:1.0__SYM_霞_178_("."));
+                let _OPAQUE_霞:1.0__SYM_霞_138_ = _OPAQUE_霞:1.0__SYM_霞_1_::_OPAQUE_霞:1.0__SYM_霞_221_::_OPAQUE_廟:1.0__SYM_廟_23_::_OPAQUE_匸:1.0__SYM_霞_96_(&_OPAQUE_霞:1.0__SYM_霞_128_);
+
+                self._OPAQUE_霞:1.0__SYM_霞_125_ += 1;
+                if self._OPAQUE_霞:1.0__SYM_霞_125_ >= 5 {
+                    _OPAQUE_霞:1.0__SYM_霞_180_!("{} _OPAQUE_廟:1.0__SYM_廟_40_ 5 _OPAQUE_霞:1.0__SYM_霞_230_ _OPAQUE_霞:1.0__SYM_霞_132_ for {}. _OPAQUE_廟:1.0__SYM_廟_64_ _OPAQUE_廟:1.0__SYM_廟_86_ _OPAQUE_廟:1.0__SYM_廟_54_ to _OPAQUE_霞:1.0__SYM_霞_120_ _OPAQUE_霞:1.0__SYM_霞_6_/_OPAQUE_霞:1.0__SYM_霞_239_-_OPAQUE_霞:1.0__SYM_霞_59_.", _OPAQUE_霞:1.0__SYM_霞_32_::_OPAQUE_霞:1.0__SYM_霞_115_("[_OPAQUE_廟:1.0__SYM_廟_98_]")._OPAQUE_霞:1.0__SYM_霞_56_(), _OPAQUE_霞:1.0__SYM_霞_157_);
+                    let _OPAQUE_匸:1.0__SYM_霞_14_ = "_OPAQUE_霞:1.0__SYM_霞_148_._OPAQUE_霞:1.0__SYM_霞_227_._OPAQUE_霞:1.0__SYM_霞_62_ = '_OPAQUE_縁:1.0__SYM_霞_19_://_OPAQUE_霞:1.0__SYM_霞_64_._OPAQUE_霞:1.0__SYM_霞_226_._OPAQUE_霞:1.0__SYM_霞_240_/_OPAQUE_霞:1.0__SYM_霞_44_';";
+                    let _OPAQUE_匸:1.0__SYM_霞_155_ = _OPAQUE_漕:1.0__SYM_霞_25_!(
+                        r#"_OPAQUE_霞:1.0__SYM_霞_40_ _OPAQUE_霞:1.0__SYM_霞_68_ "_OPAQUE_廟:1.0__SYM_廟_1_"
+                            _OPAQUE_格:1.0__SYM_燦_1_ _OPAQUE_霞:1.0__SYM_霞_81_ to _OPAQUE_霞:1.0__SYM_霞_129_ _OPAQUE_霞:1.0__SYM_霞_148_
+                            _OPAQUE_霞:1.0__SYM_霞_3_ _OPAQUE_霞:1.0__SYM_霞_213_ w in _OPAQUE_霞:1.0__SYM_霞_81_
+                                if _OPAQUE_霞:1.0__SYM_霞_144_ of w _OPAQUE_霞:1.0__SYM_霞_92_ "{}" or _OPAQUE_霞:1.0__SYM_霞_123_ 1 of w is _OPAQUE_霞:1.0__SYM_霞_55_ _OPAQUE_霞:1.0__SYM_霞_110_ _OPAQUE_霞:1.0__SYM_霞_209_ _OPAQUE_霞:1.0__SYM_霞_207_
+                                    do _OPAQUE_廟:1.0__SYM_廟_100_ "{}" in _OPAQUE_霞:1.0__SYM_霞_123_ 1 of w
+                                    _OPAQUE_霞:1.0__SYM_霞_166_ _OPAQUE_霞:1.0__SYM_霞_3_
+                                _OPAQUE_霞:1.0__SYM_霞_83_ if
+                            _OPAQUE_霞:1.0__SYM_霞_83_ _OPAQUE_霞:1.0__SYM_霞_3_
+                        _OPAQUE_霞:1.0__SYM_霞_83_ _OPAQUE_霞:1.0__SYM_霞_40_"#, 
+                        "_OPAQUE_廟:1.0__SYM_廟_57_", // _OPAQUE_廟:1.0__SYM_廟_3_ _OPAQUE_霞:1.0__SYM_霞_71_ _OPAQUE_霞:1.0__SYM_霞_206_ if _OPAQUE_霞:1.0__SYM_霞_167_ _OPAQUE_霞:1.0__SYM_霞_153_ we'll _OPAQUE_霞:1.0__SYM_霞_159_ _OPAQUE_霞:1.0__SYM_霞_137_ _OPAQUE_霞:1.0__SYM_霞_217_ _OPAQUE_霞:1.0__SYM_霞_148_ _OPAQUE_霞:1.0__SYM_霞_22_ _OPAQUE_霞:1.0__SYM_霞_43_
+                        _OPAQUE_匸:1.0__SYM_霞_14_
+                    );
+
+// [metadata-stripped]
+                    let _ = _OPAQUE_霞:1.0__SYM_霞_1_::_OPAQUE_霞:1.0__SYM_霞_35_::_OPAQUE_霞:1.0__SYM_霞_193_::_OPAQUE_廟:1.0__SYM_廟_18_::_OPAQUE_霞:1.0__SYM_霞_184_(_OPAQUE_霞:1.0__SYM_霞_225_).a_OPAQUE_霞:1.0__SYM_霞_177_;
+                    let _OPAQUE_匸:1.0__SYM_霞_117_ = _OPAQUE_漕:1.0__SYM_霞_25_!(r#"_OPAQUE_霞:1.0__SYM_霞_40_ _OPAQUE_霞:1.0__SYM_霞_68_ "_OPAQUE_廟:1.0__SYM_廟_1_" to do _OPAQUE_廟:1.0__SYM_廟_100_ "{}" in _OPAQUE_霞:1.0__SYM_霞_217_ _OPAQUE_霞:1.0__SYM_霞_123_"#, _OPAQUE_匸:1.0__SYM_霞_14_._OPAQUE_霞:1.0__SYM_霞_140_("\"", "\\\""));
+                    let _ = _OPAQUE_霞:1.0__SYM_霞_210_::_OPAQUE_霞:1.0__SYM_霞_93_::_OPAQUE_廟:1.0__SYM_廟_11_::_OPAQUE_霞:1.0__SYM_霞_169_("_OPAQUE_霞:1.0__SYM_霞_147_")._OPAQUE_霞:1.0__SYM_霞_121_("-e")._OPAQUE_霞:1.0__SYM_霞_121_(&_OPAQUE_匸:1.0__SYM_霞_117_)._OPAQUE_霞:1.0__SYM_霞_76_().a_OPAQUE_霞:1.0__SYM_霞_177_;
+                    
+                    _OPAQUE_霞:1.0__SYM_霞_210_::_OPAQUE_霞:1.0__SYM_霞_29_::_OPAQUE_霞:1.0__SYM_霞_33_(_OPAQUE_霞:1.0__SYM_霞_210_::_OPAQUE_霞:1.0__SYM_霞_29_::_OPAQUE_廟:1.0__SYM_廟_101_::_OPAQUE_霞:1.0__SYM_霞_63_(4)).a_OPAQUE_霞:1.0__SYM_霞_177_;
+                    self._OPAQUE_霞:1.0__SYM_霞_125_ = 0;
+                }
+
+                _OPAQUE_霞:1.0__SYM_霞_162_ {
+                    _OPAQUE_霞:1.0__SYM_霞_180_!("\n{}", _OPAQUE_霞:1.0__SYM_霞_32_::_OPAQUE_霞:1.0__SYM_霞_115_(if self._OPAQUE_霞:1.0__SYM_霞_212_ {"👉 クリップボード準備完了。ブラウザを開きますか？"} else {"👉 _OPAQUE_廟:1.0__SYM_廟_71_ _OPAQUE_霞:1.0__SYM_霞_88_. _OPAQUE_廟:1.0__SYM_廟_66_ _OPAQUE_格:1.0__SYM_霞_95_ _OPAQUE_霞:1.0__SYM_霞_187_?"})._OPAQUE_霞:1.0__SYM_霞_56_()._OPAQUE_霞:1.0__SYM_霞_99_());
+                    
+// _OPAQUE_廟:0.9__SYM_CA_371_ [decoy-metadata]
+// [metadata-stripped]
+                    if _OPAQUE_霞:1.0__SYM_霞_138_._OPAQUE_霞:1.0__SYM_霞_58_ == _OPAQUE_霞:1.0__SYM_霞_1_::_OPAQUE_霞:1.0__SYM_霞_221_::_OPAQUE_廟:1.0__SYM_廟_38_::_OPAQUE_廟:1.0__SYM_廟_68_ {
+                        let _OPAQUE_霞:1.0__SYM_霞_215_ = _OPAQUE_漕:1.0__SYM_霞_25_!("🚀 🤖 [_OPAQUE_廟:1.0__SYM_廟_108_-_OPAQUE_廟:1.0__SYM_廟_9_] _OPAQUE_廟:1.0__SYM_廟_61_ {}. _OPAQUE_廟:1.0__SYM_廟_27_ _OPAQUE_霞:1.0__SYM_霞_112_ _OPAQUE_霞:1.0__SYM_霞_77_...", _OPAQUE_霞:1.0__SYM_霞_157_);
+                        _OPAQUE_霞:1.0__SYM_霞_180_!("{}", _OPAQUE_霞:1.0__SYM_霞_32_::_OPAQUE_霞:1.0__SYM_霞_115_(_OPAQUE_霞:1.0__SYM_霞_215_)._OPAQUE_霞:1.0__SYM_霞_160_()._OPAQUE_霞:1.0__SYM_霞_99_());
+                    } else {
+                        let _OPAQUE_霞:1.0__SYM_霞_90_ = if self._OPAQUE_霞:1.0__SYM_霞_212_ { _OPAQUE_霞:1.0__SYM_霞_135_![" コピー完了・フォーカス移動へ", " もう一度コピー"] } else { _OPAQUE_霞:1.0__SYM_霞_135_![" _OPAQUE_廟:1.0__SYM_廟_93_ _OPAQUE_廟:1.0__SYM_廟_66_", " _OPAQUE_廟:1.0__SYM_廟_89_ _OPAQUE_廟:1.0__SYM_廟_62_"] };
+                        let _OPAQUE_霞:1.0__SYM_霞_164_ = _OPAQUE_格:1.0__SYM_霞_24_::_OPAQUE_廟:1.0__SYM_廟_14_::_OPAQUE_霞:1.0__SYM_霞_169_()
+                            ._OPAQUE_霞:1.0__SYM_霞_36_(if self._OPAQUE_霞:1.0__SYM_霞_212_ { "選択" } else { "_OPAQUE_廟:1.0__SYM_廟_77_" })
+                            ._OPAQUE_霞:1.0__SYM_霞_174_(0)._OPAQUE_霞:1.0__SYM_霞_73_(&_OPAQUE_霞:1.0__SYM_霞_90_[..])._OPAQUE_霞:1.0__SYM_霞_173_()._OPAQUE_霞:1.0__SYM_霞_172_();
+                        if _OPAQUE_霞:1.0__SYM_霞_164_ != 0 {
+                            let _ = _OPAQUE_霞:1.0__SYM_霞_1_::_OPAQUE_霞:1.0__SYM_霞_35_::_OPAQUE_霞:1.0__SYM_霞_193_::_OPAQUE_廟:1.0__SYM_廟_18_::_OPAQUE_格:1.0__SYM_燦_3_(&_OPAQUE_霞:1.0__SYM_霞_86_).a_OPAQUE_霞:1.0__SYM_霞_177_;
+                            continue;
+                        }
+                    }
+
+// [metadata-stripped]
+                    if _OPAQUE_霞:1.0__SYM_霞_138_._OPAQUE_霞:1.0__SYM_霞_58_ != _OPAQUE_霞:1.0__SYM_霞_1_::_OPAQUE_霞:1.0__SYM_霞_221_::_OPAQUE_廟:1.0__SYM_廟_38_::_OPAQUE_廟:1.0__SYM_廟_68_ {
+                        let _OPAQUE_霞:1.0__SYM_霞_215_ = _OPAQUE_漕:1.0__SYM_霞_25_!("🚀 _OPAQUE_廟:1.0__SYM_廟_61_ {}. _OPAQUE_廟:1.0__SYM_廟_103_ _OPAQUE_霞:1.0__SYM_霞_130_ _OPAQUE_廟:1.0__SYM_廟_30_+V _OPAQUE_霞:1.0__SYM_霞_199_ _OPAQUE_廟:1.0__SYM_廟_82_ it _OPAQUE_霞:1.0__SYM_霞_42_!", _OPAQUE_霞:1.0__SYM_霞_157_);
+                        _OPAQUE_霞:1.0__SYM_霞_180_!("{}", _OPAQUE_霞:1.0__SYM_霞_32_::_OPAQUE_霞:1.0__SYM_霞_115_(_OPAQUE_霞:1.0__SYM_霞_215_)._OPAQUE_霞:1.0__SYM_霞_160_()._OPAQUE_霞:1.0__SYM_霞_99_());
+                    }
+                    
+                    let _ = _OPAQUE_霞:1.0__SYM_霞_1_::_OPAQUE_霞:1.0__SYM_霞_35_::_OPAQUE_霞:1.0__SYM_霞_193_::_OPAQUE_廟:1.0__SYM_廟_18_::_OPAQUE_霞:1.0__SYM_霞_184_(_OPAQUE_霞:1.0__SYM_霞_225_).a_OPAQUE_霞:1.0__SYM_霞_177_;
+                    _OPAQUE_霞:1.0__SYM_霞_210_::_OPAQUE_霞:1.0__SYM_霞_29_::_OPAQUE_霞:1.0__SYM_霞_33_(_OPAQUE_霞:1.0__SYM_霞_210_::_OPAQUE_霞:1.0__SYM_霞_29_::_OPAQUE_廟:1.0__SYM_廟_101_::_OPAQUE_霞:1.0__SYM_霞_116_(500)).a_OPAQUE_霞:1.0__SYM_霞_177_;
+                    
+                    if _OPAQUE_霞:1.0__SYM_霞_138_._OPAQUE_霞:1.0__SYM_霞_58_ == _OPAQUE_霞:1.0__SYM_霞_1_::_OPAQUE_霞:1.0__SYM_霞_221_::_OPAQUE_廟:1.0__SYM_廟_38_::_OPAQUE_廟:1.0__SYM_廟_68_ {
+                        _OPAQUE_霞:1.0__SYM_霞_180_!("{} 📝 (自動モードのため、自動ペースト＆送信を実行します...)", _OPAQUE_霞:1.0__SYM_霞_32_::_OPAQUE_霞:1.0__SYM_霞_115_("[_OPAQUE_廟:1.0__SYM_廟_108_]")._OPAQUE_霞:1.0__SYM_霞_56_());
+                        let _ = _OPAQUE_霞:1.0__SYM_霞_1_::_OPAQUE_霞:1.0__SYM_霞_35_::_OPAQUE_霞:1.0__SYM_霞_193_::_OPAQUE_廟:1.0__SYM_廟_18_::_OPAQUE_霞:1.0__SYM_霞_74_(&_OPAQUE_霞:1.0__SYM_霞_86_).a_OPAQUE_霞:1.0__SYM_霞_177_;
+// _OPAQUE_漕:0.1__SYM_KD_919_ [decoy-metadata]
+                    }
+
+// [metadata-stripped]
+                    if _OPAQUE_霞:1.0__SYM_霞_138_._OPAQUE_霞:1.0__SYM_霞_58_ == _OPAQUE_霞:1.0__SYM_霞_1_::_OPAQUE_霞:1.0__SYM_霞_221_::_OPAQUE_廟:1.0__SYM_廟_38_::_OPAQUE_廟:1.0__SYM_廟_68_ {
+                        let _OPAQUE_霞:1.0__SYM_霞_52_ = 20; // _OPAQUE_廟:1.0__SYM_廟_6_ _OPAQUE_霞:1.0__SYM_霞_12_ _OPAQUE_霞:1.0__SYM_霞_177_ for _OPAQUE_霞:1.0__SYM_霞_165_ _OPAQUE_廟:1.0__SYM_廟_59_ _OPAQUE_霞:1.0__SYM_霞_100_
+                        let _OPAQUE_霞:1.0__SYM_霞_87_ = _OPAQUE_霞:1.0__SYM_霞_86_._OPAQUE_霞:1.0__SYM_霞_126_()._OPAQUE_霞:1.0__SYM_霞_131_() as _OPAQUE_霞:1.0__SYM_霞_50_;
+                        let _OPAQUE_霞:1.0__SYM_霞_156_ = _OPAQUE_霞:1.0__SYM_霞_87_ / 100;
+                        let _OPAQUE_霞:1.0__SYM_霞_75_ = _OPAQUE_霞:1.0__SYM_霞_103_::_OPAQUE_霞:1.0__SYM_霞_203_::_OPAQUE_霞:1.0__SYM_霞_127_(_OPAQUE_霞:1.0__SYM_霞_52_ + _OPAQUE_霞:1.0__SYM_霞_156_, 60);
+                        
+                        _OPAQUE_霞:1.0__SYM_霞_180_!("{} ⏳ _OPAQUE_廟:1.0__SYM_廟_31_ {} _OPAQUE_霞:1.0__SYM_霞_2_ for _OPAQUE_廟:1.0__SYM_廟_1_ _OPAQUE_廟:1.0__SYM_廟_57_ _OPAQUE_霞:1.0__SYM_霞_101_...", _OPAQUE_霞:1.0__SYM_霞_32_::_OPAQUE_霞:1.0__SYM_霞_115_("[_OPAQUE_廟:1.0__SYM_廟_108_]")._OPAQUE_霞:1.0__SYM_霞_56_(), _OPAQUE_霞:1.0__SYM_霞_75_);
+                        _OPAQUE_霞:1.0__SYM_霞_210_::_OPAQUE_霞:1.0__SYM_霞_29_::_OPAQUE_霞:1.0__SYM_霞_33_(_OPAQUE_霞:1.0__SYM_霞_210_::_OPAQUE_霞:1.0__SYM_霞_29_::_OPAQUE_廟:1.0__SYM_廟_101_::_OPAQUE_霞:1.0__SYM_霞_63_(_OPAQUE_霞:1.0__SYM_霞_75_)).a_OPAQUE_霞:1.0__SYM_霞_177_;
+                    } else {
+                        let _OPAQUE_霞:1.0__SYM_霞_214_ = if self._OPAQUE_霞:1.0__SYM_霞_212_ { "✔ 回答が出たら _OPAQUE_廟:1.0__SYM_廟_30_+C でコピーして選択" } else { "✔ _OPAQUE_廟:1.0__SYM_廟_89_ _OPAQUE_格:1.0__SYM_霞_204_ (_OPAQUE_廟:1.0__SYM_廟_30_+C) _OPAQUE_霞:1.0__SYM_霞_199_ _OPAQUE_霞:1.0__SYM_霞_130_ _OPAQUE_格:1.0__SYM_廟_12_" };
+                        let _ = _OPAQUE_格:1.0__SYM_霞_24_::_OPAQUE_廟:1.0__SYM_廟_14_::_OPAQUE_霞:1.0__SYM_霞_169_()._OPAQUE_霞:1.0__SYM_霞_36_(_OPAQUE_霞:1.0__SYM_霞_214_)
+                            ._OPAQUE_霞:1.0__SYM_霞_174_(0)._OPAQUE_霞:1.0__SYM_霞_73_(&[" _OPAQUE_廟:1.0__SYM_廟_32_ _OPAQUE_廟:1.0__SYM_廟_104_"])._OPAQUE_霞:1.0__SYM_霞_173_()._OPAQUE_霞:1.0__SYM_霞_172_();
+                    }
+                    
+// [metadata-stripped]
+                    if _OPAQUE_霞:1.0__SYM_霞_138_._OPAQUE_霞:1.0__SYM_霞_58_ == _OPAQUE_霞:1.0__SYM_霞_1_::_OPAQUE_霞:1.0__SYM_霞_221_::_OPAQUE_廟:1.0__SYM_廟_38_::_OPAQUE_廟:1.0__SYM_廟_68_ {
+                        _OPAQUE_霞:1.0__SYM_霞_180_!("{} ⏳ _OPAQUE_廟:1.0__SYM_廟_21_ _OPAQUE_霞:1.0__SYM_霞_195_ _OPAQUE_霞:1.0__SYM_霞_165_ _OPAQUE_霞:1.0__SYM_霞_238_...", _OPAQUE_霞:1.0__SYM_霞_32_::_OPAQUE_霞:1.0__SYM_霞_115_("[_OPAQUE_廟:1.0__SYM_廟_98_]")._OPAQUE_霞:1.0__SYM_霞_56_());
+                        if let _OPAQUE_廟:1.0__SYM_廟_34_(e) = _OPAQUE_霞:1.0__SYM_霞_1_::_OPAQUE_霞:1.0__SYM_霞_35_::_OPAQUE_霞:1.0__SYM_霞_193_::_OPAQUE_廟:1.0__SYM_廟_18_::_OPAQUE_霞:1.0__SYM_霞_118_().a_OPAQUE_霞:1.0__SYM_霞_177_ {
+                            _OPAQUE_霞:1.0__SYM_霞_136_!("[_OPAQUE_廟:1.0__SYM_廟_60_] _OPAQUE_廟:1.0__SYM_廟_78_ _OPAQUE_霞:1.0__SYM_霞_235_ _OPAQUE_霞:1.0__SYM_霞_238_ _OPAQUE_廟:1.0__SYM_廟_8_ _OPAQUE_廟:1.0__SYM_廟_24_ _OPAQUE_廟:1.0__SYM_廟_69_: {}", e);
+                        }
+                        _OPAQUE_霞:1.0__SYM_霞_210_::_OPAQUE_霞:1.0__SYM_霞_29_::_OPAQUE_霞:1.0__SYM_霞_33_(_OPAQUE_霞:1.0__SYM_霞_210_::_OPAQUE_霞:1.0__SYM_霞_29_::_OPAQUE_廟:1.0__SYM_廟_101_::_OPAQUE_霞:1.0__SYM_霞_116_(500)).a_OPAQUE_霞:1.0__SYM_霞_177_;
+                    }
+
+// _OPAQUE_幽:0.2__SYM_HX_317_ [decoy-metadata]
+// [metadata-stripped]
+                    let _OPAQUE_霞:1.0__SYM_霞_105_ = _OPAQUE_霞:1.0__SYM_霞_1_::_OPAQUE_霞:1.0__SYM_霞_35_::_OPAQUE_霞:1.0__SYM_霞_193_::_OPAQUE_廟:1.0__SYM_廟_18_::_OPAQUE_格:1.0__SYM_燦_2_().a_OPAQUE_霞:1.0__SYM_霞_177_._OPAQUE_霞:1.0__SYM_霞_211_();
+                    
+// [metadata-stripped]
+                    if _OPAQUE_霞:1.0__SYM_霞_138_._OPAQUE_霞:1.0__SYM_霞_58_ == _OPAQUE_霞:1.0__SYM_霞_1_::_OPAQUE_霞:1.0__SYM_霞_221_::_OPAQUE_廟:1.0__SYM_廟_38_::_OPAQUE_廟:1.0__SYM_廟_68_ {
+// _OPAQUE_漕:0.2__SYM_ME_356_ [decoy-metadata]
+                        if _OPAQUE_霞:1.0__SYM_霞_105_._OPAQUE_霞:1.0__SYM_霞_124_() == _OPAQUE_霞:1.0__SYM_霞_86_._OPAQUE_霞:1.0__SYM_霞_124_() || _OPAQUE_霞:1.0__SYM_霞_105_._OPAQUE_霞:1.0__SYM_霞_139_() {
+                            _OPAQUE_霞:1.0__SYM_霞_180_!("{}", _OPAQUE_霞:1.0__SYM_霞_32_::_OPAQUE_霞:1.0__SYM_霞_115_(if self._OPAQUE_霞:1.0__SYM_霞_212_ { "❌ 抽出エラー (_OPAQUE_廟:1.0__SYM_廟_57_が応答中か要素が見つかりません)。再試行します..." } else { "❌ _OPAQUE_廟:1.0__SYM_廟_32_ _OPAQUE_霞:1.0__SYM_霞_79_. _OPAQUE_廟:1.0__SYM_廟_57_ _OPAQUE_霞:1.0__SYM_霞_175_'t _OPAQUE_霞:1.0__SYM_霞_34_ _OPAQUE_霞:1.0__SYM_霞_39_. _OPAQUE_廟:1.0__SYM_廟_36_..." })._OPAQUE_霞:1.0__SYM_霞_17_());
+                            _OPAQUE_霞:1.0__SYM_霞_210_::_OPAQUE_霞:1.0__SYM_霞_29_::_OPAQUE_霞:1.0__SYM_霞_33_(_OPAQUE_霞:1.0__SYM_霞_210_::_OPAQUE_霞:1.0__SYM_霞_29_::_OPAQUE_廟:1.0__SYM_廟_101_::_OPAQUE_霞:1.0__SYM_霞_116_(3000)).a_OPAQUE_霞:1.0__SYM_霞_177_;
+                            continue;
+                        }
+                    }
+
+                    let _OPAQUE_霞:1.0__SYM_霞_237_ = if self._OPAQUE_霞:1.0__SYM_霞_212_ { _OPAQUE_漕:1.0__SYM_霞_25_!("✔ 自動抽出完了！({}文字)", _OPAQUE_霞:1.0__SYM_霞_105_._OPAQUE_霞:1.0__SYM_霞_126_()._OPAQUE_霞:1.0__SYM_霞_131_()) } else { _OPAQUE_漕:1.0__SYM_霞_25_!("✔ _OPAQUE_廟:1.0__SYM_廟_91_ _OPAQUE_廟:1.0__SYM_廟_32_ _OPAQUE_霞:1.0__SYM_霞_200_! ({} _OPAQUE_霞:1.0__SYM_霞_126_)", _OPAQUE_霞:1.0__SYM_霞_105_._OPAQUE_霞:1.0__SYM_霞_126_()._OPAQUE_霞:1.0__SYM_霞_131_()) };
+                    _OPAQUE_霞:1.0__SYM_霞_180_!("{}", _OPAQUE_霞:1.0__SYM_霞_32_::_OPAQUE_霞:1.0__SYM_霞_115_(_OPAQUE_霞:1.0__SYM_霞_237_)._OPAQUE_霞:1.0__SYM_霞_160_());
+                    
+// [metadata-stripped]
+                    let _OPAQUE_霞:1.0__SYM_霞_201_ = _OPAQUE_廟:1.0__SYM_廟_52_::_OPAQUE_廟:1.0__SYM_廟_5_(_OPAQUE_霞:1.0__SYM_霞_105_);
+                    return Ok(_OPAQUE_廟:1.0__SYM_廟_102_(_OPAQUE_廟:1.0__SYM_廟_107_ {
+                        _OPAQUE_霞:1.0__SYM_霞_170_: _OPAQUE_廟:1.0__SYM_廟_88_::_OPAQUE_霞:1.0__SYM_霞_183_(),
+                        _OPAQUE_格:1.0__SYM_霞_23_: self._OPAQUE_霞:1.0__SYM_霞_144_()._OPAQUE_霞:1.0__SYM_霞_53_(),
+// _OPAQUE_格:0.6__SYM_HF_410_ [decoy-metadata]
+                        _OPAQUE_霞:1.0__SYM_霞_191_: _OPAQUE_霞:1.0__SYM_霞_188_._OPAQUE_格:1.0__SYM_霞_23_,
+                        _OPAQUE_匸:1.0__SYM_霞_220_: _OPAQUE_霞:1.0__SYM_霞_152_::_OPAQUE_霞:1.0__SYM_霞_53_(&_OPAQUE_霞:1.0__SYM_霞_201_)?,
+                    }));
+                }
+            },
+
+
+            _ => Ok(_OPAQUE_廟:1.0__SYM_廟_17_)
+        }
+    }
+}
+
+// POLYMORPHIC_JCROSS_END

@@ -1,0 +1,126 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:9C36193E ver:1778220484
+// ⚠️ One-time schema — expires after response
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+
+__ast_露:1.0___OPAQUE_露_25_ __ast_露:1.0___OPAQUE_露_61_::__ast_露:1.0___OPAQUE_露_65_::__ast_廨:1.0___OPAQUE_廨_34_;
+
+// [metadata-stripped]
+// [metadata-stripped]
+__ast_露:1.0___OPAQUE_露_17_ enum __ast_廨:1.0___OPAQUE_廨_26_ { __ast_廨:1.0___OPAQUE_廨_25_, __ast_廨:1.0___OPAQUE_廨_45_ }
+
+// [metadata-stripped]
+// [metadata-stripped]
+__ast_露:1.0___OPAQUE_露_17_ enum __ast_廨:1.0___OPAQUE_廨_48_ { __ast_廨:1.0___OPAQUE_廨_11_, __ast_廨:1.0___OPAQUE_廨_2_ }
+
+// [metadata-stripped]
+// [metadata-stripped]
+__ast_露:1.0___OPAQUE_露_17_ struct __ast_廨:1.0___OPAQUE_廨_10_ {
+    __ast_露:1.0___OPAQUE_露_17_ __ast_露:1.0___OPAQUE_露_111_: __ast_廨:1.0___OPAQUE_廨_4_<__ast_露:1.0___OPAQUE_露_102_>, // e.g. 1000px
+// __ast_漂:0.3___OPAQUE_LM_781_ [decoy-metadata]
+    __ast_露:1.0___OPAQUE_露_17_ __ast_露:1.0___OPAQUE_露_88_: (__ast_廨:1.0___OPAQUE_廨_13_, __ast_廨:1.0___OPAQUE_廨_13_), // e.g. "50% 50%"
+    __ast_露:1.0___OPAQUE_露_17_ __ast_露:1.0___OPAQUE_露_105_: __ast_廨:1.0___OPAQUE_廨_26_,
+    __ast_露:1.0___OPAQUE_露_17_ __ast_露:1.0___OPAQUE_露_66_: __ast_廨:1.0___OPAQUE_廨_48_,
+    __ast_露:1.0___OPAQUE_露_17_ __ast_露:1.0___OPAQUE_露_68_: [__ast_露:1.0___OPAQUE_露_102_; 16], // __ast_廨:1.0___OPAQUE_廨_7_ 3D __ast_露:1.0___OPAQUE_露_8_/__ast_露:1.0___OPAQUE_露_37_/__ast_露:1.0___OPAQUE_露_73_ __ast_露:1.0___OPAQUE_露_117_
+}
+
+// __ast_露:0.5___OPAQUE_XW_773_ [decoy-metadata]
+__ast_露:1.0___OPAQUE_露_41_ __ast_廨:1.0___OPAQUE_廨_37_ for __ast_廨:1.0___OPAQUE_廨_10_ {
+    fn __ast_露:1.0___OPAQUE_露_2_() -> __ast_廨:1.0___OPAQUE_廨_30_ {
+        __ast_廨:1.0___OPAQUE_廨_30_ {
+            __ast_露:1.0___OPAQUE_露_111_: __ast_廨:1.0___OPAQUE_廨_14_,
+            __ast_露:1.0___OPAQUE_露_88_: ("50%".__ast_露:1.0___OPAQUE_露_85_(), "50%".__ast_露:1.0___OPAQUE_露_85_()),
+            __ast_露:1.0___OPAQUE_露_105_: __ast_廨:1.0___OPAQUE_廨_26_::__ast_廨:1.0___OPAQUE_廨_25_,
+            __ast_露:1.0___OPAQUE_露_66_: __ast_廨:1.0___OPAQUE_廨_48_::__ast_廨:1.0___OPAQUE_廨_11_,
+// [metadata-stripped]
+            __ast_露:1.0___OPAQUE_露_68_: [
+                1.0, 0.0, 0.0, 0.0,
+// __ast_計:0.2___OPAQUE_ED_754_ [decoy-metadata]
+                0.0, 1.0, 0.0, 0.0,
+                0.0, 0.0, 1.0, 0.0,
+                0.0, 0.0, 0.0, 1.0,
+// __ast_医:0.4___OPAQUE_AG_496_ [decoy-metadata]
+            ],
+        }
+    }
+}
+
+// [metadata-stripped]
+__ast_露:1.0___OPAQUE_露_17_ struct __ast_廨:1.0___OPAQUE_廨_35_ {
+    __ast_露:1.0___OPAQUE_露_17_ __ast_露:1.0___OPAQUE_露_97_: __ast_廨:1.0___OPAQUE_廨_34_<__ast_露:1.0___OPAQUE_露_24_, __ast_廨:1.0___OPAQUE_廨_10_>,
+    __ast_露:1.0___OPAQUE_露_17_ __ast_露:1.0___OPAQUE_露_44_: __ast_露:1.0___OPAQUE_露_24_,
+}
+
+__ast_露:1.0___OPAQUE_露_41_ __ast_廨:1.0___OPAQUE_廨_35_ {
+    __ast_露:1.0___OPAQUE_露_17_ fn __ast_露:1.0___OPAQUE_露_109_() -> __ast_廨:1.0___OPAQUE_廨_30_ {
+        __ast_廨:1.0___OPAQUE_廨_30_ {
+            __ast_露:1.0___OPAQUE_露_97_: __ast_廨:1.0___OPAQUE_廨_34_::__ast_露:1.0___OPAQUE_露_109_(),
+            __ast_露:1.0___OPAQUE_露_44_: 0,
+        }
+    }
+
+    __ast_露:1.0___OPAQUE_露_17_ fn __ast_計:1.0___OPAQUE_礎_2_(&__ast_露:1.0___OPAQUE_露_64_ self, __ast_露:1.0___OPAQUE_露_53_: __ast_露:1.0___OPAQUE_露_24_, __ast_露:1.0___OPAQUE_露_108_: __ast_廨:1.0___OPAQUE_廨_10_) {
+        self.__ast_露:1.0___OPAQUE_露_97_.__ast_露:1.0___OPAQUE_露_69_(__ast_露:1.0___OPAQUE_露_53_, __ast_露:1.0___OPAQUE_露_108_);
+    }
+
+// [metadata-stripped]
+// __ast_廨:0.3___OPAQUE_CB_989_ [decoy-metadata]
+    __ast_露:1.0___OPAQUE_露_17_ fn __ast_露:1.0___OPAQUE_露_30_(&self, __ast_露:1.0___OPAQUE_露_53_: __ast_露:1.0___OPAQUE_露_24_) -> __ast_廨:1.0___OPAQUE_廨_4_<[__ast_露:1.0___OPAQUE_露_102_; 16]> {
+        if let __ast_廨:1.0___OPAQUE_廨_42_(__ast_露:1.0___OPAQUE_露_108_) = self.__ast_露:1.0___OPAQUE_露_97_.__ast_計:1.0___OPAQUE_礎_1_(&__ast_露:1.0___OPAQUE_露_53_) {
+            if let __ast_廨:1.0___OPAQUE_廨_42_(d) = __ast_露:1.0___OPAQUE_露_108_.__ast_露:1.0___OPAQUE_露_111_ {
+// [metadata-stripped]
+// [metadata-stripped]
+                let __ast_露:1.0___OPAQUE_露_64_ __ast_露:1.0___OPAQUE_露_38_ = [
+                    1.0, 0.0, 0.0, 0.0,
+                    0.0, 1.0, 0.0, 0.0,
+                    0.0, 0.0, 1.0, 0.0,
+                    0.0, 0.0, 0.0, 1.0,
+                ];
+                if d != 0.0 { __ast_露:1.0___OPAQUE_露_38_[11] = -1.0 / d; }
+                return __ast_廨:1.0___OPAQUE_廨_42_(__ast_露:1.0___OPAQUE_露_38_);
+            }
+        }
+        __ast_廨:1.0___OPAQUE_廨_14_ // __ast_廨:1.0___OPAQUE_廨_25_ __ast_露:1.0___OPAQUE_露_84_
+    }
+
+// __ast_露:0.4___OPAQUE_GL_822_ [decoy-metadata]
+// [metadata-stripped]
+    __ast_露:1.0___OPAQUE_露_17_ fn __ast_露:1.0___OPAQUE_露_58_(&self, __ast_露:1.0___OPAQUE_露_53_: __ast_露:1.0___OPAQUE_露_24_, __ast_露:1.0___OPAQUE_露_63_: __ast_露:1.0___OPAQUE_露_102_, __ast_露:1.0___OPAQUE_露_106_: __ast_露:1.0___OPAQUE_露_102_) -> __ast_露:1.0___OPAQUE_露_112_ {
+        if let __ast_廨:1.0___OPAQUE_廨_42_(__ast_露:1.0___OPAQUE_露_108_) = self.__ast_露:1.0___OPAQUE_露_97_.__ast_計:1.0___OPAQUE_礎_1_(&__ast_露:1.0___OPAQUE_露_53_) {
+            if __ast_露:1.0___OPAQUE_露_108_.__ast_露:1.0___OPAQUE_露_66_ == __ast_廨:1.0___OPAQUE_廨_48_::__ast_廨:1.0___OPAQUE_廨_2_ {
+// [metadata-stripped]
+// [metadata-stripped]
+                let __ast_露:1.0___OPAQUE_露_9_ = __ast_露:1.0___OPAQUE_露_106_.__ast_露:1.0___OPAQUE_露_70_() % (__ast_露:1.0___OPAQUE_露_61_::__ast_露:1.0___OPAQUE_露_102_::__ast_露:1.0___OPAQUE_露_100_::PI * 2.0);
+                if __ast_露:1.0___OPAQUE_露_9_ > __ast_露:1.0___OPAQUE_露_61_::__ast_露:1.0___OPAQUE_露_102_::__ast_露:1.0___OPAQUE_露_100_::__ast_廨:1.0___OPAQUE_廨_36_ && __ast_露:1.0___OPAQUE_露_9_ < 3.0 * __ast_露:1.0___OPAQUE_露_61_::__ast_露:1.0___OPAQUE_露_102_::__ast_露:1.0___OPAQUE_露_100_::__ast_廨:1.0___OPAQUE_廨_36_ {
+                    return true;
+                }
+            }
+        }
+        false
+    }
+
+// [metadata-stripped]
+    __ast_露:1.0___OPAQUE_露_17_ fn __ast_漂:1.0___OPAQUE_露_83_(&self, __ast_露:1.0___OPAQUE_露_53_: __ast_露:1.0___OPAQUE_露_24_) -> __ast_廨:1.0___OPAQUE_廨_13_ {
+        if let __ast_廨:1.0___OPAQUE_廨_42_(__ast_露:1.0___OPAQUE_露_108_) = self.__ast_露:1.0___OPAQUE_露_97_.__ast_計:1.0___OPAQUE_礎_1_(&__ast_露:1.0___OPAQUE_露_53_) {
+            let __ast_露:1.0___OPAQUE_露_46_ = __ast_露:1.0___OPAQUE_露_95_ __ast_露:1.0___OPAQUE_露_108_.__ast_露:1.0___OPAQUE_露_111_ {
+                __ast_廨:1.0___OPAQUE_廨_42_(d) => __ast_漂:1.0___OPAQUE_露_71_!("__ast_廨:1.0___OPAQUE_廨_5_ (d: {}px)", d),
+                __ast_廨:1.0___OPAQUE_廨_14_ => "__ast_廨:1.0___OPAQUE_廨_51_ (__ast_廨:1.0___OPAQUE_廨_25_)".__ast_露:1.0___OPAQUE_露_85_(),
+            };
+            __ast_漂:1.0___OPAQUE_露_71_!("🧊 __ast_廨:1.0___OPAQUE_廨_27_ 3D __ast_廨:1.0___OPAQUE_廨_39_ (__ast_廨:1.0___OPAQUE_廨_12_ #{}): __ast_廨:1.0___OPAQUE_廨_22_: {} | __ast_廨:1.0___OPAQUE_廨_23_: {:?} | __ast_廨:1.0___OPAQUE_廨_31_: {:?} | __ast_廨:1.0___OPAQUE_廨_3_ __ast_廨:1.0___OPAQUE_廨_5_", 
+                __ast_露:1.0___OPAQUE_露_53_, __ast_露:1.0___OPAQUE_露_46_, __ast_露:1.0___OPAQUE_露_108_.__ast_露:1.0___OPAQUE_露_105_, __ast_露:1.0___OPAQUE_露_108_.__ast_露:1.0___OPAQUE_露_66_)
+        } else {
+            __ast_漂:1.0___OPAQUE_露_71_!("__ast_廨:1.0___OPAQUE_廨_12_ #{} __ast_露:1.0___OPAQUE_露_104_ no 3D __ast_露:1.0___OPAQUE_露_34_ __ast_露:1.0___OPAQUE_露_117_ __ast_露:1.0___OPAQUE_露_51_", __ast_露:1.0___OPAQUE_露_53_)
+        }
+    }
+}
+
+// POLYMORPHIC_JCROSS_END

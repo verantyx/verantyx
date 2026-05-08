@@ -1,0 +1,120 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:20DAF0DD ver:1778220598
+// ⚠️ One-time schema — expires after response
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+
+_ID_滴:1.0__TOKEN_滴_19_ _ID_滴:1.0__TOKEN_滴_47_::_ID_滴:1.0__TOKEN_滴_52_::_ID_廡:1.0__TOKEN_廡_43_;
+
+// [metadata-stripped]
+// [metadata-stripped]
+_ID_滴:1.0__TOKEN_滴_11_ enum _ID_廡:1.0__TOKEN_廡_20_ { _ID_図:1.0__TOKEN_廡_4_, _ID_図:1.0__TOKEN_廡_22_, _ID_図:1.0__TOKEN_廡_50_ }
+
+// [metadata-stripped]
+// [metadata-stripped]
+_ID_滴:1.0__TOKEN_滴_11_ enum _ID_廡:1.0__TOKEN_廡_54_ { _ID_廡:1.0__TOKEN_廡_30_, _ID_図:1.0__TOKEN_廡_46_, _ID_廡:1.0__TOKEN_廡_48_, _ID_廡:1.0__TOKEN_廡_25_ }
+
+// _ID_滴:0.3__TOKEN_YA_115_ [decoy-metadata]
+// [metadata-stripped]
+// [metadata-stripped]
+_ID_滴:1.0__TOKEN_滴_11_ struct _ID_廡:1.0__TOKEN_廡_8_ {
+    _ID_滴:1.0__TOKEN_滴_11_ _ID_滴:1.0__TOKEN_滴_64_: _ID_滴:1.0__TOKEN_滴_16_,
+    _ID_滴:1.0__TOKEN_滴_11_ _ID_滴:1.0__TOKEN_滴_74_: _ID_滴:1.0__TOKEN_滴_16_,
+    _ID_滴:1.0__TOKEN_滴_11_ _ID_滴:1.0__TOKEN_滴_41_: _ID_滴:1.0__TOKEN_滴_84_,
+    _ID_滴:1.0__TOKEN_滴_11_ _ID_滴:1.0__TOKEN_滴_7_: _ID_滴:1.0__TOKEN_滴_84_,
+    _ID_滴:1.0__TOKEN_滴_11_ _ID_滴:1.0__TOKEN_滴_93_: _ID_滴:1.0__TOKEN_滴_84_, // _ID_廡:1.0__TOKEN_廡_39_ _ID_滴:1.0__TOKEN_滴_65_ _ID_滴:1.0__TOKEN_滴_31_ _ID_滴:1.0__TOKEN_滴_94_
+}
+
+// [metadata-stripped]
+// [metadata-stripped]
+_ID_滴:1.0__TOKEN_滴_11_ struct _ID_図:1.0__TOKEN_廡_42_ {
+    _ID_滴:1.0__TOKEN_滴_11_ _ID_滴:1.0__TOKEN_滴_10_: _ID_滴:1.0__TOKEN_滴_16_,
+    _ID_滴:1.0__TOKEN_滴_11_ _ID_滴:1.0__TOKEN_滴_38_: _ID_廡:1.0__TOKEN_廡_20_,
+    _ID_滴:1.0__TOKEN_滴_11_ _ID_滴:1.0__TOKEN_滴_15_: _ID_廡:1.0__TOKEN_廡_54_,
+    _ID_滴:1.0__TOKEN_滴_11_ _ID_滴:1.0__TOKEN_滴_60_: _ID_廡:1.0__TOKEN_廡_37_<_ID_廡:1.0__TOKEN_廡_8_>,
+}
+
+// [metadata-stripped]
+_ID_滴:1.0__TOKEN_滴_11_ struct _ID_廡:1.0__TOKEN_廡_38_ {
+    _ID_滴:1.0__TOKEN_滴_11_ _ID_滴:1.0__TOKEN_滴_81_: _ID_廡:1.0__TOKEN_廡_43_<_ID_滴:1.0__TOKEN_滴_16_, _ID_図:1.0__TOKEN_廡_42_>,
+}
+
+_ID_滴:1.0__TOKEN_滴_29_ _ID_廡:1.0__TOKEN_廡_38_ {
+    _ID_滴:1.0__TOKEN_滴_11_ fn _ID_滴:1.0__TOKEN_滴_90_() -> _ID_廡:1.0__TOKEN_廡_36_ {
+        _ID_廡:1.0__TOKEN_廡_36_ { _ID_滴:1.0__TOKEN_滴_81_: _ID_廡:1.0__TOKEN_廡_43_::_ID_滴:1.0__TOKEN_滴_90_() }
+    }
+
+    _ID_滴:1.0__TOKEN_滴_11_ fn _ID_図:1.0__TOKEN_礎_3_(&_ID_滴:1.0__TOKEN_滴_50_ self, _ID_図:1.0__TOKEN_滴_5_: _ID_図:1.0__TOKEN_廡_42_) {
+        self._ID_滴:1.0__TOKEN_滴_81_._ID_滴:1.0__TOKEN_滴_55_(_ID_図:1.0__TOKEN_滴_5_._ID_滴:1.0__TOKEN_滴_10_, _ID_図:1.0__TOKEN_滴_5_);
+// _ID_礎:0.3__TOKEN_MF_147_ [decoy-metadata]
+    }
+
+// _ID_礎:0.9__TOKEN_WL_209_ [decoy-metadata]
+// [metadata-stripped]
+    _ID_滴:1.0__TOKEN_滴_11_ fn _ID_滴:1.0__TOKEN_滴_40_(&_ID_滴:1.0__TOKEN_滴_50_ self, _ID_滴:1.0__TOKEN_滴_10_: _ID_滴:1.0__TOKEN_滴_16_) {
+        if let _ID_廡:1.0__TOKEN_廡_51_(_ID_図:1.0__TOKEN_滴_5_) = self._ID_滴:1.0__TOKEN_滴_81_._ID_図:1.0__TOKEN_礎_2_(&_ID_滴:1.0__TOKEN_滴_10_) {
+            for _ID_滴:1.0__TOKEN_滴_72_ in &_ID_滴:1.0__TOKEN_滴_50_ _ID_図:1.0__TOKEN_滴_5_._ID_滴:1.0__TOKEN_滴_60_ {
+// _ID_網:0.6__TOKEN_DY_728_ [decoy-metadata]
+// [metadata-stripped]
+                _ID_滴:1.0__TOKEN_滴_72_._ID_滴:1.0__TOKEN_滴_93_ = _ID_滴:1.0__TOKEN_滴_72_._ID_滴:1.0__TOKEN_滴_41_._ID_滴:1.0__TOKEN_滴_92_(_ID_滴:1.0__TOKEN_滴_72_._ID_滴:1.0__TOKEN_滴_7_);
+// _ID_図:0.6__TOKEN_DH_611_ [decoy-metadata]
+            }
+        }
+    }
+
+// [metadata-stripped]
+    _ID_滴:1.0__TOKEN_滴_11_ fn _ID_滴:1.0__TOKEN_滴_82_(&self, _ID_滴:1.0__TOKEN_滴_72_: &_ID_廡:1.0__TOKEN_廡_8_, _ID_滴:1.0__TOKEN_滴_15_: _ID_廡:1.0__TOKEN_廡_54_) -> (_ID_滴:1.0__TOKEN_滴_84_, _ID_滴:1.0__TOKEN_滴_84_) {
+        let _ID_浮:1.0__TOKEN_滴_78_ = _ID_滴:1.0__TOKEN_滴_72_._ID_滴:1.0__TOKEN_滴_7_ - _ID_滴:1.0__TOKEN_滴_72_._ID_滴:1.0__TOKEN_滴_41_;
+        
+        let (_ID_滴:1.0__TOKEN_滴_83_, _ID_滴:1.0__TOKEN_滴_25_) = if _ID_浮:1.0__TOKEN_滴_78_ > 0.0 {
+// [metadata-stripped]
+            if _ID_滴:1.0__TOKEN_滴_15_ == _ID_廡:1.0__TOKEN_廡_54_::_ID_図:1.0__TOKEN_廡_46_ {
+                (_ID_浮:1.0__TOKEN_滴_78_ / 2.0, 0.0)
+            } else if _ID_滴:1.0__TOKEN_滴_15_ == _ID_廡:1.0__TOKEN_廡_54_::_ID_廡:1.0__TOKEN_廡_30_ {
+                (0.0, 0.0)
+            } else {
+                (_ID_浮:1.0__TOKEN_滴_78_ / 2.0, 0.0) // _ID_廡:1.0__TOKEN_廡_16_ _ID_滴:1.0__TOKEN_滴_68_-_ID_滴:1.0__TOKEN_滴_6_ _ID_滴:1.0__TOKEN_滴_88_
+            }
+        } else {
+// [metadata-stripped]
+// _ID_匣:0.1__TOKEN_MF_447_ [decoy-metadata]
+            let _ID_浮:1.0__TOKEN_滴_8_ = -_ID_浮:1.0__TOKEN_滴_78_;
+            if _ID_滴:1.0__TOKEN_滴_15_ == _ID_廡:1.0__TOKEN_廡_54_::_ID_図:1.0__TOKEN_廡_46_ {
+                (0.0, _ID_浮:1.0__TOKEN_滴_8_ / 2.0)
+            } else if _ID_滴:1.0__TOKEN_滴_15_ == _ID_廡:1.0__TOKEN_廡_54_::_ID_廡:1.0__TOKEN_廡_30_ {
+                (0.0, 0.0)
+            } else {
+                (0.0, _ID_浮:1.0__TOKEN_滴_8_ / 2.0)
+            }
+        };
+
+        (_ID_滴:1.0__TOKEN_滴_83_, _ID_滴:1.0__TOKEN_滴_25_)
+    }
+
+// [metadata-stripped]
+    _ID_滴:1.0__TOKEN_滴_11_ fn _ID_滴:1.0__TOKEN_滴_76_(&self, _ID_滴:1.0__TOKEN_滴_42_: _ID_滴:1.0__TOKEN_滴_16_) -> _ID_廡:1.0__TOKEN_廡_9_ {
+        if let _ID_廡:1.0__TOKEN_廡_51_(_ID_図:1.0__TOKEN_滴_5_) = self._ID_滴:1.0__TOKEN_滴_81_._ID_図:1.0__TOKEN_礎_1_(&_ID_滴:1.0__TOKEN_滴_42_) {
+            let _ID_滴:1.0__TOKEN_滴_50_ _ID_滴:1.0__TOKEN_滴_89_ = _ID_浮:1.0__TOKEN_滴_56_!("📝 _ID_廡:1.0__TOKEN_廡_3_ _ID_廡:1.0__TOKEN_廡_21_ (_ID_廡:1.0__TOKEN_廡_10_ #{}): [_ID_廡:1.0__TOKEN_廡_2_={:?}, _ID_廡:1.0__TOKEN_廡_5_={:?}] {} _ID_廡:1.0__TOKEN_廡_44_(s)", 
+                _ID_滴:1.0__TOKEN_滴_42_, _ID_図:1.0__TOKEN_滴_5_._ID_滴:1.0__TOKEN_滴_38_, _ID_図:1.0__TOKEN_滴_5_._ID_滴:1.0__TOKEN_滴_15_, _ID_図:1.0__TOKEN_滴_5_._ID_滴:1.0__TOKEN_滴_60_._ID_滴:1.0__TOKEN_滴_12_());
+            for p in &_ID_図:1.0__TOKEN_滴_5_._ID_滴:1.0__TOKEN_滴_60_ {
+                _ID_滴:1.0__TOKEN_滴_89_._ID_滴:1.0__TOKEN_滴_67_(&_ID_浮:1.0__TOKEN_滴_56_!("\n  - _ID_廡:1.0__TOKEN_廡_17_#{}({:.1}px) _ID_滴:1.0__TOKEN_滴_21_ to _ID_廡:1.0__TOKEN_廡_31_#{}({:.1}px) -> _ID_廡:1.0__TOKEN_廡_23_ _ID_廡:1.0__TOKEN_廡_12_ {:.1}px", 
+                    p._ID_滴:1.0__TOKEN_滴_64_, p._ID_滴:1.0__TOKEN_滴_41_, p._ID_滴:1.0__TOKEN_滴_74_, p._ID_滴:1.0__TOKEN_滴_7_, p._ID_滴:1.0__TOKEN_滴_93_));
+            }
+            _ID_滴:1.0__TOKEN_滴_89_
+        } else {
+            _ID_浮:1.0__TOKEN_滴_56_!("_ID_廡:1.0__TOKEN_廡_10_ #{} is _ID_滴:1.0__TOKEN_滴_95_ an _ID_滴:1.0__TOKEN_滴_54_ _ID_廡:1.0__TOKEN_廡_3_ _ID_図:1.0__TOKEN_滴_5_", _ID_滴:1.0__TOKEN_滴_42_)
+        }
+    }
+}
+
+// POLYMORPHIC_JCROSS_END

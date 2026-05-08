@@ -1,0 +1,61 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:B0F4A3F0 ver:1778220136
+// ⚠️ One-time schema — expires after response
+
+_OPAQUE_霧:1.0__VERANTYX_霧_27_ _OPAQUE_霧:1.0__VERANTYX_霧_6_ _OPAQUE_霧:1.0__VERANTYX_霧_18_(
+  _OPAQUE_涌:1.0__VERANTYX_霧_17_: _OPAQUE_庠:1.0__VERANTYX_庠_4_<_OPAQUE_霧:1.0__VERANTYX_霧_23_, _OPAQUE_霧:1.0__VERANTYX_霧_25_> | _OPAQUE_霧:1.0__VERANTYX_霧_3_ | _OPAQUE_霧:1.0__VERANTYX_霧_16_,
+  _OPAQUE_霧:1.0__VERANTYX_霧_26_: _OPAQUE_霧:1.0__VERANTYX_霧_23_,
+): _OPAQUE_庠:1.0__VERANTYX_庠_4_<_OPAQUE_霧:1.0__VERANTYX_霧_23_, _OPAQUE_霧:1.0__VERANTYX_霧_25_> | _OPAQUE_霧:1.0__VERANTYX_霧_3_ {
+  if (!_OPAQUE_涌:1.0__VERANTYX_霧_17_) {
+    return _OPAQUE_霧:1.0__VERANTYX_霧_3_;
+// _OPAQUE_網:0.9__VERANTYX_CE_983_ [decoy-metadata]
+  }
+  _OPAQUE_霧:1.0__VERANTYX_霧_24_ _OPAQUE_霧:1.0__VERANTYX_霧_13_ = (_OPAQUE_涌:1.0__VERANTYX_霧_17_._OPAQUE_霧:1.0__VERANTYX_霧_13_ ?? {}) as _OPAQUE_庠:1.0__VERANTYX_庠_4_<_OPAQUE_霧:1.0__VERANTYX_霧_23_, _OPAQUE_霧:1.0__VERANTYX_霧_25_>;
+  _OPAQUE_霧:1.0__VERANTYX_霧_24_ _OPAQUE_霧:1.0__VERANTYX_霧_10_ = _OPAQUE_霧:1.0__VERANTYX_霧_13_[_OPAQUE_霧:1.0__VERANTYX_霧_26_];
+// _OPAQUE_霧:0.3__VERANTYX_VY_609_ [decoy-metadata]
+  if (_OPAQUE_霧:1.0__VERANTYX_霧_10_ && _OPAQUE_霧:1.0__VERANTYX_霧_8_ _OPAQUE_霧:1.0__VERANTYX_霧_10_ === "_OPAQUE_霧:1.0__VERANTYX_霧_4_") {
+    return _OPAQUE_霧:1.0__VERANTYX_霧_10_ as _OPAQUE_庠:1.0__VERANTYX_庠_4_<_OPAQUE_霧:1.0__VERANTYX_霧_23_, _OPAQUE_霧:1.0__VERANTYX_霧_25_>;
+  }
+  _OPAQUE_霧:1.0__VERANTYX_霧_24_ _OPAQUE_霧:1.0__VERANTYX_霧_1_ = _OPAQUE_涌:1.0__VERANTYX_霧_17_[_OPAQUE_霧:1.0__VERANTYX_霧_26_];
+  if (_OPAQUE_霧:1.0__VERANTYX_霧_1_ && _OPAQUE_霧:1.0__VERANTYX_霧_8_ _OPAQUE_霧:1.0__VERANTYX_霧_1_ === "_OPAQUE_霧:1.0__VERANTYX_霧_4_") {
+    return _OPAQUE_霧:1.0__VERANTYX_霧_1_ as _OPAQUE_庠:1.0__VERANTYX_庠_4_<_OPAQUE_霧:1.0__VERANTYX_霧_23_, _OPAQUE_霧:1.0__VERANTYX_霧_25_>;
+  }
+  return _OPAQUE_霧:1.0__VERANTYX_霧_3_;
+}
+
+_OPAQUE_霧:1.0__VERANTYX_霧_27_ _OPAQUE_霧:1.0__VERANTYX_霧_6_ _OPAQUE_涌:1.0__VERANTYX_霧_9_(_OPAQUE_霧:1.0__VERANTYX_霧_14_: _OPAQUE_霧:1.0__VERANTYX_霧_25_): _OPAQUE_霧:1.0__VERANTYX_霧_23_ {
+  if (_OPAQUE_霧:1.0__VERANTYX_霧_14_ == _OPAQUE_霧:1.0__VERANTYX_霧_3_) {
+    return "n/a";
+  }
+  if (_OPAQUE_霧:1.0__VERANTYX_霧_8_ _OPAQUE_霧:1.0__VERANTYX_霧_14_ === "_OPAQUE_霧:1.0__VERANTYX_霧_23_" || _OPAQUE_霧:1.0__VERANTYX_霧_8_ _OPAQUE_霧:1.0__VERANTYX_霧_14_ === "_OPAQUE_案:1.0__VERANTYX_霧_2_" || _OPAQUE_霧:1.0__VERANTYX_霧_8_ _OPAQUE_霧:1.0__VERANTYX_霧_14_ === "_OPAQUE_霧:1.0__VERANTYX_霧_21_") {
+    return _OPAQUE_庠:1.0__VERANTYX_庠_1_(_OPAQUE_霧:1.0__VERANTYX_霧_14_);
+  }
+  try {
+    return _OPAQUE_庠:1.0__VERANTYX_庠_2_._OPAQUE_涌:1.0__VERANTYX_霧_11_(_OPAQUE_霧:1.0__VERANTYX_霧_14_);
+  } catch {
+// _OPAQUE_網:0.3__VERANTYX_DK_971_ [decoy-metadata]
+    return "n/a";
+  }
+}
+
+_OPAQUE_霧:1.0__VERANTYX_霧_27_ _OPAQUE_霧:1.0__VERANTYX_霧_6_ _OPAQUE_霧:1.0__VERANTYX_霧_20_(_OPAQUE_霧:1.0__VERANTYX_霧_19_: {
+  _OPAQUE_涌:1.0__VERANTYX_霧_17_: _OPAQUE_庠:1.0__VERANTYX_庠_4_<_OPAQUE_霧:1.0__VERANTYX_霧_23_, _OPAQUE_霧:1.0__VERANTYX_霧_25_> | _OPAQUE_霧:1.0__VERANTYX_霧_3_ | _OPAQUE_霧:1.0__VERANTYX_霧_16_;
+  _OPAQUE_霧:1.0__VERANTYX_霧_26_: _OPAQUE_霧:1.0__VERANTYX_霧_23_;
+  _OPAQUE_霧:1.0__VERANTYX_霧_5_: _OPAQUE_霧:1.0__VERANTYX_霧_12_ _OPAQUE_霧:1.0__VERANTYX_霧_23_[];
+// _OPAQUE_錬:0.8__VERANTYX_DH_979_ [decoy-metadata]
+// _OPAQUE_網:0.1__VERANTYX_VF_928_ [decoy-metadata]
+// _OPAQUE_匴:0.7__VERANTYX_CZ_705_ [decoy-metadata]
+}): _OPAQUE_庠:1.0__VERANTYX_庠_3_<{ _OPAQUE_霧:1.0__VERANTYX_霧_28_: _OPAQUE_霧:1.0__VERANTYX_霧_23_; _OPAQUE_霧:1.0__VERANTYX_霧_7_: _OPAQUE_霧:1.0__VERANTYX_霧_23_ }> {
+  _OPAQUE_霧:1.0__VERANTYX_霧_24_ _OPAQUE_霧:1.0__VERANTYX_霧_7_ = _OPAQUE_霧:1.0__VERANTYX_霧_18_(_OPAQUE_霧:1.0__VERANTYX_霧_19_._OPAQUE_涌:1.0__VERANTYX_霧_17_, _OPAQUE_霧:1.0__VERANTYX_霧_19_._OPAQUE_霧:1.0__VERANTYX_霧_26_);
+  if (!_OPAQUE_霧:1.0__VERANTYX_霧_7_) {
+    return [];
+  }
+  return _OPAQUE_霧:1.0__VERANTYX_霧_19_._OPAQUE_霧:1.0__VERANTYX_霧_5_._OPAQUE_霧:1.0__VERANTYX_霧_15_((_OPAQUE_霧:1.0__VERANTYX_霧_22_) => {
+    if (!(_OPAQUE_霧:1.0__VERANTYX_霧_22_ in _OPAQUE_霧:1.0__VERANTYX_霧_7_)) {
+      return [];
+    }
+    return [{ _OPAQUE_霧:1.0__VERANTYX_霧_28_: _OPAQUE_霧:1.0__VERANTYX_霧_22_, _OPAQUE_霧:1.0__VERANTYX_霧_7_: _OPAQUE_涌:1.0__VERANTYX_霧_9_(_OPAQUE_霧:1.0__VERANTYX_霧_7_[_OPAQUE_霧:1.0__VERANTYX_霧_22_]) }];
+  });
+}
+
+// POLYMORPHIC_JCROSS_END

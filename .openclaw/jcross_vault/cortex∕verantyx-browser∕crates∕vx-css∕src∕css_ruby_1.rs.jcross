@@ -1,0 +1,102 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:E8BA3618 ver:1778220476
+// ⚠️ One-time schema — expires after response
+
+// [metadata-stripped]
+// _ASTNODE_廉:0.1__ID_YA_110_ [decoy-metadata]
+// [metadata-stripped]
+// _ASTNODE_廓:0.5__ID_BW_271_ [decoy-metadata]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+
+_ASTNODE_霧:1.0__ID_霧_29_ _ASTNODE_霧:1.0__ID_霧_63_::_ASTNODE_霧:1.0__ID_霧_67_::_ASTNODE_廓:1.0__ID_廓_33_;
+
+// [metadata-stripped]
+// [metadata-stripped]
+_ASTNODE_霧:1.0__ID_霧_17_ enum _ASTNODE_廓:1.0__ID_廓_16_ { _ASTNODE_処:1.0__ID_廓_2_, _ASTNODE_処:1.0__ID_廓_18_, _ASTNODE_処:1.0__ID_廓_42_, _ASTNODE_廓:1.0__ID_廓_31_ }
+
+// [metadata-stripped]
+// [metadata-stripped]
+// _ASTNODE_庫:0.3__ID_YF_161_ [decoy-metadata]
+_ASTNODE_霧:1.0__ID_霧_17_ enum _ASTNODE_廓:1.0__ID_廓_46_ { _ASTNODE_廓:1.0__ID_廓_22_, _ASTNODE_処:1.0__ID_廓_37_, _ASTNODE_廓:1.0__ID_廓_41_, _ASTNODE_廓:1.0__ID_廓_20_ }
+
+// [metadata-stripped]
+// [metadata-stripped]
+_ASTNODE_霧:1.0__ID_霧_17_ struct _ASTNODE_廓:1.0__ID_廓_38_ {
+    _ASTNODE_霧:1.0__ID_霧_17_ _ASTNODE_霧:1.0__ID_霧_55_: _ASTNODE_廓:1.0__ID_廓_16_,
+    _ASTNODE_霧:1.0__ID_霧_17_ _ASTNODE_霧:1.0__ID_霧_26_: _ASTNODE_廓:1.0__ID_廓_46_,
+    _ASTNODE_霧:1.0__ID_霧_17_ _ASTNODE_霧:1.0__ID_霧_22_: _ASTNODE_霧:1.0__ID_霧_102_, // e.g. _ASTNODE_霧:1.0__ID_霧_90_ _ASTNODE_霧:1.0__ID_霧_108_ `<_ASTNODE_霧:1.0__ID_霧_13_>` _ASTNODE_霧:1.0__ID_霧_93_
+}
+
+_ASTNODE_霧:1.0__ID_霧_47_ _ASTNODE_廓:1.0__ID_廓_34_ for _ASTNODE_廓:1.0__ID_廓_38_ {
+    fn _ASTNODE_霧:1.0__ID_霧_5_() -> _ASTNODE_廓:1.0__ID_廓_27_ {
+        _ASTNODE_廓:1.0__ID_廓_27_ {
+            _ASTNODE_霧:1.0__ID_霧_55_: _ASTNODE_廓:1.0__ID_廓_16_::_ASTNODE_処:1.0__ID_廓_2_,
+            _ASTNODE_霧:1.0__ID_霧_26_: _ASTNODE_廓:1.0__ID_廓_46_::_ASTNODE_廓:1.0__ID_廓_20_,
+            _ASTNODE_霧:1.0__ID_霧_22_: false,
+        }
+    }
+}
+
+// [metadata-stripped]
+_ASTNODE_霧:1.0__ID_霧_17_ struct _ASTNODE_廓:1.0__ID_廓_29_ {
+    _ASTNODE_霧:1.0__ID_霧_17_ _ASTNODE_霧:1.0__ID_霧_89_: _ASTNODE_廓:1.0__ID_廓_33_<_ASTNODE_霧:1.0__ID_霧_28_, _ASTNODE_廓:1.0__ID_廓_38_>,
+// _ASTNODE_霧:0.6__ID_VF_428_ [decoy-metadata]
+// _ASTNODE_廉:0.1__ID_DC_131_ [decoy-metadata]
+    _ASTNODE_霧:1.0__ID_霧_17_ _ASTNODE_霧:1.0__ID_霧_103_: _ASTNODE_霧:1.0__ID_霧_28_,
+}
+
+_ASTNODE_霧:1.0__ID_霧_47_ _ASTNODE_廓:1.0__ID_廓_29_ {
+    _ASTNODE_霧:1.0__ID_霧_17_ fn _ASTNODE_霧:1.0__ID_霧_101_() -> _ASTNODE_廓:1.0__ID_廓_27_ {
+        _ASTNODE_廓:1.0__ID_廓_27_ {
+            _ASTNODE_霧:1.0__ID_霧_89_: _ASTNODE_廓:1.0__ID_廓_33_::_ASTNODE_霧:1.0__ID_霧_101_(),
+            _ASTNODE_霧:1.0__ID_霧_103_: 0,
+        }
+    }
+
+    _ASTNODE_霧:1.0__ID_霧_17_ fn _ASTNODE_処:1.0__ID_廉_2_(&_ASTNODE_霧:1.0__ID_霧_66_ self, _ASTNODE_霧:1.0__ID_霧_57_: _ASTNODE_霧:1.0__ID_霧_28_, _ASTNODE_霧:1.0__ID_霧_100_: _ASTNODE_廓:1.0__ID_廓_38_) {
+        self._ASTNODE_霧:1.0__ID_霧_89_._ASTNODE_霧:1.0__ID_霧_70_(_ASTNODE_霧:1.0__ID_霧_57_, _ASTNODE_霧:1.0__ID_霧_100_);
+        self._ASTNODE_霧:1.0__ID_霧_103_ += 1;
+    }
+
+// [metadata-stripped]
+// [metadata-stripped]
+    _ASTNODE_霧:1.0__ID_霧_17_ fn _ASTNODE_霧:1.0__ID_霧_45_(&self, _ASTNODE_霧:1.0__ID_霧_57_: _ASTNODE_霧:1.0__ID_霧_28_, _ASTNODE_霧:1.0__ID_霧_10_: _ASTNODE_霧:1.0__ID_霧_95_) -> _ASTNODE_霧:1.0__ID_霧_95_ {
+        if let _ASTNODE_廓:1.0__ID_廓_43_(_ASTNODE_霧:1.0__ID_霧_100_) = self._ASTNODE_霧:1.0__ID_霧_89_._ASTNODE_処:1.0__ID_廉_1_(&_ASTNODE_霧:1.0__ID_霧_57_) {
+            _ASTNODE_霧:1.0__ID_霧_92_ _ASTNODE_霧:1.0__ID_霧_100_._ASTNODE_霧:1.0__ID_霧_55_ {
+                _ASTNODE_廓:1.0__ID_廓_16_::_ASTNODE_処:1.0__ID_廓_2_ => {
+// [metadata-stripped]
+                    return _ASTNODE_霧:1.0__ID_霧_10_;
+                }
+                _ASTNODE_廓:1.0__ID_廓_16_::_ASTNODE_処:1.0__ID_廓_18_ => {
+// [metadata-stripped]
+// [metadata-stripped]
+                    return 0.0;
+                }
+// _ASTNODE_廓:0.7__ID_ZE_548_ [decoy-metadata]
+                _ASTNODE_廓:1.0__ID_廓_16_::_ASTNODE_処:1.0__ID_廓_42_ => {
+// [metadata-stripped]
+                    return 0.0;
+                }
+                _ => return _ASTNODE_霧:1.0__ID_霧_10_,
+            }
+        }
+        _ASTNODE_霧:1.0__ID_霧_10_ // _ASTNODE_廓:1.0__ID_廓_40_ _ASTNODE_廓:1.0__ID_廓_34_ is _ASTNODE_処:1.0__ID_廓_2_
+    }
+
+// [metadata-stripped]
+    _ASTNODE_霧:1.0__ID_霧_17_ fn _ASTNODE_霧:1.0__ID_霧_87_(&self, _ASTNODE_霧:1.0__ID_霧_57_: _ASTNODE_霧:1.0__ID_霧_28_) -> _ASTNODE_廓:1.0__ID_廓_9_ {
+        if let _ASTNODE_廓:1.0__ID_廓_43_(_ASTNODE_霧:1.0__ID_霧_100_) = self._ASTNODE_霧:1.0__ID_霧_89_._ASTNODE_処:1.0__ID_廉_1_(&_ASTNODE_霧:1.0__ID_霧_57_) {
+            _ASTNODE_澎:1.0__ID_霧_71_!("㊙️ _ASTNODE_廓:1.0__ID_廓_23_ _ASTNODE_廓:1.0__ID_廓_1_ 1 (_ASTNODE_廓:1.0__ID_廓_10_ #{}): _ASTNODE_廓:1.0__ID_廓_35_: {:?} | _ASTNODE_廓:1.0__ID_廓_5_: {:?} | _ASTNODE_廓:1.0__ID_廓_7_ _ASTNODE_廓:1.0__ID_廓_30_ _ASTNODE_廓:1.0__ID_廓_39_: {}", 
+                _ASTNODE_霧:1.0__ID_霧_57_, _ASTNODE_霧:1.0__ID_霧_100_._ASTNODE_霧:1.0__ID_霧_55_, _ASTNODE_霧:1.0__ID_霧_100_._ASTNODE_霧:1.0__ID_霧_26_, self._ASTNODE_霧:1.0__ID_霧_103_)
+        } else {
+            _ASTNODE_澎:1.0__ID_霧_71_!("_ASTNODE_廓:1.0__ID_廓_10_ #{} _ASTNODE_霧:1.0__ID_霧_52_ no _ASTNODE_廓:1.0__ID_廓_19_ _ASTNODE_廓:1.0__ID_廓_32_ _ASTNODE_廓:1.0__ID_廓_1_ _ASTNODE_霧:1.0__ID_霧_50_ _ASTNODE_霧:1.0__ID_霧_39_", _ASTNODE_霧:1.0__ID_霧_57_)
+        }
+    }
+}
+
+// POLYMORPHIC_JCROSS_END

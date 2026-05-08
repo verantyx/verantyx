@@ -1,0 +1,172 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:6B0A8800 ver:1778220007
+// ⚠️ One-time schema — expires after response
+
+import { _JCROSS_霞:1.0__SYM_霞_23_, _JCROSS_霞:1.0__SYM_霞_102_ } _JCROSS_霞:1.0__SYM_霞_88_ "_JCROSS_霞:1.0__SYM_霞_73_";
+import _JCROSS_霞:1.0__SYM_霞_112_ { _JCROSS_庵:1.0__SYM_庵_16_ } _JCROSS_霞:1.0__SYM_霞_88_ "../_JCROSS_霞:1.0__SYM_霞_75_-_JCROSS_霞:1.0__SYM_霞_38_.ts";
+import { _JCROSS_匶:1.0__SYM_霞_34_ } _JCROSS_霞:1.0__SYM_霞_88_ "../_JCROSS_型:1.0__SYM_霞_42_.ts";
+
+_JCROSS_霞:1.0__SYM_霞_47_ _JCROSS_霞:1.0__SYM_霞_112_ _JCROSS_庵:1.0__SYM_庵_26_ = {
+  _JCROSS_匶:1.0__SYM_霞_28_: _JCROSS_霞:1.0__SYM_霞_35_;
+  _JCROSS_霞:1.0__SYM_霞_99_: _JCROSS_庵:1.0__SYM_庵_4_<_JCROSS_霞:1.0__SYM_霞_48_, _JCROSS_霞:1.0__SYM_霞_74_> | _JCROSS_霞:1.0__SYM_霞_94_;
+  _JCROSS_霞:1.0__SYM_霞_7_: _JCROSS_庵:1.0__SYM_庵_4_<_JCROSS_霞:1.0__SYM_霞_48_, _JCROSS_霞:1.0__SYM_霞_74_> | _JCROSS_霞:1.0__SYM_霞_94_;
+  _JCROSS_霞:1.0__SYM_霞_100_: _JCROSS_霞:1.0__SYM_霞_74_[];
+  _JCROSS_霞:1.0__SYM_霞_17_: _JCROSS_霞:1.0__SYM_霞_74_;
+  _JCROSS_霞:1.0__SYM_霞_58_: _JCROSS_庵:1.0__SYM_庵_16_[];
+  _JCROSS_霞:1.0__SYM_霞_44_: _JCROSS_霞:1.0__SYM_霞_48_[];
+  _JCROSS_霞:1.0__SYM_霞_18_: _JCROSS_霞:1.0__SYM_霞_48_;
+  _JCROSS_霞:1.0__SYM_霞_83_: _JCROSS_霞:1.0__SYM_霞_48_;
+  _JCROSS_霞:1.0__SYM_霞_14_: _JCROSS_霞:1.0__SYM_霞_48_ | _JCROSS_霞:1.0__SYM_霞_94_;
+  _JCROSS_霞:1.0__SYM_霞_105_: _JCROSS_霞:1.0__SYM_霞_48_ | _JCROSS_霞:1.0__SYM_霞_94_;
+  _JCROSS_霞:1.0__SYM_霞_24_: (_JCROSS_霞:1.0__SYM_霞_52_: _JCROSS_霞:1.0__SYM_霞_48_) => _JCROSS_霞:1.0__SYM_霞_81_;
+  _JCROSS_霞:1.0__SYM_霞_16_: (_JCROSS_霞:1.0__SYM_霞_52_: _JCROSS_霞:1.0__SYM_霞_48_) => _JCROSS_霞:1.0__SYM_霞_81_;
+  _JCROSS_霞:1.0__SYM_霞_95_: () => _JCROSS_霞:1.0__SYM_霞_81_;
+  _JCROSS_霞:1.0__SYM_霞_108_: () => _JCROSS_霞:1.0__SYM_霞_81_;
+};
+
+_JCROSS_霞:1.0__SYM_霞_47_ _JCROSS_霞:1.0__SYM_霞_71_ _JCROSS_霞:1.0__SYM_霞_65_(_JCROSS_霞:1.0__SYM_霞_104_: _JCROSS_庵:1.0__SYM_庵_26_) {
+  _JCROSS_霞:1.0__SYM_霞_20_ _JCROSS_霞:1.0__SYM_霞_98_ =
+    _JCROSS_霞:1.0__SYM_霞_104_._JCROSS_霞:1.0__SYM_霞_99_ && _JCROSS_霞:1.0__SYM_霞_9_ _JCROSS_霞:1.0__SYM_霞_104_._JCROSS_霞:1.0__SYM_霞_99_ === "_JCROSS_霞:1.0__SYM_霞_30_"
+      ? (_JCROSS_霞:1.0__SYM_霞_104_._JCROSS_霞:1.0__SYM_霞_99_ as { _JCROSS_霞:1.0__SYM_霞_98_?: { _JCROSS_霞:1.0__SYM_霞_43_?: _JCROSS_庵:1.0__SYM_庵_4_<_JCROSS_霞:1.0__SYM_霞_48_, _JCROSS_型:1.0__SYM_霞_101_> } })._JCROSS_霞:1.0__SYM_霞_98_
+      : _JCROSS_霞:1.0__SYM_霞_94_;
+  _JCROSS_霞:1.0__SYM_霞_20_ _JCROSS_霞:1.0__SYM_霞_114_ = _JCROSS_霞:1.0__SYM_霞_98_?._JCROSS_霞:1.0__SYM_霞_43_ ?? _JCROSS_霞:1.0__SYM_霞_94_;
+  _JCROSS_霞:1.0__SYM_霞_20_ _JCROSS_霞:1.0__SYM_霞_46_ = _JCROSS_霞:1.0__SYM_霞_114_?._JCROSS_霞:1.0__SYM_霞_46_ ?? 0;
+  _JCROSS_霞:1.0__SYM_霞_20_ _JCROSS_霞:1.0__SYM_霞_110_ = _JCROSS_霞:1.0__SYM_霞_114_?._JCROSS_霞:1.0__SYM_霞_110_ ?? 0;
+  _JCROSS_霞:1.0__SYM_霞_20_ _JCROSS_霞:1.0__SYM_霞_109_ = _JCROSS_霞:1.0__SYM_霞_114_?._JCROSS_霞:1.0__SYM_霞_109_ ?? 0;
+  _JCROSS_霞:1.0__SYM_霞_20_ _JCROSS_霞:1.0__SYM_霞_82_ = _JCROSS_霞:1.0__SYM_霞_46_ > 0 ? "_JCROSS_型:1.0__SYM_霞_29_" : _JCROSS_霞:1.0__SYM_霞_110_ > 0 ? "_JCROSS_霞:1.0__SYM_霞_110_" : "_JCROSS_霞:1.0__SYM_霞_60_";
+  _JCROSS_霞:1.0__SYM_霞_20_ _JCROSS_霞:1.0__SYM_霞_27_ =
+    _JCROSS_霞:1.0__SYM_霞_46_ > 0 ? `${_JCROSS_霞:1.0__SYM_霞_46_} _JCROSS_霞:1.0__SYM_霞_46_` : _JCROSS_霞:1.0__SYM_霞_110_ > 0 ? `${_JCROSS_霞:1.0__SYM_霞_110_} _JCROSS_霞:1.0__SYM_霞_37_` : "No _JCROSS_霞:1.0__SYM_霞_46_ _JCROSS_霞:1.0__SYM_霞_53_";
+
+  return _JCROSS_霞:1.0__SYM_霞_23_`
+    <_JCROSS_霞:1.0__SYM_霞_8_ class="_JCROSS_霞:1.0__SYM_霞_55_">
+      <_JCROSS_霞:1.0__SYM_霞_89_ class="_JCROSS_霞:1.0__SYM_霞_64_">
+        <_JCROSS_霞:1.0__SYM_霞_89_ class="_JCROSS_霞:1.0__SYM_霞_2_" _JCROSS_霞:1.0__SYM_霞_32_="_JCROSS_濫:1.0__SYM_霞_11_-_JCROSS_霞:1.0__SYM_霞_106_: _JCROSS_霞:1.0__SYM_霞_10_-_JCROSS_霞:1.0__SYM_霞_25_;">
+          <_JCROSS_霞:1.0__SYM_霞_89_>
+            <_JCROSS_霞:1.0__SYM_霞_89_ class="_JCROSS_霞:1.0__SYM_霞_64_-_JCROSS_霞:1.0__SYM_霞_33_">_JCROSS_庵:1.0__SYM_庵_23_</_JCROSS_霞:1.0__SYM_霞_89_>
+            <_JCROSS_霞:1.0__SYM_霞_89_ class="_JCROSS_霞:1.0__SYM_霞_64_-_JCROSS_霞:1.0__SYM_霞_87_">_JCROSS_庵:1.0__SYM_庵_25_, _JCROSS_霞:1.0__SYM_霞_7_, _JCROSS_霞:1.0__SYM_霞_107_ _JCROSS_霞:1.0__SYM_霞_17_ _JCROSS_霞:1.0__SYM_霞_6_.</_JCROSS_霞:1.0__SYM_霞_89_>
+          </_JCROSS_霞:1.0__SYM_霞_89_>
+          <_JCROSS_霞:1.0__SYM_霞_61_ class="_JCROSS_霞:1.0__SYM_霞_115_" ?_JCROSS_霞:1.0__SYM_霞_12_=${_JCROSS_霞:1.0__SYM_霞_104_._JCROSS_匶:1.0__SYM_霞_28_} @_JCROSS_霞:1.0__SYM_霞_41_=${_JCROSS_霞:1.0__SYM_霞_104_._JCROSS_霞:1.0__SYM_霞_95_}>
+            ${_JCROSS_霞:1.0__SYM_霞_104_._JCROSS_匶:1.0__SYM_霞_28_ ? "_JCROSS_庵:1.0__SYM_庵_24_…" : "_JCROSS_庵:1.0__SYM_庵_6_"}
+          </_JCROSS_霞:1.0__SYM_霞_61_>
+        </_JCROSS_霞:1.0__SYM_霞_89_>
+        <_JCROSS_霞:1.0__SYM_霞_89_ class="_JCROSS_霞:1.0__SYM_霞_113_" _JCROSS_霞:1.0__SYM_霞_32_="_JCROSS_霞:1.0__SYM_霞_93_-_JCROSS_霞:1.0__SYM_霞_39_: 12px;">
+          <_JCROSS_霞:1.0__SYM_霞_89_>
+            <_JCROSS_霞:1.0__SYM_霞_89_ class="_JCROSS_霞:1.0__SYM_霞_15_">_JCROSS_庵:1.0__SYM_庵_25_</_JCROSS_霞:1.0__SYM_霞_89_>
+            ${
+              _JCROSS_霞:1.0__SYM_霞_114_
+                ? _JCROSS_霞:1.0__SYM_霞_23_`<_JCROSS_霞:1.0__SYM_霞_89_ class="_JCROSS_霞:1.0__SYM_霞_111_ ${_JCROSS_霞:1.0__SYM_霞_82_}" _JCROSS_霞:1.0__SYM_霞_32_="_JCROSS_霞:1.0__SYM_霞_93_-_JCROSS_霞:1.0__SYM_霞_39_: 8px;">
+                  _JCROSS_庵:1.0__SYM_庵_10_ _JCROSS_霞:1.0__SYM_霞_76_: ${_JCROSS_霞:1.0__SYM_霞_27_}${_JCROSS_霞:1.0__SYM_霞_109_ > 0 ? ` · ${_JCROSS_霞:1.0__SYM_霞_109_} _JCROSS_霞:1.0__SYM_霞_109_` : ""}. _JCROSS_庵:1.0__SYM_庵_7_
+                  <_JCROSS_霞:1.0__SYM_霞_68_ class="_JCROSS_霞:1.0__SYM_霞_70_">_JCROSS_霞:1.0__SYM_霞_1_ _JCROSS_霞:1.0__SYM_霞_67_ _JCROSS_霞:1.0__SYM_霞_76_ --_JCROSS_霞:1.0__SYM_霞_84_</_JCROSS_霞:1.0__SYM_霞_68_> for _JCROSS_霞:1.0__SYM_霞_91_.
+                </_JCROSS_霞:1.0__SYM_霞_89_>`
+                : _JCROSS_霞:1.0__SYM_霞_102_
+            }
+            <_JCROSS_霞:1.0__SYM_霞_103_ class="_JCROSS_霞:1.0__SYM_霞_3_-_JCROSS_霞:1.0__SYM_霞_69_">${_JCROSS_庵:1.0__SYM_庵_18_._JCROSS_濫:1.0__SYM_霞_49_(_JCROSS_霞:1.0__SYM_霞_104_._JCROSS_霞:1.0__SYM_霞_99_ ?? {}, _JCROSS_霞:1.0__SYM_霞_94_, 2)}</_JCROSS_霞:1.0__SYM_霞_103_>
+          </_JCROSS_霞:1.0__SYM_霞_89_>
+// _JCROSS_曠:0.4__SYM_XW_608_ [decoy-metadata]
+          <_JCROSS_霞:1.0__SYM_霞_89_>
+            <_JCROSS_霞:1.0__SYM_霞_89_ class="_JCROSS_霞:1.0__SYM_霞_15_">_JCROSS_庵:1.0__SYM_庵_22_</_JCROSS_霞:1.0__SYM_霞_89_>
+            <_JCROSS_霞:1.0__SYM_霞_103_ class="_JCROSS_霞:1.0__SYM_霞_3_-_JCROSS_霞:1.0__SYM_霞_69_">${_JCROSS_庵:1.0__SYM_庵_18_._JCROSS_濫:1.0__SYM_霞_49_(_JCROSS_霞:1.0__SYM_霞_104_._JCROSS_霞:1.0__SYM_霞_7_ ?? {}, _JCROSS_霞:1.0__SYM_霞_94_, 2)}</_JCROSS_霞:1.0__SYM_霞_103_>
+          </_JCROSS_霞:1.0__SYM_霞_89_>
+          <_JCROSS_霞:1.0__SYM_霞_89_>
+            <_JCROSS_霞:1.0__SYM_霞_89_ class="_JCROSS_霞:1.0__SYM_霞_15_">_JCROSS_庵:1.0__SYM_庵_3_ _JCROSS_霞:1.0__SYM_霞_17_</_JCROSS_霞:1.0__SYM_霞_89_>
+            <_JCROSS_霞:1.0__SYM_霞_103_ class="_JCROSS_霞:1.0__SYM_霞_3_-_JCROSS_霞:1.0__SYM_霞_69_">${_JCROSS_庵:1.0__SYM_庵_18_._JCROSS_濫:1.0__SYM_霞_49_(_JCROSS_霞:1.0__SYM_霞_104_._JCROSS_霞:1.0__SYM_霞_17_ ?? {}, _JCROSS_霞:1.0__SYM_霞_94_, 2)}</_JCROSS_霞:1.0__SYM_霞_103_>
+          </_JCROSS_霞:1.0__SYM_霞_89_>
+        </_JCROSS_霞:1.0__SYM_霞_89_>
+      </_JCROSS_霞:1.0__SYM_霞_89_>
+
+      <_JCROSS_霞:1.0__SYM_霞_89_ class="_JCROSS_霞:1.0__SYM_霞_64_">
+        <_JCROSS_霞:1.0__SYM_霞_89_ class="_JCROSS_霞:1.0__SYM_霞_64_-_JCROSS_霞:1.0__SYM_霞_33_">_JCROSS_庵:1.0__SYM_庵_8_ _JCROSS_庵:1.0__SYM_庵_1_</_JCROSS_霞:1.0__SYM_霞_89_>
+        <_JCROSS_霞:1.0__SYM_霞_89_ class="_JCROSS_霞:1.0__SYM_霞_64_-_JCROSS_霞:1.0__SYM_霞_87_">_JCROSS_庵:1.0__SYM_庵_9_ a _JCROSS_霞:1.0__SYM_霞_79_ _JCROSS_霞:1.0__SYM_霞_86_ _JCROSS_霞:1.0__SYM_霞_56_ _JCROSS_霞:1.0__SYM_霞_22_ _JCROSS_庵:1.0__SYM_庵_18_ _JCROSS_霞:1.0__SYM_霞_36_.</_JCROSS_霞:1.0__SYM_霞_89_>
+        <_JCROSS_霞:1.0__SYM_霞_89_ class="_JCROSS_霞:1.0__SYM_霞_113_" _JCROSS_霞:1.0__SYM_霞_32_="_JCROSS_霞:1.0__SYM_霞_93_-_JCROSS_霞:1.0__SYM_霞_39_: 16px;">
+          <_JCROSS_霞:1.0__SYM_霞_72_ class="_JCROSS_霞:1.0__SYM_霞_62_">
+            <_JCROSS_霞:1.0__SYM_霞_68_>_JCROSS_庵:1.0__SYM_庵_13_</_JCROSS_霞:1.0__SYM_霞_68_>
+            <_JCROSS_霞:1.0__SYM_霞_19_
+              ._JCROSS_霞:1.0__SYM_霞_57_=${_JCROSS_霞:1.0__SYM_霞_104_._JCROSS_霞:1.0__SYM_霞_18_}
+              @_JCROSS_霞:1.0__SYM_霞_77_=${(e: _JCROSS_庵:1.0__SYM_庵_14_) => _JCROSS_霞:1.0__SYM_霞_104_._JCROSS_霞:1.0__SYM_霞_24_((e._JCROSS_霞:1.0__SYM_霞_66_ as _JCROSS_庵:1.0__SYM_庵_27_)._JCROSS_霞:1.0__SYM_霞_57_)}
+// _JCROSS_封:0.5__SYM_YX_394_ [decoy-metadata]
+// _JCROSS_霞:0.8__SYM_MY_192_ [decoy-metadata]
+            >
+              ${
+                !_JCROSS_霞:1.0__SYM_霞_104_._JCROSS_霞:1.0__SYM_霞_18_
+                  ? _JCROSS_霞:1.0__SYM_霞_23_`
+                      <_JCROSS_霞:1.0__SYM_霞_59_ _JCROSS_霞:1.0__SYM_霞_57_="" _JCROSS_霞:1.0__SYM_霞_12_>_JCROSS_庵:1.0__SYM_庵_5_ a _JCROSS_霞:1.0__SYM_霞_56_…</_JCROSS_霞:1.0__SYM_霞_59_>
+                    `
+                  : _JCROSS_霞:1.0__SYM_霞_102_
+              }
+// _JCROSS_庵:0.5__SYM_ML_945_ [decoy-metadata]
+              ${_JCROSS_霞:1.0__SYM_霞_104_._JCROSS_霞:1.0__SYM_霞_44_._JCROSS_霞:1.0__SYM_霞_85_((m) => _JCROSS_霞:1.0__SYM_霞_23_`<_JCROSS_霞:1.0__SYM_霞_59_ _JCROSS_霞:1.0__SYM_霞_57_=${m}>${m}</_JCROSS_霞:1.0__SYM_霞_59_>`)}
+            </_JCROSS_霞:1.0__SYM_霞_19_>
+          </_JCROSS_霞:1.0__SYM_霞_72_>
+          <_JCROSS_霞:1.0__SYM_霞_72_ class="_JCROSS_霞:1.0__SYM_霞_62_">
+            <_JCROSS_霞:1.0__SYM_霞_68_>_JCROSS_庵:1.0__SYM_庵_19_ (_JCROSS_庵:1.0__SYM_庵_18_)</_JCROSS_霞:1.0__SYM_霞_68_>
+            <_JCROSS_霞:1.0__SYM_霞_45_
+              ._JCROSS_霞:1.0__SYM_霞_57_=${_JCROSS_霞:1.0__SYM_霞_104_._JCROSS_霞:1.0__SYM_霞_83_}
+              @_JCROSS_霞:1.0__SYM_霞_96_=${(e: _JCROSS_庵:1.0__SYM_庵_14_) =>
+                _JCROSS_霞:1.0__SYM_霞_104_._JCROSS_霞:1.0__SYM_霞_16_((e._JCROSS_霞:1.0__SYM_霞_66_ as _JCROSS_庵:1.0__SYM_庵_21_)._JCROSS_霞:1.0__SYM_霞_57_)}
+              _JCROSS_霞:1.0__SYM_霞_50_="6"
+            ></_JCROSS_霞:1.0__SYM_霞_45_>
+          </_JCROSS_霞:1.0__SYM_霞_72_>
+        </_JCROSS_霞:1.0__SYM_霞_89_>
+        <_JCROSS_霞:1.0__SYM_霞_89_ class="_JCROSS_霞:1.0__SYM_霞_2_" _JCROSS_霞:1.0__SYM_霞_32_="_JCROSS_霞:1.0__SYM_霞_93_-_JCROSS_霞:1.0__SYM_霞_39_: 12px;">
+          <_JCROSS_霞:1.0__SYM_霞_61_ class="_JCROSS_霞:1.0__SYM_霞_115_ _JCROSS_霞:1.0__SYM_霞_63_" @_JCROSS_霞:1.0__SYM_霞_41_=${_JCROSS_霞:1.0__SYM_霞_104_._JCROSS_霞:1.0__SYM_霞_108_}>_JCROSS_庵:1.0__SYM_庵_15_</_JCROSS_霞:1.0__SYM_霞_61_>
+        </_JCROSS_霞:1.0__SYM_霞_89_>
+        ${
+          _JCROSS_霞:1.0__SYM_霞_104_._JCROSS_霞:1.0__SYM_霞_105_
+            ? _JCROSS_霞:1.0__SYM_霞_23_`<_JCROSS_霞:1.0__SYM_霞_89_ class="_JCROSS_霞:1.0__SYM_霞_111_ _JCROSS_型:1.0__SYM_霞_29_" _JCROSS_霞:1.0__SYM_霞_32_="_JCROSS_霞:1.0__SYM_霞_93_-_JCROSS_霞:1.0__SYM_霞_39_: 12px;">
+// _JCROSS_濫:0.6__SYM_ZZ_933_ [decoy-metadata]
+              ${_JCROSS_霞:1.0__SYM_霞_104_._JCROSS_霞:1.0__SYM_霞_105_}
+            </_JCROSS_霞:1.0__SYM_霞_89_>`
+            : _JCROSS_霞:1.0__SYM_霞_102_
+        }
+        ${
+          _JCROSS_霞:1.0__SYM_霞_104_._JCROSS_霞:1.0__SYM_霞_14_
+            ? _JCROSS_霞:1.0__SYM_霞_23_`<_JCROSS_霞:1.0__SYM_霞_103_ class="_JCROSS_霞:1.0__SYM_霞_3_-_JCROSS_霞:1.0__SYM_霞_69_" _JCROSS_霞:1.0__SYM_霞_32_="_JCROSS_霞:1.0__SYM_霞_93_-_JCROSS_霞:1.0__SYM_霞_39_: 12px;">${_JCROSS_霞:1.0__SYM_霞_104_._JCROSS_霞:1.0__SYM_霞_14_}</_JCROSS_霞:1.0__SYM_霞_103_>`
+            : _JCROSS_霞:1.0__SYM_霞_102_
+        }
+      </_JCROSS_霞:1.0__SYM_霞_89_>
+    </_JCROSS_霞:1.0__SYM_霞_8_>
+
+    <_JCROSS_霞:1.0__SYM_霞_8_ class="_JCROSS_霞:1.0__SYM_霞_64_" _JCROSS_霞:1.0__SYM_霞_32_="_JCROSS_霞:1.0__SYM_霞_93_-_JCROSS_霞:1.0__SYM_霞_39_: 18px;">
+      <_JCROSS_霞:1.0__SYM_霞_89_ class="_JCROSS_霞:1.0__SYM_霞_64_-_JCROSS_霞:1.0__SYM_霞_33_">_JCROSS_庵:1.0__SYM_庵_12_</_JCROSS_霞:1.0__SYM_霞_89_>
+      <_JCROSS_霞:1.0__SYM_霞_89_ class="_JCROSS_霞:1.0__SYM_霞_64_-_JCROSS_霞:1.0__SYM_霞_87_">_JCROSS_庵:1.0__SYM_庵_20_ _JCROSS_霞:1.0__SYM_霞_88_ _JCROSS_霞:1.0__SYM_霞_100_._JCROSS_霞:1.0__SYM_霞_80_.</_JCROSS_霞:1.0__SYM_霞_89_>
+      <_JCROSS_霞:1.0__SYM_霞_103_ class="_JCROSS_霞:1.0__SYM_霞_3_-_JCROSS_霞:1.0__SYM_霞_69_" _JCROSS_霞:1.0__SYM_霞_32_="_JCROSS_霞:1.0__SYM_霞_93_-_JCROSS_霞:1.0__SYM_霞_39_: 12px;">${_JCROSS_庵:1.0__SYM_庵_18_._JCROSS_濫:1.0__SYM_霞_49_(
+        _JCROSS_霞:1.0__SYM_霞_104_._JCROSS_霞:1.0__SYM_霞_100_ ?? [],
+        _JCROSS_霞:1.0__SYM_霞_94_,
+        2,
+      )}</_JCROSS_霞:1.0__SYM_霞_103_>
+    </_JCROSS_霞:1.0__SYM_霞_8_>
+
+    <_JCROSS_霞:1.0__SYM_霞_8_ class="_JCROSS_霞:1.0__SYM_霞_64_" _JCROSS_霞:1.0__SYM_霞_32_="_JCROSS_霞:1.0__SYM_霞_93_-_JCROSS_霞:1.0__SYM_霞_39_: 18px;">
+      <_JCROSS_霞:1.0__SYM_霞_89_ class="_JCROSS_霞:1.0__SYM_霞_64_-_JCROSS_霞:1.0__SYM_霞_33_">_JCROSS_庵:1.0__SYM_庵_14_ _JCROSS_庵:1.0__SYM_庵_2_</_JCROSS_霞:1.0__SYM_霞_89_>
+      <_JCROSS_霞:1.0__SYM_霞_89_ class="_JCROSS_霞:1.0__SYM_霞_64_-_JCROSS_霞:1.0__SYM_霞_87_">_JCROSS_庵:1.0__SYM_庵_17_ _JCROSS_霞:1.0__SYM_霞_86_ _JCROSS_霞:1.0__SYM_霞_38_.</_JCROSS_霞:1.0__SYM_霞_89_>
+      ${
+        _JCROSS_霞:1.0__SYM_霞_104_._JCROSS_霞:1.0__SYM_霞_58_._JCROSS_霞:1.0__SYM_霞_4_ === 0
+          ? _JCROSS_霞:1.0__SYM_霞_23_`
+              <_JCROSS_霞:1.0__SYM_霞_89_ class="_JCROSS_霞:1.0__SYM_霞_15_" _JCROSS_霞:1.0__SYM_霞_32_="_JCROSS_霞:1.0__SYM_霞_93_-_JCROSS_霞:1.0__SYM_霞_39_: 12px">No _JCROSS_霞:1.0__SYM_霞_38_ _JCROSS_霞:1.0__SYM_霞_78_.</_JCROSS_霞:1.0__SYM_霞_89_>
+            `
+          : _JCROSS_霞:1.0__SYM_霞_23_`
+            <_JCROSS_霞:1.0__SYM_霞_89_ class="_JCROSS_霞:1.0__SYM_霞_80_ _JCROSS_霞:1.0__SYM_霞_97_-_JCROSS_霞:1.0__SYM_霞_51_-_JCROSS_霞:1.0__SYM_霞_21_" _JCROSS_霞:1.0__SYM_霞_32_="_JCROSS_霞:1.0__SYM_霞_93_-_JCROSS_霞:1.0__SYM_霞_39_: 12px;">
+              ${_JCROSS_霞:1.0__SYM_霞_104_._JCROSS_霞:1.0__SYM_霞_58_._JCROSS_霞:1.0__SYM_霞_85_(
+                (_JCROSS_霞:1.0__SYM_霞_31_) => _JCROSS_霞:1.0__SYM_霞_23_`
+                  <_JCROSS_霞:1.0__SYM_霞_89_ class="_JCROSS_霞:1.0__SYM_霞_80_-_JCROSS_霞:1.0__SYM_霞_116_ _JCROSS_霞:1.0__SYM_霞_97_-_JCROSS_霞:1.0__SYM_霞_51_-_JCROSS_霞:1.0__SYM_霞_92_">
+// _JCROSS_型:0.7__SYM_BG_496_ [decoy-metadata]
+                    <_JCROSS_霞:1.0__SYM_霞_89_ class="_JCROSS_霞:1.0__SYM_霞_80_-_JCROSS_霞:1.0__SYM_霞_5_">
+                      <_JCROSS_霞:1.0__SYM_霞_89_ class="_JCROSS_霞:1.0__SYM_霞_80_-_JCROSS_霞:1.0__SYM_霞_33_">${_JCROSS_霞:1.0__SYM_霞_31_._JCROSS_霞:1.0__SYM_霞_51_}</_JCROSS_霞:1.0__SYM_霞_89_>
+                      <_JCROSS_霞:1.0__SYM_霞_89_ class="_JCROSS_霞:1.0__SYM_霞_80_-_JCROSS_霞:1.0__SYM_霞_87_">${_JCROSS_霞:1.0__SYM_霞_40_ _JCROSS_庵:1.0__SYM_庵_11_(_JCROSS_霞:1.0__SYM_霞_31_.ts)._JCROSS_霞:1.0__SYM_霞_26_()}</_JCROSS_霞:1.0__SYM_霞_89_>
+                    </_JCROSS_霞:1.0__SYM_霞_89_>
+                    <_JCROSS_霞:1.0__SYM_霞_89_ class="_JCROSS_霞:1.0__SYM_霞_80_-_JCROSS_霞:1.0__SYM_霞_90_ _JCROSS_霞:1.0__SYM_霞_97_-_JCROSS_霞:1.0__SYM_霞_51_-_JCROSS_霞:1.0__SYM_霞_117_">
+                      <_JCROSS_霞:1.0__SYM_霞_103_ class="_JCROSS_霞:1.0__SYM_霞_3_-_JCROSS_霞:1.0__SYM_霞_69_ _JCROSS_霞:1.0__SYM_霞_97_-_JCROSS_霞:1.0__SYM_霞_51_-_JCROSS_匶:1.0__SYM_霞_54_">${_JCROSS_匶:1.0__SYM_霞_34_(
+                        _JCROSS_霞:1.0__SYM_霞_31_._JCROSS_匶:1.0__SYM_霞_13_,
+                      )}</_JCROSS_霞:1.0__SYM_霞_103_>
+                    </_JCROSS_霞:1.0__SYM_霞_89_>
+                  </_JCROSS_霞:1.0__SYM_霞_89_>
+                `,
+              )}
+            </_JCROSS_霞:1.0__SYM_霞_89_>
+          `
+      }
+    </_JCROSS_霞:1.0__SYM_霞_8_>
+  `;
+}
+
+// POLYMORPHIC_JCROSS_END

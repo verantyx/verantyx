@@ -1,0 +1,459 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:E0918049 ver:1778219079
+// ⚠️ One-time schema — expires after response
+
+// [metadata-stripped]
+"""
+_TOKEN_廨:1.0__OPAQUE_廨_64_ _TOKEN_廨:1.0__OPAQUE_廨_14_ × _TOKEN_廨:1.0__OPAQUE_廨_74_ — _TOKEN_廨:1.0__OPAQUE_廨_71_ _TOKEN_廨:1.0__OPAQUE_廨_48_
+==============================================
+アーキテクチャ:
+  _TOKEN_廨:1.0__OPAQUE_廨_114_ 1個 (_TOKEN_礫:1.0__OPAQUE_礫_198_:26b) を L1〜L3 の全フェーズで使用。
+  各セッション注入はステートレス独立呼び出し → コンテキスト汚染ゼロ。
+  最終推論時はAIが自分の内部記憶を100%信用せず、_TOKEN_廨:1.0__OPAQUE_廨_19_のみを正として回答。
+
+動作フロー:
+  [注入] _TOKEN_廨:1.0__OPAQUE_廨_61_ _TOKEN_礫:1.0__OPAQUE_礫_175_ → _TOKEN_廨:1.0__OPAQUE_廨_114_ (OP対応表参照) → L2 OPs生成 → _TOKEN_廨:1.0__OPAQUE_廨_19_書き込み → コンテキスト排出
+  [検索] L1 _TOKEN_廨:1.0__OPAQUE_廨_41_ _TOKEN_礫:1.0__OPAQUE_礫_138_ → 候補絞り → L2 OPスキャン → _TOKEN_廨:1.0__OPAQUE_廨_2_-1特定 → L3+L2 → _TOKEN_廨:1.0__OPAQUE_廨_114_回答
+"""
+
+import _TOKEN_礫:1.0__OPAQUE_礫_111_, os, re, _TOKEN_礫:1.0__OPAQUE_礫_206_, _TOKEN_礫:1.0__OPAQUE_礫_311_, _TOKEN_礫:1.0__OPAQUE_礫_336_
+import _TOKEN_縺:1.0__OPAQUE_礫_39_._TOKEN_縺:1.0__OPAQUE_礫_242_
+
+// [metadata-stripped]
+_TOKEN_廨:1.0__OPAQUE_廨_54_   = "/_TOKEN_廨:1.0__OPAQUE_廨_88_/_TOKEN_礫:1.0__OPAQUE_礫_61_/_TOKEN_礫:1.0__OPAQUE_礫_320_-_TOKEN_礫:1.0__OPAQUE_礫_49_/_TOKEN_礫:1.0__OPAQUE_礫_129_/_TOKEN_廨:1.0__OPAQUE_廨_74_/_TOKEN_礫:1.0__OPAQUE_礫_186_/_TOKEN_礫:1.0__OPAQUE_礫_146_._TOKEN_礫:1.0__OPAQUE_礫_111_"
+_TOKEN_廨:1.0__OPAQUE_廨_115_     = os._TOKEN_礫:1.0__OPAQUE_礫_121_._TOKEN_規:1.0__OPAQUE_礫_305_("~/._TOKEN_礫:1.0__OPAQUE_礫_389_/_TOKEN_礫:1.0__OPAQUE_礫_24_/_TOKEN_礫:1.0__OPAQUE_礫_290_")
+_TOKEN_縺:1.0__OPAQUE_廨_55_     = "_TOKEN_縺:1.0__OPAQUE_礫_280_://_TOKEN_礫:1.0__OPAQUE_礫_282_:11434/_TOKEN_縺:1.0__OPAQUE_礫_413_/_TOKEN_礫:1.0__OPAQUE_礫_133_"
+_TOKEN_廨:1.0__OPAQUE_廨_67_    = "_TOKEN_礫:1.0__OPAQUE_礫_198_:_TOKEN_礫:1.0__OPAQUE_礫_224_"   # L2生成: 軽量・高速・ステートレス
+_TOKEN_廨:1.0__OPAQUE_廨_86_    = "_TOKEN_礫:1.0__OPAQUE_礫_198_:26b"   # 最終推論: 高精度
+_TOKEN_廨:1.0__OPAQUE_廨_26_  = 7              # 500に変更でフルラン
+_TOKEN_廨:1.0__OPAQUE_廨_76_       = 50             # L1マップで絞る候補数
+_TOKEN_廨:1.0__OPAQUE_廨_44_   = 15             # _TOKEN_廨:1.0__OPAQUE_廨_114_ L2生成を適用する上位N件
+_TOKEN_廨:1.0__OPAQUE_廨_63_     = 1              # 最終推論に渡す件数
+
+// [metadata-stripped]
+// [metadata-stripped]
+_TOKEN_廨:1.0__OPAQUE_廨_45_ = """_TOKEN_廨:1.0__OPAQUE_廨_94_ _TOKEN_廨:1.0__OPAQUE_廨_24_ — _TOKEN_廨:1.0__OPAQUE_廨_64_ _TOKEN_廨:1.0__OPAQUE_廨_39_ _TOKEN_廨:1.0__OPAQUE_廨_57_ _TOKEN_廨:1.0__OPAQUE_廨_60_
+================================================================
+_TOKEN_廨:1.0__OPAQUE_廨_42_ _TOKEN_礫:1.0__OPAQUE_礫_200_ to _TOKEN_礫:1.0__OPAQUE_礫_2_ _TOKEN_礫:1.0__OPAQUE_礫_353_ _TOKEN_礫:1.0__OPAQUE_礫_29_. _TOKEN_廨:1.0__OPAQUE_廨_12_ _TOKEN_規:1.0__OPAQUE_礫_178_ _TOKEN_礫:1.0__OPAQUE_礫_283_.
+If no _TOKEN_礫:1.0__OPAQUE_礫_339_ op _TOKEN_礫:1.0__OPAQUE_礫_56_, _TOKEN_廨:1.0__OPAQUE_廨_35_ _TOKEN_礫:1.0__OPAQUE_礫_114_ + (e.g. OP._TOKEN_廨:1.0__OPAQUE_廨_21_+_TOKEN_廨:1.0__OPAQUE_廨_102_(...)).
+
+OP._TOKEN_廨:1.0__OPAQUE_廨_70_("_TOKEN_礫:1.0__OPAQUE_礫_157_")           - _TOKEN_廨:1.0__OPAQUE_廨_112_ _TOKEN_礫:1.0__OPAQUE_礫_210_ _TOKEN_礫:1.0__OPAQUE_礫_200_ is _TOKEN_礫:1.0__OPAQUE_礫_357_ _TOKEN_礫:1.0__OPAQUE_礫_33_
+OP._TOKEN_廨:1.0__OPAQUE_廨_18_("_TOKEN_礫:1.0__OPAQUE_礫_10_")                 - _TOKEN_廨:1.0__OPAQUE_廨_112_ _TOKEN_礫:1.0__OPAQUE_礫_97_ _TOKEN_規:1.0__OPAQUE_礫_346_ is _TOKEN_礫:1.0__OPAQUE_礫_32_ to _TOKEN_礫:1.0__OPAQUE_礫_369_
+OP._TOKEN_廨:1.0__OPAQUE_廨_21_("_TOKEN_錠:1.0__OPAQUE_礫_57_", "_TOKEN_礫:1.0__OPAQUE_礫_212_")           - A _TOKEN_礫:1.0__OPAQUE_礫_182_ _TOKEN_礫:1.0__OPAQUE_礫_385_ _TOKEN_礫:1.0__OPAQUE_礫_69_ _TOKEN_礫:1.0__OPAQUE_礫_97_ _TOKEN_礫:1.0__OPAQUE_礫_200_
+OP._TOKEN_廨:1.0__OPAQUE_廨_102_("_TOKEN_礫:1.0__OPAQUE_礫_235_", "_TOKEN_礫:1.0__OPAQUE_礫_259_")         - A _TOKEN_礫:1.0__OPAQUE_礫_424_ _TOKEN_礫:1.0__OPAQUE_礫_34_ (_TOKEN_礫:1.0__OPAQUE_礫_176_, _TOKEN_礫:1.0__OPAQUE_礫_364_, _TOKEN_礫:1.0__OPAQUE_礫_276_, _TOKEN_礫:1.0__OPAQUE_礫_161_)
+OP._TOKEN_廨:1.0__OPAQUE_廨_66_("_TOKEN_礫:1.0__OPAQUE_礫_328_", "_TOKEN_礫:1.0__OPAQUE_礫_87_")     - A _TOKEN_礫:1.0__OPAQUE_礫_250_ or _TOKEN_礫:1.0__OPAQUE_礫_71_ _TOKEN_礫:1.0__OPAQUE_礫_193_
+OP._TOKEN_廨:1.0__OPAQUE_廨_30_("_TOKEN_礫:1.0__OPAQUE_礫_435_", "_TOKEN_礫:1.0__OPAQUE_礫_191_")      - A _TOKEN_礫:1.0__OPAQUE_礫_298_ or _TOKEN_礫:1.0__OPAQUE_礫_179_ _TOKEN_礫:1.0__OPAQUE_礫_191_
+OP._TOKEN_廨:1.0__OPAQUE_廨_106_("a", "_TOKEN_礫:1.0__OPAQUE_礫_70_", "b")      - A _TOKEN_礫:1.0__OPAQUE_礫_414_ _TOKEN_礫:1.0__OPAQUE_礫_332_ _TOKEN_礫:1.0__OPAQUE_礫_398_ _TOKEN_礫:1.0__OPAQUE_礫_406_
+OP._TOKEN_廨:1.0__OPAQUE_廨_15_("_TOKEN_錠:1.0__OPAQUE_礫_57_", "_TOKEN_礫:1.0__OPAQUE_礫_368_")          - _TOKEN_廨:1.0__OPAQUE_廨_123_ _TOKEN_礫:1.0__OPAQUE_礫_330_ _TOKEN_礫:1.0__OPAQUE_礫_368_ _TOKEN_礫:1.0__OPAQUE_礫_78_ _TOKEN_礫:1.0__OPAQUE_礫_104_ _TOKEN_礫:1.0__OPAQUE_礫_88_
+
+_TOKEN_廨:1.0__OPAQUE_廨_8_:
+- _TOKEN_廨:1.0__OPAQUE_廨_93_ _TOKEN_廨:1.0__OPAQUE_廨_98_ _TOKEN_礫:1.0__OPAQUE_礫_82_, _TOKEN_礫:1.0__OPAQUE_礫_289_, _TOKEN_礫:1.0__OPAQUE_礫_306_, _TOKEN_礫:1.0__OPAQUE_礫_93_
+- _TOKEN_廨:1.0__OPAQUE_廨_29_ _TOKEN_礫:1.0__OPAQUE_礫_176_ _TOKEN_礫:1.0__OPAQUE_礫_372_, _TOKEN_礫:1.0__OPAQUE_礫_260_ _TOKEN_礫:1.0__OPAQUE_礫_108_ OP._TOKEN_廨:1.0__OPAQUE_廨_102_("_TOKEN_礫:1.0__OPAQUE_礫_176_", "_TOKEN_廨:1.0__OPAQUE_廨_101_")
+- _TOKEN_廨:1.0__OPAQUE_廨_29_ _TOKEN_礫:1.0__OPAQUE_礫_154_ (X _TOKEN_礫:1.0__OPAQUE_礫_37_, X _TOKEN_礫:1.0__OPAQUE_礫_255_), _TOKEN_礫:1.0__OPAQUE_礫_260_ _TOKEN_礫:1.0__OPAQUE_礫_108_ OP._TOKEN_廨:1.0__OPAQUE_廨_66_
+- _TOKEN_廨:1.0__OPAQUE_廨_29_ _TOKEN_規:1.0__OPAQUE_礫_17_ _TOKEN_礫:1.0__OPAQUE_礫_416_ (_TOKEN_礫:1.0__OPAQUE_礫_161_ _TOKEN_礫:1.0__OPAQUE_礫_372_, _TOKEN_礫:1.0__OPAQUE_礫_376_ _TOKEN_礫:1.0__OPAQUE_礫_372_), _TOKEN_礫:1.0__OPAQUE_礫_260_ _TOKEN_礫:1.0__OPAQUE_礫_108_ OP._TOKEN_廨:1.0__OPAQUE_廨_102_
+- _TOKEN_廨:1.0__OPAQUE_廨_29_ _TOKEN_礫:1.0__OPAQUE_礫_94_/_TOKEN_規:1.0__OPAQUE_礫_122_ _TOKEN_礫:1.0__OPAQUE_礫_82_, _TOKEN_礫:1.0__OPAQUE_礫_260_ _TOKEN_礫:1.0__OPAQUE_礫_108_ OP._TOKEN_廨:1.0__OPAQUE_廨_21_
+- _TOKEN_廨:1.0__OPAQUE_廨_53_ _TOKEN_礫:1.0__OPAQUE_礫_59_ _TOKEN_規:1.0__OPAQUE_礫_141_: OP._TOKEN_廨:1.0__OPAQUE_廨_21_+_TOKEN_廨:1.0__OPAQUE_廨_102_("_TOKEN_礫:1.0__OPAQUE_礫_5_", "_TOKEN_廨:1.0__OPAQUE_廨_7_ _TOKEN_廨:1.0__OPAQUE_廨_104_")
+- _TOKEN_廨:1.0__OPAQUE_廨_43_ _TOKEN_廨:1.0__OPAQUE_廨_87_ _TOKEN_礫:1.0__OPAQUE_礫_353_ _TOKEN_礫:1.0__OPAQUE_礫_4_. No _TOKEN_礫:1.0__OPAQUE_礫_208_. No _TOKEN_礫:1.0__OPAQUE_礫_350_.
+================================================================"""
+
+
+// [metadata-stripped]
+_TOKEN_廨:1.0__OPAQUE_廨_28_ = {
+    "場": ["where", "_TOKEN_礫:1.0__OPAQUE_礫_434_", "_TOKEN_礫:1.0__OPAQUE_礫_176_", "_TOKEN_礫:1.0__OPAQUE_礫_177_", "_TOKEN_礫:1.0__OPAQUE_礫_18_", "_TOKEN_礫:1.0__OPAQUE_礫_376_", "_TOKEN_礫:1.0__OPAQUE_礫_394_",
+           "_TOKEN_礫:1.0__OPAQUE_礫_293_", "_TOKEN_礫:1.0__OPAQUE_礫_377_", "_TOKEN_礫:1.0__OPAQUE_礫_388_", "_TOKEN_礫:1.0__OPAQUE_礫_351_", "_TOKEN_礫:1.0__OPAQUE_礫_187_", "_TOKEN_礫:1.0__OPAQUE_礫_215_", "_TOKEN_礫:1.0__OPAQUE_礫_410_",
+           "_TOKEN_規:1.0__OPAQUE_礫_147_", "_TOKEN_礫:1.0__OPAQUE_礫_373_", "_TOKEN_礫:1.0__OPAQUE_礫_279_", "_TOKEN_礫:1.0__OPAQUE_礫_214_", "_TOKEN_礫:1.0__OPAQUE_礫_379_", "_TOKEN_礫:1.0__OPAQUE_礫_422_"],
+    "時": ["_TOKEN_礫:1.0__OPAQUE_礫_59_", "_TOKEN_礫:1.0__OPAQUE_礫_371_", "_TOKEN_礫:1.0__OPAQUE_礫_336_", "_TOKEN_礫:1.0__OPAQUE_礫_96_", "_TOKEN_礫:1.0__OPAQUE_礫_103_", "_TOKEN_礫:1.0__OPAQUE_礫_164_", "_TOKEN_礫:1.0__OPAQUE_礫_266_", "_TOKEN_礫:1.0__OPAQUE_礫_286_",
+           "_TOKEN_礫:1.0__OPAQUE_礫_213_", "_TOKEN_礫:1.0__OPAQUE_礫_291_", "_TOKEN_礫:1.0__OPAQUE_礫_98_", "_TOKEN_礫:1.0__OPAQUE_礫_251_", "_TOKEN_礫:1.0__OPAQUE_礫_142_", "_TOKEN_礫:1.0__OPAQUE_礫_14_", "_TOKEN_礫:1.0__OPAQUE_礫_62_"],
+    "人": ["_TOKEN_礫:1.0__OPAQUE_礫_259_", "_TOKEN_礫:1.0__OPAQUE_礫_364_", "_TOKEN_礫:1.0__OPAQUE_礫_119_", "_TOKEN_礫:1.0__OPAQUE_礫_436_", "_TOKEN_礫:1.0__OPAQUE_礫_52_", "_TOKEN_漂:1.0__OPAQUE_礫_428_", "_TOKEN_礫:1.0__OPAQUE_礫_179_",
+           "_TOKEN_礫:1.0__OPAQUE_礫_419_", "_TOKEN_礫:1.0__OPAQUE_礫_128_ _TOKEN_礫:1.0__OPAQUE_礫_259_", "_TOKEN_礫:1.0__OPAQUE_礫_309_ _TOKEN_礫:1.0__OPAQUE_礫_259_", "_TOKEN_礫:1.0__OPAQUE_礫_343_", "_TOKEN_礫:1.0__OPAQUE_礫_219_"],
+    "商": ["_TOKEN_礫:1.0__OPAQUE_礫_217_", "_TOKEN_礫:1.0__OPAQUE_礫_234_", "_TOKEN_礫:1.0__OPAQUE_礫_99_", "_TOKEN_礫:1.0__OPAQUE_礫_42_", "_TOKEN_礫:1.0__OPAQUE_礫_356_", "_TOKEN_礫:1.0__OPAQUE_礫_106_", "_TOKEN_礫:1.0__OPAQUE_礫_89_",
+           "_TOKEN_礫:1.0__OPAQUE_礫_109_", "_TOKEN_礫:1.0__OPAQUE_礫_50_", "_TOKEN_礫:1.0__OPAQUE_礫_333_", "_TOKEN_礫:1.0__OPAQUE_礫_151_", "_TOKEN_規:1.0__OPAQUE_礫_185_", "_TOKEN_礫:1.0__OPAQUE_礫_261_"],
+    "健": ["_TOKEN_礫:1.0__OPAQUE_礫_366_", "_TOKEN_礫:1.0__OPAQUE_礫_252_", "_TOKEN_礫:1.0__OPAQUE_礫_136_", "_TOKEN_礫:1.0__OPAQUE_礫_120_", "_TOKEN_礫:1.0__OPAQUE_礫_293_", "_TOKEN_礫:1.0__OPAQUE_礫_79_",
+           "_TOKEN_礫:1.0__OPAQUE_礫_83_", "_TOKEN_礫:1.0__OPAQUE_礫_65_", "_TOKEN_礫:1.0__OPAQUE_礫_25_", "_TOKEN_礫:1.0__OPAQUE_礫_238_", "_TOKEN_礫:1.0__OPAQUE_礫_376_", "_TOKEN_礫:1.0__OPAQUE_礫_405_"],
+    "食": ["_TOKEN_礫:1.0__OPAQUE_礫_180_", "_TOKEN_礫:1.0__OPAQUE_礫_315_", "_TOKEN_礫:1.0__OPAQUE_礫_13_", "_TOKEN_礫:1.0__OPAQUE_礫_165_", "_TOKEN_礫:1.0__OPAQUE_礫_40_", "_TOKEN_礫:1.0__OPAQUE_礫_380_", "_TOKEN_規:1.0__OPAQUE_礫_185_",
+           "_TOKEN_礫:1.0__OPAQUE_礫_394_", "_TOKEN_礫:1.0__OPAQUE_礫_7_", "_TOKEN_礫:1.0__OPAQUE_礫_323_", "_TOKEN_礫:1.0__OPAQUE_礫_430_", "_TOKEN_礫:1.0__OPAQUE_礫_188_", "_TOKEN_礫:1.0__OPAQUE_礫_396_", "_TOKEN_礫:1.0__OPAQUE_礫_74_"],
+    "職": ["_TOKEN_礫:1.0__OPAQUE_礫_3_", "_TOKEN_礫:1.0__OPAQUE_礫_287_", "_TOKEN_規:1.0__OPAQUE_礫_122_", "_TOKEN_礫:1.0__OPAQUE_礫_365_", "_TOKEN_礫:1.0__OPAQUE_礫_362_", "_TOKEN_礫:1.0__OPAQUE_礫_288_", "_TOKEN_礫:1.0__OPAQUE_礫_267_",
+           "_TOKEN_礫:1.0__OPAQUE_礫_64_", "_TOKEN_礫:1.0__OPAQUE_礫_281_", "_TOKEN_礫:1.0__OPAQUE_礫_400_", "_TOKEN_礫:1.0__OPAQUE_礫_21_", "_TOKEN_礫:1.0__OPAQUE_礫_313_",
+           "_TOKEN_礫:1.0__OPAQUE_礫_326_", "_TOKEN_礫:1.0__OPAQUE_礫_391_", "_TOKEN_礫:1.0__OPAQUE_礫_60_", "_TOKEN_礫:1.0__OPAQUE_礫_307_", "_TOKEN_礫:1.0__OPAQUE_礫_378_"],
+    "娯": ["_TOKEN_礫:1.0__OPAQUE_礫_72_", "_TOKEN_礫:1.0__OPAQUE_礫_159_", "_TOKEN_礫:1.0__OPAQUE_礫_19_", "_TOKEN_礫:1.0__OPAQUE_礫_393_", "_TOKEN_漂:1.0__OPAQUE_礫_423_", "_TOKEN_規:1.0__OPAQUE_礫_147_", "_TOKEN_礫:1.0__OPAQUE_礫_150_",
+           "_TOKEN_礫:1.0__OPAQUE_礫_90_", "_TOKEN_礫:1.0__OPAQUE_礫_345_", "_TOKEN_礫:1.0__OPAQUE_礫_112_", "_TOKEN_礫:1.0__OPAQUE_礫_220_", "_TOKEN_礫:1.0__OPAQUE_礫_73_", "_TOKEN_礫:1.0__OPAQUE_礫_91_",
+           "_TOKEN_礫:1.0__OPAQUE_礫_386_ _TOKEN_礫:1.0__OPAQUE_礫_207_", "_TOKEN_規:1.0__OPAQUE_礫_137_ _TOKEN_礫:1.0__OPAQUE_礫_170_", "_TOKEN_漂:1.0__OPAQUE_礫_12_"],
+    "技": ["_TOKEN_礫:1.0__OPAQUE_礫_300_", "_TOKEN_礫:1.0__OPAQUE_礫_51_", "_TOKEN_規:1.0__OPAQUE_礫_105_", "_TOKEN_礫:1.0__OPAQUE_礫_316_", "_TOKEN_礫:1.0__OPAQUE_礫_232_",
+           "_TOKEN_礫:1.0__OPAQUE_礫_223_", "_TOKEN_礫:1.0__OPAQUE_礫_278_", "_TOKEN_礫:1.0__OPAQUE_礫_195_", "_TOKEN_礫:1.0__OPAQUE_礫_186_", "_TOKEN_礫:1.0__OPAQUE_礫_30_"],
+}
+
+
+_TOKEN_礫:1.0__OPAQUE_礫_127_ _TOKEN_礫:1.0__OPAQUE_礫_143_(_TOKEN_礫:1.0__OPAQUE_礫_199_: _TOKEN_礫:1.0__OPAQUE_礫_155_) -> _TOKEN_礫:1.0__OPAQUE_礫_233_:
+    tl = _TOKEN_礫:1.0__OPAQUE_礫_199_._TOKEN_規:1.0__OPAQUE_礫_297_()
+    _TOKEN_礫:1.0__OPAQUE_礫_401_ = {}
+    for k, _TOKEN_礫:1.0__OPAQUE_礫_347_ in _TOKEN_廨:1.0__OPAQUE_廨_28_._TOKEN_礫:1.0__OPAQUE_礫_381_():
+        _TOKEN_礫:1.0__OPAQUE_礫_203_ = _TOKEN_礫:1.0__OPAQUE_礫_131_(1 for kw in _TOKEN_礫:1.0__OPAQUE_礫_347_ if kw in tl)
+        if _TOKEN_礫:1.0__OPAQUE_礫_203_ > 0:
+            _TOKEN_礫:1.0__OPAQUE_礫_401_[k] = _TOKEN_礫:1.0__OPAQUE_礫_225_(1.0, _TOKEN_礫:1.0__OPAQUE_礫_284_(_TOKEN_礫:1.0__OPAQUE_礫_203_ / 3, 2))
+    _TOKEN_礫:1.0__OPAQUE_礫_401_["記"] = 0.3
+    _TOKEN_礫:1.0__OPAQUE_礫_80_ = _TOKEN_礫:1.0__OPAQUE_礫_337_(_TOKEN_礫:1.0__OPAQUE_礫_401_._TOKEN_礫:1.0__OPAQUE_礫_381_(), _TOKEN_錠:1.0__OPAQUE_礫_57_=_TOKEN_礫:1.0__OPAQUE_礫_412_ x: x[1], _TOKEN_礫:1.0__OPAQUE_礫_327_=_TOKEN_廨:1.0__OPAQUE_廨_37_)[:3]
+    return _TOKEN_礫:1.0__OPAQUE_礫_233_(_TOKEN_礫:1.0__OPAQUE_礫_80_)
+
+
+_TOKEN_礫:1.0__OPAQUE_礫_127_ _TOKEN_礫:1.0__OPAQUE_礫_118_(_TOKEN_礫:1.0__OPAQUE_礫_28_: _TOKEN_礫:1.0__OPAQUE_礫_155_) -> _TOKEN_礫:1.0__OPAQUE_礫_233_:
+    q = _TOKEN_礫:1.0__OPAQUE_礫_28_._TOKEN_規:1.0__OPAQUE_礫_297_()
+    _TOKEN_礫:1.0__OPAQUE_礫_209_ = {"記": 0.3}
+    _TOKEN_礫:1.0__OPAQUE_礫_218_ = [
+        (["where", "_TOKEN_礫:1.0__OPAQUE_礫_434_", "_TOKEN_礫:1.0__OPAQUE_礫_176_", "_TOKEN_礫:1.0__OPAQUE_礫_177_", "_TOKEN_礫:1.0__OPAQUE_礫_89_"],     "場", 1.0),
+        (["_TOKEN_礫:1.0__OPAQUE_礫_59_", "_TOKEN_礫:1.0__OPAQUE_礫_371_", "_TOKEN_礫:1.0__OPAQUE_礫_336_", "_TOKEN_礫:1.0__OPAQUE_礫_96_", "_TOKEN_礫:1.0__OPAQUE_礫_309_", "_TOKEN_礫:1.0__OPAQUE_礫_128_"],      "時", 1.0),
+        (["_TOKEN_礫:1.0__OPAQUE_礫_288_", "_TOKEN_礫:1.0__OPAQUE_礫_267_", "_TOKEN_礫:1.0__OPAQUE_礫_287_", "_TOKEN_規:1.0__OPAQUE_礫_122_", "_TOKEN_礫:1.0__OPAQUE_礫_3_",
+          "_TOKEN_礫:1.0__OPAQUE_礫_362_", "_TOKEN_礫:1.0__OPAQUE_礫_149_"],                                 "職", 1.0),
+        (["_TOKEN_礫:1.0__OPAQUE_礫_393_", "_TOKEN_礫:1.0__OPAQUE_礫_159_", "_TOKEN_礫:1.0__OPAQUE_礫_72_", "_TOKEN_礫:1.0__OPAQUE_礫_19_", "_TOKEN_礫:1.0__OPAQUE_礫_150_",
+          "_TOKEN_規:1.0__OPAQUE_礫_147_", "_TOKEN_礫:1.0__OPAQUE_礫_90_", "_TOKEN_礫:1.0__OPAQUE_礫_345_", "_TOKEN_礫:1.0__OPAQUE_礫_220_"],                  "娯", 1.0),
+        (["_TOKEN_礫:1.0__OPAQUE_礫_217_", "_TOKEN_礫:1.0__OPAQUE_礫_99_", "_TOKEN_礫:1.0__OPAQUE_礫_234_", "_TOKEN_礫:1.0__OPAQUE_礫_89_", "_TOKEN_礫:1.0__OPAQUE_礫_42_"],        "商", 0.9),
+        (["_TOKEN_礫:1.0__OPAQUE_礫_252_", "_TOKEN_礫:1.0__OPAQUE_礫_136_", "_TOKEN_礫:1.0__OPAQUE_礫_293_", "_TOKEN_礫:1.0__OPAQUE_礫_366_", "class",
+          "_TOKEN_礫:1.0__OPAQUE_礫_376_"],                                              "健", 1.0),
+        (["_TOKEN_礫:1.0__OPAQUE_礫_259_", "_TOKEN_礫:1.0__OPAQUE_礫_304_", "_TOKEN_礫:1.0__OPAQUE_礫_128_ _TOKEN_礫:1.0__OPAQUE_礫_259_", "_TOKEN_礫:1.0__OPAQUE_礫_309_ _TOKEN_礫:1.0__OPAQUE_礫_259_",
+          "_TOKEN_礫:1.0__OPAQUE_礫_179_"],                                             "人", 1.0),
+        (["_TOKEN_礫:1.0__OPAQUE_礫_180_", "_TOKEN_礫:1.0__OPAQUE_礫_315_", "_TOKEN_礫:1.0__OPAQUE_礫_394_", "_TOKEN_礫:1.0__OPAQUE_礫_165_", "_TOKEN_礫:1.0__OPAQUE_礫_380_"],       "食", 0.9),
+    ]
+    for _TOKEN_礫:1.0__OPAQUE_礫_347_, _TOKEN_礫:1.0__OPAQUE_礫_335_, w in _TOKEN_礫:1.0__OPAQUE_礫_218_:
+        if any(kw in q for kw in _TOKEN_礫:1.0__OPAQUE_礫_347_):
+            _TOKEN_礫:1.0__OPAQUE_礫_209_[_TOKEN_礫:1.0__OPAQUE_礫_335_] = w
+    return _TOKEN_礫:1.0__OPAQUE_礫_209_
+
+// _TOKEN_巌:0.4__OPAQUE_LD_405_ [decoy-metadata]
+
+// [metadata-stripped]
+_TOKEN_礫:1.0__OPAQUE_礫_127_ _TOKEN_礫:1.0__OPAQUE_礫_274_(_TOKEN_礫:1.0__OPAQUE_礫_387_: _TOKEN_礫:1.0__OPAQUE_礫_155_, _TOKEN_礫:1.0__OPAQUE_礫_163_: _TOKEN_礫:1.0__OPAQUE_礫_155_, _TOKEN_錠:1.0__OPAQUE_礫_158_: _TOKEN_礫:1.0__OPAQUE_礫_264_ = 512) -> _TOKEN_礫:1.0__OPAQUE_礫_155_:
+    """
+    ステートレスな単一_TOKEN_廨:1.0__OPAQUE_廨_114_呼び出し。
+    各呼び出しはコンテキストを共有しない → 汚染ゼロ。
+    """
+    _TOKEN_匳:1.0__OPAQUE_礫_226_ = _TOKEN_礫:1.0__OPAQUE_礫_111_._TOKEN_礫:1.0__OPAQUE_礫_53_({
+        "_TOKEN_礫:1.0__OPAQUE_礫_163_": _TOKEN_礫:1.0__OPAQUE_礫_163_,
+        "_TOKEN_礫:1.0__OPAQUE_礫_387_": _TOKEN_礫:1.0__OPAQUE_礫_387_,
+        "_TOKEN_礫:1.0__OPAQUE_礫_270_": _TOKEN_廨:1.0__OPAQUE_廨_89_,
+        "_TOKEN_礫:1.0__OPAQUE_礫_216_": {"_TOKEN_礫:1.0__OPAQUE_礫_374_": 0.0, "_TOKEN_礫:1.0__OPAQUE_礫_68_": _TOKEN_錠:1.0__OPAQUE_礫_158_}
+    })._TOKEN_礫:1.0__OPAQUE_礫_167_()
+    try:
+        _TOKEN_礫:1.0__OPAQUE_礫_152_ = _TOKEN_縺:1.0__OPAQUE_礫_39_._TOKEN_縺:1.0__OPAQUE_礫_242_._TOKEN_縺:1.0__OPAQUE_廨_78_(
+            _TOKEN_縺:1.0__OPAQUE_廨_55_, _TOKEN_礫:1.0__OPAQUE_礫_186_=_TOKEN_匳:1.0__OPAQUE_礫_226_,
+            _TOKEN_礫:1.0__OPAQUE_礫_254_={"_TOKEN_廨:1.0__OPAQUE_廨_9_-_TOKEN_廨:1.0__OPAQUE_廨_32_": "_TOKEN_礫:1.0__OPAQUE_礫_248_/_TOKEN_礫:1.0__OPAQUE_礫_111_"}
+        )
+        _TOKEN_礫:1.0__OPAQUE_礫_114_ _TOKEN_縺:1.0__OPAQUE_礫_39_._TOKEN_縺:1.0__OPAQUE_礫_242_._TOKEN_縺:1.0__OPAQUE_礫_321_(_TOKEN_礫:1.0__OPAQUE_礫_152_, _TOKEN_礫:1.0__OPAQUE_礫_63_=120) as _TOKEN_礫:1.0__OPAQUE_礫_9_:
+            _TOKEN_礫:1.0__OPAQUE_礫_186_ = _TOKEN_礫:1.0__OPAQUE_礫_111_._TOKEN_匳:1.0__OPAQUE_礫_241_(_TOKEN_礫:1.0__OPAQUE_礫_9_._TOKEN_礫:1.0__OPAQUE_礫_91_())
+            _TOKEN_礫:1.0__OPAQUE_礫_175_ = _TOKEN_礫:1.0__OPAQUE_礫_186_._TOKEN_規:1.0__OPAQUE_巌_2_("_TOKEN_礫:1.0__OPAQUE_礫_273_", "")._TOKEN_礫:1.0__OPAQUE_礫_383_()
+            if "</_TOKEN_礫:1.0__OPAQUE_礫_22_>" in _TOKEN_礫:1.0__OPAQUE_礫_175_:
+                _TOKEN_礫:1.0__OPAQUE_礫_175_ = _TOKEN_礫:1.0__OPAQUE_礫_175_._TOKEN_礫:1.0__OPAQUE_礫_236_("</_TOKEN_礫:1.0__OPAQUE_礫_22_>")[-1]._TOKEN_礫:1.0__OPAQUE_礫_383_()
+            return _TOKEN_礫:1.0__OPAQUE_礫_175_
+    _TOKEN_礫:1.0__OPAQUE_礫_257_ _TOKEN_廨:1.0__OPAQUE_廨_65_ as e:
+        return f"[_TOKEN_廨:1.0__OPAQUE_廨_10_: {e}]"
+
+// _TOKEN_匳:0.6__OPAQUE_HH_313_ [decoy-metadata]
+
+// _TOKEN_漂:0.2__OPAQUE_XE_287_ [decoy-metadata]
+_TOKEN_礫:1.0__OPAQUE_礫_127_ _TOKEN_礫:1.0__OPAQUE_礫_349_(_TOKEN_礫:1.0__OPAQUE_礫_20_: _TOKEN_礫:1.0__OPAQUE_礫_155_) -> _TOKEN_礫:1.0__OPAQUE_礫_384_[_TOKEN_礫:1.0__OPAQUE_礫_155_]:
+    """
+    L2操作コマンド生成: _TOKEN_廨:1.0__OPAQUE_廨_114_がOP対応表を参照してステートレスに変換。
+    各セッション独立呼び出し → コンテキスト排出済み。
+    """
+    _TOKEN_礫:1.0__OPAQUE_礫_387_ = f"""{_TOKEN_廨:1.0__OPAQUE_廨_45_}
+
+_TOKEN_廨:1.0__OPAQUE_廨_1_ to _TOKEN_礫:1.0__OPAQUE_礫_47_:
+{_TOKEN_礫:1.0__OPAQUE_礫_20_[:600]}
+
+_TOKEN_廨:1.0__OPAQUE_廨_43_ _TOKEN_礫:1.0__OPAQUE_礫_353_ _TOKEN_礫:1.0__OPAQUE_礫_29_ _TOKEN_礫:1.0__OPAQUE_礫_292_:"""
+
+    _TOKEN_礫:1.0__OPAQUE_礫_397_ = _TOKEN_礫:1.0__OPAQUE_礫_274_(_TOKEN_礫:1.0__OPAQUE_礫_387_, _TOKEN_廨:1.0__OPAQUE_廨_67_, _TOKEN_錠:1.0__OPAQUE_礫_158_=256)
+// [metadata-stripped]
+    _TOKEN_礫:1.0__OPAQUE_礫_113_ = [_TOKEN_礫:1.0__OPAQUE_礫_283_._TOKEN_礫:1.0__OPAQUE_礫_383_() for _TOKEN_礫:1.0__OPAQUE_礫_283_ in _TOKEN_礫:1.0__OPAQUE_礫_397_._TOKEN_礫:1.0__OPAQUE_礫_359_()
+           if _TOKEN_礫:1.0__OPAQUE_礫_283_._TOKEN_礫:1.0__OPAQUE_礫_383_()._TOKEN_礫:1.0__OPAQUE_礫_26_("OP.")]
+// [metadata-stripped]
+    if _TOKEN_礫:1.0__OPAQUE_礫_78_ _TOKEN_礫:1.0__OPAQUE_礫_113_:
+        _TOKEN_礫:1.0__OPAQUE_礫_4_ = _TOKEN_礫:1.0__OPAQUE_礫_20_._TOKEN_礫:1.0__OPAQUE_礫_359_()
+        _TOKEN_礫:1.0__OPAQUE_礫_299_ = [l[5:]._TOKEN_礫:1.0__OPAQUE_礫_383_() for l in _TOKEN_礫:1.0__OPAQUE_礫_4_ if l._TOKEN_礫:1.0__OPAQUE_礫_26_("_TOKEN_規:1.0__OPAQUE_廨_79_:")]
+        if _TOKEN_礫:1.0__OPAQUE_礫_299_:
+            _TOKEN_礫:1.0__OPAQUE_礫_113_ = [f'OP._TOKEN_廨:1.0__OPAQUE_廨_70_("{_TOKEN_礫:1.0__OPAQUE_礫_299_[0][:80]._TOKEN_礫:1.0__OPAQUE_礫_403_(_TOKEN_礫:1.0__OPAQUE_礫_173_(34), _TOKEN_礫:1.0__OPAQUE_礫_173_(39))}")']
+    return _TOKEN_礫:1.0__OPAQUE_礫_113_[:12]
+
+
+// [metadata-stripped]
+_TOKEN_礫:1.0__OPAQUE_礫_127_ _TOKEN_礫:1.0__OPAQUE_礫_75_(_TOKEN_礫:1.0__OPAQUE_礫_202_: _TOKEN_礫:1.0__OPAQUE_礫_155_, _TOKEN_礫:1.0__OPAQUE_礫_335_: _TOKEN_礫:1.0__OPAQUE_礫_233_, _TOKEN_礫:1.0__OPAQUE_礫_294_: _TOKEN_礫:1.0__OPAQUE_礫_155_,
+                 _TOKEN_礫:1.0__OPAQUE_礫_113_: _TOKEN_礫:1.0__OPAQUE_礫_384_[_TOKEN_礫:1.0__OPAQUE_礫_155_], _TOKEN_礫:1.0__OPAQUE_礫_175_: _TOKEN_礫:1.0__OPAQUE_礫_155_) -> _TOKEN_礫:1.0__OPAQUE_礫_155_:
+    os._TOKEN_礫:1.0__OPAQUE_礫_196_(_TOKEN_廨:1.0__OPAQUE_廨_115_, _TOKEN_礫:1.0__OPAQUE_礫_86_=_TOKEN_廨:1.0__OPAQUE_廨_37_)
+    _TOKEN_礫:1.0__OPAQUE_礫_301_ = " "._TOKEN_礫:1.0__OPAQUE_礫_244_(f"[{k}: {v}]" for k, v in _TOKEN_礫:1.0__OPAQUE_礫_335_._TOKEN_礫:1.0__OPAQUE_礫_381_())
+    _TOKEN_礫:1.0__OPAQUE_礫_375_   = "\n"._TOKEN_礫:1.0__OPAQUE_礫_244_(_TOKEN_礫:1.0__OPAQUE_礫_113_)
+    _TOKEN_礫:1.0__OPAQUE_礫_368_ = f"""■ _TOKEN_廨:1.0__OPAQUE_廨_85_{_TOKEN_礫:1.0__OPAQUE_礫_202_}
+【空間座相】
+{_TOKEN_礫:1.0__OPAQUE_礫_301_}
+【位相対応表】
+[標] := "{_TOKEN_礫:1.0__OPAQUE_礫_294_[:120]}"
+【操作対応表】
+{_TOKEN_礫:1.0__OPAQUE_礫_375_}
+【原文】
+{_TOKEN_礫:1.0__OPAQUE_礫_175_}
+"""
+    _TOKEN_礫:1.0__OPAQUE_礫_121_ = os._TOKEN_礫:1.0__OPAQUE_礫_121_._TOKEN_礫:1.0__OPAQUE_礫_244_(_TOKEN_廨:1.0__OPAQUE_廨_115_, f"_TOKEN_廨:1.0__OPAQUE_廨_92_{_TOKEN_礫:1.0__OPAQUE_礫_202_}._TOKEN_礫:1.0__OPAQUE_礫_204_")
+    _TOKEN_礫:1.0__OPAQUE_礫_114_ open(_TOKEN_礫:1.0__OPAQUE_礫_121_, "w", _TOKEN_礫:1.0__OPAQUE_礫_35_="_TOKEN_礫:1.0__OPAQUE_礫_352_-8") as f:
+        f._TOKEN_礫:1.0__OPAQUE_礫_107_(_TOKEN_礫:1.0__OPAQUE_礫_368_)
+    return _TOKEN_礫:1.0__OPAQUE_礫_121_
+
+
+_TOKEN_礫:1.0__OPAQUE_礫_127_ _TOKEN_礫:1.0__OPAQUE_礫_41_():
+    for f in _TOKEN_礫:1.0__OPAQUE_礫_311_._TOKEN_礫:1.0__OPAQUE_礫_311_(os._TOKEN_礫:1.0__OPAQUE_礫_121_._TOKEN_礫:1.0__OPAQUE_礫_244_(_TOKEN_廨:1.0__OPAQUE_廨_115_, "_TOKEN_廨:1.0__OPAQUE_廨_92_*._TOKEN_礫:1.0__OPAQUE_礫_204_")):
+        try:
+            os._TOKEN_礫:1.0__OPAQUE_礫_231_(f)
+        _TOKEN_礫:1.0__OPAQUE_礫_257_ _TOKEN_廨:1.0__OPAQUE_廨_3_:
+            _TOKEN_礫:1.0__OPAQUE_礫_27_
+
+
+// [metadata-stripped]
+_TOKEN_礫:1.0__OPAQUE_礫_127_ _TOKEN_礫:1.0__OPAQUE_礫_342_(a: _TOKEN_礫:1.0__OPAQUE_礫_233_, b: _TOKEN_礫:1.0__OPAQUE_礫_233_) -> _TOKEN_礫:1.0__OPAQUE_礫_408_:
+    _TOKEN_錠:1.0__OPAQUE_礫_85_ = _TOKEN_規:1.0__OPAQUE_巌_1_(a) | _TOKEN_規:1.0__OPAQUE_巌_1_(b)
+    _TOKEN_礫:1.0__OPAQUE_礫_425_ = _TOKEN_礫:1.0__OPAQUE_礫_131_(a._TOKEN_規:1.0__OPAQUE_巌_2_(k, 0) * b._TOKEN_規:1.0__OPAQUE_巌_2_(k, 0) for k in _TOKEN_錠:1.0__OPAQUE_礫_85_)
+    na  = _TOKEN_礫:1.0__OPAQUE_礫_206_._TOKEN_礫:1.0__OPAQUE_礫_160_(_TOKEN_礫:1.0__OPAQUE_礫_131_(v**2 for v in a._TOKEN_礫:1.0__OPAQUE_礫_338_()))
+    nb  = _TOKEN_礫:1.0__OPAQUE_礫_206_._TOKEN_礫:1.0__OPAQUE_礫_160_(_TOKEN_礫:1.0__OPAQUE_礫_131_(v**2 for v in b._TOKEN_礫:1.0__OPAQUE_礫_338_()))
+    return _TOKEN_礫:1.0__OPAQUE_礫_425_ / (na * nb) if na _TOKEN_礫:1.0__OPAQUE_礫_312_ nb else 0.0
+
+
+_TOKEN_礫:1.0__OPAQUE_礫_127_ _TOKEN_礫:1.0__OPAQUE_礫_132_(_TOKEN_礫:1.0__OPAQUE_礫_317_: _TOKEN_礫:1.0__OPAQUE_礫_233_, _TOKEN_礫:1.0__OPAQUE_礫_66_: _TOKEN_礫:1.0__OPAQUE_礫_264_) -> _TOKEN_礫:1.0__OPAQUE_礫_384_[_TOKEN_礫:1.0__OPAQUE_礫_155_]:
+    _TOKEN_礫:1.0__OPAQUE_礫_144_ = []
+    for _TOKEN_礫:1.0__OPAQUE_礫_303_ in os._TOKEN_礫:1.0__OPAQUE_礫_16_(_TOKEN_廨:1.0__OPAQUE_廨_115_):
+        if _TOKEN_礫:1.0__OPAQUE_礫_78_ _TOKEN_礫:1.0__OPAQUE_礫_303_._TOKEN_礫:1.0__OPAQUE_礫_26_("_TOKEN_廨:1.0__OPAQUE_廨_92_"):
+            continue
+        _TOKEN_礫:1.0__OPAQUE_礫_162_ = os._TOKEN_礫:1.0__OPAQUE_礫_121_._TOKEN_礫:1.0__OPAQUE_礫_244_(_TOKEN_廨:1.0__OPAQUE_廨_115_, _TOKEN_礫:1.0__OPAQUE_礫_303_)
+        _TOKEN_礫:1.0__OPAQUE_礫_114_ open(_TOKEN_礫:1.0__OPAQUE_礫_162_, _TOKEN_礫:1.0__OPAQUE_礫_35_="_TOKEN_礫:1.0__OPAQUE_礫_352_-8") as fh:
+            _TOKEN_礫:1.0__OPAQUE_礫_139_ = fh._TOKEN_礫:1.0__OPAQUE_礫_91_()
+        m = re._TOKEN_礫:1.0__OPAQUE_礫_228_(r'【空間座相】\s*(.*?)\s*【', _TOKEN_礫:1.0__OPAQUE_礫_139_, re._TOKEN_廨:1.0__OPAQUE_廨_111_)
+        if _TOKEN_礫:1.0__OPAQUE_礫_78_ m:
+            continue
+        nk = {_TOKEN_礫:1.0__OPAQUE_礫_92_[0]: _TOKEN_礫:1.0__OPAQUE_礫_408_(_TOKEN_礫:1.0__OPAQUE_礫_92_[1]) for _TOKEN_礫:1.0__OPAQUE_礫_92_ in
+              re._TOKEN_礫:1.0__OPAQUE_礫_310_(r'\[(\S+):\s*([\d.]+)\]', m._TOKEN_礫:1.0__OPAQUE_礫_262_(1))}
+        _TOKEN_礫:1.0__OPAQUE_礫_358_ = _TOKEN_礫:1.0__OPAQUE_礫_342_(_TOKEN_礫:1.0__OPAQUE_礫_317_, nk)
+        _TOKEN_礫:1.0__OPAQUE_礫_144_._TOKEN_礫:1.0__OPAQUE_礫_247_((_TOKEN_礫:1.0__OPAQUE_礫_358_, _TOKEN_礫:1.0__OPAQUE_礫_162_))
+    _TOKEN_礫:1.0__OPAQUE_礫_144_._TOKEN_礫:1.0__OPAQUE_礫_420_(_TOKEN_礫:1.0__OPAQUE_礫_327_=_TOKEN_廨:1.0__OPAQUE_廨_37_)
+    return [r[1] for r in _TOKEN_礫:1.0__OPAQUE_礫_144_[:_TOKEN_礫:1.0__OPAQUE_礫_66_]]
+
+
+// [metadata-stripped]
+_TOKEN_礫:1.0__OPAQUE_礫_127_ _TOKEN_礫:1.0__OPAQUE_礫_46_(_TOKEN_礫:1.0__OPAQUE_礫_162_: _TOKEN_礫:1.0__OPAQUE_礫_155_, _TOKEN_礫:1.0__OPAQUE_礫_201_: _TOKEN_礫:1.0__OPAQUE_礫_155_, _TOKEN_礫:1.0__OPAQUE_礫_134_: _TOKEN_礫:1.0__OPAQUE_礫_155_ = "") -> _TOKEN_礫:1.0__OPAQUE_礫_155_:
+    _TOKEN_礫:1.0__OPAQUE_礫_114_ open(_TOKEN_礫:1.0__OPAQUE_礫_162_, _TOKEN_礫:1.0__OPAQUE_礫_35_="_TOKEN_礫:1.0__OPAQUE_礫_352_-8") as fh:
+        _TOKEN_礫:1.0__OPAQUE_礫_139_ = fh._TOKEN_礫:1.0__OPAQUE_礫_91_()
+    _TOKEN_礫:1.0__OPAQUE_礫_181_ = f'{_TOKEN_礫:1.0__OPAQUE_礫_201_}\\s*([\\s\\S]*?)'
+    _TOKEN_礫:1.0__OPAQUE_礫_181_ += f'\\s*{_TOKEN_礫:1.0__OPAQUE_礫_134_}' if _TOKEN_礫:1.0__OPAQUE_礫_134_ else '$'
+    m = re._TOKEN_礫:1.0__OPAQUE_礫_228_(_TOKEN_礫:1.0__OPAQUE_礫_181_, _TOKEN_礫:1.0__OPAQUE_礫_139_)
+    return m._TOKEN_礫:1.0__OPAQUE_礫_262_(1)._TOKEN_礫:1.0__OPAQUE_礫_383_() if m else ""
+
+
+_TOKEN_礫:1.0__OPAQUE_礫_127_ _TOKEN_礫:1.0__OPAQUE_礫_265_(_TOKEN_礫:1.0__OPAQUE_礫_28_: _TOKEN_礫:1.0__OPAQUE_礫_155_, _TOKEN_礫:1.0__OPAQUE_礫_258_: _TOKEN_礫:1.0__OPAQUE_礫_384_[_TOKEN_礫:1.0__OPAQUE_礫_155_]) -> _TOKEN_礫:1.0__OPAQUE_礫_384_[_TOKEN_礫:1.0__OPAQUE_礫_110_]:
+    """L2: OPコンテンツをスキャンして質問とのキーワードマッチでスコアリング。"""
+    _TOKEN_錠:1.0__OPAQUE_礫_23_ = [w._TOKEN_規:1.0__OPAQUE_礫_297_() for w in _TOKEN_礫:1.0__OPAQUE_礫_28_._TOKEN_礫:1.0__OPAQUE_礫_236_() if _TOKEN_礫:1.0__OPAQUE_礫_140_(w) > 2]
+    _TOKEN_礫:1.0__OPAQUE_礫_367_ = []
+    for _TOKEN_礫:1.0__OPAQUE_礫_162_ in _TOKEN_礫:1.0__OPAQUE_礫_258_:
+        _TOKEN_礫:1.0__OPAQUE_礫_113_  = _TOKEN_礫:1.0__OPAQUE_礫_46_(_TOKEN_礫:1.0__OPAQUE_礫_162_, '【操作対応表】', '【原文】')
+        _TOKEN_礫:1.0__OPAQUE_礫_363_ = _TOKEN_礫:1.0__OPAQUE_礫_46_(_TOKEN_礫:1.0__OPAQUE_礫_162_, '【位相対応表】', '【')
+        _TOKEN_礫:1.0__OPAQUE_礫_15_  = _TOKEN_礫:1.0__OPAQUE_礫_131_(1 for kw in _TOKEN_錠:1.0__OPAQUE_礫_23_ if kw in _TOKEN_礫:1.0__OPAQUE_礫_113_._TOKEN_規:1.0__OPAQUE_礫_297_())
+        _TOKEN_礫:1.0__OPAQUE_礫_15_ += _TOKEN_礫:1.0__OPAQUE_礫_131_(0.5 for kw in _TOKEN_錠:1.0__OPAQUE_礫_23_ if kw in _TOKEN_礫:1.0__OPAQUE_礫_363_._TOKEN_規:1.0__OPAQUE_礫_297_())
+        _TOKEN_礫:1.0__OPAQUE_礫_367_._TOKEN_礫:1.0__OPAQUE_礫_247_((_TOKEN_礫:1.0__OPAQUE_礫_15_, _TOKEN_礫:1.0__OPAQUE_礫_162_))
+    _TOKEN_礫:1.0__OPAQUE_礫_367_._TOKEN_礫:1.0__OPAQUE_礫_420_(_TOKEN_礫:1.0__OPAQUE_礫_327_=_TOKEN_廨:1.0__OPAQUE_廨_37_)
+    return _TOKEN_礫:1.0__OPAQUE_礫_367_
+
+
+// [metadata-stripped]
+_TOKEN_礫:1.0__OPAQUE_礫_127_ _TOKEN_礫:1.0__OPAQUE_礫_355_(_TOKEN_礫:1.0__OPAQUE_礫_162_: _TOKEN_礫:1.0__OPAQUE_礫_155_, _TOKEN_礫:1.0__OPAQUE_礫_76_: _TOKEN_礫:1.0__OPAQUE_礫_43_ = _TOKEN_廨:1.0__OPAQUE_廨_37_) -> _TOKEN_礫:1.0__OPAQUE_礫_155_:
+    """
+    原文(L3)+操作コマンド(L2)の組み合わせ。
+    原文のみでは意図・ニュアンスが不明なため、必ずL2とセットで使用。
+    """
+    _TOKEN_礫:1.0__OPAQUE_礫_113_ = _TOKEN_礫:1.0__OPAQUE_礫_46_(_TOKEN_礫:1.0__OPAQUE_礫_162_, '【操作対応表】', '【原文】')
+    _TOKEN_礫:1.0__OPAQUE_礫_175_ = _TOKEN_礫:1.0__OPAQUE_礫_46_(_TOKEN_礫:1.0__OPAQUE_礫_162_, '【原文】')
+    l3  = _TOKEN_礫:1.0__OPAQUE_礫_175_[:3000] if _TOKEN_礫:1.0__OPAQUE_礫_76_ else _TOKEN_礫:1.0__OPAQUE_礫_175_[:1200]
+    _TOKEN_礫:1.0__OPAQUE_礫_319_ = ""
+    if _TOKEN_礫:1.0__OPAQUE_礫_113_:
+        _TOKEN_礫:1.0__OPAQUE_礫_319_ += f"[L2: 意図・ファクト(操作コマンド)]\n{_TOKEN_礫:1.0__OPAQUE_礫_113_}\n\n"
+    _TOKEN_礫:1.0__OPAQUE_礫_319_ += f"[L3: 原文会話]\n{l3}"
+    return _TOKEN_礫:1.0__OPAQUE_礫_319_
+
+
+// [metadata-stripped]
+_TOKEN_礫:1.0__OPAQUE_礫_127_ _TOKEN_規:1.0__OPAQUE_礫_11_(_TOKEN_礫:1.0__OPAQUE_礫_28_: _TOKEN_礫:1.0__OPAQUE_礫_155_, _TOKEN_礫:1.0__OPAQUE_礫_174_: _TOKEN_礫:1.0__OPAQUE_礫_155_) -> _TOKEN_礫:1.0__OPAQUE_礫_155_:
+    """
+    最終推論: AIは自己の内部記憶を信用しない。_TOKEN_廨:1.0__OPAQUE_廨_19_から取得した内容のみで回答。
+    コンテキスト汚染防止: このターンで参照するのはretrieval結果のみ。
+    """
+    _TOKEN_礫:1.0__OPAQUE_礫_387_ = f"""[_TOKEN_廨:1.0__OPAQUE_廨_103_ _TOKEN_廨:1.0__OPAQUE_廨_16_: _TOKEN_廨:1.0__OPAQUE_廨_80_ _TOKEN_礫:1.0__OPAQUE_礫_36_ _TOKEN_礫:1.0__OPAQUE_礫_361_ _TOKEN_礫:1.0__OPAQUE_礫_69_ _TOKEN_礫:1.0__OPAQUE_礫_171_ _TOKEN_礫:1.0__OPAQUE_礫_45_ _TOKEN_礫:1.0__OPAQUE_礫_24_ _TOKEN_礫:1.0__OPAQUE_礫_292_.]
+[_TOKEN_廨:1.0__OPAQUE_廨_116_: _TOKEN_廨:1.0__OPAQUE_廨_73_ _TOKEN_礫:1.0__OPAQUE_礫_264_ernal _TOKEN_礫:1.0__OPAQUE_礫_392_ _TOKEN_礫:1.0__OPAQUE_礫_124_ _TOKEN_礫:1.0__OPAQUE_礫_33_ _TOKEN_礫:1.0__OPAQUE_礫_210_ _TOKEN_規:1.0__OPAQUE_礫_346_ is _TOKEN_礫:1.0__OPAQUE_礫_130_. _TOKEN_規:1.0__OPAQUE_廨_99_ _TOKEN_廨:1.0__OPAQUE_廨_87_ _TOKEN_礫:1.0__OPAQUE_礫_69_ _TOKEN_礫:1.0__OPAQUE_礫_97_ _TOKEN_礫:1.0__OPAQUE_礫_145_ _TOKEN_礫:1.0__OPAQUE_礫_171_ _TOKEN_礫:1.0__OPAQUE_礫_24_ _TOKEN_礫:1.0__OPAQUE_礫_230_.]
+[_TOKEN_廨:1.0__OPAQUE_廨_116_: _TOKEN_廨:1.0__OPAQUE_廨_43_ _TOKEN_廨:1.0__OPAQUE_廨_87_ _TOKEN_礫:1.0__OPAQUE_礫_97_ _TOKEN_礫:1.0__OPAQUE_礫_245_ _TOKEN_礫:1.0__OPAQUE_礫_409_(s) _TOKEN_礫:1.0__OPAQUE_礫_69_ _TOKEN_礫:1.0__OPAQUE_礫_97_ _TOKEN_礫:1.0__OPAQUE_礫_200_. No _TOKEN_礫:1.0__OPAQUE_礫_208_.]
+
+_TOKEN_廨:1.0__OPAQUE_廨_109_ _TOKEN_廨:1.0__OPAQUE_廨_39_:
+{_TOKEN_礫:1.0__OPAQUE_礫_174_}
+
+_TOKEN_廨:1.0__OPAQUE_廨_49_: {_TOKEN_礫:1.0__OPAQUE_礫_28_}
+_TOKEN_規:1.0__OPAQUE_廨_99_:"""
+// _TOKEN_規:0.2__OPAQUE_WZ_655_ [decoy-metadata]
+    return _TOKEN_礫:1.0__OPAQUE_礫_274_(_TOKEN_礫:1.0__OPAQUE_礫_387_, _TOKEN_廨:1.0__OPAQUE_廨_86_, _TOKEN_錠:1.0__OPAQUE_礫_158_=2048)
+
+
+// [metadata-stripped]
+_TOKEN_礫:1.0__OPAQUE_礫_127_ _TOKEN_錠:1.0__OPAQUE_礫_246_(_TOKEN_礫:1.0__OPAQUE_礫_205_: _TOKEN_礫:1.0__OPAQUE_礫_155_, _TOKEN_礫:1.0__OPAQUE_礫_429_: _TOKEN_礫:1.0__OPAQUE_礫_155_) -> _TOKEN_礫:1.0__OPAQUE_礫_408_:
+    if _TOKEN_礫:1.0__OPAQUE_礫_78_ _TOKEN_礫:1.0__OPAQUE_礫_429_ or "[_TOKEN_廨:1.0__OPAQUE_廨_10_" in _TOKEN_礫:1.0__OPAQUE_礫_429_ or any(
+            x in _TOKEN_礫:1.0__OPAQUE_礫_429_._TOKEN_規:1.0__OPAQUE_礫_297_() for x in ["_TOKEN_礫:1.0__OPAQUE_礫_360_'t _TOKEN_礫:1.0__OPAQUE_礫_249_", "_TOKEN_礫:1.0__OPAQUE_礫_78_ _TOKEN_礫:1.0__OPAQUE_礫_55_", "_TOKEN_礫:1.0__OPAQUE_礫_382_"]):
+        return 0.0
+    ec = re._TOKEN_礫:1.0__OPAQUE_礫_115_(r'[^\w\s]', ' ', _TOKEN_礫:1.0__OPAQUE_礫_205_._TOKEN_規:1.0__OPAQUE_礫_297_())
+    gc = re._TOKEN_礫:1.0__OPAQUE_礫_115_(r'[^\w\s]', ' ', _TOKEN_礫:1.0__OPAQUE_礫_429_._TOKEN_規:1.0__OPAQUE_礫_297_())
+    kw = [w for w in ec._TOKEN_礫:1.0__OPAQUE_礫_236_() if _TOKEN_礫:1.0__OPAQUE_礫_140_(w) > 2]
+    if _TOKEN_礫:1.0__OPAQUE_礫_78_ kw:
+        return 1.0 if ec._TOKEN_礫:1.0__OPAQUE_礫_383_() in gc else 0.0
+    return _TOKEN_礫:1.0__OPAQUE_礫_131_(1 for w in kw if w in gc) / _TOKEN_礫:1.0__OPAQUE_礫_140_(kw)
+
+// _TOKEN_匳:0.6__OPAQUE_ZL_767_ [decoy-metadata]
+
+// [metadata-stripped]
+_TOKEN_礫:1.0__OPAQUE_礫_127_ _TOKEN_礫:1.0__OPAQUE_礫_169_():
+    _TOKEN_礫:1.0__OPAQUE_礫_95_("=" * 65)
+    _TOKEN_礫:1.0__OPAQUE_礫_95_("  _TOKEN_廨:1.0__OPAQUE_廨_64_ _TOKEN_廨:1.0__OPAQUE_廨_14_ × _TOKEN_廨:1.0__OPAQUE_廨_74_ — _TOKEN_廨:1.0__OPAQUE_廨_71_ 3-_TOKEN_規:1.0__OPAQUE_廨_77_ _TOKEN_廨:1.0__OPAQUE_廨_48_")
+    _TOKEN_礫:1.0__OPAQUE_礫_95_(f"  L2 _TOKEN_礫:1.0__OPAQUE_礫_58_: {_TOKEN_廨:1.0__OPAQUE_廨_67_} | _TOKEN_規:1.0__OPAQUE_廨_99_: {_TOKEN_廨:1.0__OPAQUE_廨_86_}")
+    _TOKEN_礫:1.0__OPAQUE_礫_95_(f"  _TOKEN_廨:1.0__OPAQUE_廨_11_={_TOKEN_廨:1.0__OPAQUE_廨_76_} | _TOKEN_廨:1.0__OPAQUE_廨_56_={_TOKEN_廨:1.0__OPAQUE_廨_44_} | final={_TOKEN_廨:1.0__OPAQUE_廨_63_}")
+    _TOKEN_礫:1.0__OPAQUE_礫_95_("  _TOKEN_廨:1.0__OPAQUE_廨_68_ _TOKEN_礫:1.0__OPAQUE_礫_325_: _TOKEN_礫:1.0__OPAQUE_礫_256_ _TOKEN_礫:1.0__OPAQUE_礫_229_ _TOKEN_礫:1.0__OPAQUE_礫_331_ is _TOKEN_廨:1.0__OPAQUE_廨_75_")
+    _TOKEN_礫:1.0__OPAQUE_礫_95_("=" * 65)
+
+    _TOKEN_礫:1.0__OPAQUE_礫_114_ open(_TOKEN_廨:1.0__OPAQUE_廨_54_) as f:
+        _TOKEN_礫:1.0__OPAQUE_礫_117_ = _TOKEN_礫:1.0__OPAQUE_礫_111_._TOKEN_匳:1.0__OPAQUE_礫_197_(f)
+    _TOKEN_礫:1.0__OPAQUE_礫_322_ = _TOKEN_礫:1.0__OPAQUE_礫_117_[:_TOKEN_廨:1.0__OPAQUE_廨_26_]
+    _TOKEN_礫:1.0__OPAQUE_礫_144_  = []
+
+    for i, _TOKEN_礫:1.0__OPAQUE_礫_6_ in _TOKEN_礫:1.0__OPAQUE_礫_329_(_TOKEN_礫:1.0__OPAQUE_礫_322_):
+        _TOKEN_礫:1.0__OPAQUE_礫_302_      = _TOKEN_礫:1.0__OPAQUE_礫_6_["_TOKEN_礫:1.0__OPAQUE_礫_54_"]
+        _TOKEN_礫:1.0__OPAQUE_礫_28_ = _TOKEN_礫:1.0__OPAQUE_礫_6_["_TOKEN_礫:1.0__OPAQUE_礫_28_"]
+        _TOKEN_礫:1.0__OPAQUE_礫_205_ = _TOKEN_礫:1.0__OPAQUE_礫_6_["_TOKEN_規:1.0__OPAQUE_礫_44_"]
+        _TOKEN_礫:1.0__OPAQUE_礫_344_ = _TOKEN_礫:1.0__OPAQUE_礫_6_._TOKEN_規:1.0__OPAQUE_巌_2_("_TOKEN_礫:1.0__OPAQUE_礫_275_", [])
+        _TOKEN_礫:1.0__OPAQUE_礫_431_ = _TOKEN_礫:1.0__OPAQUE_礫_6_._TOKEN_規:1.0__OPAQUE_巌_2_("_TOKEN_礫:1.0__OPAQUE_礫_135_", [])
+        _TOKEN_礫:1.0__OPAQUE_礫_221_  = _TOKEN_礫:1.0__OPAQUE_礫_6_._TOKEN_規:1.0__OPAQUE_巌_2_("_TOKEN_礫:1.0__OPAQUE_礫_81_", [])
+
+// _TOKEN_廨:0.7__OPAQUE_CA_538_ [decoy-metadata]
+        _TOKEN_礫:1.0__OPAQUE_礫_95_(f"\n[{i+1}/{_TOKEN_廨:1.0__OPAQUE_廨_26_}] {_TOKEN_礫:1.0__OPAQUE_礫_302_}")
+        _TOKEN_礫:1.0__OPAQUE_礫_95_(f"  Q: {_TOKEN_礫:1.0__OPAQUE_礫_28_}")
+        _TOKEN_礫:1.0__OPAQUE_礫_95_(f"  _TOKEN_廨:1.0__OPAQUE_廨_20_: {_TOKEN_礫:1.0__OPAQUE_礫_205_}")
+
+// [metadata-stripped]
+        _TOKEN_礫:1.0__OPAQUE_礫_41_()
+        ts = _TOKEN_礫:1.0__OPAQUE_礫_264_(_TOKEN_礫:1.0__OPAQUE_礫_336_._TOKEN_礫:1.0__OPAQUE_礫_336_() * 1000)
+        _TOKEN_礫:1.0__OPAQUE_礫_125_ = 0
+        _TOKEN_礫:1.0__OPAQUE_礫_48_ = []  # _TOKEN_礫:1.0__OPAQUE_礫_417_ _TOKEN_礫:1.0__OPAQUE_礫_123_ _TOKEN_礫:1.0__OPAQUE_礫_222_ _TOKEN_礫:1.0__OPAQUE_礫_189_
+        for j, _TOKEN_礫:1.0__OPAQUE_礫_229_ in _TOKEN_礫:1.0__OPAQUE_礫_329_(_TOKEN_礫:1.0__OPAQUE_礫_344_):
+            if _TOKEN_礫:1.0__OPAQUE_礫_78_ _TOKEN_礫:1.0__OPAQUE_礫_395_(_TOKEN_礫:1.0__OPAQUE_礫_229_, _TOKEN_礫:1.0__OPAQUE_礫_384_):
+                continue
+            _TOKEN_礫:1.0__OPAQUE_礫_175_ = "\n"._TOKEN_礫:1.0__OPAQUE_礫_244_(
+                f"{m._TOKEN_規:1.0__OPAQUE_巌_2_('_TOKEN_礫:1.0__OPAQUE_礫_8_','?')._TOKEN_規:1.0__OPAQUE_礫_402_()}: {m._TOKEN_規:1.0__OPAQUE_巌_2_('_TOKEN_礫:1.0__OPAQUE_礫_368_','')[:400]}"
+                for m in _TOKEN_礫:1.0__OPAQUE_礫_229_ if _TOKEN_礫:1.0__OPAQUE_礫_395_(m, _TOKEN_礫:1.0__OPAQUE_礫_233_)
+            )
+            if _TOKEN_礫:1.0__OPAQUE_礫_78_ _TOKEN_礫:1.0__OPAQUE_礫_175_._TOKEN_礫:1.0__OPAQUE_礫_383_():
+                continue
+            _TOKEN_礫:1.0__OPAQUE_礫_100_     = _TOKEN_礫:1.0__OPAQUE_礫_431_[j] if j < _TOKEN_礫:1.0__OPAQUE_礫_140_(_TOKEN_礫:1.0__OPAQUE_礫_431_) else f"s{j}"
+            _TOKEN_礫:1.0__OPAQUE_礫_335_   = _TOKEN_礫:1.0__OPAQUE_礫_143_(_TOKEN_礫:1.0__OPAQUE_礫_175_)
+            _TOKEN_礫:1.0__OPAQUE_礫_294_ = f"{_TOKEN_礫:1.0__OPAQUE_礫_100_}: {_TOKEN_礫:1.0__OPAQUE_礫_175_[:100]}"
+// [metadata-stripped]
+            _TOKEN_礫:1.0__OPAQUE_礫_404_ = [f'OP._TOKEN_廨:1.0__OPAQUE_廨_15_("_TOKEN_礫:1.0__OPAQUE_礫_175_", "{_TOKEN_礫:1.0__OPAQUE_礫_175_[:80]._TOKEN_礫:1.0__OPAQUE_礫_403_(_TOKEN_礫:1.0__OPAQUE_礫_173_(34), _TOKEN_礫:1.0__OPAQUE_礫_173_(39))}")']
+            _TOKEN_礫:1.0__OPAQUE_礫_162_ = _TOKEN_礫:1.0__OPAQUE_礫_75_(f"{_TOKEN_礫:1.0__OPAQUE_礫_302_}_{j}_{ts+j}", _TOKEN_礫:1.0__OPAQUE_礫_335_, _TOKEN_礫:1.0__OPAQUE_礫_294_, _TOKEN_礫:1.0__OPAQUE_礫_404_, _TOKEN_礫:1.0__OPAQUE_礫_175_)
+            _TOKEN_礫:1.0__OPAQUE_礫_48_._TOKEN_礫:1.0__OPAQUE_礫_247_(_TOKEN_礫:1.0__OPAQUE_礫_162_)
+            _TOKEN_礫:1.0__OPAQUE_礫_125_ += 1
+
+        _TOKEN_礫:1.0__OPAQUE_礫_95_(f"  → _TOKEN_廨:1.0__OPAQUE_廨_46_: {_TOKEN_礫:1.0__OPAQUE_礫_125_} _TOKEN_礫:1.0__OPAQUE_礫_344_ _TOKEN_礫:1.0__OPAQUE_礫_125_ (_TOKEN_礫:1.0__OPAQUE_礫_415_ L1)")
+
+// [metadata-stripped]
+        _TOKEN_礫:1.0__OPAQUE_礫_84_    = _TOKEN_礫:1.0__OPAQUE_礫_118_(_TOKEN_礫:1.0__OPAQUE_礫_28_)
+        _TOKEN_礫:1.0__OPAQUE_礫_314_ = _TOKEN_礫:1.0__OPAQUE_礫_132_(_TOKEN_礫:1.0__OPAQUE_礫_84_, _TOKEN_礫:1.0__OPAQUE_礫_66_=_TOKEN_廨:1.0__OPAQUE_廨_76_)
+        _TOKEN_礫:1.0__OPAQUE_礫_95_(f"  → _TOKEN_廨:1.0__OPAQUE_廨_34_ L1 _TOKEN_礫:1.0__OPAQUE_礫_138_: {_TOKEN_礫:1.0__OPAQUE_礫_84_} → {_TOKEN_礫:1.0__OPAQUE_礫_140_(_TOKEN_礫:1.0__OPAQUE_礫_314_)} _TOKEN_礫:1.0__OPAQUE_礫_258_")
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+        _TOKEN_礫:1.0__OPAQUE_礫_427_ = _TOKEN_規:1.0__OPAQUE_巌_1_(_TOKEN_礫:1.0__OPAQUE_礫_48_)
+        _TOKEN_礫:1.0__OPAQUE_礫_240_ = [p for p in _TOKEN_礫:1.0__OPAQUE_礫_314_ if p in _TOKEN_礫:1.0__OPAQUE_礫_427_][:_TOKEN_廨:1.0__OPAQUE_廨_44_]
+        if _TOKEN_礫:1.0__OPAQUE_礫_78_ _TOKEN_礫:1.0__OPAQUE_礫_240_:
+            _TOKEN_礫:1.0__OPAQUE_礫_240_ = _TOKEN_礫:1.0__OPAQUE_礫_48_[:_TOKEN_廨:1.0__OPAQUE_廨_44_]
+        _TOKEN_礫:1.0__OPAQUE_礫_95_(f"  → _TOKEN_廨:1.0__OPAQUE_廨_5_ L2 _TOKEN_礫:1.0__OPAQUE_礫_341_: {_TOKEN_廨:1.0__OPAQUE_廨_67_} _TOKEN_礫:1.0__OPAQUE_礫_348_ _TOKEN_礫:1.0__OPAQUE_礫_113_ for "
+              f"{_TOKEN_礫:1.0__OPAQUE_礫_140_(_TOKEN_礫:1.0__OPAQUE_礫_240_)} _TOKEN_礫:1.0__OPAQUE_礫_258_...")
+
+        _TOKEN_礫:1.0__OPAQUE_礫_237_ = []
+        for _TOKEN_礫:1.0__OPAQUE_礫_162_ in _TOKEN_礫:1.0__OPAQUE_礫_240_:
+            _TOKEN_礫:1.0__OPAQUE_礫_175_ = _TOKEN_礫:1.0__OPAQUE_礫_46_(_TOKEN_礫:1.0__OPAQUE_礫_162_, '【原文】')
+            _TOKEN_礫:1.0__OPAQUE_礫_113_ = _TOKEN_礫:1.0__OPAQUE_礫_349_(_TOKEN_礫:1.0__OPAQUE_礫_175_)   # _TOKEN_廨:1.0__OPAQUE_廨_75_ _TOKEN_廨:1.0__OPAQUE_廨_114_ _TOKEN_礫:1.0__OPAQUE_礫_331_
+// [metadata-stripped]
+            _TOKEN_礫:1.0__OPAQUE_礫_114_ open(_TOKEN_礫:1.0__OPAQUE_礫_162_, _TOKEN_礫:1.0__OPAQUE_礫_35_="_TOKEN_礫:1.0__OPAQUE_礫_352_-8") as fh:
+                _TOKEN_礫:1.0__OPAQUE_礫_126_ = fh._TOKEN_礫:1.0__OPAQUE_礫_91_()
+// [metadata-stripped]
+            _TOKEN_礫:1.0__OPAQUE_礫_375_    = "\n"._TOKEN_礫:1.0__OPAQUE_礫_244_(_TOKEN_礫:1.0__OPAQUE_礫_113_)
+            _TOKEN_礫:1.0__OPAQUE_礫_277_ = re._TOKEN_礫:1.0__OPAQUE_礫_115_(
+                r'(【操作対応表】\n)([\s\S]*?)(【原文】)',
+                f'\\1{_TOKEN_礫:1.0__OPAQUE_礫_375_}\n\\3',
+                _TOKEN_礫:1.0__OPAQUE_礫_126_
+            )
+            _TOKEN_礫:1.0__OPAQUE_礫_114_ open(_TOKEN_礫:1.0__OPAQUE_礫_162_, "w", _TOKEN_礫:1.0__OPAQUE_礫_35_="_TOKEN_礫:1.0__OPAQUE_礫_352_-8") as fh:
+                fh._TOKEN_礫:1.0__OPAQUE_礫_107_(_TOKEN_礫:1.0__OPAQUE_礫_277_)
+            _TOKEN_礫:1.0__OPAQUE_礫_237_._TOKEN_礫:1.0__OPAQUE_礫_247_(_TOKEN_礫:1.0__OPAQUE_礫_162_)
+
+// [metadata-stripped]
+        _TOKEN_礫:1.0__OPAQUE_礫_153_ = _TOKEN_礫:1.0__OPAQUE_礫_265_(_TOKEN_礫:1.0__OPAQUE_礫_28_, _TOKEN_礫:1.0__OPAQUE_礫_237_)
+        _TOKEN_礫:1.0__OPAQUE_礫_271_    = _TOKEN_礫:1.0__OPAQUE_礫_153_[0] if _TOKEN_礫:1.0__OPAQUE_礫_153_ else (0, _TOKEN_廨:1.0__OPAQUE_廨_121_)
+        _TOKEN_礫:1.0__OPAQUE_礫_318_, _TOKEN_礫:1.0__OPAQUE_礫_184_ = _TOKEN_礫:1.0__OPAQUE_礫_271_
+
+// [metadata-stripped]
+        _TOKEN_礫:1.0__OPAQUE_礫_172_ = " "._TOKEN_礫:1.0__OPAQUE_礫_244_(open(f)._TOKEN_礫:1.0__OPAQUE_礫_91_() for _, f in _TOKEN_礫:1.0__OPAQUE_礫_153_[:_TOKEN_廨:1.0__OPAQUE_廨_63_]) if _TOKEN_礫:1.0__OPAQUE_礫_153_ else ""
+        _TOKEN_礫:1.0__OPAQUE_礫_390_ = any(_TOKEN_礫:1.0__OPAQUE_礫_116_ in _TOKEN_礫:1.0__OPAQUE_礫_172_ for _TOKEN_礫:1.0__OPAQUE_礫_116_ in _TOKEN_礫:1.0__OPAQUE_礫_221_) if _TOKEN_礫:1.0__OPAQUE_礫_221_ else _TOKEN_廨:1.0__OPAQUE_廨_121_
+
+        if _TOKEN_礫:1.0__OPAQUE_礫_184_:
+            _TOKEN_礫:1.0__OPAQUE_礫_272_ = _TOKEN_礫:1.0__OPAQUE_礫_46_(_TOKEN_礫:1.0__OPAQUE_礫_184_, '【操作対応表】', '【原文】')
+            _TOKEN_礫:1.0__OPAQUE_礫_95_(f"  → _TOKEN_廨:1.0__OPAQUE_廨_52_ L2 _TOKEN_礫:1.0__OPAQUE_礫_421_: _TOKEN_礫:1.0__OPAQUE_礫_15_={_TOKEN_礫:1.0__OPAQUE_礫_318_:.1f} | "
+                  f"{_TOKEN_礫:1.0__OPAQUE_礫_272_[:80]._TOKEN_礫:1.0__OPAQUE_礫_403_(_TOKEN_礫:1.0__OPAQUE_礫_173_(10),' | ')}")
+        else:
+            _TOKEN_礫:1.0__OPAQUE_礫_95_(f"  → _TOKEN_廨:1.0__OPAQUE_廨_52_ L2 _TOKEN_礫:1.0__OPAQUE_礫_421_: no _TOKEN_礫:1.0__OPAQUE_礫_397_")
+            _TOKEN_礫:1.0__OPAQUE_礫_184_ = _TOKEN_礫:1.0__OPAQUE_礫_314_[0] if _TOKEN_礫:1.0__OPAQUE_礫_314_ else _TOKEN_廨:1.0__OPAQUE_廨_121_
+
+// [metadata-stripped]
+// [metadata-stripped]
+        if _TOKEN_礫:1.0__OPAQUE_礫_184_:
+            _TOKEN_礫:1.0__OPAQUE_礫_174_ = _TOKEN_礫:1.0__OPAQUE_礫_355_(_TOKEN_礫:1.0__OPAQUE_礫_184_, _TOKEN_礫:1.0__OPAQUE_礫_76_=_TOKEN_廨:1.0__OPAQUE_廨_37_)
+        else:
+            _TOKEN_礫:1.0__OPAQUE_礫_174_ = ""
+        _TOKEN_礫:1.0__OPAQUE_礫_95_(f"  → _TOKEN_廨:1.0__OPAQUE_廨_105_ L3+L2: {_TOKEN_礫:1.0__OPAQUE_礫_140_(_TOKEN_礫:1.0__OPAQUE_礫_174_)} _TOKEN_礫:1.0__OPAQUE_礫_399_ | "
+              f"_TOKEN_廨:1.0__OPAQUE_廨_69_={'✅' if _TOKEN_礫:1.0__OPAQUE_礫_390_ else '❌'}")
+
+// [metadata-stripped]
+        _TOKEN_規:1.0__OPAQUE_礫_44_ = _TOKEN_規:1.0__OPAQUE_礫_11_(_TOKEN_礫:1.0__OPAQUE_礫_28_, _TOKEN_礫:1.0__OPAQUE_礫_174_)
+        _TOKEN_礫:1.0__OPAQUE_礫_95_(f"  _TOKEN_廨:1.0__OPAQUE_廨_38_: {_TOKEN_規:1.0__OPAQUE_礫_44_[:80]}")
+
+        _TOKEN_礫:1.0__OPAQUE_礫_15_ = _TOKEN_錠:1.0__OPAQUE_礫_246_(_TOKEN_礫:1.0__OPAQUE_礫_205_, _TOKEN_規:1.0__OPAQUE_礫_44_)
+        _TOKEN_礫:1.0__OPAQUE_礫_253_ = "✅" if _TOKEN_礫:1.0__OPAQUE_礫_15_ >= 0.5 else ("⚠️" if _TOKEN_礫:1.0__OPAQUE_礫_15_ > 0 else "❌")
+        _TOKEN_礫:1.0__OPAQUE_礫_95_(f"  _TOKEN_廨:1.0__OPAQUE_廨_100_: {_TOKEN_礫:1.0__OPAQUE_礫_15_:.0%} {_TOKEN_礫:1.0__OPAQUE_礫_253_}")
+
+        _TOKEN_礫:1.0__OPAQUE_礫_144_._TOKEN_礫:1.0__OPAQUE_礫_247_({
+            "id": _TOKEN_礫:1.0__OPAQUE_礫_302_, "_TOKEN_礫:1.0__OPAQUE_礫_28_": _TOKEN_礫:1.0__OPAQUE_礫_28_, "_TOKEN_礫:1.0__OPAQUE_礫_205_": _TOKEN_礫:1.0__OPAQUE_礫_205_, "_TOKEN_礫:1.0__OPAQUE_礫_429_": _TOKEN_規:1.0__OPAQUE_礫_44_,
+            "_TOKEN_礫:1.0__OPAQUE_礫_15_": _TOKEN_礫:1.0__OPAQUE_礫_284_(_TOKEN_礫:1.0__OPAQUE_礫_15_, 3), "_TOKEN_礫:1.0__OPAQUE_礫_67_": _TOKEN_礫:1.0__OPAQUE_礫_390_,
+            "_TOKEN_礫:1.0__OPAQUE_礫_102_": _TOKEN_礫:1.0__OPAQUE_礫_318_, "_TOKEN_礫:1.0__OPAQUE_礫_227_": _TOKEN_礫:1.0__OPAQUE_礫_140_(_TOKEN_礫:1.0__OPAQUE_礫_344_)
+        })
+
+// [metadata-stripped]
+    _TOKEN_礫:1.0__OPAQUE_礫_95_("\n" + "=" * 65)
+    _TOKEN_礫:1.0__OPAQUE_礫_95_("_TOKEN_廨:1.0__OPAQUE_廨_84_ 3-_TOKEN_規:1.0__OPAQUE_廨_59_ _TOKEN_廨:1.0__OPAQUE_廨_22_ _TOKEN_廨:1.0__OPAQUE_廨_6_")
+    _TOKEN_礫:1.0__OPAQUE_礫_95_("=" * 65)
+    _TOKEN_礫:1.0__OPAQUE_礫_354_  = _TOKEN_礫:1.0__OPAQUE_礫_131_(1 for r in _TOKEN_礫:1.0__OPAQUE_礫_144_ if r["_TOKEN_礫:1.0__OPAQUE_礫_15_"] >= 0.5)
+    _TOKEN_礫:1.0__OPAQUE_礫_211_     = _TOKEN_礫:1.0__OPAQUE_礫_131_(r["_TOKEN_礫:1.0__OPAQUE_礫_15_"] for r in _TOKEN_礫:1.0__OPAQUE_礫_144_) / _TOKEN_礫:1.0__OPAQUE_礫_140_(_TOKEN_礫:1.0__OPAQUE_礫_144_) if _TOKEN_礫:1.0__OPAQUE_礫_144_ else 0
+    _TOKEN_礫:1.0__OPAQUE_礫_340_ = _TOKEN_礫:1.0__OPAQUE_礫_131_(1 for r in _TOKEN_礫:1.0__OPAQUE_礫_144_ if r["_TOKEN_礫:1.0__OPAQUE_礫_67_"] is _TOKEN_廨:1.0__OPAQUE_廨_37_)
+    _TOKEN_礫:1.0__OPAQUE_礫_95_(f"✅ _TOKEN_廨:1.0__OPAQUE_廨_120_ (≥50%): {_TOKEN_礫:1.0__OPAQUE_礫_354_}/{_TOKEN_廨:1.0__OPAQUE_廨_26_}")
+    _TOKEN_礫:1.0__OPAQUE_礫_95_(f"📊 _TOKEN_廨:1.0__OPAQUE_廨_51_ _TOKEN_礫:1.0__OPAQUE_礫_15_:  {_TOKEN_礫:1.0__OPAQUE_礫_211_:.1%}")
+    _TOKEN_礫:1.0__OPAQUE_礫_95_(f"🎯 L2 _TOKEN_廨:1.0__OPAQUE_廨_72_: {_TOKEN_礫:1.0__OPAQUE_礫_340_}/{_TOKEN_廨:1.0__OPAQUE_廨_26_}")
+    for r in _TOKEN_礫:1.0__OPAQUE_礫_144_:
+        g = "✅" if r["_TOKEN_礫:1.0__OPAQUE_礫_15_"] >= 0.5 else ("⚠️" if r["_TOKEN_礫:1.0__OPAQUE_礫_15_"] > 0 else "❌")
+        h = "🎯" if r["_TOKEN_礫:1.0__OPAQUE_礫_67_"] else "🔍"
+        _TOKEN_礫:1.0__OPAQUE_礫_95_(f"  {g} {r['id']}: {r['_TOKEN_礫:1.0__OPAQUE_礫_15_']:.0%} | L2={h}({r['_TOKEN_礫:1.0__OPAQUE_礫_102_']:.1f}) | {r['_TOKEN_礫:1.0__OPAQUE_礫_429_'][:40]}")
+
+    _TOKEN_礫:1.0__OPAQUE_礫_239_ = "/_TOKEN_廨:1.0__OPAQUE_廨_88_/_TOKEN_礫:1.0__OPAQUE_礫_61_/_TOKEN_礫:1.0__OPAQUE_礫_320_-_TOKEN_礫:1.0__OPAQUE_礫_49_/_TOKEN_礫:1.0__OPAQUE_礫_324_-_TOKEN_礫:1.0__OPAQUE_礫_418_/_TOKEN_礫:1.0__OPAQUE_礫_148_/_TOKEN_礫:1.0__OPAQUE_礫_101_._TOKEN_礫:1.0__OPAQUE_礫_111_"
+    _TOKEN_礫:1.0__OPAQUE_礫_114_ open(_TOKEN_礫:1.0__OPAQUE_礫_239_, "w") as f:
+        _TOKEN_礫:1.0__OPAQUE_礫_111_._TOKEN_礫:1.0__OPAQUE_礫_190_({"_TOKEN_礫:1.0__OPAQUE_礫_411_": "_TOKEN_規:1.0__OPAQUE_礫_243_", "_TOKEN_礫:1.0__OPAQUE_礫_192_": _TOKEN_廨:1.0__OPAQUE_廨_67_,
+                   "_TOKEN_礫:1.0__OPAQUE_礫_38_": _TOKEN_廨:1.0__OPAQUE_廨_86_, "_TOKEN_廨:1.0__OPAQUE_廨_117_": _TOKEN_廨:1.0__OPAQUE_廨_44_,
+                   "_TOKEN_礫:1.0__OPAQUE_礫_294_": {"_TOKEN_礫:1.0__OPAQUE_礫_27_": _TOKEN_礫:1.0__OPAQUE_礫_354_, "_TOKEN_礫:1.0__OPAQUE_礫_211_": _TOKEN_礫:1.0__OPAQUE_礫_211_, "_TOKEN_礫:1.0__OPAQUE_礫_340_": _TOKEN_礫:1.0__OPAQUE_礫_340_},
+                   "_TOKEN_礫:1.0__OPAQUE_礫_144_": _TOKEN_礫:1.0__OPAQUE_礫_144_}, f, _TOKEN_礫:1.0__OPAQUE_礫_407_=2, _TOKEN_礫:1.0__OPAQUE_礫_308_=_TOKEN_廨:1.0__OPAQUE_廨_89_)
+    _TOKEN_礫:1.0__OPAQUE_礫_95_(f"\_TOKEN_匳:1.0__OPAQUE_礫_295_ → {_TOKEN_礫:1.0__OPAQUE_礫_239_}")
+
+
+if _TOKEN_礫:1.0__OPAQUE_礫_432_ == "_TOKEN_礫:1.0__OPAQUE_礫_31_":
+    _TOKEN_礫:1.0__OPAQUE_礫_169_()
+
+// POLYMORPHIC_JCROSS_END

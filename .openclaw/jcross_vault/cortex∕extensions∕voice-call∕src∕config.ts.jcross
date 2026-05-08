@@ -1,0 +1,532 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:AECFE0DC ver:1778222170
+// ⚠️ One-time schema — expires after response
+
+im__node_泡:1.0___VERANTYX_泡_29_ { z } __node_泡:1.0___VERANTYX_泡_310_ "__node_泡:1.0___VERANTYX_泡_212_";
+im__node_泡:1.0___VERANTYX_泡_29_ { __node_廟:1.0___VERANTYX_廟_75_, __node_廟:1.0___VERANTYX_廟_78_, __node_廟:1.0___VERANTYX_廟_54_, __node_廟:1.0___VERANTYX_廟_79_ } __node_泡:1.0___VERANTYX_泡_310_ "../__node_縁:1.0___VERANTYX_泡_163_.js";
+im__node_泡:1.0___VERANTYX_泡_29_ { __node_泡:1.0___VERANTYX_泡_56_ } __node_泡:1.0___VERANTYX_泡_310_ "./__node_泡:1.0___VERANTYX_泡_301_-__node_泡:1.0___VERANTYX_泡_133_.js";
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+
+/**
+ * E.164 __node_泡:1.0___VERANTYX_泡_65_ __node_技:1.0___VERANTYX_泡_186_ __node_澎:1.0___VERANTYX_泡_59_: +[__node_泡:1.0___VERANTYX_泡_128_ __node_泡:1.0___VERANTYX_泡_94_][__node_技:1.0___VERANTYX_泡_186_]
+ * __node_廟:1.0___VERANTYX_廟_90_ __node_泡:1.0___VERANTYX_泡_60_ 555 __node_泡:1.0___VERANTYX_泡_247_ (__node_泡:1.0___VERANTYX_泡_162_ for __node_泡:1.0___VERANTYX_泡_143_ __node_泡:1.0___VERANTYX_泡_187_)
+ */
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_53_ __node_廟:1.0___VERANTYX_廟_80_ = z
+  .__node_泡:1.0___VERANTYX_泡_285_()
+  .__node_泡:1.0___VERANTYX_泡_221_(/^\+[1-9]\d{1,14}$/, "__node_廟:1.0___VERANTYX_廟_112_ E.164 __node_澎:1.0___VERANTYX_泡_59_, e.g. +15550001234");
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+
+/**
+ * __node_廟:1.0___VERANTYX_廟_19_ __node_泡:1.0___VERANTYX_泡_28_ __node_泡:1.0___VERANTYX_泡_159_ __node_泡:1.0___VERANTYX_泡_215_ __node_泡:1.0___VERANTYX_泡_248_ __node_泡:1.0___VERANTYX_泡_23_:
+ * - "__node_泡:1.0___VERANTYX_泡_277_": __node_廟:1.0___VERANTYX_廟_14_ __node_泡:1.0___VERANTYX_泡_17_ __node_泡:1.0___VERANTYX_泡_159_ __node_泡:1.0___VERANTYX_泡_215_ (__node_泡:1.0___VERANTYX_泡_129_ __node_泡:1.0___VERANTYX_泡_239_)
+ * - "__node_泡:1.0___VERANTYX_泡_150_": __node_廟:1.0___VERANTYX_廟_109_ __node_泡:1.0___VERANTYX_泡_139_ __node_泡:1.0___VERANTYX_泡_215_ __node_泡:1.0___VERANTYX_泡_310_ __node_泡:1.0___VERANTYX_泡_187_ in __node_泡:1.0___VERANTYX_泡_240_
+ * - "__node_泡:1.0___VERANTYX_泡_30_": __node_廟:1.0___VERANTYX_廟_5_ __node_泡:1.0___VERANTYX_泡_234_ __node_泡:1.0___VERANTYX_泡_223_ __node_縁:1.0___VERANTYX_泡_32_ __node_泡:1.0___VERANTYX_泡_30_ (__node_泡:1.0___VERANTYX_泡_45_)
+ * - "open": __node_廟:1.0___VERANTYX_廟_62_ __node_泡:1.0___VERANTYX_泡_17_ __node_泡:1.0___VERANTYX_泡_159_ __node_泡:1.0___VERANTYX_泡_215_ (__node_泡:1.0___VERANTYX_泡_274_!)
+ */
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_53_ __node_廟:1.0___VERANTYX_廟_46_ = z.enum(["__node_泡:1.0___VERANTYX_泡_277_", "__node_泡:1.0___VERANTYX_泡_150_", "__node_泡:1.0___VERANTYX_泡_30_", "open"]);
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_261_ __node_廟:1.0___VERANTYX_廟_131_ = z.__node_技:1.0___VERANTYX_泡_273_<__node_泡:1.0___VERANTYX_泡_316_ __node_廟:1.0___VERANTYX_廟_46_>;
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// __node_縁:0.6___VERANTYX_CG_517_ [decoy-metadata]
+
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_53_ __node_廟:1.0___VERANTYX_廟_63_ = z
+  .__node_泡:1.0___VERANTYX_泡_115_({
+    /** __node_廟:1.0___VERANTYX_廟_82_ __node_縁:1.0___VERANTYX_廟_30_ v2 __node_幽:1.0___VERANTYX_泡_231_ */
+    __node_幽:1.0___VERANTYX_泡_250_: z.__node_泡:1.0___VERANTYX_泡_285_().__node_泡:1.0___VERANTYX_泡_126_(1).__node_泡:1.0___VERANTYX_泡_75_(),
+    /** __node_廟:1.0___VERANTYX_廟_82_ __node_泡:1.0___VERANTYX_泡_119_ ID (__node_泡:1.0___VERANTYX_泡_310_ __node_廟:1.0___VERANTYX_廟_128_ __node_廟:1.0___VERANTYX_廟_60_ __node_泡:1.0___VERANTYX_泡_52_) */
+    __node_泡:1.0___VERANTYX_泡_230_: z.__node_泡:1.0___VERANTYX_泡_285_().__node_泡:1.0___VERANTYX_泡_126_(1).__node_泡:1.0___VERANTYX_泡_75_(),
+    /** __node_廟:1.0___VERANTYX_廟_3_ __node_幽:1.0___VERANTYX_泡_231_ for __node_泡:1.0___VERANTYX_泡_84_ __node_泡:1.0___VERANTYX_泡_300_ __node_澎:1.0___VERANTYX_泡_177_ */
+    __node_幽:1.0___VERANTYX_泡_111_: z.__node_泡:1.0___VERANTYX_泡_285_().__node_泡:1.0___VERANTYX_泡_126_(1).__node_泡:1.0___VERANTYX_泡_75_(),
+  })
+  .__node_泡:1.0___VERANTYX_泡_14_();
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_261_ __node_廟:1.0___VERANTYX_廟_65_ = z.__node_技:1.0___VERANTYX_泡_273_<__node_泡:1.0___VERANTYX_泡_316_ __node_廟:1.0___VERANTYX_廟_63_>;
+
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_53_ __node_廟:1.0___VERANTYX_廟_22_ = z
+  .__node_泡:1.0___VERANTYX_泡_115_({
+    /** __node_廟:1.0___VERANTYX_廟_102_ __node_廟:1.0___VERANTYX_廟_4_ __node_廟:1.0___VERANTYX_廟_113_ */
+    __node_泡:1.0___VERANTYX_泡_160_: z.__node_泡:1.0___VERANTYX_泡_285_().__node_泡:1.0___VERANTYX_泡_126_(1).__node_泡:1.0___VERANTYX_泡_75_(),
+    /** __node_廟:1.0___VERANTYX_廟_102_ __node_廟:1.0___VERANTYX_廟_93_ __node_幽:1.0___VERANTYX_廟_76_ */
+    __node_幽:1.0___VERANTYX_泡_293_: z.__node_泡:1.0___VERANTYX_泡_285_().__node_泡:1.0___VERANTYX_泡_126_(1).__node_泡:1.0___VERANTYX_泡_75_(),
+  })
+  .__node_泡:1.0___VERANTYX_泡_14_();
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_261_ __node_廟:1.0___VERANTYX_廟_99_ = z.__node_技:1.0___VERANTYX_泡_273_<__node_泡:1.0___VERANTYX_泡_316_ __node_廟:1.0___VERANTYX_廟_22_>;
+
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_53_ __node_廟:1.0___VERANTYX_廟_129_ = z
+  .__node_泡:1.0___VERANTYX_泡_115_({
+    /** __node_廟:1.0___VERANTYX_廟_34_ __node_廟:1.0___VERANTYX_廟_93_ ID (__node_泡:1.0___VERANTYX_泡_113_ __node_泡:1.0___VERANTYX_泡_178_ MA/SA) */
+    __node_泡:1.0___VERANTYX_泡_237_: z.__node_泡:1.0___VERANTYX_泡_285_().__node_泡:1.0___VERANTYX_泡_126_(1).__node_泡:1.0___VERANTYX_泡_75_(),
+    /** __node_廟:1.0___VERANTYX_廟_34_ __node_廟:1.0___VERANTYX_廟_93_ __node_幽:1.0___VERANTYX_廟_76_ */
+// __node_幽:0.9___VERANTYX_GV_640_ [decoy-metadata]
+    __node_幽:1.0___VERANTYX_泡_293_: z.__node_泡:1.0___VERANTYX_泡_285_().__node_泡:1.0___VERANTYX_泡_126_(1).__node_泡:1.0___VERANTYX_泡_75_(),
+  })
+  .__node_泡:1.0___VERANTYX_泡_14_();
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_261_ __node_廟:1.0___VERANTYX_廟_10_ = z.__node_技:1.0___VERANTYX_泡_273_<__node_泡:1.0___VERANTYX_泡_316_ __node_廟:1.0___VERANTYX_廟_129_>;
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_53_ __node_廟:1.0___VERANTYX_廟_81_ = z
+  .__node_泡:1.0___VERANTYX_泡_115_({
+    /** __node_廟:1.0___VERANTYX_廟_118_ __node_技:1.0___VERANTYX_泡_296_ (__node_泡:1.0___VERANTYX_泡_272_ __node_泡:1.0___VERANTYX_泡_239_ __node_廟:1.0___VERANTYX_廟_33_ __node_泡:1.0___VERANTYX_泡_287_) */
+    __node_技:1.0___VERANTYX_泡_296_: z.__node_泡:1.0___VERANTYX_泡_182_("__node_泡:1.0___VERANTYX_泡_204_").__node_泡:1.0___VERANTYX_泡_188_("__node_泡:1.0___VERANTYX_泡_204_"),
+    /** __node_技:1.0___VERANTYX_廟_26_ __node_泡:1.0___VERANTYX_泡_251_ to __node_泡:1.0___VERANTYX_泡_60_ */
+// __node_泡:0.1___VERANTYX_ZX_504_ [decoy-metadata]
+    __node_泡:1.0___VERANTYX_泡_251_: z.__node_泡:1.0___VERANTYX_泡_285_().__node_泡:1.0___VERANTYX_泡_126_(1).__node_泡:1.0___VERANTYX_泡_188_("__node_技:1.0___VERANTYX_泡_70_-1"),
+  })
+  .__node_泡:1.0___VERANTYX_泡_14_()
+  .__node_泡:1.0___VERANTYX_泡_188_({ __node_技:1.0___VERANTYX_泡_296_: "__node_泡:1.0___VERANTYX_泡_204_", __node_泡:1.0___VERANTYX_泡_251_: "__node_技:1.0___VERANTYX_泡_70_-1" });
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_261_ __node_廟:1.0___VERANTYX_廟_95_ = z.__node_技:1.0___VERANTYX_泡_273_<__node_泡:1.0___VERANTYX_泡_316_ __node_廟:1.0___VERANTYX_廟_81_>;
+
+__node_泡:1.0___VERANTYX_泡_170_ { __node_廟:1.0___VERANTYX_廟_75_, __node_廟:1.0___VERANTYX_廟_78_, __node_廟:1.0___VERANTYX_廟_54_, __node_廟:1.0___VERANTYX_廟_79_ };
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_261_ __node_廟:1.0___VERANTYX_廟_50_ = z.__node_技:1.0___VERANTYX_泡_273_<__node_泡:1.0___VERANTYX_泡_316_ __node_廟:1.0___VERANTYX_廟_78_>;
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_53_ __node_廟:1.0___VERANTYX_廟_119_ = z
+  .__node_泡:1.0___VERANTYX_泡_115_({
+    /** __node_廟:1.0___VERANTYX_廟_121_ to __node_泡:1.0___VERANTYX_泡_249_ on */
+    __node_泡:1.0___VERANTYX_泡_29_: z.__node_技:1.0___VERANTYX_泡_186_().__node_泡:1.0___VERANTYX_泡_107_().__node_泡:1.0___VERANTYX_泡_77_().__node_泡:1.0___VERANTYX_泡_188_(3334),
+    /** __node_廟:1.0___VERANTYX_廟_74_ __node_泡:1.0___VERANTYX_泡_62_ */
+    __node_泡:1.0___VERANTYX_泡_18_: z.__node_泡:1.0___VERANTYX_泡_285_().__node_泡:1.0___VERANTYX_泡_188_("127.0.0.1"),
+    /** __node_廟:1.0___VERANTYX_廟_48_ __node_泡:1.0___VERANTYX_泡_148_ */
+    __node_泡:1.0___VERANTYX_泡_148_: z.__node_泡:1.0___VERANTYX_泡_285_().__node_泡:1.0___VERANTYX_泡_126_(1).__node_泡:1.0___VERANTYX_泡_188_("/__node_泡:1.0___VERANTYX_泡_294_/__node_泡:1.0___VERANTYX_泡_84_"),
+  })
+  .__node_泡:1.0___VERANTYX_泡_14_()
+  .__node_泡:1.0___VERANTYX_泡_188_({ __node_泡:1.0___VERANTYX_泡_29_: 3334, __node_泡:1.0___VERANTYX_泡_18_: "127.0.0.1", __node_泡:1.0___VERANTYX_泡_148_: "/__node_泡:1.0___VERANTYX_泡_294_/__node_泡:1.0___VERANTYX_泡_84_" });
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_261_ __node_廟:1.0___VERANTYX_廟_123_ = z.__node_技:1.0___VERANTYX_泡_273_<__node_泡:1.0___VERANTYX_泡_316_ __node_廟:1.0___VERANTYX_廟_119_>;
+
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_53_ __node_廟:1.0___VERANTYX_廟_21_ = z
+  .__node_泡:1.0___VERANTYX_泡_115_({
+    /**
+     * __node_廟:1.0___VERANTYX_廟_1_ __node_泡:1.0___VERANTYX_泡_1_ __node_泡:1.0___VERANTYX_泡_297_:
+     * - "__node_泡:1.0___VERANTYX_泡_101_": No __node_廟:1.0___VERANTYX_廟_1_ __node_泡:1.0___VERANTYX_泡_1_
+     * - "__node_泡:1.0___VERANTYX_泡_26_": __node_廟:1.0___VERANTYX_廟_1_ __node_泡:1.0___VERANTYX_泡_26_ (private to __node_泡:1.0___VERANTYX_泡_61_)
+     * - "__node_泡:1.0___VERANTYX_泡_189_": __node_廟:1.0___VERANTYX_廟_1_ __node_泡:1.0___VERANTYX_泡_189_ (public __node_縁:1.0___VERANTYX_廟_18_)
+     */
+    __node_泡:1.0___VERANTYX_泡_297_: z.enum(["__node_泡:1.0___VERANTYX_泡_101_", "__node_泡:1.0___VERANTYX_泡_26_", "__node_泡:1.0___VERANTYX_泡_189_"]).__node_泡:1.0___VERANTYX_泡_188_("__node_泡:1.0___VERANTYX_泡_101_"),
+    /** __node_廟:1.0___VERANTYX_廟_25_ for __node_廟:1.0___VERANTYX_廟_1_ __node_泡:1.0___VERANTYX_泡_26_/__node_泡:1.0___VERANTYX_泡_189_ (__node_泡:1.0___VERANTYX_泡_289_ __node_泡:1.0___VERANTYX_泡_218_ __node_泡:1.0___VERANTYX_泡_265_ __node_泡:1.0___VERANTYX_泡_26_.__node_泡:1.0___VERANTYX_泡_148_) */
+    __node_泡:1.0___VERANTYX_泡_148_: z.__node_泡:1.0___VERANTYX_泡_285_().__node_泡:1.0___VERANTYX_泡_126_(1).__node_泡:1.0___VERANTYX_泡_188_("/__node_泡:1.0___VERANTYX_泡_294_/__node_泡:1.0___VERANTYX_泡_84_"),
+  })
+  .__node_泡:1.0___VERANTYX_泡_14_()
+  .__node_泡:1.0___VERANTYX_泡_188_({ __node_泡:1.0___VERANTYX_泡_297_: "__node_泡:1.0___VERANTYX_泡_101_", __node_泡:1.0___VERANTYX_泡_148_: "/__node_泡:1.0___VERANTYX_泡_294_/__node_泡:1.0___VERANTYX_泡_84_" });
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_261_ __node_廟:1.0___VERANTYX_廟_40_ = z.__node_技:1.0___VERANTYX_泡_273_<__node_泡:1.0___VERANTYX_泡_316_ __node_廟:1.0___VERANTYX_廟_21_>;
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_53_ __node_廟:1.0___VERANTYX_廟_120_ = z
+  .__node_泡:1.0___VERANTYX_泡_115_({
+    /**
+     * __node_廟:1.0___VERANTYX_廟_29_ __node_技:1.0___VERANTYX_泡_296_:
+     * - "__node_泡:1.0___VERANTYX_泡_140_": No __node_泡:1.0___VERANTYX_泡_78_ (__node_泡:1.0___VERANTYX_泡_60_ __node_縁:1.0___VERANTYX_泡_168_ if __node_技:1.0___VERANTYX_縁_3_, or __node_泡:1.0___VERANTYX_泡_203_ __node_技:1.0___VERANTYX_縁_2_)
+     * - "__node_泡:1.0___VERANTYX_泡_246_": __node_廟:1.0___VERANTYX_廟_57_ __node_泡:1.0___VERANTYX_泡_246_ for public __node_縁:1.0___VERANTYX_廟_18_ __node_泡:1.0___VERANTYX_泡_78_
+     * - "__node_泡:1.0___VERANTYX_泡_190_-__node_泡:1.0___VERANTYX_泡_26_": __node_廟:1.0___VERANTYX_廟_1_ __node_泡:1.0___VERANTYX_泡_26_ (private to __node_泡:1.0___VERANTYX_泡_61_)
+     * - "__node_泡:1.0___VERANTYX_泡_190_-__node_泡:1.0___VERANTYX_泡_189_": __node_廟:1.0___VERANTYX_廟_1_ __node_泡:1.0___VERANTYX_泡_189_ (public __node_縁:1.0___VERANTYX_廟_18_)
+     */
+    __node_技:1.0___VERANTYX_泡_296_: z.enum(["__node_泡:1.0___VERANTYX_泡_140_", "__node_泡:1.0___VERANTYX_泡_246_", "__node_泡:1.0___VERANTYX_泡_190_-__node_泡:1.0___VERANTYX_泡_26_", "__node_泡:1.0___VERANTYX_泡_190_-__node_泡:1.0___VERANTYX_泡_189_"]).__node_泡:1.0___VERANTYX_泡_188_("__node_泡:1.0___VERANTYX_泡_140_"),
+    /** __node_泡:1.0___VERANTYX_泡_246_ __node_泡:1.0___VERANTYX_泡_252_ __node_幽:1.0___VERANTYX_泡_144_ (__node_泡:1.0___VERANTYX_泡_75_, __node_泡:1.0___VERANTYX_泡_99_ __node_技:1.0___VERANTYX_泡_253_ __node_泡:1.0___VERANTYX_泡_242_ __node_泡:1.0___VERANTYX_泡_306_ __node_泡:1.0___VERANTYX_泡_254_ __node_泡:1.0___VERANTYX_泡_96_) */
+    __node_幽:1.0___VERANTYX_泡_202_: z.__node_泡:1.0___VERANTYX_泡_285_().__node_泡:1.0___VERANTYX_泡_126_(1).__node_泡:1.0___VERANTYX_泡_75_(),
+    /** __node_泡:1.0___VERANTYX_泡_246_ __node_泡:1.0___VERANTYX_泡_149_ __node_泡:1.0___VERANTYX_泡_206_ (__node_泡:1.0___VERANTYX_泡_245_ __node_泡:1.0___VERANTYX_泡_157_, e.g., "__node_泡:1.0___VERANTYX_泡_175_.__node_泡:1.0___VERANTYX_泡_246_.io") */
+    __node_泡:1.0___VERANTYX_泡_21_: z.__node_泡:1.0___VERANTYX_泡_285_().__node_泡:1.0___VERANTYX_泡_126_(1).__node_泡:1.0___VERANTYX_泡_75_(),
+    /**
+     * __node_廟:1.0___VERANTYX_廟_91_ __node_泡:1.0___VERANTYX_泡_246_ __node_泡:1.0___VERANTYX_泡_302_ __node_技:1.0___VERANTYX_泡_268_ __node_泡:1.0___VERANTYX_泡_259_ __node_泡:1.0___VERANTYX_泡_297_.
+     * __node_廟:1.0___VERANTYX_廟_115_ true, __node_澎:1.0___VERANTYX_泡_3_ __node_泡:1.0___VERANTYX_泡_58_ __node_泡:1.0___VERANTYX_泡_227_ be __node_泡:1.0___VERANTYX_泡_137_ for __node_泡:1.0___VERANTYX_泡_279_ __node_縁:1.0___VERANTYX_泡_290_
+     * to __node_泡:1.0___VERANTYX_泡_123_ __node_泡:1.0___VERANTYX_泡_43_ public __node_泡:1.0___VERANTYX_泡_246_ __node_縁:1.0___VERANTYX_廟_37_ __node_泡:1.0___VERANTYX_泡_262_ for __node_泡:1.0___VERANTYX_泡_263_.
+     *
+     * __node_廟:1.0___VERANTYX_廟_125_: __node_廟:1.0___VERANTYX_廟_15_ __node_泡:1.0___VERANTYX_泡_207_ __node_廟:1.0___VERANTYX_廟_85_ __node_泡:1.0___VERANTYX_泡_64_ __node_泡:1.0___VERANTYX_泡_300_ __node_澎:1.0___VERANTYX_泡_177_.
+     */
+    __node_泡:1.0___VERANTYX_泡_95_: z.__node_泡:1.0___VERANTYX_泡_124_().__node_泡:1.0___VERANTYX_泡_188_(false),
+  })
+  .__node_泡:1.0___VERANTYX_泡_14_()
+  .__node_泡:1.0___VERANTYX_泡_188_({ __node_技:1.0___VERANTYX_泡_296_: "__node_泡:1.0___VERANTYX_泡_140_", __node_泡:1.0___VERANTYX_泡_95_: false });
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_261_ __node_廟:1.0___VERANTYX_廟_107_ = z.__node_技:1.0___VERANTYX_泡_273_<__node_泡:1.0___VERANTYX_泡_316_ __node_廟:1.0___VERANTYX_廟_120_>;
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_53_ __node_廟:1.0___VERANTYX_廟_98_ = z
+  .__node_泡:1.0___VERANTYX_泡_115_({
+    /**
+     * __node_廟:1.0___VERANTYX_廟_77_ __node_泡:1.0___VERANTYX_泡_91_ for __node_泡:1.0___VERANTYX_泡_84_ __node_縁:1.0___VERANTYX_廟_37_ __node_泡:1.0___VERANTYX_泡_19_.
+     * __node_廟:1.0___VERANTYX_廟_109_ __node_泡:1.0___VERANTYX_泡_106_ __node_泡:1.0___VERANTYX_泡_10_ __node_泡:1.0___VERANTYX_泡_248_ __node_泡:1.0___VERANTYX_泡_54_ __node_泡:1.0___VERANTYX_泡_310_ __node_澎:1.0___VERANTYX_泡_146_ __node_泡:1.0___VERANTYX_泡_58_.
+     */
+    __node_泡:1.0___VERANTYX_泡_67_: z.__node_泡:1.0___VERANTYX_泡_103_(z.__node_泡:1.0___VERANTYX_泡_285_().__node_泡:1.0___VERANTYX_泡_126_(1)).__node_泡:1.0___VERANTYX_泡_188_([]),
+    /**
+     * __node_廟:1.0___VERANTYX_廟_84_ X-__node_廟:1.0___VERANTYX_廟_49_-* __node_泡:1.0___VERANTYX_泡_58_ __node_泡:1.0___VERANTYX_泡_120_ a __node_泡:1.0___VERANTYX_泡_138_ __node_泡:1.0___VERANTYX_泡_150_.
+     * __node_廟:1.0___VERANTYX_廟_38_: __node_廟:1.0___VERANTYX_廟_109_ __node_泡:1.0___VERANTYX_泡_112_ if __node_泡:1.0___VERANTYX_泡_183_ __node_泡:1.0___VERANTYX_泡_276_ __node_泡:1.0___VERANTYX_泡_12_ __node_泡:1.0___VERANTYX_泡_164_ __node_泡:1.0___VERANTYX_泡_104_.
+     */
+    __node_澎:1.0___VERANTYX_泡_76_: z.__node_泡:1.0___VERANTYX_泡_124_().__node_泡:1.0___VERANTYX_泡_188_(false),
+    /**
+     * __node_廟:1.0___VERANTYX_廟_67_ __node_泡:1.0___VERANTYX_泡_164_ IP __node_泡:1.0___VERANTYX_泡_88_. __node_廟:1.0___VERANTYX_廟_49_ __node_泡:1.0___VERANTYX_泡_58_ __node_泡:1.0___VERANTYX_泡_248_ __node_泡:1.0___VERANTYX_泡_239_ __node_泡:1.0___VERANTYX_泡_137_ __node_泡:1.0___VERANTYX_泡_63_
+     * __node_泡:1.0___VERANTYX_泡_43_ __node_泡:1.0___VERANTYX_泡_284_ IP __node_泡:1.0___VERANTYX_泡_219_ __node_泡:1.0___VERANTYX_泡_311_ of __node_泡:1.0___VERANTYX_泡_106_ __node_泡:1.0___VERANTYX_泡_88_.
+     */
+    __node_泡:1.0___VERANTYX_泡_191_: z.__node_泡:1.0___VERANTYX_泡_103_(z.__node_泡:1.0___VERANTYX_泡_285_().__node_泡:1.0___VERANTYX_泡_126_(1)).__node_泡:1.0___VERANTYX_泡_188_([]),
+  })
+  .__node_泡:1.0___VERANTYX_泡_14_()
+  .__node_泡:1.0___VERANTYX_泡_188_({ __node_泡:1.0___VERANTYX_泡_67_: [], __node_澎:1.0___VERANTYX_泡_76_: false, __node_泡:1.0___VERANTYX_泡_191_: [] });
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_261_ __node_廟:1.0___VERANTYX_廟_51_ = z.__node_技:1.0___VERANTYX_泡_273_<__node_泡:1.0___VERANTYX_泡_316_ __node_廟:1.0___VERANTYX_廟_98_>;
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+
+/**
+ * __node_廟:1.0___VERANTYX_廟_128_ __node_泡:1.0___VERANTYX_泡_297_ __node_泡:1.0___VERANTYX_泡_155_ __node_泡:1.0___VERANTYX_泡_28_ __node_泡:1.0___VERANTYX_泡_129_ __node_泡:1.0___VERANTYX_泡_215_ __node_泡:1.0___VERANTYX_泡_308_:
+ * - "__node_澎:1.0___VERANTYX_泡_226_": __node_技:1.0___VERANTYX_廟_71_ __node_泡:1.0___VERANTYX_泡_132_ __node_泡:1.0___VERANTYX_泡_306_ __node_泡:1.0___VERANTYX_泡_92_-__node_泡:1.0___VERANTYX_泡_114_ __node_技:1.0___VERANTYX_泡_153_ __node_泡:1.0___VERANTYX_泡_74_ (__node_泡:1.0___VERANTYX_泡_311_-__node_泡:1.0___VERANTYX_泡_198_ __node_澎:1.0___VERANTYX_泡_145_)
+ * - "__node_泡:1.0___VERANTYX_泡_102_": __node_廟:1.0___VERANTYX_廟_44_ open for __node_泡:1.0___VERANTYX_泡_49_-__node_泡:1.0___VERANTYX_泡_306_-__node_澎:1.0___VERANTYX_泡_121_ __node_泡:1.0___VERANTYX_泡_141_ __node_泡:1.0___VERANTYX_泡_24_ __node_泡:1.0___VERANTYX_泡_166_ or __node_泡:1.0___VERANTYX_泡_211_
+ */
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_53_ __node_廟:1.0___VERANTYX_廟_72_ = z.enum(["__node_澎:1.0___VERANTYX_泡_226_", "__node_泡:1.0___VERANTYX_泡_102_"]);
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_261_ __node_廟:1.0___VERANTYX_廟_116_ = z.__node_技:1.0___VERANTYX_泡_273_<__node_泡:1.0___VERANTYX_泡_316_ __node_廟:1.0___VERANTYX_廟_72_>;
+
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_53_ __node_廟:1.0___VERANTYX_廟_53_ = z
+  .__node_泡:1.0___VERANTYX_泡_115_({
+    /** __node_廟:1.0___VERANTYX_廟_87_ __node_泡:1.0___VERANTYX_泡_180_ __node_泡:1.0___VERANTYX_泡_297_ for __node_泡:1.0___VERANTYX_泡_129_ __node_泡:1.0___VERANTYX_泡_215_ */
+    __node_泡:1.0___VERANTYX_泡_213_: __node_廟:1.0___VERANTYX_廟_72_.__node_泡:1.0___VERANTYX_泡_188_("__node_澎:1.0___VERANTYX_泡_226_"),
+    /** __node_廟:1.0___VERANTYX_廟_43_ to __node_泡:1.0___VERANTYX_泡_46_ __node_技:1.0___VERANTYX_泡_153_ __node_廟:1.0___VERANTYX_廟_12_ __node_澎:1.0___VERANTYX_泡_291_ __node_泡:1.0___VERANTYX_泡_92_-__node_泡:1.0___VERANTYX_泡_114_ in __node_澎:1.0___VERANTYX_泡_226_ __node_泡:1.0___VERANTYX_泡_297_ */
+    __node_澎:1.0___VERANTYX_泡_165_: z.__node_技:1.0___VERANTYX_泡_186_().__node_泡:1.0___VERANTYX_泡_107_().__node_泡:1.0___VERANTYX_泡_255_().__node_泡:1.0___VERANTYX_泡_188_(3),
+  })
+  .__node_泡:1.0___VERANTYX_泡_14_()
+  .__node_泡:1.0___VERANTYX_泡_188_({ __node_泡:1.0___VERANTYX_泡_213_: "__node_澎:1.0___VERANTYX_泡_226_", __node_澎:1.0___VERANTYX_泡_165_: 3 });
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_261_ __node_廟:1.0___VERANTYX_廟_83_ = z.__node_技:1.0___VERANTYX_泡_273_<__node_泡:1.0___VERANTYX_泡_316_ __node_廟:1.0___VERANTYX_廟_53_>;
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_53_ __node_廟:1.0___VERANTYX_廟_94_ = z
+  .__node_泡:1.0___VERANTYX_泡_115_({
+    /** __node_廟:1.0___VERANTYX_廟_61_ __node_泡:1.0___VERANTYX_泡_66_-__node_泡:1.0___VERANTYX_泡_44_ __node_泡:1.0___VERANTYX_泡_208_ __node_泡:1.0___VERANTYX_泡_286_ (__node_泡:1.0___VERANTYX_泡_269_ __node_廟:1.0___VERANTYX_廟_58_ __node_泡:1.0___VERANTYX_泡_68_) */
+    __node_泡:1.0___VERANTYX_泡_116_: z.__node_泡:1.0___VERANTYX_泡_124_().__node_泡:1.0___VERANTYX_泡_188_(false),
+    /** __node_廟:1.0___VERANTYX_廟_118_ __node_技:1.0___VERANTYX_泡_296_ for __node_泡:1.0___VERANTYX_泡_66_-__node_泡:1.0___VERANTYX_泡_44_ __node_泡:1.0___VERANTYX_泡_281_ */
+    __node_技:1.0___VERANTYX_泡_270_: z.enum(["__node_泡:1.0___VERANTYX_泡_204_-__node_泡:1.0___VERANTYX_泡_71_"]).__node_泡:1.0___VERANTYX_泡_188_("__node_泡:1.0___VERANTYX_泡_204_-__node_泡:1.0___VERANTYX_泡_71_"),
+    /** __node_廟:1.0___VERANTYX_廟_33_ __node_縁:1.0___VERANTYX_廟_30_ __node_幽:1.0___VERANTYX_泡_231_ for __node_廟:1.0___VERANTYX_廟_86_ __node_縁:1.0___VERANTYX_廟_30_ (__node_泡:1.0___VERANTYX_泡_196_ __node_幽:1.0___VERANTYX_廟_68_ __node_泡:1.0___VERANTYX_泡_197_ if __node_泡:1.0___VERANTYX_泡_283_ __node_技:1.0___VERANTYX_縁_3_) */
+    __node_幽:1.0___VERANTYX_泡_83_: z.__node_泡:1.0___VERANTYX_泡_285_().__node_泡:1.0___VERANTYX_泡_126_(1).__node_泡:1.0___VERANTYX_泡_75_(),
+    /** __node_廟:1.0___VERANTYX_廟_33_ __node_泡:1.0___VERANTYX_泡_281_ __node_泡:1.0___VERANTYX_泡_251_ (__node_泡:1.0___VERANTYX_泡_188_: __node_泡:1.0___VERANTYX_泡_9_-4o-__node_泡:1.0___VERANTYX_泡_222_) */
+    __node_泡:1.0___VERANTYX_泡_275_: z.__node_泡:1.0___VERANTYX_泡_285_().__node_泡:1.0___VERANTYX_泡_126_(1).__node_泡:1.0___VERANTYX_泡_188_("__node_泡:1.0___VERANTYX_泡_9_-4o-__node_泡:1.0___VERANTYX_泡_222_"),
+    /** __node_廟:1.0___VERANTYX_廟_20_ __node_泡:1.0___VERANTYX_泡_181_ __node_泡:1.0___VERANTYX_泡_55_ in ms __node_澎:1.0___VERANTYX_泡_291_ __node_泡:1.0___VERANTYX_泡_5_ __node_泡:1.0___VERANTYX_泡_86_ __node_泡:1.0___VERANTYX_泡_57_ */
+    __node_泡:1.0___VERANTYX_泡_214_: z.__node_技:1.0___VERANTYX_泡_186_().__node_泡:1.0___VERANTYX_泡_107_().__node_泡:1.0___VERANTYX_泡_77_().__node_泡:1.0___VERANTYX_泡_188_(800),
+    /** __node_廟:1.0___VERANTYX_廟_20_ __node_泡:1.0___VERANTYX_泡_184_ 0-1 (__node_技:1.0___VERANTYX_泡_233_ = __node_泡:1.0___VERANTYX_泡_87_ __node_泡:1.0___VERANTYX_泡_303_) */
+    __node_泡:1.0___VERANTYX_泡_195_: z.__node_技:1.0___VERANTYX_泡_186_().__node_泡:1.0___VERANTYX_泡_126_(0).__node_泡:1.0___VERANTYX_泡_48_(1).__node_泡:1.0___VERANTYX_泡_188_(0.5),
+    /** __node_廟:1.0___VERANTYX_廟_58_ __node_泡:1.0___VERANTYX_泡_148_ for __node_泡:1.0___VERANTYX_泡_292_ __node_泡:1.0___VERANTYX_泡_199_ __node_泡:1.0___VERANTYX_泡_122_ */
+    __node_泡:1.0___VERANTYX_泡_241_: z.__node_泡:1.0___VERANTYX_泡_285_().__node_泡:1.0___VERANTYX_泡_126_(1).__node_泡:1.0___VERANTYX_泡_188_("/__node_泡:1.0___VERANTYX_泡_294_/__node_泡:1.0___VERANTYX_泡_199_"),
+    /**
+     * __node_廟:1.0___VERANTYX_廟_103_ __node_泡:1.0___VERANTYX_泡_147_ __node_泡:1.0___VERANTYX_泡_292_ __node_泡:1.0___VERANTYX_泡_199_ __node_泡:1.0___VERANTYX_泡_194_ if no __node_泡:1.0___VERANTYX_泡_179_ `__node_泡:1.0___VERANTYX_泡_282_` __node_泡:1.0___VERANTYX_泡_172_ __node_泡:1.0___VERANTYX_泡_244_ in __node_泡:1.0___VERANTYX_泡_44_.
+     * __node_廟:1.0___VERANTYX_廟_132_ __node_泡:1.0___VERANTYX_泡_33_ __node_泡:1.0___VERANTYX_泡_280_-__node_泡:1.0___VERANTYX_泡_252_ __node_泡:1.0___VERANTYX_泡_50_ __node_泡:1.0___VERANTYX_泡_119_ __node_泡:1.0___VERANTYX_泡_108_ __node_泡:1.0___VERANTYX_泡_151_.
+     */
+    __node_泡:1.0___VERANTYX_泡_158_: z.__node_技:1.0___VERANTYX_泡_186_().__node_泡:1.0___VERANTYX_泡_107_().__node_泡:1.0___VERANTYX_泡_77_().__node_泡:1.0___VERANTYX_泡_188_(5000),
+    /** __node_廟:1.0___VERANTYX_廟_7_ __node_技:1.0___VERANTYX_泡_186_ of __node_泡:1.0___VERANTYX_泡_125_ __node_泡:1.0___VERANTYX_泡_313_ (__node_泡:1.0___VERANTYX_泡_280_-__node_泡:1.0___VERANTYX_泡_282_) __node_泡:1.0___VERANTYX_泡_292_ __node_泡:1.0___VERANTYX_泡_199_ __node_泡:1.0___VERANTYX_泡_194_. */
+    __node_泡:1.0___VERANTYX_泡_4_: z.__node_技:1.0___VERANTYX_泡_186_().__node_泡:1.0___VERANTYX_泡_107_().__node_泡:1.0___VERANTYX_泡_77_().__node_泡:1.0___VERANTYX_泡_188_(32),
+    /** __node_廟:1.0___VERANTYX_廟_7_ __node_泡:1.0___VERANTYX_泡_313_ __node_泡:1.0___VERANTYX_泡_292_ __node_泡:1.0___VERANTYX_泡_199_ __node_泡:1.0___VERANTYX_泡_194_ __node_技:1.0___VERANTYX_泡_81_ __node_泡:1.0___VERANTYX_泡_152_ IP. */
+    __node_泡:1.0___VERANTYX_泡_34_: z.__node_技:1.0___VERANTYX_泡_186_().__node_泡:1.0___VERANTYX_泡_107_().__node_泡:1.0___VERANTYX_泡_77_().__node_泡:1.0___VERANTYX_泡_188_(4),
+    /** __node_廟:1.0___VERANTYX_廟_56_ __node_泡:1.0___VERANTYX_泡_295_ for __node_泡:1.0___VERANTYX_泡_17_ open __node_泡:1.0___VERANTYX_泡_292_ __node_泡:1.0___VERANTYX_泡_199_ __node_泡:1.0___VERANTYX_泡_194_ (__node_泡:1.0___VERANTYX_泡_313_ + __node_泡:1.0___VERANTYX_泡_97_). */
+    __node_泡:1.0___VERANTYX_泡_98_: z.__node_技:1.0___VERANTYX_泡_186_().__node_泡:1.0___VERANTYX_泡_107_().__node_泡:1.0___VERANTYX_泡_77_().__node_泡:1.0___VERANTYX_泡_188_(128),
+  })
+  .__node_泡:1.0___VERANTYX_泡_14_()
+  .__node_泡:1.0___VERANTYX_泡_188_({
+// __node_廟:0.7___VERANTYX_BX_364_ [decoy-metadata]
+    __node_泡:1.0___VERANTYX_泡_116_: false,
+    __node_技:1.0___VERANTYX_泡_270_: "__node_泡:1.0___VERANTYX_泡_204_-__node_泡:1.0___VERANTYX_泡_71_",
+    __node_泡:1.0___VERANTYX_泡_275_: "__node_泡:1.0___VERANTYX_泡_9_-4o-__node_泡:1.0___VERANTYX_泡_222_",
+    __node_泡:1.0___VERANTYX_泡_214_: 800,
+    __node_泡:1.0___VERANTYX_泡_195_: 0.5,
+    __node_泡:1.0___VERANTYX_泡_241_: "/__node_泡:1.0___VERANTYX_泡_294_/__node_泡:1.0___VERANTYX_泡_199_",
+    __node_泡:1.0___VERANTYX_泡_158_: 5000,
+    __node_泡:1.0___VERANTYX_泡_4_: 32,
+    __node_泡:1.0___VERANTYX_泡_34_: 4,
+    __node_泡:1.0___VERANTYX_泡_98_: 128,
+  });
+// __node_縁:0.6___VERANTYX_EE_198_ [decoy-metadata]
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_261_ __node_廟:1.0___VERANTYX_廟_6_ = z.__node_技:1.0___VERANTYX_泡_273_<__node_泡:1.0___VERANTYX_泡_316_ __node_廟:1.0___VERANTYX_廟_94_>;
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_53_ __node_廟:1.0___VERANTYX_廟_23_ = z
+  .__node_泡:1.0___VERANTYX_泡_115_({
+    /** __node_廟:1.0___VERANTYX_廟_61_ __node_泡:1.0___VERANTYX_泡_294_ __node_泡:1.0___VERANTYX_泡_180_ __node_泡:1.0___VERANTYX_泡_117_ */
+    __node_泡:1.0___VERANTYX_泡_116_: z.__node_泡:1.0___VERANTYX_泡_124_().__node_泡:1.0___VERANTYX_泡_188_(false),
+
+    /** __node_廟:1.0___VERANTYX_廟_122_ __node_技:1.0___VERANTYX_泡_296_ (__node_泡:1.0___VERANTYX_泡_260_, __node_泡:1.0___VERANTYX_泡_315_, __node_泡:1.0___VERANTYX_泡_72_, or __node_泡:1.0___VERANTYX_泡_89_) */
+    __node_技:1.0___VERANTYX_泡_296_: z.enum(["__node_泡:1.0___VERANTYX_泡_260_", "__node_泡:1.0___VERANTYX_泡_315_", "__node_泡:1.0___VERANTYX_泡_72_", "__node_泡:1.0___VERANTYX_泡_89_"]).__node_泡:1.0___VERANTYX_泡_75_(),
+
+    /** __node_廟:1.0___VERANTYX_廟_82_-__node_澎:1.0___VERANTYX_泡_41_ __node_泡:1.0___VERANTYX_泡_104_ */
+    __node_泡:1.0___VERANTYX_泡_260_: __node_廟:1.0___VERANTYX_廟_63_.__node_泡:1.0___VERANTYX_泡_75_(),
+
+    /** __node_廟:1.0___VERANTYX_廟_102_-__node_澎:1.0___VERANTYX_泡_41_ __node_泡:1.0___VERANTYX_泡_104_ */
+    __node_泡:1.0___VERANTYX_泡_315_: __node_廟:1.0___VERANTYX_廟_22_.__node_泡:1.0___VERANTYX_泡_75_(),
+
+    /** __node_廟:1.0___VERANTYX_廟_34_-__node_澎:1.0___VERANTYX_泡_41_ __node_泡:1.0___VERANTYX_泡_104_ */
+    __node_泡:1.0___VERANTYX_泡_72_: __node_廟:1.0___VERANTYX_廟_129_.__node_泡:1.0___VERANTYX_泡_75_(),
+
+    /** __node_廟:1.0___VERANTYX_廟_24_ __node_技:1.0___VERANTYX_泡_186_ to __node_泡:1.0___VERANTYX_泡_180_ __node_泡:1.0___VERANTYX_泡_310_ (E.164) */
+    __node_技:1.0___VERANTYX_泡_37_: __node_廟:1.0___VERANTYX_廟_80_.__node_泡:1.0___VERANTYX_泡_75_(),
+
+    /** __node_廟:1.0___VERANTYX_廟_87_ __node_泡:1.0___VERANTYX_泡_65_ __node_技:1.0___VERANTYX_泡_186_ to __node_泡:1.0___VERANTYX_泡_180_ (E.164) */
+    __node_技:1.0___VERANTYX_泡_38_: __node_廟:1.0___VERANTYX_廟_80_.__node_泡:1.0___VERANTYX_泡_75_(),
+
+    /** __node_廟:1.0___VERANTYX_廟_59_ __node_泡:1.0___VERANTYX_泡_180_ __node_泡:1.0___VERANTYX_泡_22_ */
+    __node_泡:1.0___VERANTYX_泡_25_: __node_廟:1.0___VERANTYX_廟_46_.__node_泡:1.0___VERANTYX_泡_188_("__node_泡:1.0___VERANTYX_泡_277_"),
+
+    /** __node_廟:1.0___VERANTYX_廟_126_ of __node_泡:1.0___VERANTYX_泡_65_ __node_泡:1.0___VERANTYX_泡_187_ for __node_泡:1.0___VERANTYX_泡_159_ __node_泡:1.0___VERANTYX_泡_215_ (E.164) */
+    __node_泡:1.0___VERANTYX_泡_240_: z.__node_泡:1.0___VERANTYX_泡_103_(__node_廟:1.0___VERANTYX_廟_80_).__node_泡:1.0___VERANTYX_泡_188_([]),
+
+    /** __node_廟:1.0___VERANTYX_廟_70_ __node_泡:1.0___VERANTYX_泡_132_ for __node_泡:1.0___VERANTYX_泡_159_ __node_泡:1.0___VERANTYX_泡_215_ */
+    __node_泡:1.0___VERANTYX_泡_225_: z.__node_泡:1.0___VERANTYX_泡_285_().__node_泡:1.0___VERANTYX_泡_75_(),
+
+    /** __node_廟:1.0___VERANTYX_廟_27_ __node_泡:1.0___VERANTYX_泡_180_ __node_泡:1.0___VERANTYX_泡_104_ */
+    __node_泡:1.0___VERANTYX_泡_129_: __node_廟:1.0___VERANTYX_廟_53_,
+
+    /** __node_廟:1.0___VERANTYX_廟_7_ __node_泡:1.0___VERANTYX_泡_180_ __node_泡:1.0___VERANTYX_泡_55_ in __node_泡:1.0___VERANTYX_泡_42_ */
+    __node_泡:1.0___VERANTYX_泡_200_: z.__node_技:1.0___VERANTYX_泡_186_().__node_泡:1.0___VERANTYX_泡_107_().__node_泡:1.0___VERANTYX_泡_77_().__node_泡:1.0___VERANTYX_泡_188_(300),
+
+    /**
+     * __node_廟:1.0___VERANTYX_廟_7_ __node_泡:1.0___VERANTYX_泡_167_ of a __node_泡:1.0___VERANTYX_泡_180_ in __node_泡:1.0___VERANTYX_泡_42_ __node_澎:1.0___VERANTYX_泡_291_ it is __node_泡:1.0___VERANTYX_泡_174_ __node_泡:1.0___VERANTYX_泡_217_.
+     * __node_廟:1.0___VERANTYX_廟_88_ __node_泡:1.0___VERANTYX_泡_215_ __node_泡:1.0___VERANTYX_泡_142_ in __node_泡:1.0___VERANTYX_泡_304_ __node_泡:1.0___VERANTYX_泡_209_ (e.g., __node_澎:1.0___VERANTYX_泡_226_-__node_泡:1.0___VERANTYX_泡_297_ __node_泡:1.0___VERANTYX_泡_215_ __node_泡:1.0___VERANTYX_泡_258_
+     * __node_技:1.0___VERANTYX_泡_2_ __node_泡:1.0___VERANTYX_泡_228_ a __node_泡:1.0___VERANTYX_泡_299_ __node_泡:1.0___VERANTYX_泡_84_). __node_技:1.0___VERANTYX_縁_1_ to 0 to __node_泡:1.0___VERANTYX_泡_15_.
+     * __node_廟:1.0___VERANTYX_廟_87_: 0 (__node_泡:1.0___VERANTYX_泡_277_). __node_廟:1.0___VERANTYX_廟_47_: 120-300 for __node_泡:1.0___VERANTYX_泡_298_.
+     */
+    __node_泡:1.0___VERANTYX_泡_80_: z.__node_技:1.0___VERANTYX_泡_186_().__node_泡:1.0___VERANTYX_泡_107_().__node_泡:1.0___VERANTYX_泡_255_().__node_泡:1.0___VERANTYX_泡_188_(0),
+
+    /** __node_廟:1.0___VERANTYX_廟_73_ __node_泡:1.0___VERANTYX_泡_211_ for __node_泡:1.0___VERANTYX_泡_166_-of-__node_泡:1.0___VERANTYX_泡_86_ __node_泡:1.0___VERANTYX_泡_47_ (ms) */
+    __node_泡:1.0___VERANTYX_泡_135_: z.__node_技:1.0___VERANTYX_泡_186_().__node_泡:1.0___VERANTYX_泡_107_().__node_泡:1.0___VERANTYX_泡_77_().__node_泡:1.0___VERANTYX_泡_188_(800),
+
+    /** __node_廟:1.0___VERANTYX_廟_117_ for __node_技:1.0___VERANTYX_泡_173_ __node_泡:1.0___VERANTYX_泡_235_ (ms) */
+    __node_泡:1.0___VERANTYX_泡_176_: z.__node_技:1.0___VERANTYX_泡_186_().__node_泡:1.0___VERANTYX_泡_107_().__node_泡:1.0___VERANTYX_泡_77_().__node_泡:1.0___VERANTYX_泡_188_(180000),
+
+    /** __node_廟:1.0___VERANTYX_廟_96_ __node_泡:1.0___VERANTYX_泡_211_ for __node_泡:1.0___VERANTYX_泡_129_ __node_泡:1.0___VERANTYX_泡_215_ (ms) */
+    __node_泡:1.0___VERANTYX_泡_100_: z.__node_技:1.0___VERANTYX_泡_186_().__node_泡:1.0___VERANTYX_泡_107_().__node_泡:1.0___VERANTYX_泡_77_().__node_泡:1.0___VERANTYX_泡_188_(30000),
+
+    /** __node_廟:1.0___VERANTYX_廟_7_ __node_泡:1.0___VERANTYX_泡_35_ __node_泡:1.0___VERANTYX_泡_215_ */
+    __node_泡:1.0___VERANTYX_泡_210_: z.__node_技:1.0___VERANTYX_泡_186_().__node_泡:1.0___VERANTYX_泡_107_().__node_泡:1.0___VERANTYX_泡_77_().__node_泡:1.0___VERANTYX_泡_188_(1),
+
+    /** __node_廟:1.0___VERANTYX_廟_48_ __node_技:1.0___VERANTYX_泡_16_ __node_泡:1.0___VERANTYX_泡_104_ */
+    __node_泡:1.0___VERANTYX_泡_26_: __node_廟:1.0___VERANTYX_廟_119_,
+
+    /** __node_廟:1.0___VERANTYX_廟_1_ __node_泡:1.0___VERANTYX_泡_1_ __node_泡:1.0___VERANTYX_泡_104_ (__node_泡:1.0___VERANTYX_泡_11_, __node_技:1.0___VERANTYX_泡_79_ __node_泡:1.0___VERANTYX_泡_78_ __node_泡:1.0___VERANTYX_泡_243_) */
+    __node_泡:1.0___VERANTYX_泡_190_: __node_廟:1.0___VERANTYX_廟_21_,
+
+    /** __node_廟:1.0___VERANTYX_廟_29_ __node_泡:1.0___VERANTYX_泡_104_ (__node_澎:1.0___VERANTYX_泡_31_ __node_泡:1.0___VERANTYX_泡_246_/__node_泡:1.0___VERANTYX_泡_190_) */
+    __node_泡:1.0___VERANTYX_泡_78_: __node_廟:1.0___VERANTYX_廟_120_,
+
+    /** __node_廟:1.0___VERANTYX_廟_48_ __node_泡:1.0___VERANTYX_泡_300_ __node_泡:1.0___VERANTYX_泡_19_ __node_泡:1.0___VERANTYX_泡_306_ __node_泡:1.0___VERANTYX_泡_164_ __node_泡:1.0___VERANTYX_泡_276_ __node_泡:1.0___VERANTYX_泡_104_ */
+    __node_泡:1.0___VERANTYX_泡_312_: __node_廟:1.0___VERANTYX_廟_98_,
+
+    /** __node_廟:1.0___VERANTYX_廟_114_-__node_泡:1.0___VERANTYX_泡_44_ __node_泡:1.0___VERANTYX_泡_208_ __node_泡:1.0___VERANTYX_泡_286_ __node_泡:1.0___VERANTYX_泡_104_ */
+    __node_泡:1.0___VERANTYX_泡_286_: __node_廟:1.0___VERANTYX_廟_94_,
+
+    /** __node_廟:1.0___VERANTYX_廟_3_ __node_泡:1.0___VERANTYX_泡_84_ __node_縁:1.0___VERANTYX_廟_37_ override (if __node_技:1.0___VERANTYX_縁_3_, __node_泡:1.0___VERANTYX_泡_154_ __node_泡:1.0___VERANTYX_泡_78_ __node_泡:1.0___VERANTYX_泡_92_-__node_泡:1.0___VERANTYX_泡_47_) */
+    __node_縁:1.0___VERANTYX_泡_168_: z.__node_泡:1.0___VERANTYX_泡_285_().__node_縁:1.0___VERANTYX_泡_232_().__node_泡:1.0___VERANTYX_泡_75_(),
+
+    /** __node_廟:1.0___VERANTYX_廟_89_ __node_泡:1.0___VERANTYX_泡_84_ __node_泡:1.0___VERANTYX_泡_300_ __node_澎:1.0___VERANTYX_泡_177_ (__node_泡:1.0___VERANTYX_泡_40_ __node_泡:1.0___VERANTYX_泡_239_, __node_廟:1.0___VERANTYX_廟_85_ for __node_泡:1.0___VERANTYX_泡_298_) */
+    __node_澎:1.0___VERANTYX_泡_238_: z.__node_泡:1.0___VERANTYX_泡_124_().__node_泡:1.0___VERANTYX_泡_188_(false),
+
+    /** __node_廟:1.0___VERANTYX_廟_118_ __node_泡:1.0___VERANTYX_泡_104_ */
+    __node_泡:1.0___VERANTYX_泡_8_: __node_廟:1.0___VERANTYX_廟_81_,
+
+    /** __node_廟:1.0___VERANTYX_廟_12_ override (__node_泡:1.0___VERANTYX_泡_301_-__node_泡:1.0___VERANTYX_泡_130_ __node_泡:1.0___VERANTYX_泡_178_ __node_泡:1.0___VERANTYX_泡_36_ __node_泡:1.0___VERANTYX_泡_185_.__node_泡:1.0___VERANTYX_泡_271_) */
+    __node_泡:1.0___VERANTYX_泡_271_: __node_廟:1.0___VERANTYX_廟_78_,
+
+    /** __node_廟:1.0___VERANTYX_廟_104_ __node_泡:1.0___VERANTYX_泡_148_ for __node_泡:1.0___VERANTYX_泡_180_ __node_泡:1.0___VERANTYX_泡_82_ */
+    __node_泡:1.0___VERANTYX_泡_109_: z.__node_泡:1.0___VERANTYX_泡_285_().__node_泡:1.0___VERANTYX_泡_75_(),
+
+    /** __node_廟:1.0___VERANTYX_廟_32_ for __node_泡:1.0___VERANTYX_泡_27_ __node_泡:1.0___VERANTYX_泡_294_ __node_泡:1.0___VERANTYX_泡_236_ (e.g., "__node_泡:1.0___VERANTYX_泡_156_/__node_泡:1.0___VERANTYX_泡_224_-__node_泡:1.0___VERANTYX_泡_305_-4", "__node_泡:1.0___VERANTYX_泡_204_/__node_泡:1.0___VERANTYX_泡_9_-4o") */
+    __node_泡:1.0___VERANTYX_泡_105_: z.__node_泡:1.0___VERANTYX_泡_285_().__node_泡:1.0___VERANTYX_泡_188_("__node_泡:1.0___VERANTYX_泡_204_/__node_泡:1.0___VERANTYX_泡_9_-4o-__node_泡:1.0___VERANTYX_泡_85_"),
+
+    /** __node_廟:1.0___VERANTYX_廟_36_ __node_泡:1.0___VERANTYX_泡_131_ for __node_泡:1.0___VERANTYX_泡_294_ __node_泡:1.0___VERANTYX_泡_236_ */
+    __node_泡:1.0___VERANTYX_泡_192_: z.__node_泡:1.0___VERANTYX_泡_285_().__node_泡:1.0___VERANTYX_泡_75_(),
+
+    /** __node_廟:1.0___VERANTYX_廟_117_ for __node_泡:1.0___VERANTYX_泡_229_ __node_泡:1.0___VERANTYX_泡_257_ in ms (__node_泡:1.0___VERANTYX_泡_188_ 30s) */
+    __node_泡:1.0___VERANTYX_泡_20_: z.__node_技:1.0___VERANTYX_泡_186_().__node_泡:1.0___VERANTYX_泡_107_().__node_泡:1.0___VERANTYX_泡_77_().__node_泡:1.0___VERANTYX_泡_188_(30000),
+  })
+  .__node_泡:1.0___VERANTYX_泡_14_();
+
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_261_ __node_廟:1.0___VERANTYX_廟_66_ = z.__node_技:1.0___VERANTYX_泡_273_<__node_泡:1.0___VERANTYX_泡_316_ __node_廟:1.0___VERANTYX_廟_23_>;
+__node_泡:1.0___VERANTYX_泡_261_ __node_廟:1.0___VERANTYX_廟_64_<T> =
+  T __node_泡:1.0___VERANTYX_泡_205_ __node_廟:1.0___VERANTYX_廟_111_<__node_技:1.0___VERANTYX_泡_273_ U>
+    ? __node_廟:1.0___VERANTYX_廟_64_<U>[]
+    : T __node_泡:1.0___VERANTYX_泡_205_ __node_泡:1.0___VERANTYX_泡_115_
+      ? { [K in __node_幽:1.0___VERANTYX_泡_93_ T]?: __node_廟:1.0___VERANTYX_廟_64_<T[K]> }
+      : T;
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_261_ __node_廟:1.0___VERANTYX_廟_8_ = __node_廟:1.0___VERANTYX_廟_64_<__node_廟:1.0___VERANTYX_廟_66_>;
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+
+__node_泡:1.0___VERANTYX_泡_53_ __node_廟:1.0___VERANTYX_廟_124_ = __node_廟:1.0___VERANTYX_廟_23_.__node_泡:1.0___VERANTYX_泡_161_({});
+
+__node_泡:1.0___VERANTYX_泡_171_ __node_泡:1.0___VERANTYX_泡_69_(): __node_廟:1.0___VERANTYX_廟_66_ {
+  return __node_泡:1.0___VERANTYX_泡_201_(__node_廟:1.0___VERANTYX_廟_124_);
+}
+
+__node_泡:1.0___VERANTYX_泡_171_ __node_泡:1.0___VERANTYX_泡_288_(
+  __node_泡:1.0___VERANTYX_泡_314_: __node_廟:1.0___VERANTYX_廟_50_,
+  __node_泡:1.0___VERANTYX_泡_90_: __node_廟:1.0___VERANTYX_廟_64_<__node_廟:1.0___VERANTYX_廟_110_<__node_廟:1.0___VERANTYX_廟_50_>> | __node_泡:1.0___VERANTYX_泡_220_,
+): __node_廟:1.0___VERANTYX_廟_50_ {
+  if (!__node_泡:1.0___VERANTYX_泡_314_ && !__node_泡:1.0___VERANTYX_泡_90_) {
+    return __node_泡:1.0___VERANTYX_泡_220_;
+  }
+
+  return __node_廟:1.0___VERANTYX_廟_78_.__node_泡:1.0___VERANTYX_泡_161_(__node_泡:1.0___VERANTYX_泡_56_(__node_泡:1.0___VERANTYX_泡_314_ ?? {}, __node_泡:1.0___VERANTYX_泡_90_ ?? {}));
+}
+
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_171_ __node_泡:1.0___VERANTYX_泡_134_(__node_泡:1.0___VERANTYX_泡_243_: __node_廟:1.0___VERANTYX_廟_8_): __node_廟:1.0___VERANTYX_廟_66_ {
+  __node_泡:1.0___VERANTYX_泡_53_ __node_泡:1.0___VERANTYX_泡_314_ = __node_泡:1.0___VERANTYX_泡_69_();
+  return {
+    ...__node_泡:1.0___VERANTYX_泡_314_,
+    ...__node_泡:1.0___VERANTYX_泡_243_,
+    __node_泡:1.0___VERANTYX_泡_240_: __node_泡:1.0___VERANTYX_泡_243_.__node_泡:1.0___VERANTYX_泡_240_ ?? __node_泡:1.0___VERANTYX_泡_314_.__node_泡:1.0___VERANTYX_泡_240_,
+    __node_泡:1.0___VERANTYX_泡_129_: { ...__node_泡:1.0___VERANTYX_泡_314_.__node_泡:1.0___VERANTYX_泡_129_, ...__node_泡:1.0___VERANTYX_泡_243_.__node_泡:1.0___VERANTYX_泡_129_ },
+    __node_泡:1.0___VERANTYX_泡_26_: { ...__node_泡:1.0___VERANTYX_泡_314_.__node_泡:1.0___VERANTYX_泡_26_, ...__node_泡:1.0___VERANTYX_泡_243_.__node_泡:1.0___VERANTYX_泡_26_ },
+    __node_泡:1.0___VERANTYX_泡_190_: { ...__node_泡:1.0___VERANTYX_泡_314_.__node_泡:1.0___VERANTYX_泡_190_, ...__node_泡:1.0___VERANTYX_泡_243_.__node_泡:1.0___VERANTYX_泡_190_ },
+    __node_泡:1.0___VERANTYX_泡_78_: { ...__node_泡:1.0___VERANTYX_泡_314_.__node_泡:1.0___VERANTYX_泡_78_, ...__node_泡:1.0___VERANTYX_泡_243_.__node_泡:1.0___VERANTYX_泡_78_ },
+    __node_泡:1.0___VERANTYX_泡_312_: {
+      ...__node_泡:1.0___VERANTYX_泡_314_.__node_泡:1.0___VERANTYX_泡_312_,
+      ...__node_泡:1.0___VERANTYX_泡_243_.__node_泡:1.0___VERANTYX_泡_312_,
+      __node_泡:1.0___VERANTYX_泡_67_: __node_泡:1.0___VERANTYX_泡_243_.__node_泡:1.0___VERANTYX_泡_312_?.__node_泡:1.0___VERANTYX_泡_67_ ?? __node_泡:1.0___VERANTYX_泡_314_.__node_泡:1.0___VERANTYX_泡_312_.__node_泡:1.0___VERANTYX_泡_67_,
+      __node_泡:1.0___VERANTYX_泡_191_:
+        __node_泡:1.0___VERANTYX_泡_243_.__node_泡:1.0___VERANTYX_泡_312_?.__node_泡:1.0___VERANTYX_泡_191_ ?? __node_泡:1.0___VERANTYX_泡_314_.__node_泡:1.0___VERANTYX_泡_312_.__node_泡:1.0___VERANTYX_泡_191_,
+    },
+    __node_泡:1.0___VERANTYX_泡_286_: { ...__node_泡:1.0___VERANTYX_泡_314_.__node_泡:1.0___VERANTYX_泡_286_, ...__node_泡:1.0___VERANTYX_泡_243_.__node_泡:1.0___VERANTYX_泡_286_ },
+    __node_泡:1.0___VERANTYX_泡_8_: { ...__node_泡:1.0___VERANTYX_泡_314_.__node_泡:1.0___VERANTYX_泡_8_, ...__node_泡:1.0___VERANTYX_泡_243_.__node_泡:1.0___VERANTYX_泡_8_ },
+    __node_泡:1.0___VERANTYX_泡_271_: __node_泡:1.0___VERANTYX_泡_288_(__node_泡:1.0___VERANTYX_泡_314_.__node_泡:1.0___VERANTYX_泡_271_, __node_泡:1.0___VERANTYX_泡_243_.__node_泡:1.0___VERANTYX_泡_271_),
+  };
+}
+
+/**
+ * __node_廟:1.0___VERANTYX_廟_101_ __node_泡:1.0___VERANTYX_泡_43_ __node_泡:1.0___VERANTYX_泡_104_ by __node_泡:1.0___VERANTYX_泡_13_ __node_泡:1.0___VERANTYX_泡_267_ __node_泡:1.0___VERANTYX_泡_278_ __node_泡:1.0___VERANTYX_泡_136_ __node_泡:1.0___VERANTYX_泡_193_ __node_泡:1.0___VERANTYX_泡_216_.
+ * __node_廟:1.0___VERANTYX_廟_41_ a __node_泡:1.0___VERANTYX_泡_264_ __node_泡:1.0___VERANTYX_泡_104_ __node_泡:1.0___VERANTYX_泡_115_ __node_泡:1.0___VERANTYX_泡_178_ __node_泡:1.0___VERANTYX_泡_267_ __node_泡:1.0___VERANTYX_泡_278_ __node_泡:1.0___VERANTYX_泡_110_.
+ */
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_171_ __node_泡:1.0___VERANTYX_泡_73_(__node_泡:1.0___VERANTYX_泡_243_: __node_廟:1.0___VERANTYX_廟_8_): __node_廟:1.0___VERANTYX_廟_66_ {
+  __node_泡:1.0___VERANTYX_泡_53_ __node_泡:1.0___VERANTYX_泡_309_ = __node_泡:1.0___VERANTYX_泡_134_(__node_泡:1.0___VERANTYX_泡_243_);
+
+// [metadata-stripped]
+  if (__node_泡:1.0___VERANTYX_泡_309_.__node_技:1.0___VERANTYX_泡_296_ === "__node_泡:1.0___VERANTYX_泡_260_") {
+    __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_260_ = __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_260_ ?? {};
+    __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_260_.__node_幽:1.0___VERANTYX_泡_250_ = __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_260_.__node_幽:1.0___VERANTYX_泡_250_ ?? __node_泡:1.0___VERANTYX_泡_7_.__node_泡:1.0___VERANTYX_泡_197_.__node_幽:1.0___VERANTYX_廟_28_;
+    __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_260_.__node_泡:1.0___VERANTYX_泡_230_ = __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_260_.__node_泡:1.0___VERANTYX_泡_230_ ?? __node_泡:1.0___VERANTYX_泡_7_.__node_泡:1.0___VERANTYX_泡_197_.__node_廟:1.0___VERANTYX_廟_39_;
+    __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_260_.__node_幽:1.0___VERANTYX_泡_111_ = __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_260_.__node_幽:1.0___VERANTYX_泡_111_ ?? __node_泡:1.0___VERANTYX_泡_7_.__node_泡:1.0___VERANTYX_泡_197_.__node_幽:1.0___VERANTYX_廟_31_;
+  }
+
+// [metadata-stripped]
+  if (__node_泡:1.0___VERANTYX_泡_309_.__node_技:1.0___VERANTYX_泡_296_ === "__node_泡:1.0___VERANTYX_泡_315_") {
+    __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_315_ = __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_315_ ?? {};
+    __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_315_.__node_泡:1.0___VERANTYX_泡_160_ = __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_315_.__node_泡:1.0___VERANTYX_泡_160_ ?? __node_泡:1.0___VERANTYX_泡_7_.__node_泡:1.0___VERANTYX_泡_197_.__node_廟:1.0___VERANTYX_廟_127_;
+    __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_315_.__node_幽:1.0___VERANTYX_泡_293_ = __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_315_.__node_幽:1.0___VERANTYX_泡_293_ ?? __node_泡:1.0___VERANTYX_泡_7_.__node_泡:1.0___VERANTYX_泡_197_.__node_幽:1.0___VERANTYX_廟_92_;
+  }
+
+// [metadata-stripped]
+  if (__node_泡:1.0___VERANTYX_泡_309_.__node_技:1.0___VERANTYX_泡_296_ === "__node_泡:1.0___VERANTYX_泡_72_") {
+    __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_72_ = __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_72_ ?? {};
+    __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_72_.__node_泡:1.0___VERANTYX_泡_237_ = __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_72_.__node_泡:1.0___VERANTYX_泡_237_ ?? __node_泡:1.0___VERANTYX_泡_7_.__node_泡:1.0___VERANTYX_泡_197_.__node_廟:1.0___VERANTYX_廟_17_;
+    __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_72_.__node_幽:1.0___VERANTYX_泡_293_ = __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_72_.__node_幽:1.0___VERANTYX_泡_293_ ?? __node_泡:1.0___VERANTYX_泡_7_.__node_泡:1.0___VERANTYX_泡_197_.__node_幽:1.0___VERANTYX_廟_13_;
+  }
+
+// [metadata-stripped]
+  __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_78_ = __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_78_ ?? {
+    __node_技:1.0___VERANTYX_泡_296_: "__node_泡:1.0___VERANTYX_泡_140_",
+    __node_泡:1.0___VERANTYX_泡_95_: false,
+  };
+  __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_78_.__node_泡:1.0___VERANTYX_泡_95_ =
+    __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_78_.__node_泡:1.0___VERANTYX_泡_95_ ?? false;
+  __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_78_.__node_幽:1.0___VERANTYX_泡_202_ = __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_78_.__node_幽:1.0___VERANTYX_泡_202_ ?? __node_泡:1.0___VERANTYX_泡_7_.__node_泡:1.0___VERANTYX_泡_197_.__node_幽:1.0___VERANTYX_廟_35_;
+  __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_78_.__node_泡:1.0___VERANTYX_泡_21_ = __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_78_.__node_泡:1.0___VERANTYX_泡_21_ ?? __node_泡:1.0___VERANTYX_泡_7_.__node_泡:1.0___VERANTYX_泡_197_.__node_廟:1.0___VERANTYX_廟_130_;
+
+// [metadata-stripped]
+  __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_312_ = __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_312_ ?? {
+    __node_泡:1.0___VERANTYX_泡_67_: [],
+    __node_澎:1.0___VERANTYX_泡_76_: false,
+    __node_泡:1.0___VERANTYX_泡_191_: [],
+  };
+  __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_312_.__node_泡:1.0___VERANTYX_泡_67_ = __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_312_.__node_泡:1.0___VERANTYX_泡_67_ ?? [];
+  __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_312_.__node_澎:1.0___VERANTYX_泡_76_ =
+    __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_312_.__node_澎:1.0___VERANTYX_泡_76_ ?? false;
+  __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_312_.__node_泡:1.0___VERANTYX_泡_191_ = __node_泡:1.0___VERANTYX_泡_309_.__node_泡:1.0___VERANTYX_泡_312_.__node_泡:1.0___VERANTYX_泡_191_ ?? [];
+
+  return __node_泡:1.0___VERANTYX_泡_134_(__node_泡:1.0___VERANTYX_泡_309_);
+}
+
+/**
+ * __node_廟:1.0___VERANTYX_廟_69_ __node_泡:1.0___VERANTYX_泡_258_ __node_泡:1.0___VERANTYX_泡_43_ __node_泡:1.0___VERANTYX_泡_104_ __node_泡:1.0___VERANTYX_泡_169_ __node_泡:1.0___VERANTYX_泡_17_ __node_泡:1.0___VERANTYX_泡_51_ __node_泡:1.0___VERANTYX_泡_216_ for __node_泡:1.0___VERANTYX_泡_43_ __node_泡:1.0___VERANTYX_泡_266_ __node_技:1.0___VERANTYX_泡_296_.
+ */
+__node_泡:1.0___VERANTYX_泡_170_ __node_泡:1.0___VERANTYX_泡_171_ __node_泡:1.0___VERANTYX_泡_6_(__node_泡:1.0___VERANTYX_泡_243_: __node_廟:1.0___VERANTYX_廟_66_): {
+  __node_泡:1.0___VERANTYX_泡_179_: __node_泡:1.0___VERANTYX_泡_124_;
+  __node_泡:1.0___VERANTYX_泡_256_: __node_泡:1.0___VERANTYX_泡_285_[];
+} {
+  __node_泡:1.0___VERANTYX_泡_53_ __node_泡:1.0___VERANTYX_泡_256_: __node_泡:1.0___VERANTYX_泡_285_[] = [];
+
+  if (!__node_泡:1.0___VERANTYX_泡_243_.__node_泡:1.0___VERANTYX_泡_116_) {
+    return { __node_泡:1.0___VERANTYX_泡_179_: true, __node_泡:1.0___VERANTYX_泡_256_: [] };
+  }
+
+// __node_縁:0.1___VERANTYX_KF_112_ [decoy-metadata]
+  if (!__node_泡:1.0___VERANTYX_泡_243_.__node_技:1.0___VERANTYX_泡_296_) {
+    __node_泡:1.0___VERANTYX_泡_256_.__node_泡:1.0___VERANTYX_泡_39_("__node_泡:1.0___VERANTYX_泡_118_.__node_泡:1.0___VERANTYX_泡_307_.__node_泡:1.0___VERANTYX_泡_294_-__node_泡:1.0___VERANTYX_泡_180_.__node_泡:1.0___VERANTYX_泡_243_.__node_技:1.0___VERANTYX_泡_296_ is __node_泡:1.0___VERANTYX_泡_51_");
+  }
+
+  if (!__node_泡:1.0___VERANTYX_泡_243_.__node_技:1.0___VERANTYX_泡_37_ && __node_泡:1.0___VERANTYX_泡_243_.__node_技:1.0___VERANTYX_泡_296_ !== "__node_泡:1.0___VERANTYX_泡_89_") {
+    __node_泡:1.0___VERANTYX_泡_256_.__node_泡:1.0___VERANTYX_泡_39_("__node_泡:1.0___VERANTYX_泡_118_.__node_泡:1.0___VERANTYX_泡_307_.__node_泡:1.0___VERANTYX_泡_294_-__node_泡:1.0___VERANTYX_泡_180_.__node_泡:1.0___VERANTYX_泡_243_.__node_技:1.0___VERANTYX_泡_37_ is __node_泡:1.0___VERANTYX_泡_51_");
+  }
+
+  if (__node_泡:1.0___VERANTYX_泡_243_.__node_技:1.0___VERANTYX_泡_296_ === "__node_泡:1.0___VERANTYX_泡_260_") {
+    if (!__node_泡:1.0___VERANTYX_泡_243_.__node_泡:1.0___VERANTYX_泡_260_?.__node_幽:1.0___VERANTYX_泡_250_) {
+      __node_泡:1.0___VERANTYX_泡_256_.__node_泡:1.0___VERANTYX_泡_39_(
+        "__node_泡:1.0___VERANTYX_泡_118_.__node_泡:1.0___VERANTYX_泡_307_.__node_泡:1.0___VERANTYX_泡_294_-__node_泡:1.0___VERANTYX_泡_180_.__node_泡:1.0___VERANTYX_泡_243_.__node_泡:1.0___VERANTYX_泡_260_.__node_幽:1.0___VERANTYX_泡_250_ is __node_泡:1.0___VERANTYX_泡_51_ (or __node_技:1.0___VERANTYX_縁_3_ __node_幽:1.0___VERANTYX_廟_28_ __node_泡:1.0___VERANTYX_泡_197_)",
+      );
+    }
+    if (!__node_泡:1.0___VERANTYX_泡_243_.__node_泡:1.0___VERANTYX_泡_260_?.__node_泡:1.0___VERANTYX_泡_230_) {
+      __node_泡:1.0___VERANTYX_泡_256_.__node_泡:1.0___VERANTYX_泡_39_(
+        "__node_泡:1.0___VERANTYX_泡_118_.__node_泡:1.0___VERANTYX_泡_307_.__node_泡:1.0___VERANTYX_泡_294_-__node_泡:1.0___VERANTYX_泡_180_.__node_泡:1.0___VERANTYX_泡_243_.__node_泡:1.0___VERANTYX_泡_260_.__node_泡:1.0___VERANTYX_泡_230_ is __node_泡:1.0___VERANTYX_泡_51_ (or __node_技:1.0___VERANTYX_縁_3_ __node_廟:1.0___VERANTYX_廟_39_ __node_泡:1.0___VERANTYX_泡_197_)",
+      );
+    }
+    if (!__node_泡:1.0___VERANTYX_泡_243_.__node_澎:1.0___VERANTYX_泡_238_ && !__node_泡:1.0___VERANTYX_泡_243_.__node_泡:1.0___VERANTYX_泡_260_?.__node_幽:1.0___VERANTYX_泡_111_) {
+      __node_泡:1.0___VERANTYX_泡_256_.__node_泡:1.0___VERANTYX_泡_39_(
+        "__node_泡:1.0___VERANTYX_泡_118_.__node_泡:1.0___VERANTYX_泡_307_.__node_泡:1.0___VERANTYX_泡_294_-__node_泡:1.0___VERANTYX_泡_180_.__node_泡:1.0___VERANTYX_泡_243_.__node_泡:1.0___VERANTYX_泡_260_.__node_幽:1.0___VERANTYX_泡_111_ is __node_泡:1.0___VERANTYX_泡_51_ (or __node_技:1.0___VERANTYX_縁_3_ __node_幽:1.0___VERANTYX_廟_31_ __node_泡:1.0___VERANTYX_泡_197_)",
+      );
+    }
+  }
+
+  if (__node_泡:1.0___VERANTYX_泡_243_.__node_技:1.0___VERANTYX_泡_296_ === "__node_泡:1.0___VERANTYX_泡_315_") {
+    if (!__node_泡:1.0___VERANTYX_泡_243_.__node_泡:1.0___VERANTYX_泡_315_?.__node_泡:1.0___VERANTYX_泡_160_) {
+      __node_泡:1.0___VERANTYX_泡_256_.__node_泡:1.0___VERANTYX_泡_39_(
+        "__node_泡:1.0___VERANTYX_泡_118_.__node_泡:1.0___VERANTYX_泡_307_.__node_泡:1.0___VERANTYX_泡_294_-__node_泡:1.0___VERANTYX_泡_180_.__node_泡:1.0___VERANTYX_泡_243_.__node_泡:1.0___VERANTYX_泡_315_.__node_泡:1.0___VERANTYX_泡_160_ is __node_泡:1.0___VERANTYX_泡_51_ (or __node_技:1.0___VERANTYX_縁_3_ __node_廟:1.0___VERANTYX_廟_127_ __node_泡:1.0___VERANTYX_泡_197_)",
+      );
+    }
+    if (!__node_泡:1.0___VERANTYX_泡_243_.__node_泡:1.0___VERANTYX_泡_315_?.__node_幽:1.0___VERANTYX_泡_293_) {
+      __node_泡:1.0___VERANTYX_泡_256_.__node_泡:1.0___VERANTYX_泡_39_(
+        "__node_泡:1.0___VERANTYX_泡_118_.__node_泡:1.0___VERANTYX_泡_307_.__node_泡:1.0___VERANTYX_泡_294_-__node_泡:1.0___VERANTYX_泡_180_.__node_泡:1.0___VERANTYX_泡_243_.__node_泡:1.0___VERANTYX_泡_315_.__node_幽:1.0___VERANTYX_泡_293_ is __node_泡:1.0___VERANTYX_泡_51_ (or __node_技:1.0___VERANTYX_縁_3_ __node_幽:1.0___VERANTYX_廟_92_ __node_泡:1.0___VERANTYX_泡_197_)",
+      );
+    }
+  }
+
+  if (__node_泡:1.0___VERANTYX_泡_243_.__node_技:1.0___VERANTYX_泡_296_ === "__node_泡:1.0___VERANTYX_泡_72_") {
+    if (!__node_泡:1.0___VERANTYX_泡_243_.__node_泡:1.0___VERANTYX_泡_72_?.__node_泡:1.0___VERANTYX_泡_237_) {
+      __node_泡:1.0___VERANTYX_泡_256_.__node_泡:1.0___VERANTYX_泡_39_(
+        "__node_泡:1.0___VERANTYX_泡_118_.__node_泡:1.0___VERANTYX_泡_307_.__node_泡:1.0___VERANTYX_泡_294_-__node_泡:1.0___VERANTYX_泡_180_.__node_泡:1.0___VERANTYX_泡_243_.__node_泡:1.0___VERANTYX_泡_72_.__node_泡:1.0___VERANTYX_泡_237_ is __node_泡:1.0___VERANTYX_泡_51_ (or __node_技:1.0___VERANTYX_縁_3_ __node_廟:1.0___VERANTYX_廟_17_ __node_泡:1.0___VERANTYX_泡_197_)",
+      );
+    }
+    if (!__node_泡:1.0___VERANTYX_泡_243_.__node_泡:1.0___VERANTYX_泡_72_?.__node_幽:1.0___VERANTYX_泡_293_) {
+      __node_泡:1.0___VERANTYX_泡_256_.__node_泡:1.0___VERANTYX_泡_39_(
+        "__node_泡:1.0___VERANTYX_泡_118_.__node_泡:1.0___VERANTYX_泡_307_.__node_泡:1.0___VERANTYX_泡_294_-__node_泡:1.0___VERANTYX_泡_180_.__node_泡:1.0___VERANTYX_泡_243_.__node_泡:1.0___VERANTYX_泡_72_.__node_幽:1.0___VERANTYX_泡_293_ is __node_泡:1.0___VERANTYX_泡_51_ (or __node_技:1.0___VERANTYX_縁_3_ __node_幽:1.0___VERANTYX_廟_13_ __node_泡:1.0___VERANTYX_泡_197_)",
+      );
+    }
+  }
+
+  return { __node_泡:1.0___VERANTYX_泡_179_: __node_泡:1.0___VERANTYX_泡_256_.__node_泡:1.0___VERANTYX_泡_127_ === 0, __node_泡:1.0___VERANTYX_泡_256_ };
+}
+
+// POLYMORPHIC_JCROSS_END

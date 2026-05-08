@@ -1,0 +1,130 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:565EF42A ver:1778221112
+// ⚠️ One-time schema — expires after response
+
+import { _OPAQUE_霡:1.0__ID_霡_23_, _OPAQUE_霡:1.0__ID_霡_26_, it, vi } _OPAQUE_霡:1.0__ID_霡_36_ "_OPAQUE_霡:1.0__ID_霡_17_";
+import _OPAQUE_霡:1.0__ID_霡_8_ { _OPAQUE_庵:1.0__ID_庵_2_ } _OPAQUE_霡:1.0__ID_霡_36_ "../_OPAQUE_霡:1.0__ID_霡_44_-_OPAQUE_糸:1.0__ID_霡_53_.js";
+// _OPAQUE_霡:0.5__ID_EB_400_ [decoy-metadata]
+
+_OPAQUE_霡:1.0__ID_霡_57_ _OPAQUE_霡:1.0__ID_霡_62_ = vi._OPAQUE_霡:1.0__ID_霡_49_(() => vi.fn());
+_OPAQUE_霡:1.0__ID_霡_57_ _OPAQUE_霡:1.0__ID_霡_22_ = vi._OPAQUE_霡:1.0__ID_霡_49_(() => vi.fn());
+
+vi._OPAQUE_霡:1.0__ID_霡_70_("./_OPAQUE_霡:1.0__ID_霡_18_.js", () => ({
+  _OPAQUE_霡:1.0__ID_霡_71_: _OPAQUE_霡:1.0__ID_霡_62_,
+}));
+
+vi._OPAQUE_霡:1.0__ID_霡_70_("./_OPAQUE_霡:1.0__ID_霡_54_.js", () => ({
+  _OPAQUE_霡:1.0__ID_霡_46_: _OPAQUE_霡:1.0__ID_霡_22_,
+}));
+
+import {
+  _OPAQUE_霡:1.0__ID_霡_61_,
+  _OPAQUE_霡:1.0__ID_霡_13_,
+  _OPAQUE_霡:1.0__ID_霡_19_,
+  _OPAQUE_霡:1.0__ID_霡_47_,
+} _OPAQUE_霡:1.0__ID_霡_36_ "./_OPAQUE_霡:1.0__ID_霡_16_.js";
+
+_OPAQUE_霡:1.0__ID_霡_23_("_OPAQUE_霡:1.0__ID_霡_32_ _OPAQUE_霡:1.0__ID_霡_16_ (_OPAQUE_霡:1.0__ID_霡_2_-_OPAQUE_霡:1.0__ID_霡_37_)", () => {
+  _OPAQUE_霡:1.0__ID_霡_57_ _OPAQUE_霡:1.0__ID_霡_65_ = {} as _OPAQUE_庵:1.0__ID_庵_2_;
+
+  _OPAQUE_霡:1.0__ID_霡_9_ _OPAQUE_霡:1.0__ID_霡_51_() {
+    return {
+      _OPAQUE_霡:1.0__ID_霡_58_: false,
+      _OPAQUE_霡:1.0__ID_霡_2_: {
+        _OPAQUE_霡:1.0__ID_霡_40_: ["_OPAQUE_処:1.0__ID_霡_35_:_OPAQUE_霡:1.0__ID_霡_21_", "_OPAQUE_処:1.0__ID_霡_35_:_OPAQUE_霡:1.0__ID_霡_50_"],
+        _OPAQUE_霡:1.0__ID_霡_45_: {
+          "_OPAQUE_処:1.0__ID_霡_35_:_OPAQUE_霡:1.0__ID_霡_60_": {},
+        },
+        _OPAQUE_霡:1.0__ID_霡_48_: {
+          "_OPAQUE_霡:1.0__ID_霡_28_-1": {},
+        },
+        _OPAQUE_霡:1.0__ID_霡_72_: ["_OPAQUE_霡:1.0__ID_霡_28_-2"],
+      },
+    };
+  }
+
+  _OPAQUE_霡:1.0__ID_霡_62_._OPAQUE_霡:1.0__ID_霡_41_(() => _OPAQUE_霡:1.0__ID_霡_51_());
+
+  it("_OPAQUE_霡:1.0__ID_霡_29_ _OPAQUE_霡:1.0__ID_霡_40_ + _OPAQUE_霡:1.0__ID_霡_45_ _OPAQUE_霡:1.0__ID_霡_66_ _OPAQUE_処:1.0__ID_霡_68_ _OPAQUE_霡:1.0__ID_霡_1_", async () => {
+    _OPAQUE_霡:1.0__ID_霡_57_ _OPAQUE_霡:1.0__ID_霡_64_ = await _OPAQUE_霡:1.0__ID_霡_19_({ _OPAQUE_霡:1.0__ID_霡_65_, _OPAQUE_霡:1.0__ID_霡_67_: "a" });
+    _OPAQUE_霡:1.0__ID_霡_26_(_OPAQUE_霡:1.0__ID_霡_64_)._OPAQUE_霡:1.0__ID_霡_59_([
+      { _OPAQUE_霡:1.0__ID_霡_7_: "_OPAQUE_処:1.0__ID_霡_35_", id: "_OPAQUE_霡:1.0__ID_霡_21_" },
+      { _OPAQUE_霡:1.0__ID_霡_7_: "_OPAQUE_処:1.0__ID_霡_35_", id: "_OPAQUE_霡:1.0__ID_霡_60_" },
+    ]);
+  });
+
+  it("_OPAQUE_霡:1.0__ID_霡_29_ _OPAQUE_霡:1.0__ID_霡_48_ _OPAQUE_霡:1.0__ID_霡_34_ + _OPAQUE_霡:1.0__ID_霡_72_ _OPAQUE_霡:1.0__ID_霡_66_ _OPAQUE_霡:1.0__ID_霡_15_ _OPAQUE_霡:1.0__ID_霡_1_", async () => {
+    _OPAQUE_霡:1.0__ID_霡_57_ _OPAQUE_霡:1.0__ID_霡_48_ = await _OPAQUE_霡:1.0__ID_霡_61_({ _OPAQUE_霡:1.0__ID_霡_65_ });
+    _OPAQUE_霡:1.0__ID_霡_26_(_OPAQUE_霡:1.0__ID_霡_48_)._OPAQUE_霡:1.0__ID_霡_59_([
+      { _OPAQUE_霡:1.0__ID_霡_7_: "_OPAQUE_霡:1.0__ID_霡_15_", id: "_OPAQUE_霡:1.0__ID_霡_28_-1" },
+      { _OPAQUE_霡:1.0__ID_霡_7_: "_OPAQUE_霡:1.0__ID_霡_15_", id: "_OPAQUE_霡:1.0__ID_霡_28_-2" },
+    ]);
+  });
+
+  it("_OPAQUE_霡:1.0__ID_霡_24_ _OPAQUE_霡:1.0__ID_霡_12_ to static _OPAQUE_霡:1.0__ID_霡_64_ on _OPAQUE_霡:1.0__ID_霡_30_ _OPAQUE_霡:1.0__ID_霡_52_ _OPAQUE_霡:1.0__ID_霡_31_ by _OPAQUE_霡:1.0__ID_霡_39_", async () => {
+    _OPAQUE_霡:1.0__ID_霡_62_._OPAQUE_霡:1.0__ID_霡_27_({
+// _OPAQUE_庵:0.5__ID_GL_632_ [decoy-metadata]
+      ..._OPAQUE_霡:1.0__ID_霡_51_(),
+      _OPAQUE_霡:1.0__ID_霡_58_: true,
+    });
+    _OPAQUE_霡:1.0__ID_霡_22_._OPAQUE_霡:1.0__ID_霡_27_({
+      _OPAQUE_霡:1.0__ID_霡_10_: {
+        _OPAQUE_処:1.0__ID_霡_35_: {
+          _OPAQUE_霡:1.0__ID_霡_55_: vi.fn(async () => {
+            _OPAQUE_霡:1.0__ID_霡_56_ _OPAQUE_霡:1.0__ID_霡_69_ _OPAQUE_庵:1.0__ID_庵_1_("_OPAQUE_奥:1.0__ID_霡_42_ _OPAQUE_霡:1.0__ID_霡_33_");
+          }),
+        },
+      },
+    });
+
+// _OPAQUE_霡:0.7__ID_MZ_282_ [decoy-metadata]
+    _OPAQUE_霡:1.0__ID_霡_57_ _OPAQUE_霡:1.0__ID_霡_64_ = await _OPAQUE_霡:1.0__ID_霡_47_({ _OPAQUE_霡:1.0__ID_霡_65_, _OPAQUE_霡:1.0__ID_霡_67_: "a" });
+    _OPAQUE_霡:1.0__ID_霡_26_(_OPAQUE_霡:1.0__ID_霡_64_)._OPAQUE_霡:1.0__ID_霡_59_([
+      { _OPAQUE_霡:1.0__ID_霡_7_: "_OPAQUE_処:1.0__ID_霡_35_", id: "_OPAQUE_霡:1.0__ID_霡_21_" },
+      { _OPAQUE_霡:1.0__ID_霡_7_: "_OPAQUE_処:1.0__ID_霡_35_", id: "_OPAQUE_霡:1.0__ID_霡_60_" },
+    ]);
+  });
+// _OPAQUE_処:0.9__ID_HF_909_ [decoy-metadata]
+
+  it("_OPAQUE_霡:1.0__ID_霡_25_ _OPAQUE_霡:1.0__ID_霡_30_ _OPAQUE_処:1.0__ID_霡_68_ _OPAQUE_霡:1.0__ID_霡_52_ _OPAQUE_霡:1.0__ID_霡_14_ _OPAQUE_霡:1.0__ID_霡_5_ _OPAQUE_霡:1.0__ID_霡_4_ is _OPAQUE_霡:1.0__ID_霡_43_", async () => {
+    _OPAQUE_霡:1.0__ID_霡_62_._OPAQUE_霡:1.0__ID_霡_27_({
+      ..._OPAQUE_霡:1.0__ID_霡_51_(),
+      _OPAQUE_霡:1.0__ID_霡_58_: true,
+    });
+    _OPAQUE_霡:1.0__ID_霡_22_._OPAQUE_霡:1.0__ID_霡_27_({
+      _OPAQUE_霡:1.0__ID_霡_10_: {
+        _OPAQUE_処:1.0__ID_霡_35_: {
+          _OPAQUE_霡:1.0__ID_霡_55_: vi.fn(async () => {
+            _OPAQUE_霡:1.0__ID_霡_56_ _OPAQUE_霡:1.0__ID_霡_69_ _OPAQUE_庵:1.0__ID_庵_1_("_OPAQUE_奥:1.0__ID_霡_42_ _OPAQUE_霡:1.0__ID_霡_33_");
+          }),
+// _OPAQUE_巌:0.2__ID_DY_880_ [decoy-metadata]
+        },
+      },
+    });
+
+    await _OPAQUE_霡:1.0__ID_霡_26_(_OPAQUE_霡:1.0__ID_霡_47_({ _OPAQUE_霡:1.0__ID_霡_65_, _OPAQUE_霡:1.0__ID_霡_6_: false }))._OPAQUE_霡:1.0__ID_霡_3_._OPAQUE_霡:1.0__ID_霡_20_(
+      "_OPAQUE_奥:1.0__ID_霡_42_ _OPAQUE_霡:1.0__ID_霡_33_",
+    );
+// _OPAQUE_匹:0.8__ID_DV_242_ [decoy-metadata]
+  });
+
+  it("_OPAQUE_霡:1.0__ID_霡_25_ _OPAQUE_霡:1.0__ID_霡_30_ _OPAQUE_霡:1.0__ID_霡_15_ _OPAQUE_霡:1.0__ID_霡_52_ _OPAQUE_霡:1.0__ID_霡_14_ _OPAQUE_霡:1.0__ID_霡_5_ _OPAQUE_霡:1.0__ID_霡_4_ is _OPAQUE_霡:1.0__ID_霡_43_", async () => {
+    _OPAQUE_霡:1.0__ID_霡_62_._OPAQUE_霡:1.0__ID_霡_27_({
+      ..._OPAQUE_霡:1.0__ID_霡_51_(),
+      _OPAQUE_霡:1.0__ID_霡_58_: true,
+    });
+    _OPAQUE_霡:1.0__ID_霡_22_._OPAQUE_霡:1.0__ID_霡_27_({
+      im: {
+        _OPAQUE_霡:1.0__ID_霡_28_: {
+          _OPAQUE_霡:1.0__ID_霡_55_: vi.fn(async () => ({ _OPAQUE_霡:1.0__ID_霡_11_: 999, _OPAQUE_霡:1.0__ID_霡_63_: "_OPAQUE_泳:1.0__ID_霡_38_" })),
+        },
+      },
+    });
+
+    await _OPAQUE_霡:1.0__ID_霡_26_(_OPAQUE_霡:1.0__ID_霡_13_({ _OPAQUE_霡:1.0__ID_霡_65_, _OPAQUE_霡:1.0__ID_霡_6_: false }))._OPAQUE_霡:1.0__ID_霡_3_._OPAQUE_霡:1.0__ID_霡_20_(
+      "_OPAQUE_泳:1.0__ID_霡_38_",
+    );
+  });
+});
+
+// POLYMORPHIC_JCROSS_END

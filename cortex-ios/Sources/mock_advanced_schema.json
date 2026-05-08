@@ -1,0 +1,78 @@
+{
+  "id": "root_app",
+  "type": "container",
+  "axis": "horizontal",
+  "children": [
+    {
+      "id": "main_sidebar",
+      "type": "template",
+      "templateName": "side_navigation",
+      "properties": {
+        "title": "History",
+        "closeAction": "toggle_sidebar"
+      },
+      "children": [
+        {
+          "id": "btn_chat_1",
+          "type": "button",
+          "label": "Chat - UI Sync layer",
+          "action": "load_chat_1"
+        },
+        {
+          "id": "btn_chat_2",
+          "type": "button",
+          "label": "Chat - iOS native port",
+          "action": "load_chat_2"
+        }
+      ]
+    },
+    {
+      "id": "content_area",
+      "type": "container",
+      "axis": "vertical",
+      "children": [
+        {
+          "id": "settings_form",
+          "type": "template",
+          "templateName": "form_card",
+          "properties": {
+            "title": "Config"
+          },
+          "children": [
+            {
+              "id": "form_input_model",
+              "type": "input",
+              "placeholder": "Model setting (e.g. Claude-3-Opus)"
+            }
+          ]
+        },
+        {
+          "id": "chat_scroll_area",
+          "type": "container",
+          "axis": "vertical",
+          "children": [
+            {
+              "id": "msg_user_1",
+              "type": "template",
+              "templateName": "chat_message",
+              "properties": {
+                "sender": "user",
+                "text": "How do we render dynamic desktop apps?"
+              }
+            },
+            {
+              "id": "msg_ai_1",
+              "type": "template",
+              "templateName": "chat_message",
+              "properties": {
+                "sender": "ai",
+                "senderName": "Verantyx",
+                "text": "By extracting Abstract Semantic Graphs (ASG) and utilizing the Template Registry."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

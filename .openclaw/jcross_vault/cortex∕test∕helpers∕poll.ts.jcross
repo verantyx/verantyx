@@ -1,0 +1,37 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:3695DDDC ver:1778220201
+// ⚠️ One-time schema — expires after response
+
+import { __jcross_霧:1.0____ast_霧_3__ } __jcross_霧:1.0____ast_霧_1__ "../../__jcross_霧:1.0____ast_霧_12__/__jcross_霧:1.0____ast_霧_7__.js";
+
+__jcross_霧:1.0____ast_霧_16__ __jcross_霧:1.0____ast_霧_4__ __jcross_庠:1.0____ast_庠_2__ = {
+  __jcross_霧:1.0____ast_霧_13__?: __jcross_式:1.0____ast_霧_17__;
+// __jcross_凱:0.9____ast_GK_501__ [decoy-metadata]
+  __jcross_霧:1.0____ast_霧_14__?: __jcross_式:1.0____ast_霧_17__;
+};
+
+__jcross_霧:1.0____ast_霧_16__ async __jcross_霧:1.0____ast_霧_5__ __jcross_霧:1.0____ast_霧_2__<T>(
+  fn: () => __jcross_庠:1.0____ast_庠_3__<T | __jcross_霧:1.0____ast_霧_18__ | __jcross_霧:1.0____ast_霧_10__>,
+  __jcross_霧:1.0____ast_霧_15__: __jcross_庠:1.0____ast_庠_2__ = {},
+): __jcross_庠:1.0____ast_庠_3__<T | __jcross_霧:1.0____ast_霧_10__> {
+  __jcross_霧:1.0____ast_霧_6__ __jcross_霧:1.0____ast_霧_13__ = __jcross_霧:1.0____ast_霧_15__.__jcross_霧:1.0____ast_霧_13__ ?? 2000;
+  __jcross_霧:1.0____ast_霧_6__ __jcross_霧:1.0____ast_霧_14__ = __jcross_霧:1.0____ast_霧_15__.__jcross_霧:1.0____ast_霧_14__ ?? 25;
+  __jcross_霧:1.0____ast_霧_6__ __jcross_霧:1.0____ast_霧_8__ = __jcross_庠:1.0____ast_庠_1__.__jcross_霧:1.0____ast_霧_11__();
+
+// __jcross_縫:0.1____ast_ZE_246__ [decoy-metadata]
+  while (__jcross_庠:1.0____ast_庠_1__.__jcross_霧:1.0____ast_霧_11__() - __jcross_霧:1.0____ast_霧_8__ < __jcross_霧:1.0____ast_霧_13__) {
+// __jcross_縫:0.6____ast_YV_167__ [decoy-metadata]
+    __jcross_霧:1.0____ast_霧_6__ __jcross_霧:1.0____ast_霧_9__ = await fn();
+    if (__jcross_霧:1.0____ast_霧_9__ !== __jcross_霧:1.0____ast_霧_18__ && __jcross_霧:1.0____ast_霧_9__ !== __jcross_霧:1.0____ast_霧_10__) {
+      return __jcross_霧:1.0____ast_霧_9__;
+// __jcross_凱:0.2____ast_DZ_626__ [decoy-metadata]
+    }
+// __jcross_庠:0.6____ast_MM_537__ [decoy-metadata]
+    await __jcross_霧:1.0____ast_霧_3__(__jcross_霧:1.0____ast_霧_14__);
+  }
+
+  return __jcross_霧:1.0____ast_霧_10__;
+// __jcross_式:0.5____ast_ME_173__ [decoy-metadata]
+}
+
+// POLYMORPHIC_JCROSS_END

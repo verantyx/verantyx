@@ -1,0 +1,98 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:1E2BF8C3 ver:1778220556
+// ⚠️ One-time schema — expires after response
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+
+_ASTNODE_靄:1.0__SYM_靄_9_ _ASTNODE_靄:1.0__SYM_靄_28_::_ASTNODE_靄:1.0__SYM_靄_30_::_ASTNODE_廟:1.0__SYM_廟_55_;
+// _ASTNODE_節:0.6__SYM_KW_161_ [decoy-metadata]
+
+// [metadata-stripped]
+// [metadata-stripped]
+_ASTNODE_靄:1.0__SYM_靄_4_ enum _ASTNODE_廟:1.0__SYM_廟_15_ { _ASTNODE_廟:1.0__SYM_廟_66_ = 0x0303, _ASTNODE_廟:1.0__SYM_廟_31_ = 0x0304 }
+
+// [metadata-stripped]
+// [metadata-stripped]
+_ASTNODE_靄:1.0__SYM_靄_4_ enum _ASTNODE_廟:1.0__SYM_廟_40_ {
+    _ASTNODE_廟:1.0__SYM_廟_37_ = 0x1301,
+    _ASTNODE_廟:1.0__SYM_廟_22_ = 0x1302,
+    _ASTNODE_廟:1.0__SYM_廟_49_ = 0x1303,
+}
+
+// [metadata-stripped]
+_ASTNODE_靄:1.0__SYM_靄_4_ _ASTNODE_靄:1.0__SYM_靄_3_uct _ASTNODE_廟:1.0__SYM_廟_5_ {
+    _ASTNODE_靄:1.0__SYM_靄_4_ _ASTNODE_靄:1.0__SYM_靄_41_: _ASTNODE_廟:1.0__SYM_廟_15_,
+    _ASTNODE_靄:1.0__SYM_靄_4_ _ASTNODE_靄:1.0__SYM_靄_10_: _ASTNODE_廟:1.0__SYM_廟_45_<_ASTNODE_廟:1.0__SYM_廟_40_>,
+    _ASTNODE_靄:1.0__SYM_靄_4_ _ASTNODE_靄:1.0__SYM_靄_44_: _ASTNODE_廟:1.0__SYM_廟_19_, // _ASTNODE_廟:1.0__SYM_廟_59_
+    _ASTNODE_靄:1.0__SYM_靄_4_ _ASTNODE_靄:1.0__SYM_靄_49_: _ASTNODE_廟:1.0__SYM_廟_45_<_ASTNODE_廟:1.0__SYM_廟_19_>,
+    _ASTNODE_靄:1.0__SYM_靄_4_ _ASTNODE_節:1.0__SYM_靄_21_: _ASTNODE_靄:1.0__SYM_靄_55_,
+}
+
+// [metadata-stripped]
+// [metadata-stripped]
+_ASTNODE_靄:1.0__SYM_靄_4_ enum _ASTNODE_廟:1.0__SYM_廟_48_ {
+    _ASTNODE_廟:1.0__SYM_廟_14_,
+    _ASTNODE_廟:1.0__SYM_廟_54_,
+// _ASTNODE_涌:0.6__SYM_CW_164_ [decoy-metadata]
+    _ASTNODE_廟:1.0__SYM_廟_21_,
+    _ASTNODE_廟:1.0__SYM_廟_58_,
+    _ASTNODE_廟:1.0__SYM_廟_70_,
+    _ASTNODE_廟:1.0__SYM_廟_4_,
+    _ASTNODE_廟:1.0__SYM_廟_53_,
+}
+
+// [metadata-stripped]
+_ASTNODE_靄:1.0__SYM_靄_4_ _ASTNODE_靄:1.0__SYM_靄_3_uct _ASTNODE_廟:1.0__SYM_廟_50_ {
+    _ASTNODE_靄:1.0__SYM_靄_4_ _ASTNODE_靄:1.0__SYM_靄_53_: _ASTNODE_廟:1.0__SYM_廟_5_,
+// _ASTNODE_曠:0.3__SYM_XG_551_ [decoy-metadata]
+// _ASTNODE_蔵:0.9__SYM_EA_157_ [decoy-metadata]
+    _ASTNODE_靄:1.0__SYM_靄_4_ _ASTNODE_靄:1.0__SYM_靄_8_: _ASTNODE_廟:1.0__SYM_廟_48_,
+    _ASTNODE_靄:1.0__SYM_靄_4_ _ASTNODE_靄:1.0__SYM_靄_27_: _ASTNODE_廟:1.0__SYM_廟_45_<u8>,
+    _ASTNODE_靄:1.0__SYM_靄_4_ _ASTNODE_涌:1.0__SYM_靄_42_: _ASTNODE_廟:1.0__SYM_廟_45_<_ASTNODE_廟:1.0__SYM_廟_45_<u8>>, // _ASTNODE_節:1.0__SYM_廟_9_-_ASTNODE_靄:1.0__SYM_靄_20_ X.509
+}
+
+_ASTNODE_靄:1.0__SYM_靄_18_ _ASTNODE_廟:1.0__SYM_廟_50_ {
+    _ASTNODE_靄:1.0__SYM_靄_4_ fn _ASTNODE_靄:1.0__SYM_靄_54_(_ASTNODE_靄:1.0__SYM_靄_32_: &_ASTNODE_靄:1.0__SYM_靄_3_) -> _ASTNODE_廟:1.0__SYM_廟_44_ {
+// _ASTNODE_廟:0.3__SYM_YA_600_ [decoy-metadata]
+        _ASTNODE_廟:1.0__SYM_廟_44_ {
+            _ASTNODE_靄:1.0__SYM_靄_53_: _ASTNODE_廟:1.0__SYM_廟_5_ {
+                _ASTNODE_靄:1.0__SYM_靄_41_: _ASTNODE_廟:1.0__SYM_廟_15_::_ASTNODE_廟:1.0__SYM_廟_31_,
+                _ASTNODE_靄:1.0__SYM_靄_10_: _ASTNODE_靄:1.0__SYM_靄_57_![_ASTNODE_廟:1.0__SYM_廟_40_::_ASTNODE_廟:1.0__SYM_廟_37_, _ASTNODE_廟:1.0__SYM_廟_40_::_ASTNODE_廟:1.0__SYM_廟_49_],
+                _ASTNODE_靄:1.0__SYM_靄_44_: _ASTNODE_靄:1.0__SYM_靄_32_._ASTNODE_靄:1.0__SYM_靄_38_(),
+                _ASTNODE_靄:1.0__SYM_靄_49_: _ASTNODE_靄:1.0__SYM_靄_57_!["h2"._ASTNODE_靄:1.0__SYM_靄_38_(), "_ASTNODE_紗:1.0__SYM_靄_56_/1.1"._ASTNODE_靄:1.0__SYM_靄_38_()],
+                _ASTNODE_節:1.0__SYM_靄_21_: true,
+            },
+            _ASTNODE_靄:1.0__SYM_靄_8_: _ASTNODE_廟:1.0__SYM_廟_48_::_ASTNODE_廟:1.0__SYM_廟_14_,
+            _ASTNODE_靄:1.0__SYM_靄_27_: _ASTNODE_廟:1.0__SYM_廟_45_::_ASTNODE_靄:1.0__SYM_靄_54_(),
+            _ASTNODE_涌:1.0__SYM_靄_42_: _ASTNODE_廟:1.0__SYM_廟_45_::_ASTNODE_靄:1.0__SYM_靄_54_(),
+        }
+    }
+
+// [metadata-stripped]
+    _ASTNODE_靄:1.0__SYM_靄_4_ fn _ASTNODE_靄:1.0__SYM_靄_25_(&_ASTNODE_靄:1.0__SYM_靄_29_ self, _ASTNODE_靄:1.0__SYM_靄_26_: _ASTNODE_廟:1.0__SYM_廟_48_) {
+// _ASTNODE_紗:0.6__SYM_EX_389_ [decoy-metadata]
+        self._ASTNODE_靄:1.0__SYM_靄_8_ = _ASTNODE_靄:1.0__SYM_靄_26_;
+    }
+
+// [metadata-stripped]
+    _ASTNODE_靄:1.0__SYM_靄_4_ fn _ASTNODE_靄:1.0__SYM_靄_34_(&self) -> _ASTNODE_廟:1.0__SYM_廟_19_ {
+        let _ASTNODE_靄:1.0__SYM_靄_29_ _ASTNODE_靄:1.0__SYM_靄_16_ = _ASTNODE_靄:1.0__SYM_靄_57_![_ASTNODE_涌:1.0__SYM_靄_33_!("🔒 _ASTNODE_廟:1.0__SYM_廟_42_ _ASTNODE_廟:1.0__SYM_廟_33_ _ASTNODE_廟:1.0__SYM_廟_7_: {} [{:?}]", self._ASTNODE_靄:1.0__SYM_靄_53_._ASTNODE_靄:1.0__SYM_靄_44_, self._ASTNODE_靄:1.0__SYM_靄_8_)];
+        _ASTNODE_靄:1.0__SYM_靄_16_._ASTNODE_靄:1.0__SYM_靄_59_(_ASTNODE_涌:1.0__SYM_靄_33_!("  - _ASTNODE_廟:1.0__SYM_廟_28_: {:?}", self._ASTNODE_靄:1.0__SYM_靄_53_._ASTNODE_靄:1.0__SYM_靄_41_));
+        _ASTNODE_靄:1.0__SYM_靄_16_._ASTNODE_靄:1.0__SYM_靄_59_(_ASTNODE_涌:1.0__SYM_靄_33_!("  - _ASTNODE_廟:1.0__SYM_廟_69_: {:?}", self._ASTNODE_靄:1.0__SYM_靄_53_._ASTNODE_靄:1.0__SYM_靄_49_));
+        _ASTNODE_靄:1.0__SYM_靄_16_._ASTNODE_靄:1.0__SYM_靄_59_(_ASTNODE_涌:1.0__SYM_靄_33_!("  - _ASTNODE_廟:1.0__SYM_廟_10_: {} in _ASTNODE_靄:1.0__SYM_靄_22_", self._ASTNODE_涌:1.0__SYM_靄_42_._ASTNODE_靄:1.0__SYM_靄_5_()));
+        _ASTNODE_靄:1.0__SYM_靄_16_._ASTNODE_靄:1.0__SYM_靄_13_("\n")
+    }
+}
+
+// POLYMORPHIC_JCROSS_END

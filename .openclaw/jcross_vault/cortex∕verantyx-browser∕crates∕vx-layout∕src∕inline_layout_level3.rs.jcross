@@ -1,0 +1,93 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:6BC4D823 ver:1778220607
+// ⚠️ One-time schema — expires after response
+
+// _ID_匳:0.1__TOKEN_HG_180_ [decoy-metadata]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// _ID_絢:0.6__TOKEN_YX_994_ [decoy-metadata]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+
+_ID_霪:1.0__TOKEN_霪_15_ _ID_霪:1.0__TOKEN_霪_48_::_ID_霪:1.0__TOKEN_霪_52_::_ID_廡:1.0__TOKEN_廡_31_;
+
+// [metadata-stripped]
+// [metadata-stripped]
+_ID_霪:1.0__TOKEN_霪_5_ struct _ID_謀:1.0__TOKEN_廡_3_ {
+    _ID_霪:1.0__TOKEN_霪_5_ _ID_霪:1.0__TOKEN_霪_16_: _ID_霪:1.0__TOKEN_霪_79_,
+    _ID_霪:1.0__TOKEN_霪_5_ _ID_霪:1.0__TOKEN_霪_86_: _ID_霪:1.0__TOKEN_霪_79_,
+}
+
+// [metadata-stripped]
+// [metadata-stripped]
+_ID_霪:1.0__TOKEN_霪_5_ enum _ID_廡:1.0__TOKEN_廡_9_ { _ID_廡:1.0__TOKEN_廡_2_, _ID_廡:1.0__TOKEN_廡_8_, _ID_謀:1.0__TOKEN_廡_6_, _ID_廡:1.0__TOKEN_廡_14_, _ID_廡:1.0__TOKEN_廡_29_, _ID_廡:1.0__TOKEN_廡_30_, _ID_廡:1.0__TOKEN_廡_34_, _ID_廡:1.0__TOKEN_廡_32_ }
+
+// [metadata-stripped]
+_ID_霪:1.0__TOKEN_霪_5_ struct _ID_廡:1.0__TOKEN_廡_23_ {
+    _ID_霪:1.0__TOKEN_霪_5_ _ID_霪:1.0__TOKEN_霪_46_: _ID_霪:1.0__TOKEN_霪_13_,
+    _ID_霪:1.0__TOKEN_霪_5_ _ID_霪:1.0__TOKEN_霪_22_: _ID_廡:1.0__TOKEN_廡_9_,
+    _ID_霪:1.0__TOKEN_霪_5_ _ID_霪:1.0__TOKEN_霪_74_: _ID_廡:1.0__TOKEN_廡_9_,
+    _ID_霪:1.0__TOKEN_霪_5_ _ID_謀:1.0__TOKEN_霪_44_: _ID_廡:1.0__TOKEN_廡_4_<_ID_謀:1.0__TOKEN_廡_3_>,
+    _ID_霪:1.0__TOKEN_霪_5_ _ID_霪:1.0__TOKEN_霪_70_: _ID_廡:1.0__TOKEN_廡_4_<_ID_霪:1.0__TOKEN_霪_79_>,
+}
+
+// [metadata-stripped]
+_ID_霪:1.0__TOKEN_霪_5_ struct _ID_廡:1.0__TOKEN_廡_5_ {
+    _ID_霪:1.0__TOKEN_霪_5_ _ID_霪:1.0__TOKEN_霪_49_: _ID_廡:1.0__TOKEN_廡_31_<_ID_霪:1.0__TOKEN_霪_13_, _ID_廡:1.0__TOKEN_廡_23_>,
+}
+
+_ID_霪:1.0__TOKEN_霪_35_ _ID_廡:1.0__TOKEN_廡_5_ {
+    _ID_霪:1.0__TOKEN_霪_5_ fn _ID_霪:1.0__TOKEN_霪_85_() -> _ID_廡:1.0__TOKEN_廡_28_ {
+        _ID_廡:1.0__TOKEN_廡_28_ { _ID_霪:1.0__TOKEN_霪_49_: _ID_廡:1.0__TOKEN_廡_31_::_ID_霪:1.0__TOKEN_霪_85_() }
+    }
+
+// [metadata-stripped]
+    _ID_霪:1.0__TOKEN_霪_5_ fn _ID_霪:1.0__TOKEN_霪_32_(&self, _ID_霪:1.0__TOKEN_霪_46_: _ID_霪:1.0__TOKEN_霪_13_, _ID_霪:1.0__TOKEN_霪_27_: _ID_霪:1.0__TOKEN_霪_79_) -> _ID_霪:1.0__TOKEN_霪_79_ {
+        let _ID_霪:1.0__TOKEN_霪_55_ = _ID_霪:1.0__TOKEN_霪_71_ self._ID_霪:1.0__TOKEN_霪_49_._ID_謀:1.0__TOKEN_弧_1_(&_ID_霪:1.0__TOKEN_霪_46_) {
+            _ID_廡:1.0__TOKEN_廡_36_(n) => n,
+            _ID_廡:1.0__TOKEN_廡_13_ => return 0.0,
+        };
+
+        _ID_霪:1.0__TOKEN_霪_71_ _ID_霪:1.0__TOKEN_霪_55_._ID_霪:1.0__TOKEN_霪_22_ {
+            _ID_廡:1.0__TOKEN_廡_9_::_ID_廡:1.0__TOKEN_廡_8_ => _ID_霪:1.0__TOKEN_霪_27_ * 0.2,
+            _ID_廡:1.0__TOKEN_廡_9_::_ID_謀:1.0__TOKEN_廡_6_ => -_ID_霪:1.0__TOKEN_霪_27_ * 0.3,
+            _ID_廡:1.0__TOKEN_廡_9_::_ID_廡:1.0__TOKEN_廡_30_ => -_ID_霪:1.0__TOKEN_霪_27_ * 0.25,
+            _ => 0.0,
+        }
+    }
+
+// [metadata-stripped]
+// _ID_泳:0.2__TOKEN_WA_910_ [decoy-metadata]
+    _ID_霪:1.0__TOKEN_霪_5_ fn _ID_霪:1.0__TOKEN_霪_82_(&self, _ID_霪:1.0__TOKEN_霪_46_: _ID_霪:1.0__TOKEN_霪_13_, _ID_霪:1.0__TOKEN_霪_67_: _ID_霪:1.0__TOKEN_霪_79_) -> _ID_霪:1.0__TOKEN_霪_79_ {
+        if let _ID_廡:1.0__TOKEN_廡_36_(_ID_霪:1.0__TOKEN_霪_55_) = self._ID_霪:1.0__TOKEN_霪_49_._ID_謀:1.0__TOKEN_弧_1_(&_ID_霪:1.0__TOKEN_霪_46_) {
+            if let _ID_廡:1.0__TOKEN_廡_36_(_ID_霪:1.0__TOKEN_霪_72_) = _ID_霪:1.0__TOKEN_霪_55_._ID_霪:1.0__TOKEN_霪_70_ {
+                return (_ID_霪:1.0__TOKEN_霪_67_ / _ID_霪:1.0__TOKEN_霪_72_)._ID_霪:1.0__TOKEN_霪_62_() * _ID_霪:1.0__TOKEN_霪_72_;
+            }
+        }
+        _ID_霪:1.0__TOKEN_霪_67_
+    }
+// _ID_廡:0.5__TOKEN_MD_908_ [decoy-metadata]
+// _ID_泳:0.8__TOKEN_CZ_395_ [decoy-metadata]
+
+// [metadata-stripped]
+    _ID_霪:1.0__TOKEN_霪_5_ fn _ID_霪:1.0__TOKEN_霪_23_(&self, _ID_霪:1.0__TOKEN_霪_46_: _ID_霪:1.0__TOKEN_霪_13_) -> _ID_廡:1.0__TOKEN_廡_11_ {
+        if let _ID_廡:1.0__TOKEN_廡_36_(_ID_霪:1.0__TOKEN_霪_55_) = self._ID_霪:1.0__TOKEN_霪_49_._ID_謀:1.0__TOKEN_弧_1_(&_ID_霪:1.0__TOKEN_霪_46_) {
+            let _ID_霪:1.0__TOKEN_霪_50_ _ID_霪:1.0__TOKEN_霪_83_ = _ID_泳:1.0__TOKEN_霪_56_!("〰️ _ID_廡:1.0__TOKEN_廡_7_ _ID_廡:1.0__TOKEN_廡_20_ (_ID_廡:1.0__TOKEN_廡_12_ #{}): _ID_廡:1.0__TOKEN_廡_2_={:?}", _ID_霪:1.0__TOKEN_霪_46_, _ID_霪:1.0__TOKEN_霪_55_._ID_霪:1.0__TOKEN_霪_22_);
+            if let _ID_廡:1.0__TOKEN_廡_36_(il) = _ID_霪:1.0__TOKEN_霪_55_._ID_謀:1.0__TOKEN_霪_44_ {
+// _ID_霪:0.3__TOKEN_YV_429_ [decoy-metadata]
+                _ID_霪:1.0__TOKEN_霪_83_._ID_霪:1.0__TOKEN_霪_65_(&_ID_泳:1.0__TOKEN_霪_56_!("\n  - _ID_廡:1.0__TOKEN_廡_10_ _ID_謀:1.0__TOKEN_廡_15_: {} _ID_霪:1.0__TOKEN_霪_31_ (_ID_廡:1.0__TOKEN_廡_25_: {})", il._ID_霪:1.0__TOKEN_霪_16_, il._ID_霪:1.0__TOKEN_霪_86_));
+            }
+            _ID_霪:1.0__TOKEN_霪_83_
+        } else {
+            _ID_泳:1.0__TOKEN_霪_56_!("_ID_廡:1.0__TOKEN_廡_12_ #{} _ID_霪:1.0__TOKEN_霪_73_ _ID_霪:1.0__TOKEN_霪_77_ _ID_霪:1.0__TOKEN_霪_78_ _ID_霪:1.0__TOKEN_霪_39_", _ID_霪:1.0__TOKEN_霪_46_)
+        }
+    }
+}
+
+// POLYMORPHIC_JCROSS_END

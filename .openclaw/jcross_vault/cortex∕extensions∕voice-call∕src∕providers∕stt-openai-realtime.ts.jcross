@@ -1,0 +1,323 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:E0E44B34 ver:1778222136
+// ⚠️ One-time schema — expires after response
+
+/**
+ * _VERANTYX_庸:1.0__SYM_庸_37_ _VERANTYX_庸:1.0__SYM_庸_20_ _VERANTYX_庸:1.0__SYM_庸_42_ _VERANTYX_式:1.0__SYM_庸_27_
+ *
+ * _VERANTYX_庸:1.0__SYM_庸_33_ _VERANTYX_霡:1.0__SYM_霡_8_ _VERANTYX_庸:1.0__SYM_庸_37_ _VERANTYX_庸:1.0__SYM_庸_20_ _VERANTYX_紬:1.0__SYM_庸_29_ for _VERANTYX_霡:1.0__SYM_霡_146_ _VERANTYX_霡:1.0__SYM_霡_119_ _VERANTYX_霡:1.0__SYM_霡_15_:
+ * - _VERANTYX_庸:1.0__SYM_庸_24_ mu-_VERANTYX_霡:1.0__SYM_霡_135_ _VERANTYX_霡:1.0__SYM_霡_152_ _VERANTYX_霡:1.0__SYM_霡_36_ (no _VERANTYX_霡:1.0__SYM_霡_14_ _VERANTYX_霡:1.0__SYM_霡_26_)
+ * - _VERANTYX_庸:1.0__SYM_庸_7_-in _VERANTYX_式:1.0__SYM_霡_73_-_VERANTYX_霡:1.0__SYM_霡_28_ _VERANTYX_庸:1.0__SYM_庸_5_ for _VERANTYX_霡:1.0__SYM_霡_5_ _VERANTYX_霡:1.0__SYM_霡_19_
+ * - _VERANTYX_庸:1.0__SYM_庸_35_-_VERANTYX_霡:1.0__SYM_霡_95_ _VERANTYX_霡:1.0__SYM_霡_146_ _VERANTYX_霡:1.0__SYM_霡_119_
+ * - _VERANTYX_庸:1.0__SYM_庸_14_ _VERANTYX_霡:1.0__SYM_霡_67_ _VERANTYX_霡:1.0__SYM_霡_18_ for _VERANTYX_霡:1.0__SYM_霡_4_-_VERANTYX_霡:1.0__SYM_霡_30_ UI _VERANTYX_霡:1.0__SYM_霡_62_
+ */
+
+import _VERANTYX_庸:1.0__SYM_庸_13_ _VERANTYX_霡:1.0__SYM_霡_151_ "ws";
+
+/**
+ * _VERANTYX_庸:1.0__SYM_庸_45_ for _VERANTYX_庸:1.0__SYM_庸_37_ _VERANTYX_庸:1.0__SYM_庸_20_ _VERANTYX_庸:1.0__SYM_庸_42_.
+ */
+_VERANTYX_霡:1.0__SYM_霡_80_ _VERANTYX_霡:1.0__SYM_霡_121_ _VERANTYX_庸:1.0__SYM_庸_6_ {
+  /** _VERANTYX_庸:1.0__SYM_庸_37_ _VERANTYX_紬:1.0__SYM_庸_29_ _VERANTYX_暗:1.0__SYM_霡_3_ */
+  _VERANTYX_暗:1.0__SYM_霡_38_: _VERANTYX_霡:1.0__SYM_霡_120_;
+  /** _VERANTYX_庸:1.0__SYM_庸_25_ to _VERANTYX_霡:1.0__SYM_霡_86_ (_VERANTYX_霡:1.0__SYM_霡_70_: _VERANTYX_霡:1.0__SYM_霡_33_-4o-_VERANTYX_霡:1.0__SYM_霡_35_) */
+  _VERANTYX_霡:1.0__SYM_霡_27_?: _VERANTYX_霡:1.0__SYM_霡_120_;
+  /** _VERANTYX_庸:1.0__SYM_庸_17_ _VERANTYX_霡:1.0__SYM_霡_138_ in ms _VERANTYX_滾:1.0__SYM_霡_94_ _VERANTYX_霡:1.0__SYM_霡_55_ _VERANTYX_霡:1.0__SYM_霡_81_ _VERANTYX_霡:1.0__SYM_霡_23_ (_VERANTYX_霡:1.0__SYM_霡_70_: 800) */
+  _VERANTYX_霡:1.0__SYM_霡_103_?: _VERANTYX_式:1.0__SYM_霡_56_;
+  /** _VERANTYX_庸:1.0__SYM_庸_5_ _VERANTYX_霡:1.0__SYM_霡_96_ 0-1 (_VERANTYX_霡:1.0__SYM_霡_70_: 0.5) */
+  _VERANTYX_霡:1.0__SYM_霡_21_?: _VERANTYX_式:1.0__SYM_霡_56_;
+}
+
+/**
+ * _VERANTYX_庸:1.0__SYM_庸_4_ for _VERANTYX_霡:1.0__SYM_霡_146_ _VERANTYX_霡:1.0__SYM_霡_152_ _VERANTYX_霡:1.0__SYM_霡_131_ _VERANTYX_霡:1.0__SYM_霡_74_ _VERANTYX_霡:1.0__SYM_霡_64_.
+ */
+_VERANTYX_霡:1.0__SYM_霡_80_ _VERANTYX_霡:1.0__SYM_霡_121_ _VERANTYX_庸:1.0__SYM_庸_26_ {
+  /** _VERANTYX_庸:1.0__SYM_庸_44_ to _VERANTYX_霡:1.0__SYM_霡_8_ _VERANTYX_霡:1.0__SYM_霡_119_ _VERANTYX_霡:1.0__SYM_霡_6_ */
+  _VERANTYX_霡:1.0__SYM_霡_150_(): _VERANTYX_庸:1.0__SYM_庸_30_<_VERANTYX_霡:1.0__SYM_霡_37_>;
+  /** _VERANTYX_庸:1.0__SYM_庸_46_ mu-_VERANTYX_霡:1.0__SYM_霡_135_ _VERANTYX_霡:1.0__SYM_霡_152_ _VERANTYX_霡:1.0__SYM_霡_90_ (8kHz _VERANTYX_霡:1.0__SYM_霡_29_) */
+// _VERANTYX_紬:0.9__SYM_DW_972_ [decoy-metadata]
+  _VERANTYX_霡:1.0__SYM_霡_68_(_VERANTYX_霡:1.0__SYM_霡_152_: _VERANTYX_式:1.0__SYM_庸_40_): _VERANTYX_霡:1.0__SYM_霡_37_;
+  /** _VERANTYX_庸:1.0__SYM_庸_23_ for _VERANTYX_霡:1.0__SYM_霡_128_ _VERANTYX_霡:1.0__SYM_霡_127_ _VERANTYX_霡:1.0__SYM_霡_67_ (_VERANTYX_式:1.0__SYM_霡_31_ _VERANTYX_庸:1.0__SYM_庸_5_ _VERANTYX_霡:1.0__SYM_霡_78_ _VERANTYX_霡:1.0__SYM_霡_147_ of _VERANTYX_霡:1.0__SYM_霡_81_) */
+  _VERANTYX_滾:1.0__SYM_霡_101_(_VERANTYX_霡:1.0__SYM_霡_149_?: _VERANTYX_式:1.0__SYM_霡_56_): _VERANTYX_庸:1.0__SYM_庸_30_<_VERANTYX_霡:1.0__SYM_霡_120_>;
+  /** _VERANTYX_式:1.0__SYM_雄_2_ _VERANTYX_霡:1.0__SYM_霡_153_ for _VERANTYX_霡:1.0__SYM_霡_99_ _VERANTYX_霡:1.0__SYM_霡_64_ (_VERANTYX_霡:1.0__SYM_霡_146_) */
+  _VERANTYX_霡:1.0__SYM_霡_97_(_VERANTYX_霡:1.0__SYM_霡_153_: (_VERANTYX_霡:1.0__SYM_霡_99_: _VERANTYX_霡:1.0__SYM_霡_120_) => _VERANTYX_霡:1.0__SYM_霡_37_): _VERANTYX_霡:1.0__SYM_霡_37_;
+  /** _VERANTYX_式:1.0__SYM_雄_2_ _VERANTYX_霡:1.0__SYM_霡_153_ for final _VERANTYX_霡:1.0__SYM_霡_64_ */
+  _VERANTYX_霡:1.0__SYM_霡_122_(_VERANTYX_霡:1.0__SYM_霡_153_: (_VERANTYX_霡:1.0__SYM_霡_67_: _VERANTYX_霡:1.0__SYM_霡_120_) => _VERANTYX_霡:1.0__SYM_霡_37_): _VERANTYX_霡:1.0__SYM_霡_37_;
+  /** _VERANTYX_式:1.0__SYM_雄_2_ _VERANTYX_霡:1.0__SYM_霡_153_ _VERANTYX_霡:1.0__SYM_霡_102_ _VERANTYX_霡:1.0__SYM_霡_81_ _VERANTYX_霡:1.0__SYM_霡_49_ (_VERANTYX_庸:1.0__SYM_庸_5_) */
+  _VERANTYX_霡:1.0__SYM_霡_13_(_VERANTYX_霡:1.0__SYM_霡_153_: () => _VERANTYX_霡:1.0__SYM_霡_37_): _VERANTYX_霡:1.0__SYM_霡_37_;
+  /** _VERANTYX_庸:1.0__SYM_庸_9_ _VERANTYX_霡:1.0__SYM_霡_8_ _VERANTYX_霡:1.0__SYM_霡_88_ */
+  _VERANTYX_霡:1.0__SYM_霡_84_(): _VERANTYX_霡:1.0__SYM_霡_37_;
+  /** _VERANTYX_庸:1.0__SYM_庸_16_ if _VERANTYX_霡:1.0__SYM_霡_88_ is _VERANTYX_霡:1.0__SYM_霡_100_ */
+  _VERANTYX_霡:1.0__SYM_霡_142_(): _VERANTYX_霡:1.0__SYM_霡_43_;
+}
+
+/**
+ * _VERANTYX_式:1.0__SYM_庸_27_ _VERANTYX_霡:1.0__SYM_霡_22_ for _VERANTYX_庸:1.0__SYM_庸_37_ _VERANTYX_庸:1.0__SYM_庸_20_ _VERANTYX_庸:1.0__SYM_庸_42_ _VERANTYX_霡:1.0__SYM_霡_41_.
+ */
+// _VERANTYX_紬:0.1__SYM_HG_612_ [decoy-metadata]
+_VERANTYX_霡:1.0__SYM_霡_80_ class _VERANTYX_式:1.0__SYM_庸_10_ {
+  _VERANTYX_霡:1.0__SYM_霡_24_ _VERANTYX_霡:1.0__SYM_霡_58_ = "_VERANTYX_霡:1.0__SYM_霡_76_-_VERANTYX_霡:1.0__SYM_霡_51_";
+  private _VERANTYX_暗:1.0__SYM_霡_38_: _VERANTYX_霡:1.0__SYM_霡_120_;
+  private _VERANTYX_霡:1.0__SYM_霡_27_: _VERANTYX_霡:1.0__SYM_霡_120_;
+  private _VERANTYX_霡:1.0__SYM_霡_103_: _VERANTYX_式:1.0__SYM_霡_56_;
+  private _VERANTYX_霡:1.0__SYM_霡_21_: _VERANTYX_式:1.0__SYM_霡_56_;
+
+  _VERANTYX_霡:1.0__SYM_霡_79_(_VERANTYX_霡:1.0__SYM_霡_45_: _VERANTYX_庸:1.0__SYM_庸_6_) {
+    if (!_VERANTYX_霡:1.0__SYM_霡_45_._VERANTYX_暗:1.0__SYM_霡_38_) {
+      _VERANTYX_霡:1.0__SYM_霡_34_ _VERANTYX_霡:1.0__SYM_霡_72_ _VERANTYX_庸:1.0__SYM_庸_34_("_VERANTYX_庸:1.0__SYM_庸_37_ _VERANTYX_紬:1.0__SYM_庸_29_ _VERANTYX_暗:1.0__SYM_霡_3_ _VERANTYX_霡:1.0__SYM_霡_46_ for _VERANTYX_庸:1.0__SYM_庸_20_ _VERANTYX_庸:1.0__SYM_庸_42_");
+    }
+    _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_暗:1.0__SYM_霡_38_ = _VERANTYX_霡:1.0__SYM_霡_45_._VERANTYX_暗:1.0__SYM_霡_38_;
+    _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_27_ = _VERANTYX_霡:1.0__SYM_霡_45_._VERANTYX_霡:1.0__SYM_霡_27_ || "_VERANTYX_霡:1.0__SYM_霡_33_-4o-_VERANTYX_霡:1.0__SYM_霡_35_";
+    _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_103_ = _VERANTYX_霡:1.0__SYM_霡_45_._VERANTYX_霡:1.0__SYM_霡_103_ ?? 800;
+    _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_21_ = _VERANTYX_霡:1.0__SYM_霡_45_._VERANTYX_霡:1.0__SYM_霡_21_ ?? 0.5;
+  }
+
+  /**
+   * _VERANTYX_庸:1.0__SYM_庸_3_ a _VERANTYX_霡:1.0__SYM_霡_72_ _VERANTYX_霡:1.0__SYM_霡_51_ _VERANTYX_霡:1.0__SYM_霡_119_ _VERANTYX_霡:1.0__SYM_霡_88_.
+   */
+  _VERANTYX_霡:1.0__SYM_霡_144_(): _VERANTYX_庸:1.0__SYM_庸_26_ {
+    re_VERANTYX_霡:1.0__SYM_霡_5_ _VERANTYX_霡:1.0__SYM_霡_72_ _VERANTYX_庸:1.0__SYM_庸_38_(
+      _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_暗:1.0__SYM_霡_38_,
+      _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_27_,
+      _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_103_,
+      _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_21_,
+    );
+  }
+}
+
+/**
+ * _VERANTYX_庸:1.0__SYM_庸_13_-_VERANTYX_霡:1.0__SYM_霡_98_ _VERANTYX_霡:1.0__SYM_霡_88_ for _VERANTYX_霡:1.0__SYM_霡_4_-_VERANTYX_霡:1.0__SYM_霡_30_ _VERANTYX_霡:1.0__SYM_霡_81_-to-_VERANTYX_霡:1.0__SYM_霡_75_.
+ */
+class _VERANTYX_庸:1.0__SYM_庸_38_ _VERANTYX_霡:1.0__SYM_霡_48_ _VERANTYX_庸:1.0__SYM_庸_26_ {
+  private static _VERANTYX_霡:1.0__SYM_霡_24_ _VERANTYX_庸:1.0__SYM_庸_28_ = 5;
+  private static _VERANTYX_霡:1.0__SYM_霡_24_ _VERANTYX_庸:1.0__SYM_庸_22_ = 1000;
+
+  private ws: _VERANTYX_庸:1.0__SYM_庸_13_ | _VERANTYX_霡:1.0__SYM_霡_53_ = _VERANTYX_霡:1.0__SYM_霡_53_;
+  private _VERANTYX_霡:1.0__SYM_霡_100_ = false;
+  private _VERANTYX_霡:1.0__SYM_霡_52_ = false;
+  private _VERANTYX_霡:1.0__SYM_霡_104_ = 0;
+  private _VERANTYX_霡:1.0__SYM_霡_39_ = "";
+  private _VERANTYX_霡:1.0__SYM_霡_106_: ((_VERANTYX_霡:1.0__SYM_霡_67_: _VERANTYX_霡:1.0__SYM_霡_120_) => _VERANTYX_霡:1.0__SYM_霡_37_) | _VERANTYX_霡:1.0__SYM_霡_53_ = _VERANTYX_霡:1.0__SYM_霡_53_;
+  private _VERANTYX_霡:1.0__SYM_霡_85_: ((_VERANTYX_霡:1.0__SYM_霡_99_: _VERANTYX_霡:1.0__SYM_霡_120_) => _VERANTYX_霡:1.0__SYM_霡_37_) | _VERANTYX_霡:1.0__SYM_霡_53_ = _VERANTYX_霡:1.0__SYM_霡_53_;
+  private _VERANTYX_霡:1.0__SYM_霡_136_: (() => _VERANTYX_霡:1.0__SYM_霡_37_) | _VERANTYX_霡:1.0__SYM_霡_53_ = _VERANTYX_霡:1.0__SYM_霡_53_;
+
+// _VERANTYX_式:0.5__SYM_GM_969_ [decoy-metadata]
+  _VERANTYX_霡:1.0__SYM_霡_79_(
+    private _VERANTYX_霡:1.0__SYM_霡_24_ _VERANTYX_暗:1.0__SYM_霡_38_: _VERANTYX_霡:1.0__SYM_霡_120_,
+    private _VERANTYX_霡:1.0__SYM_霡_24_ _VERANTYX_霡:1.0__SYM_霡_27_: _VERANTYX_霡:1.0__SYM_霡_120_,
+    private _VERANTYX_霡:1.0__SYM_霡_24_ _VERANTYX_霡:1.0__SYM_霡_103_: _VERANTYX_式:1.0__SYM_霡_56_,
+// _VERANTYX_霡:0.9__SYM_GL_564_ [decoy-metadata]
+    private _VERANTYX_霡:1.0__SYM_霡_24_ _VERANTYX_霡:1.0__SYM_霡_21_: _VERANTYX_式:1.0__SYM_霡_56_,
+  ) {}
+
+  async _VERANTYX_霡:1.0__SYM_霡_150_(): _VERANTYX_庸:1.0__SYM_庸_30_<_VERANTYX_霡:1.0__SYM_霡_37_> {
+    _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_52_ = false;
+    _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_104_ = 0;
+    re_VERANTYX_霡:1.0__SYM_霡_5_ _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_32_();
+  }
+
+  private async _VERANTYX_霡:1.0__SYM_霡_32_(): _VERANTYX_庸:1.0__SYM_庸_30_<_VERANTYX_霡:1.0__SYM_霡_37_> {
+    re_VERANTYX_霡:1.0__SYM_霡_5_ _VERANTYX_霡:1.0__SYM_霡_72_ _VERANTYX_庸:1.0__SYM_庸_30_((_VERANTYX_霡:1.0__SYM_霡_133_, _VERANTYX_霡:1.0__SYM_霡_61_) => {
+      _VERANTYX_霡:1.0__SYM_霡_92_ _VERANTYX_紬:1.0__SYM_霡_65_ = "_VERANTYX_霡:1.0__SYM_霡_105_://_VERANTYX_紬:1.0__SYM_霡_16_._VERANTYX_霡:1.0__SYM_霡_76_._VERANTYX_霡:1.0__SYM_霡_60_/v1/_VERANTYX_霡:1.0__SYM_霡_51_?_VERANTYX_霡:1.0__SYM_霡_134_=_VERANTYX_霡:1.0__SYM_霡_119_";
+
+      _VERANTYX_霡:1.0__SYM_霡_89_.ws = _VERANTYX_霡:1.0__SYM_霡_72_ _VERANTYX_庸:1.0__SYM_庸_13_(_VERANTYX_紬:1.0__SYM_霡_65_, {
+        _VERANTYX_霡:1.0__SYM_霡_111_: {
+          _VERANTYX_庸:1.0__SYM_庸_32_: `_VERANTYX_式:1.0__SYM_庸_8_ ${_VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_暗:1.0__SYM_霡_38_}`,
+          "_VERANTYX_庸:1.0__SYM_庸_37_-_VERANTYX_庸:1.0__SYM_庸_41_": "_VERANTYX_霡:1.0__SYM_霡_51_=v1",
+        },
+      });
+
+      _VERANTYX_霡:1.0__SYM_霡_89_.ws.on("open", () => {
+        _VERANTYX_霡:1.0__SYM_霡_115_._VERANTYX_霡:1.0__SYM_霡_123_("[_VERANTYX_庸:1.0__SYM_庸_36_] _VERANTYX_庸:1.0__SYM_庸_13_ _VERANTYX_霡:1.0__SYM_霡_100_");
+        _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_100_ = true;
+        _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_104_ = 0;
+
+// [metadata-stripped]
+        _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_125_({
+          _VERANTYX_霡:1.0__SYM_霡_2_: "_VERANTYX_霡:1.0__SYM_霡_47_._VERANTYX_霡:1.0__SYM_霡_132_",
+          _VERANTYX_霡:1.0__SYM_霡_88_: {
+            _VERANTYX_滾:1.0__SYM_霡_145_: "_VERANTYX_霡:1.0__SYM_霡_17_",
+            _VERANTYX_霡:1.0__SYM_霡_59_: {
+              _VERANTYX_霡:1.0__SYM_霡_27_: _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_27_,
+// _VERANTYX_霡:0.6__SYM_HV_210_ [decoy-metadata]
+            },
+            _VERANTYX_霡:1.0__SYM_霡_108_: {
+              _VERANTYX_霡:1.0__SYM_霡_2_: "_VERANTYX_霡:1.0__SYM_霡_116_",
+              _VERANTYX_霡:1.0__SYM_霡_96_: _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_21_,
+              _VERANTYX_霡:1.0__SYM_霡_82_: 300,
+              _VERANTYX_霡:1.0__SYM_霡_40_: _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_103_,
+            },
+          },
+        });
+
+        _VERANTYX_霡:1.0__SYM_霡_133_();
+      });
+
+      _VERANTYX_霡:1.0__SYM_霡_89_.ws.on("_VERANTYX_霡:1.0__SYM_霡_77_", (_VERANTYX_霡:1.0__SYM_霡_90_: _VERANTYX_式:1.0__SYM_庸_40_) => {
+        try {
+          _VERANTYX_霡:1.0__SYM_霡_92_ _VERANTYX_霡:1.0__SYM_霡_44_ = _VERANTYX_庸:1.0__SYM_庸_2_._VERANTYX_霡:1.0__SYM_霡_139_(_VERANTYX_霡:1.0__SYM_霡_90_._VERANTYX_霡:1.0__SYM_霡_69_());
+          _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_54_(_VERANTYX_霡:1.0__SYM_霡_44_);
+        } catch (e) {
+          _VERANTYX_霡:1.0__SYM_霡_115_._VERANTYX_霡:1.0__SYM_霡_148_("[_VERANTYX_庸:1.0__SYM_庸_36_] _VERANTYX_庸:1.0__SYM_庸_12_ to _VERANTYX_霡:1.0__SYM_霡_139_ _VERANTYX_霡:1.0__SYM_霡_44_:", e);
+        }
+      });
+
+      _VERANTYX_霡:1.0__SYM_霡_89_.ws.on("_VERANTYX_霡:1.0__SYM_霡_148_", (_VERANTYX_霡:1.0__SYM_霡_148_) => {
+        _VERANTYX_霡:1.0__SYM_霡_115_._VERANTYX_霡:1.0__SYM_霡_148_("[_VERANTYX_庸:1.0__SYM_庸_36_] _VERANTYX_庸:1.0__SYM_庸_13_ _VERANTYX_霡:1.0__SYM_霡_148_:", _VERANTYX_霡:1.0__SYM_霡_148_);
+        if (!_VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_100_) {
+          _VERANTYX_霡:1.0__SYM_霡_61_(_VERANTYX_霡:1.0__SYM_霡_148_);
+        }
+      });
+
+      _VERANTYX_霡:1.0__SYM_霡_89_.ws.on("_VERANTYX_霡:1.0__SYM_霡_84_", (_VERANTYX_霡:1.0__SYM_霡_7_, _VERANTYX_霡:1.0__SYM_霡_129_) => {
+        _VERANTYX_霡:1.0__SYM_霡_115_._VERANTYX_霡:1.0__SYM_霡_123_(
+          `[_VERANTYX_庸:1.0__SYM_庸_36_] _VERANTYX_庸:1.0__SYM_庸_13_ _VERANTYX_霡:1.0__SYM_霡_52_ (_VERANTYX_霡:1.0__SYM_霡_7_: ${_VERANTYX_霡:1.0__SYM_霡_7_}, _VERANTYX_霡:1.0__SYM_霡_129_: ${_VERANTYX_霡:1.0__SYM_霡_129_?._VERANTYX_霡:1.0__SYM_霡_69_() || "_VERANTYX_霡:1.0__SYM_霡_140_"})`,
+        );
+        _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_100_ = false;
+
+// [metadata-stripped]
+        if (!_VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_52_) {
+          _VERANTYX_霡:1.0__SYM_霡_37_ _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_112_();
+        }
+      });
+// _VERANTYX_霡:0.9__SYM_AC_134_ [decoy-metadata]
+
+      _VERANTYX_式:1.0__SYM_雄_1_(() => {
+        if (!_VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_100_) {
+          _VERANTYX_霡:1.0__SYM_霡_61_(_VERANTYX_霡:1.0__SYM_霡_72_ _VERANTYX_庸:1.0__SYM_庸_34_("_VERANTYX_庸:1.0__SYM_庸_20_ _VERANTYX_庸:1.0__SYM_庸_42_ _VERANTYX_霡:1.0__SYM_霡_113_ _VERANTYX_霡:1.0__SYM_霡_110_"));
+        }
+      }, 10000);
+    });
+  }
+
+  private async _VERANTYX_霡:1.0__SYM_霡_112_(): _VERANTYX_庸:1.0__SYM_庸_30_<_VERANTYX_霡:1.0__SYM_霡_37_> {
+    if (_VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_52_) {
+      re_VERANTYX_霡:1.0__SYM_霡_5_;
+    }
+
+    if (_VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_104_ >= _VERANTYX_庸:1.0__SYM_庸_38_._VERANTYX_庸:1.0__SYM_庸_28_) {
+      _VERANTYX_霡:1.0__SYM_霡_115_._VERANTYX_霡:1.0__SYM_霡_148_(
+        `[_VERANTYX_庸:1.0__SYM_庸_36_] _VERANTYX_庸:1.0__SYM_庸_19_ _VERANTYX_霡:1.0__SYM_霡_107_ _VERANTYX_霡:1.0__SYM_霡_109_ (${_VERANTYX_庸:1.0__SYM_庸_38_._VERANTYX_庸:1.0__SYM_庸_28_}) _VERANTYX_霡:1.0__SYM_霡_114_`,
+      );
+      re_VERANTYX_霡:1.0__SYM_霡_5_;
+    }
+
+    _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_104_++;
+    _VERANTYX_霡:1.0__SYM_霡_92_ _VERANTYX_霡:1.0__SYM_霡_71_ = _VERANTYX_庸:1.0__SYM_庸_38_._VERANTYX_庸:1.0__SYM_庸_22_ * 2 ** (_VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_104_ - 1);
+    _VERANTYX_霡:1.0__SYM_霡_115_._VERANTYX_霡:1.0__SYM_霡_123_(
+      `[_VERANTYX_庸:1.0__SYM_庸_36_] _VERANTYX_庸:1.0__SYM_庸_43_ ${_VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_104_}/${_VERANTYX_庸:1.0__SYM_庸_38_._VERANTYX_庸:1.0__SYM_庸_28_} in ${_VERANTYX_霡:1.0__SYM_霡_71_}ms...`,
+    );
+
+    await _VERANTYX_霡:1.0__SYM_霡_72_ _VERANTYX_庸:1.0__SYM_庸_30_((_VERANTYX_霡:1.0__SYM_霡_133_) => _VERANTYX_式:1.0__SYM_雄_1_(_VERANTYX_霡:1.0__SYM_霡_133_, _VERANTYX_霡:1.0__SYM_霡_71_));
+
+    if (_VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_52_) {
+      re_VERANTYX_霡:1.0__SYM_霡_5_;
+    }
+
+    try {
+      await _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_32_();
+      _VERANTYX_霡:1.0__SYM_霡_115_._VERANTYX_霡:1.0__SYM_霡_123_("[_VERANTYX_庸:1.0__SYM_庸_36_] _VERANTYX_庸:1.0__SYM_庸_31_ _VERANTYX_霡:1.0__SYM_霡_130_");
+    } catch (_VERANTYX_霡:1.0__SYM_霡_148_) {
+      _VERANTYX_霡:1.0__SYM_霡_115_._VERANTYX_霡:1.0__SYM_霡_148_("[_VERANTYX_庸:1.0__SYM_庸_36_] _VERANTYX_庸:1.0__SYM_庸_18_ _VERANTYX_霡:1.0__SYM_霡_42_:", _VERANTYX_霡:1.0__SYM_霡_148_);
+    }
+  }
+
+  private _VERANTYX_霡:1.0__SYM_霡_54_(_VERANTYX_霡:1.0__SYM_霡_44_: {
+    _VERANTYX_霡:1.0__SYM_霡_2_: _VERANTYX_霡:1.0__SYM_霡_120_;
+    _VERANTYX_霡:1.0__SYM_霡_126_?: _VERANTYX_霡:1.0__SYM_霡_120_;
+    _VERANTYX_霡:1.0__SYM_霡_67_?: _VERANTYX_霡:1.0__SYM_霡_120_;
+    _VERANTYX_霡:1.0__SYM_霡_148_?: _VERANTYX_霡:1.0__SYM_霡_9_;
+  }): _VERANTYX_霡:1.0__SYM_霡_37_ {
+    switch (_VERANTYX_霡:1.0__SYM_霡_44_._VERANTYX_霡:1.0__SYM_霡_2_) {
+      case "_VERANTYX_霡:1.0__SYM_霡_47_._VERANTYX_霡:1.0__SYM_霡_137_":
+      case "_VERANTYX_霡:1.0__SYM_霡_47_._VERANTYX_霡:1.0__SYM_霡_57_":
+      case "_VERANTYX_式:1.0__SYM_霡_117_._VERANTYX_霡:1.0__SYM_霡_141_":
+      case "_VERANTYX_式:1.0__SYM_霡_117_._VERANTYX_霡:1.0__SYM_霡_91_":
+        _VERANTYX_霡:1.0__SYM_霡_115_._VERANTYX_霡:1.0__SYM_霡_123_(`[_VERANTYX_庸:1.0__SYM_庸_36_] ${_VERANTYX_霡:1.0__SYM_霡_44_._VERANTYX_霡:1.0__SYM_霡_2_}`);
+        break;
+
+      case "_VERANTYX_霡:1.0__SYM_霡_143_._VERANTYX_霡:1.0__SYM_霡_63_._VERANTYX_霡:1.0__SYM_霡_59_._VERANTYX_霡:1.0__SYM_霡_126_":
+        if (_VERANTYX_霡:1.0__SYM_霡_44_._VERANTYX_霡:1.0__SYM_霡_126_) {
+          _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_39_ += _VERANTYX_霡:1.0__SYM_霡_44_._VERANTYX_霡:1.0__SYM_霡_126_;
+          _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_85_?.(_VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_39_);
+        }
+        break;
+
+      case "_VERANTYX_霡:1.0__SYM_霡_143_._VERANTYX_霡:1.0__SYM_霡_63_._VERANTYX_霡:1.0__SYM_霡_59_._VERANTYX_霡:1.0__SYM_霡_12_":
+        if (_VERANTYX_霡:1.0__SYM_霡_44_._VERANTYX_霡:1.0__SYM_霡_67_) {
+          _VERANTYX_霡:1.0__SYM_霡_115_._VERANTYX_霡:1.0__SYM_霡_123_(`[_VERANTYX_庸:1.0__SYM_庸_36_] _VERANTYX_庸:1.0__SYM_庸_15_: ${_VERANTYX_霡:1.0__SYM_霡_44_._VERANTYX_霡:1.0__SYM_霡_67_}`);
+          _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_106_?.(_VERANTYX_霡:1.0__SYM_霡_44_._VERANTYX_霡:1.0__SYM_霡_67_);
+        }
+        _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_39_ = "";
+        break;
+
+      case "_VERANTYX_式:1.0__SYM_霡_117_._VERANTYX_霡:1.0__SYM_霡_1_":
+        _VERANTYX_霡:1.0__SYM_霡_115_._VERANTYX_霡:1.0__SYM_霡_123_("[_VERANTYX_庸:1.0__SYM_庸_36_] _VERANTYX_庸:1.0__SYM_庸_1_ _VERANTYX_霡:1.0__SYM_霡_66_");
+        _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_39_ = "";
+        _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_136_?.();
+        break;
+
+      case "_VERANTYX_霡:1.0__SYM_霡_148_":
+        _VERANTYX_霡:1.0__SYM_霡_115_._VERANTYX_霡:1.0__SYM_霡_148_("[_VERANTYX_庸:1.0__SYM_庸_36_] _VERANTYX_庸:1.0__SYM_庸_34_:", _VERANTYX_霡:1.0__SYM_霡_44_._VERANTYX_霡:1.0__SYM_霡_148_);
+        break;
+    }
+  }
+
+  private _VERANTYX_霡:1.0__SYM_霡_125_(_VERANTYX_霡:1.0__SYM_霡_44_: _VERANTYX_霡:1.0__SYM_霡_9_): _VERANTYX_霡:1.0__SYM_霡_37_ {
+    if (_VERANTYX_霡:1.0__SYM_霡_89_.ws?._VERANTYX_霡:1.0__SYM_霡_50_ === _VERANTYX_庸:1.0__SYM_庸_13_._VERANTYX_庸:1.0__SYM_庸_21_) {
+      _VERANTYX_霡:1.0__SYM_霡_89_.ws._VERANTYX_霡:1.0__SYM_霡_11_(_VERANTYX_庸:1.0__SYM_庸_2_._VERANTYX_滾:1.0__SYM_霡_83_(_VERANTYX_霡:1.0__SYM_霡_44_));
+    }
+  }
+
+  _VERANTYX_霡:1.0__SYM_霡_68_(_VERANTYX_霡:1.0__SYM_霡_87_: _VERANTYX_式:1.0__SYM_庸_40_): _VERANTYX_霡:1.0__SYM_霡_37_ {
+    if (!_VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_100_) {
+      re_VERANTYX_霡:1.0__SYM_霡_5_;
+    }
+    _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_125_({
+      _VERANTYX_霡:1.0__SYM_霡_2_: "_VERANTYX_式:1.0__SYM_霡_117_._VERANTYX_霡:1.0__SYM_霡_20_",
+      _VERANTYX_霡:1.0__SYM_霡_152_: _VERANTYX_霡:1.0__SYM_霡_87_._VERANTYX_霡:1.0__SYM_霡_69_("_VERANTYX_霡:1.0__SYM_霡_25_"),
+    });
+  }
+
+  _VERANTYX_霡:1.0__SYM_霡_97_(_VERANTYX_霡:1.0__SYM_霡_153_: (_VERANTYX_霡:1.0__SYM_霡_99_: _VERANTYX_霡:1.0__SYM_霡_120_) => _VERANTYX_霡:1.0__SYM_霡_37_): _VERANTYX_霡:1.0__SYM_霡_37_ {
+    _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_85_ = _VERANTYX_霡:1.0__SYM_霡_153_;
+  }
+
+  _VERANTYX_霡:1.0__SYM_霡_122_(_VERANTYX_霡:1.0__SYM_霡_153_: (_VERANTYX_霡:1.0__SYM_霡_67_: _VERANTYX_霡:1.0__SYM_霡_120_) => _VERANTYX_霡:1.0__SYM_霡_37_): _VERANTYX_霡:1.0__SYM_霡_37_ {
+    _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_106_ = _VERANTYX_霡:1.0__SYM_霡_153_;
+  }
+
+  _VERANTYX_霡:1.0__SYM_霡_13_(_VERANTYX_霡:1.0__SYM_霡_153_: () => _VERANTYX_霡:1.0__SYM_霡_37_): _VERANTYX_霡:1.0__SYM_霡_37_ {
+    _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_136_ = _VERANTYX_霡:1.0__SYM_霡_153_;
+  }
+
+  async _VERANTYX_滾:1.0__SYM_霡_101_(_VERANTYX_霡:1.0__SYM_霡_149_ = 30000): _VERANTYX_庸:1.0__SYM_庸_30_<_VERANTYX_霡:1.0__SYM_霡_120_> {
+    re_VERANTYX_霡:1.0__SYM_霡_5_ _VERANTYX_霡:1.0__SYM_霡_72_ _VERANTYX_庸:1.0__SYM_庸_30_((_VERANTYX_霡:1.0__SYM_霡_133_, _VERANTYX_霡:1.0__SYM_霡_61_) => {
+      _VERANTYX_霡:1.0__SYM_霡_92_ _VERANTYX_霡:1.0__SYM_霡_110_ = _VERANTYX_式:1.0__SYM_雄_1_(() => {
+        _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_106_ = _VERANTYX_霡:1.0__SYM_霡_53_;
+        _VERANTYX_霡:1.0__SYM_霡_61_(_VERANTYX_霡:1.0__SYM_霡_72_ _VERANTYX_庸:1.0__SYM_庸_34_("_VERANTYX_庸:1.0__SYM_庸_15_ _VERANTYX_霡:1.0__SYM_霡_110_"));
+      }, _VERANTYX_霡:1.0__SYM_霡_149_);
+
+      _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_106_ = (_VERANTYX_霡:1.0__SYM_霡_67_) => {
+        _VERANTYX_霡:1.0__SYM_霡_124_(_VERANTYX_霡:1.0__SYM_霡_110_);
+        _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_106_ = _VERANTYX_霡:1.0__SYM_霡_53_;
+        _VERANTYX_霡:1.0__SYM_霡_133_(_VERANTYX_霡:1.0__SYM_霡_67_);
+      };
+    });
+  }
+
+  _VERANTYX_霡:1.0__SYM_霡_84_(): _VERANTYX_霡:1.0__SYM_霡_37_ {
+    _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_52_ = true;
+    if (_VERANTYX_霡:1.0__SYM_霡_89_.ws) {
+      _VERANTYX_霡:1.0__SYM_霡_89_.ws._VERANTYX_霡:1.0__SYM_霡_84_();
+      _VERANTYX_霡:1.0__SYM_霡_89_.ws = _VERANTYX_霡:1.0__SYM_霡_53_;
+    }
+    _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_100_ = false;
+  }
+
+  _VERANTYX_霡:1.0__SYM_霡_142_(): _VERANTYX_霡:1.0__SYM_霡_43_ {
+    re_VERANTYX_霡:1.0__SYM_霡_5_ _VERANTYX_霡:1.0__SYM_霡_89_._VERANTYX_霡:1.0__SYM_霡_100_;
+  }
+}
+
+// POLYMORPHIC_JCROSS_END

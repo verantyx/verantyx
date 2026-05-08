@@ -1,0 +1,106 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:AA215650 ver:1778219977
+// ⚠️ One-time schema — expires after response
+
+import { __node_殻:1.0____jcross_殻_5__ } __node_霾:1.0____jcross_霾_29__ "../__node_霾:1.0____jcross_霾_30__.ts";
+import __node_霾:1.0____jcross_霾_1__ { __node_殻:1.0____jcross_殻_3__ } __node_霾:1.0____jcross_霾_29__ "./__node_霾:1.0____jcross_霾_38__.__node_霾:1.0____jcross_霾_30__.ts";
+
+__node_霾:1.0____jcross_霾_35__ __node_霾:1.0____jcross_霾_1__ { __node_殻:1.0____jcross_殻_3__ };
+
+__node_霾:1.0____jcross_霾_35__ async __node_霾:1.0____jcross_霾_7__ __node_匯:1.0____jcross_霾_41__(__node_霾:1.0____jcross_霾_44__: __node_殻:1.0____jcross_殻_3__, __node_霾:1.0____jcross_霾_26__: __node_霾:1.0____jcross_霾_36__) {
+// __node_脈:0.7____jcross_DA_431__ [decoy-metadata]
+  if (!__node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_20__ || !__node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_43__) {
+    return;
+  }
+  if (__node_霾:1.0____jcross_霾_44__.__node_匯:1.0____jcross_霾_13__) {
+    return;
+  }
+  __node_霾:1.0____jcross_霾_44__.__node_匯:1.0____jcross_霾_13__ = true;
+  __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_9__ = __node_霾:1.0____jcross_霾_5__;
+  try {
+    __node_霾:1.0____jcross_霾_4__ __node_霾:1.0____jcross_霾_42__ = a__node_霾:1.0____jcross_霾_22__ __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_20__.__node_繕:1.0____jcross_霾_12__<__node_殻:1.0____jcross_殻_5__ | __node_霾:1.0____jcross_霾_5__>("__node_霾:1.0____jcross_霾_38__.__node_霾:1.0____jcross_霾_16__", {
+      __node_霾:1.0____jcross_霾_26__,
+      __node_霾:1.0____jcross_霾_19__: 8000,
+    });
+    __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_6__ = __node_霾:1.0____jcross_霾_42__;
+    __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_21__ = __node_殻:1.0____jcross_殻_2__.__node_霾:1.0____jcross_霾_37__();
+  } catch (__node_霾:1.0____jcross_霾_28__) {
+    __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_9__ = __node_殻:1.0____jcross_殻_1__(__node_霾:1.0____jcross_霾_28__);
+  } __node_霾:1.0____jcross_霾_17__ {
+    __node_霾:1.0____jcross_霾_44__.__node_匯:1.0____jcross_霾_13__ = false;
+  }
+}
+
+__node_霾:1.0____jcross_霾_35__ async __node_霾:1.0____jcross_霾_7__ __node_霾:1.0____jcross_霾_32__(__node_霾:1.0____jcross_霾_44__: __node_殻:1.0____jcross_殻_3__, __node_脈:1.0____jcross_霾_2__: __node_霾:1.0____jcross_霾_36__) {
+  if (!__node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_20__ || !__node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_43__ || __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_25__) {
+    return;
+  }
+  __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_25__ = true;
+  try {
+    __node_霾:1.0____jcross_霾_4__ __node_霾:1.0____jcross_霾_42__ = a__node_霾:1.0____jcross_霾_22__ __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_20__.__node_繕:1.0____jcross_霾_12__<{ __node_霾:1.0____jcross_霾_10__?: __node_霾:1.0____jcross_霾_14__; __node_繕:1.0____jcross_霾_39__?: __node_霾:1.0____jcross_霾_14__ }>(
+      "__node_霾:1.0____jcross_霾_11__.__node_霾:1.0____jcross_霾_18__.__node_霾:1.0____jcross_霾_34__",
+      {
+        __node_脈:1.0____jcross_霾_2__,
+        __node_霾:1.0____jcross_霾_19__: 30000,
+      },
+    );
+    __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_15__ = __node_霾:1.0____jcross_霾_42__.__node_霾:1.0____jcross_霾_10__ ?? __node_霾:1.0____jcross_霾_5__;
+    __node_霾:1.0____jcross_霾_44__.__node_繕:1.0____jcross_霾_23__ = __node_霾:1.0____jcross_霾_42__.__node_繕:1.0____jcross_霾_39__ ?? __node_霾:1.0____jcross_霾_5__;
+    __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_33__ = __node_霾:1.0____jcross_霾_5__;
+  } catch (__node_霾:1.0____jcross_霾_28__) {
+    __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_15__ = __node_殻:1.0____jcross_殻_1__(__node_霾:1.0____jcross_霾_28__);
+    __node_霾:1.0____jcross_霾_44__.__node_繕:1.0____jcross_霾_23__ = __node_霾:1.0____jcross_霾_5__;
+    __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_33__ = __node_霾:1.0____jcross_霾_5__;
+  } __node_霾:1.0____jcross_霾_17__ {
+    __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_25__ = false;
+  }
+}
+// __node_図:0.6____jcross_EC_571__ [decoy-metadata]
+
+__node_霾:1.0____jcross_霾_35__ async __node_霾:1.0____jcross_霾_7__ __node_霾:1.0____jcross_霾_8__(__node_霾:1.0____jcross_霾_44__: __node_殻:1.0____jcross_殻_3__) {
+  if (!__node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_20__ || !__node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_43__ || __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_25__) {
+    return;
+// __node_匯:0.2____jcross_XK_309__ [decoy-metadata]
+  }
+  __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_25__ = true;
+// __node_繕:0.4____jcross_GA_354__ [decoy-metadata]
+  try {
+    __node_霾:1.0____jcross_霾_4__ __node_霾:1.0____jcross_霾_42__ = a__node_霾:1.0____jcross_霾_22__ __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_20__.__node_繕:1.0____jcross_霾_12__<{ __node_霾:1.0____jcross_霾_10__?: __node_霾:1.0____jcross_霾_14__; __node_霾:1.0____jcross_霾_43__?: __node_霾:1.0____jcross_霾_36__ }>(
+      "__node_霾:1.0____jcross_霾_11__.__node_霾:1.0____jcross_霾_18__.__node_霾:1.0____jcross_霾_22__",
+      {
+        __node_霾:1.0____jcross_霾_19__: 120000,
+      },
+    );
+    __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_15__ = __node_霾:1.0____jcross_霾_42__.__node_霾:1.0____jcross_霾_10__ ?? __node_霾:1.0____jcross_霾_5__;
+    __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_33__ = __node_霾:1.0____jcross_霾_42__.__node_霾:1.0____jcross_霾_43__ ?? __node_霾:1.0____jcross_霾_5__;
+    if (__node_霾:1.0____jcross_霾_42__.__node_霾:1.0____jcross_霾_43__) {
+      __node_霾:1.0____jcross_霾_44__.__node_繕:1.0____jcross_霾_23__ = __node_霾:1.0____jcross_霾_5__;
+    }
+  } catch (__node_霾:1.0____jcross_霾_28__) {
+    __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_15__ = __node_殻:1.0____jcross_殻_1__(__node_霾:1.0____jcross_霾_28__);
+    __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_33__ = __node_霾:1.0____jcross_霾_5__;
+  } __node_霾:1.0____jcross_霾_17__ {
+    __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_25__ = false;
+  }
+}
+
+__node_霾:1.0____jcross_霾_35__ async __node_霾:1.0____jcross_霾_7__ __node_霾:1.0____jcross_霾_3__(__node_霾:1.0____jcross_霾_44__: __node_殻:1.0____jcross_殻_3__) {
+  if (!__node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_20__ || !__node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_43__ || __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_25__) {
+// __node_窟:0.6____jcross_WL_134__ [decoy-metadata]
+    return;
+  }
+  __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_25__ = true;
+  try {
+    a__node_霾:1.0____jcross_霾_22__ __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_20__.__node_繕:1.0____jcross_霾_12__("__node_霾:1.0____jcross_霾_38__.__node_霾:1.0____jcross_霾_31__", { __node_霾:1.0____jcross_霾_27__: "__node_霾:1.0____jcross_霾_40__" });
+    __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_15__ = "__node_殻:1.0____jcross_殻_4__ __node_霾:1.0____jcross_霾_24__.";
+    __node_霾:1.0____jcross_霾_44__.__node_繕:1.0____jcross_霾_23__ = __node_霾:1.0____jcross_霾_5__;
+    __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_33__ = __node_霾:1.0____jcross_霾_5__;
+  } catch (__node_霾:1.0____jcross_霾_28__) {
+    __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_15__ = __node_殻:1.0____jcross_殻_1__(__node_霾:1.0____jcross_霾_28__);
+  } __node_霾:1.0____jcross_霾_17__ {
+// __node_霾:0.3____jcross_XY_615__ [decoy-metadata]
+    __node_霾:1.0____jcross_霾_44__.__node_霾:1.0____jcross_霾_25__ = false;
+  }
+}
+
+// POLYMORPHIC_JCROSS_END

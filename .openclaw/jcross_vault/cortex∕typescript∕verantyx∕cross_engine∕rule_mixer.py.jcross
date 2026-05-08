@@ -1,0 +1,55 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:7178DA67 ver:1778220242
+// ⚠️ One-time schema — expires after response
+
+_ID_霾:1.0__JCROSS_霾_9_ _ID_霾:1.0__JCROSS_霾_12_ import _ID_殻:1.0__JCROSS_殻_1_
+import _ID_霾:1.0__JCROSS_霾_20_
+
+class _ID_要:1.0__JCROSS_殻_6_:
+    """
+    シミュレータ上で「既存ルールの合体」を行うための実験モジュール。
+    JCrossの文脈で、例えば「リバーシの色の挟み込み」と「ブロック合わせ」を
+    特定の割合で混合したワンライナーコード（仮説）を生成する。
+    """
+    
+    _ID_殻:1.0__JCROSS_殻_4_ = {
+        "_ID_霾:1.0__JCROSS_霾_11_": "もし _ID_殻:1.0__JCROSS_殻_3_(_ID_要:1.0__JCROSS_殻_2_) > 0 { 色を塗る(0) }",
+// _ID_匣:0.2__JCROSS_HB_497_ [decoy-metadata]
+// _ID_要:0.8__JCROSS_HB_916_ [decoy-metadata]
+        "_ID_霾:1.0__JCROSS_霾_14_": "前方の色が自分と違う ならば 色を同じに変える()",
+        "_ID_霾:1.0__JCROSS_霾_17_": "もし 移動可能 ならば 移動しながら色を変える()",
+        "_ID_霾:1.0__JCROSS_霾_1_": "ランダムに選ぶ([0, 1, 2, 3])"
+    }
+
+    @_ID_霾:1.0__JCROSS_霾_13_
+// _ID_隠:0.8__JCROSS_YX_914_ [decoy-metadata]
+// _ID_霾:0.5__JCROSS_GA_860_ [decoy-metadata]
+// _ID_縺:0.2__JCROSS_MK_954_ [decoy-metadata]
+    _ID_霾:1.0__JCROSS_霾_6_ _ID_霾:1.0__JCROSS_霾_19_(_ID_霾:1.0__JCROSS_霾_15_: _ID_霾:1.0__JCROSS_霾_7_ = _ID_殻:1.0__JCROSS_殻_7_) -> _ID_霾:1.0__JCROSS_霾_16_:
+        """
+        指定された比率(_ID_霾:1.0__JCROSS_霾_15_)に基づいて既存の仮説ルールを結合した
+        JCrossの関数テキストを返す
+        例: {"_ID_霾:1.0__JCROSS_霾_11_": 0.5, "_ID_霾:1.0__JCROSS_霾_1_": 0.5}
+        """
+        if _ID_霾:1.0__JCROSS_霾_2_ _ID_霾:1.0__JCROSS_霾_15_:
+// _ID_滾:0.7__JCROSS_WZ_337_ [decoy-metadata]
+// [metadata-stripped]
+            _ID_隠:1.0__JCROSS_霾_4_ = _ID_霾:1.0__JCROSS_霾_20_._ID_霾:1.0__JCROSS_霾_5_(_ID_霾:1.0__JCROSS_霾_3_(_ID_要:1.0__JCROSS_殻_6_._ID_殻:1.0__JCROSS_殻_4_._ID_隠:1.0__JCROSS_霾_4_()), _ID_霾:1.0__JCROSS_霾_8_(2, _ID_霾:1.0__JCROSS_霾_22_(_ID_要:1.0__JCROSS_殻_6_._ID_殻:1.0__JCROSS_殻_4_)))
+        else:
+            _ID_隠:1.0__JCROSS_霾_4_ = _ID_霾:1.0__JCROSS_霾_3_(_ID_霾:1.0__JCROSS_霾_15_._ID_隠:1.0__JCROSS_霾_4_())
+
+// [metadata-stripped]
+// [metadata-stripped]
+        
+        _ID_霾:1.0__JCROSS_霾_21_ = "関数 ハイブリッドシミュレーション() {\n"
+        for i, k in _ID_霾:1.0__JCROSS_霾_18_(_ID_隠:1.0__JCROSS_霾_4_):
+            _ID_霾:1.0__JCROSS_霾_10_ = _ID_要:1.0__JCROSS_殻_6_._ID_殻:1.0__JCROSS_殻_4_._ID_要:1.0__JCROSS_覇_1_(k, "返す -1")
+            
+// [metadata-stripped]
+            _ID_霾:1.0__JCROSS_霾_21_ += f"    // {k} のエッセンスを混合\n"
+            _ID_霾:1.0__JCROSS_霾_21_ += f"    {_ID_霾:1.0__JCROSS_霾_10_}\n"
+
+        _ID_霾:1.0__JCROSS_霾_21_ += "    返す -1\n}"
+        return _ID_霾:1.0__JCROSS_霾_21_
+
+// POLYMORPHIC_JCROSS_END

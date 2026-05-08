@@ -1,0 +1,33 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:670C9CBB ver:1777449445
+// ⚠️ One-time schema — expires after response
+
+__jcross_礫:1.0___OPAQUE_礫_11_ __jcross_礫:1.0___OPAQUE_礫_5_ __jcross_術:1.0___OPAQUE_廨_4_ {
+// __jcross_游:0.2___OPAQUE_DD_220_ [decoy-metadata]
+    id: __jcross_礫:1.0___OPAQUE_礫_14_;
+    __jcross_礫:1.0___OPAQUE_礫_17_: __jcross_術:1.0___OPAQUE_礫_4_;
+    __jcross_礫:1.0___OPAQUE_礫_7_: __jcross_礫:1.0___OPAQUE_礫_14_[];
+}
+
+__jcross_礫:1.0___OPAQUE_礫_11_ class __jcross_廨:1.0___OPAQUE_廨_3_ {
+// __jcross_緞:0.4___OPAQUE_WG_260_ [decoy-metadata]
+// [metadata-stripped]
+// __jcross_緞:0.5___OPAQUE_BY_750_ [decoy-metadata]
+// [metadata-stripped]
+    static __jcross_礫:1.0___OPAQUE_礫_1_(__jcross_礫:1.0___OPAQUE_礫_12_: __jcross_術:1.0___OPAQUE_廨_4_[] | __jcross_礫:1.0___OPAQUE_礫_2_): __jcross_術:1.0___OPAQUE_礫_4_ {
+        let __jcross_礫:1.0___OPAQUE_礫_8_ = 0;
+// __jcross_雄:0.6___OPAQUE_HX_529_ [decoy-metadata]
+// __jcross_緞:0.5___OPAQUE_AK_479_ [decoy-metadata]
+        
+// [metadata-stripped]
+// [metadata-stripped]
+        for (let i = 0; i <= __jcross_礫:1.0___OPAQUE_礫_12_.__jcross_礫:1.0___OPAQUE_礫_10_; i++) {
+            __jcross_礫:1.0___OPAQUE_礫_8_ += __jcross_礫:1.0___OPAQUE_礫_12_[i].__jcross_礫:1.0___OPAQUE_礫_17_;
+// __jcross_術:0.2___OPAQUE_LW_983_ [decoy-metadata]
+        }
+        
+        return __jcross_礫:1.0___OPAQUE_礫_8_;
+    }
+}
+
+// POLYMORPHIC_JCROSS_END

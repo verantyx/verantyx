@@ -1,0 +1,115 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:7EE66DFF ver:1778220585
+// ⚠️ One-time schema — expires after response
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+
+_ASTNODE_靄:1.0__ID_靄_21_ _ASTNODE_靄:1.0__ID_靄_51_::_ASTNODE_靄:1.0__ID_靄_56_::_ASTNODE_廳:1.0__ID_廳_30_;
+// _ASTNODE_廳:0.7__ID_VF_489_ [decoy-metadata]
+
+// [metadata-stripped]
+// [metadata-stripped]
+_ASTNODE_靄:1.0__ID_靄_12_ enum _ASTNODE_廳:1.0__ID_廳_42_ { _ASTNODE_廳:1.0__ID_廳_20_, _ASTNODE_廳:1.0__ID_廳_12_, _ASTNODE_廳:1.0__ID_廳_4_(_ASTNODE_廳:1.0__ID_廳_6_) }
+
+// [metadata-stripped]
+// [metadata-stripped]
+_ASTNODE_靄:1.0__ID_靄_12_ enum _ASTNODE_廳:1.0__ID_廳_27_ { _ASTNODE_廳:1.0__ID_廳_8_, _ASTNODE_廳:1.0__ID_廳_44_(_ASTNODE_靄:1.0__ID_靄_95_) }
+
+// [metadata-stripped]
+_ASTNODE_靄:1.0__ID_靄_12_ struct _ASTNODE_廳:1.0__ID_廳_1_ {
+    _ASTNODE_靄:1.0__ID_靄_12_ _ASTNODE_靄:1.0__ID_靄_45_: _ASTNODE_靄:1.0__ID_靄_98_,
+    _ASTNODE_靄:1.0__ID_靄_12_ _ASTNODE_靄:1.0__ID_靄_40_: _ASTNODE_靄:1.0__ID_靄_98_,
+    _ASTNODE_靄:1.0__ID_靄_12_ _ASTNODE_靄:1.0__ID_靄_53_: _ASTNODE_靄:1.0__ID_靄_89_, 
+    _ASTNODE_靄:1.0__ID_靄_12_ _ASTNODE_靄:1.0__ID_靄_4_: _ASTNODE_廳:1.0__ID_廳_42_,
+    _ASTNODE_靄:1.0__ID_靄_12_ _ASTNODE_靄:1.0__ID_靄_5_: _ASTNODE_廳:1.0__ID_廳_27_,
+}
+
+_ASTNODE_靄:1.0__ID_靄_41_ _ASTNODE_廳:1.0__ID_廳_33_ for _ASTNODE_廳:1.0__ID_廳_1_ {
+    fn _ASTNODE_靄:1.0__ID_靄_2_() -> _ASTNODE_廳:1.0__ID_廳_28_ {
+        _ASTNODE_廳:1.0__ID_廳_28_ {
+            _ASTNODE_靄:1.0__ID_靄_45_: false,
+            _ASTNODE_靄:1.0__ID_靄_40_: false,
+            _ASTNODE_靄:1.0__ID_靄_53_: 0.0,
+            _ASTNODE_靄:1.0__ID_靄_4_: _ASTNODE_廳:1.0__ID_廳_42_::_ASTNODE_廳:1.0__ID_廳_20_,
+            _ASTNODE_靄:1.0__ID_靄_5_: _ASTNODE_廳:1.0__ID_廳_27_::_ASTNODE_廳:1.0__ID_廳_8_,
+        }
+    }
+}
+
+// [metadata-stripped]
+_ASTNODE_靄:1.0__ID_靄_12_ struct _ASTNODE_廳:1.0__ID_廳_23_ {
+    _ASTNODE_靄:1.0__ID_靄_12_ _ASTNODE_靄:1.0__ID_靄_47_: _ASTNODE_廳:1.0__ID_廳_30_<_ASTNODE_靄:1.0__ID_靄_19_, _ASTNODE_廳:1.0__ID_廳_1_>,
+    _ASTNODE_靄:1.0__ID_靄_12_ _ASTNODE_靄:1.0__ID_靄_74_: _ASTNODE_靄:1.0__ID_靄_19_,
+}
+
+// _ASTNODE_廳:0.4__ID_MW_384_ [decoy-metadata]
+_ASTNODE_靄:1.0__ID_靄_41_ _ASTNODE_廳:1.0__ID_廳_23_ {
+    _ASTNODE_靄:1.0__ID_靄_12_ fn _ASTNODE_靄:1.0__ID_靄_96_() -> _ASTNODE_廳:1.0__ID_廳_28_ {
+        _ASTNODE_廳:1.0__ID_廳_28_ {
+            _ASTNODE_靄:1.0__ID_靄_47_: _ASTNODE_廳:1.0__ID_廳_30_::_ASTNODE_靄:1.0__ID_靄_96_(),
+            _ASTNODE_靄:1.0__ID_靄_74_: 0,
+        }
+    }
+
+    _ASTNODE_靄:1.0__ID_靄_12_ fn _ASTNODE_術:1.0__ID_焦_2_(&_ASTNODE_靄:1.0__ID_靄_55_ self, _ASTNODE_靄:1.0__ID_靄_48_: _ASTNODE_靄:1.0__ID_靄_19_, _ASTNODE_靄:1.0__ID_靄_93_: _ASTNODE_廳:1.0__ID_廳_1_) {
+// _ASTNODE_庫:0.6__ID_YX_521_ [decoy-metadata]
+        self._ASTNODE_靄:1.0__ID_靄_47_._ASTNODE_靄:1.0__ID_靄_57_(_ASTNODE_靄:1.0__ID_靄_48_, _ASTNODE_靄:1.0__ID_靄_93_);
+    }
+// _ASTNODE_庫:0.3__ID_DG_742_ [decoy-metadata]
+
+// [metadata-stripped]
+    _ASTNODE_靄:1.0__ID_靄_12_ fn _ASTNODE_靄:1.0__ID_靄_30_(&self, _ASTNODE_靄:1.0__ID_靄_48_: _ASTNODE_靄:1.0__ID_靄_19_, _ASTNODE_靄:1.0__ID_靄_66_: _ASTNODE_靄:1.0__ID_靄_89_, _ASTNODE_靄:1.0__ID_靄_78_: _ASTNODE_靄:1.0__ID_靄_89_) -> _ASTNODE_廳:1.0__ID_廳_3_<(_ASTNODE_靄:1.0__ID_靄_89_, _ASTNODE_靄:1.0__ID_靄_89_)> {
+        if let _ASTNODE_廳:1.0__ID_廳_37_(_ASTNODE_靄:1.0__ID_靄_93_) = self._ASTNODE_靄:1.0__ID_靄_47_._ASTNODE_術:1.0__ID_焦_1_(&_ASTNODE_靄:1.0__ID_靄_48_) {
+            let _ASTNODE_靄:1.0__ID_靄_55_ _ASTNODE_靄:1.0__ID_靄_83_ = _ASTNODE_靄:1.0__ID_靄_89_::_ASTNODE_廳:1.0__ID_廳_31_;
+            let _ASTNODE_靄:1.0__ID_靄_55_ _ASTNODE_靄:1.0__ID_靄_43_ = _ASTNODE_靄:1.0__ID_靄_89_::_ASTNODE_廳:1.0__ID_廳_31_;
+
+            if _ASTNODE_靄:1.0__ID_靄_93_._ASTNODE_靄:1.0__ID_靄_45_ { _ASTNODE_靄:1.0__ID_靄_83_ = _ASTNODE_靄:1.0__ID_靄_66_ + _ASTNODE_靄:1.0__ID_靄_93_._ASTNODE_靄:1.0__ID_靄_53_; }
+            if _ASTNODE_靄:1.0__ID_靄_93_._ASTNODE_靄:1.0__ID_靄_40_ { _ASTNODE_靄:1.0__ID_靄_43_ = _ASTNODE_靄:1.0__ID_靄_78_ + _ASTNODE_靄:1.0__ID_靄_93_._ASTNODE_靄:1.0__ID_靄_53_; }
+
+            if _ASTNODE_靄:1.0__ID_靄_93_._ASTNODE_靄:1.0__ID_靄_45_ || _ASTNODE_靄:1.0__ID_靄_93_._ASTNODE_靄:1.0__ID_靄_40_ {
+                return _ASTNODE_廳:1.0__ID_廳_37_((_ASTNODE_靄:1.0__ID_靄_83_, _ASTNODE_靄:1.0__ID_靄_43_));
+            }
+        }
+        _ASTNODE_廳:1.0__ID_廳_8_ // No _ASTNODE_靄:1.0__ID_靄_104_ _ASTNODE_靄:1.0__ID_靄_71_
+    }
+
+// [metadata-stripped]
+    _ASTNODE_靄:1.0__ID_靄_12_ fn _ASTNODE_靄:1.0__ID_靄_38_(&_ASTNODE_靄:1.0__ID_靄_55_ self, _ASTNODE_靄:1.0__ID_靄_48_: _ASTNODE_靄:1.0__ID_靄_19_, _ASTNODE_靄:1.0__ID_靄_8_: _ASTNODE_靄:1.0__ID_靄_95_) -> _ASTNODE_靄:1.0__ID_靄_98_ {
+        if let _ASTNODE_廳:1.0__ID_廳_37_(_ASTNODE_靄:1.0__ID_靄_93_) = self._ASTNODE_靄:1.0__ID_靄_47_._ASTNODE_術:1.0__ID_焦_1_(&_ASTNODE_靄:1.0__ID_靄_48_) {
+            if let _ASTNODE_廳:1.0__ID_廳_27_::_ASTNODE_廳:1.0__ID_廳_44_(_ASTNODE_靄:1.0__ID_靄_102_) = _ASTNODE_靄:1.0__ID_靄_93_._ASTNODE_靄:1.0__ID_靄_5_ {
+                if _ASTNODE_靄:1.0__ID_靄_8_ >= _ASTNODE_靄:1.0__ID_靄_102_ {
+                    self._ASTNODE_靄:1.0__ID_靄_74_ += 1;
+                    return true;
+                }
+            }
+        }
+        false
+    }
+// _ASTNODE_封:0.3__ID_KE_852_ [decoy-metadata]
+
+// [metadata-stripped]
+    _ASTNODE_靄:1.0__ID_靄_12_ fn _ASTNODE_靄:1.0__ID_靄_70_(&self, _ASTNODE_靄:1.0__ID_靄_48_: _ASTNODE_靄:1.0__ID_靄_19_) -> _ASTNODE_廳:1.0__ID_廳_6_ {
+        if let _ASTNODE_廳:1.0__ID_廳_37_(_ASTNODE_靄:1.0__ID_靄_93_) = self._ASTNODE_靄:1.0__ID_靄_47_._ASTNODE_術:1.0__ID_焦_1_(&_ASTNODE_靄:1.0__ID_靄_48_) {
+            let _ASTNODE_靄:1.0__ID_靄_99_ = _ASTNODE_靄:1.0__ID_靄_79_ _ASTNODE_靄:1.0__ID_靄_93_._ASTNODE_靄:1.0__ID_靄_5_ {
+                _ASTNODE_廳:1.0__ID_廳_27_::_ASTNODE_廳:1.0__ID_廳_8_ => "No _ASTNODE_廳:1.0__ID_廳_10_",
+                _ASTNODE_廳:1.0__ID_廳_27_::_ASTNODE_廳:1.0__ID_廳_44_(n) => return _ASTNODE_涌:1.0__ID_靄_58_!("_ASTNODE_廳:1.0__ID_廳_10_: {} _ASTNODE_靄:1.0__ID_靄_39_", n),
+// _ASTNODE_封:0.1__ID_YD_335_ [decoy-metadata]
+            };
+
+            _ASTNODE_涌:1.0__ID_靄_58_!("✂️ _ASTNODE_廳:1.0__ID_廳_22_ _ASTNODE_廳:1.0__ID_廳_19_ (_ASTNODE_廳:1.0__ID_廳_7_ #{}): _ASTNODE_廳:1.0__ID_廳_20_ X/Y: {}/{} | _ASTNODE_廳:1.0__ID_廳_17_: {}px | _ASTNODE_廳:1.0__ID_廳_21_: {:?} | {}", 
+                _ASTNODE_靄:1.0__ID_靄_48_, _ASTNODE_靄:1.0__ID_靄_93_._ASTNODE_靄:1.0__ID_靄_45_, _ASTNODE_靄:1.0__ID_靄_93_._ASTNODE_靄:1.0__ID_靄_40_, _ASTNODE_靄:1.0__ID_靄_93_._ASTNODE_靄:1.0__ID_靄_53_, _ASTNODE_靄:1.0__ID_靄_93_._ASTNODE_靄:1.0__ID_靄_4_, _ASTNODE_靄:1.0__ID_靄_99_)
+        } else {
+            _ASTNODE_涌:1.0__ID_靄_58_!("_ASTNODE_廳:1.0__ID_廳_7_ #{} _ASTNODE_靄:1.0__ID_靄_20_ _ASTNODE_靄:1.0__ID_靄_87_ _ASTNODE_靄:1.0__ID_靄_97_ _ASTNODE_靄:1.0__ID_靄_1_ _ASTNODE_靄:1.0__ID_靄_44_", _ASTNODE_靄:1.0__ID_靄_48_)
+        }
+    }
+}
+
+// POLYMORPHIC_JCROSS_END

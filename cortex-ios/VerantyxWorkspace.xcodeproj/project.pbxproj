@@ -1,0 +1,331 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0A460ED88CE9B8A577036625 /* DynamicWorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C007A2A1366341B16D71159 /* DynamicWorkspaceView.swift */; };
+		0CDAB315CED6BE21E6DB3BEA /* FormCardTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B788E56AB4C0737F32DC4E7 /* FormCardTemplate.swift */; };
+		14120B96C4536B95F0DB20ED /* mock_schema.json in Resources */ = {isa = PBXBuildFile; fileRef = A4064C1FF7AC2209F215FA3B /* mock_schema.json */; };
+		6DAFB7D2C9AB5B80D1EDEA73 /* SidebarTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60682F1E8B6739FAE578CA77 /* SidebarTemplate.swift */; };
+		752EB2228DDA2C040ED674AB /* WorkspaceStateCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BABA1ED42CEEA77CCFFAC30 /* WorkspaceStateCore.swift */; };
+		97907BF2798C5EA1156E3BD4 /* ChatMessageTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85E678F264DD2839DC8D0FE /* ChatMessageTemplate.swift */; };
+		B0B84F7F98069A24A3AAD0F3 /* ASGNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14F94008833532E1AC254FDF /* ASGNode.swift */; };
+		C74C4ECB1F24E76A6661293F /* TemplateRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A2DFB21A99D8D874570A3C /* TemplateRegistry.swift */; };
+		C773CD62A67549C406030DED /* VerantyxWorkspaceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164B1AD7DDC9B931F7E48F97 /* VerantyxWorkspaceApp.swift */; };
+		CA1C26875F72F4831D7C158C /* mock_advanced_schema.json in Resources */ = {isa = PBXBuildFile; fileRef = B9E28BCAD65A17719FC929EA /* mock_advanced_schema.json */; };
+		FF9F2257F28DEB42B7DB9711 /* ASGRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC1C59C968D021E29D1F888 /* ASGRenderer.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		00A2DFB21A99D8D874570A3C /* TemplateRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateRegistry.swift; sourceTree = "<group>"; };
+		14F94008833532E1AC254FDF /* ASGNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASGNode.swift; sourceTree = "<group>"; };
+		164B1AD7DDC9B931F7E48F97 /* VerantyxWorkspaceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerantyxWorkspaceApp.swift; sourceTree = "<group>"; };
+		1BABA1ED42CEEA77CCFFAC30 /* WorkspaceStateCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceStateCore.swift; sourceTree = "<group>"; };
+		1CC1C59C968D021E29D1F888 /* ASGRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASGRenderer.swift; sourceTree = "<group>"; };
+		3C007A2A1366341B16D71159 /* DynamicWorkspaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicWorkspaceView.swift; sourceTree = "<group>"; };
+		60682F1E8B6739FAE578CA77 /* SidebarTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarTemplate.swift; sourceTree = "<group>"; };
+		9B788E56AB4C0737F32DC4E7 /* FormCardTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormCardTemplate.swift; sourceTree = "<group>"; };
+		9DD0F18D977B56C5B4066EFE /* VerantyxWorkspace-iOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "VerantyxWorkspace-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A4064C1FF7AC2209F215FA3B /* mock_schema.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = mock_schema.json; sourceTree = "<group>"; };
+		B9E28BCAD65A17719FC929EA /* mock_advanced_schema.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = mock_advanced_schema.json; sourceTree = "<group>"; };
+		F85E678F264DD2839DC8D0FE /* ChatMessageTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageTemplate.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		B6318C9C739965EDEB1BE605 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9DD0F18D977B56C5B4066EFE /* VerantyxWorkspace-iOS.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E370700E28681598CD1F0666 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				14F94008833532E1AC254FDF /* ASGNode.swift */,
+				1CC1C59C968D021E29D1F888 /* ASGRenderer.swift */,
+				F85E678F264DD2839DC8D0FE /* ChatMessageTemplate.swift */,
+				3C007A2A1366341B16D71159 /* DynamicWorkspaceView.swift */,
+				9B788E56AB4C0737F32DC4E7 /* FormCardTemplate.swift */,
+				B9E28BCAD65A17719FC929EA /* mock_advanced_schema.json */,
+				A4064C1FF7AC2209F215FA3B /* mock_schema.json */,
+				60682F1E8B6739FAE578CA77 /* SidebarTemplate.swift */,
+				00A2DFB21A99D8D874570A3C /* TemplateRegistry.swift */,
+				164B1AD7DDC9B931F7E48F97 /* VerantyxWorkspaceApp.swift */,
+				1BABA1ED42CEEA77CCFFAC30 /* WorkspaceStateCore.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		E4237D978C5EE4AD52B87219 = {
+			isa = PBXGroup;
+			children = (
+				E370700E28681598CD1F0666 /* Sources */,
+				B6318C9C739965EDEB1BE605 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4A423E7459668F06EED83E8B /* VerantyxWorkspace-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6E2BC523A8C97B7441C47C72 /* Build configuration list for PBXNativeTarget "VerantyxWorkspace-iOS" */;
+			buildPhases = (
+				856BD4F473E269A194071FBE /* Sources */,
+				52762437CBF4A0A3F60DF86A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "VerantyxWorkspace-iOS";
+			packageProductDependencies = (
+			);
+			productName = "VerantyxWorkspace-iOS";
+			productReference = 9DD0F18D977B56C5B4066EFE /* VerantyxWorkspace-iOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B6FD334DC981FC3AD8414CF5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 898835BF359F27951FABB7EA /* Build configuration list for PBXProject "VerantyxWorkspace" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = E4237D978C5EE4AD52B87219;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = B6318C9C739965EDEB1BE605 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4A423E7459668F06EED83E8B /* VerantyxWorkspace-iOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		52762437CBF4A0A3F60DF86A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CA1C26875F72F4831D7C158C /* mock_advanced_schema.json in Resources */,
+				14120B96C4536B95F0DB20ED /* mock_schema.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		856BD4F473E269A194071FBE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B0B84F7F98069A24A3AAD0F3 /* ASGNode.swift in Sources */,
+				FF9F2257F28DEB42B7DB9711 /* ASGRenderer.swift in Sources */,
+				97907BF2798C5EA1156E3BD4 /* ChatMessageTemplate.swift in Sources */,
+				0A460ED88CE9B8A577036625 /* DynamicWorkspaceView.swift in Sources */,
+				0CDAB315CED6BE21E6DB3BEA /* FormCardTemplate.swift in Sources */,
+				6DAFB7D2C9AB5B80D1EDEA73 /* SidebarTemplate.swift in Sources */,
+				C74C4ECB1F24E76A6661293F /* TemplateRegistry.swift in Sources */,
+				C773CD62A67549C406030DED /* VerantyxWorkspaceApp.swift in Sources */,
+				752EB2228DDA2C040ED674AB /* WorkspaceStateCore.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		3E133902AF8EE78F8C95AEA7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.verantyx.VerantyxWorkspace-iOS";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D5BAFBCE706023E1C87624E8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		E8D9E70064CE4B85D778F9D8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		F3A80948289B2BFA7063D7D4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.verantyx.VerantyxWorkspace-iOS";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6E2BC523A8C97B7441C47C72 /* Build configuration list for PBXNativeTarget "VerantyxWorkspace-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3E133902AF8EE78F8C95AEA7 /* Debug */,
+				F3A80948289B2BFA7063D7D4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		898835BF359F27951FABB7EA /* Build configuration list for PBXProject "VerantyxWorkspace" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D5BAFBCE706023E1C87624E8 /* Debug */,
+				E8D9E70064CE4B85D778F9D8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B6FD334DC981FC3AD8414CF5 /* Project object */;
+}

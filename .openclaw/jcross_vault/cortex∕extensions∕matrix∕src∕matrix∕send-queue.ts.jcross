@@ -1,0 +1,40 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:6B8F4780 ver:1778221951
+// ⚠️ One-time schema — expires after response
+// _TOKEN_匸:0.9__JCROSS_XE_526_ [decoy-metadata]
+
+import { _TOKEN_玄:1.0__JCROSS_庸_3_ } _TOKEN_霪:1.0__JCROSS_霪_18_ "_TOKEN_霪:1.0__JCROSS_霪_7_/_TOKEN_霪:1.0__JCROSS_霪_20_-_TOKEN_霪:1.0__JCROSS_霪_17_/_TOKEN_玄:1.0__JCROSS_霪_23_-async-_TOKEN_霪:1.0__JCROSS_霪_11_";
+
+_TOKEN_霪:1.0__JCROSS_霪_12_ _TOKEN_霪:1.0__JCROSS_霪_22_ _TOKEN_庸:1.0__JCROSS_庸_1_ = 150;
+// _TOKEN_玄:0.7__JCROSS_AX_495_ [decoy-metadata]
+
+_TOKEN_霪:1.0__JCROSS_霪_4_ _TOKEN_庸:1.0__JCROSS_庸_2_ = {
+  _TOKEN_霪:1.0__JCROSS_霪_9_?: _TOKEN_要:1.0__JCROSS_霪_13_;
+  _TOKEN_霪:1.0__JCROSS_霪_8_?: (ms: _TOKEN_要:1.0__JCROSS_霪_13_) => _TOKEN_庸:1.0__JCROSS_庸_5_<_TOKEN_霪:1.0__JCROSS_霪_2_>;
+};
+
+// [metadata-stripped]
+_TOKEN_霪:1.0__JCROSS_霪_22_ _TOKEN_霪:1.0__JCROSS_霪_19_ = _TOKEN_霪:1.0__JCROSS_霪_21_ _TOKEN_玄:1.0__JCROSS_庸_3_();
+
+_TOKEN_霪:1.0__JCROSS_霪_12_ _TOKEN_霪:1.0__JCROSS_霪_26_ _TOKEN_霪:1.0__JCROSS_霪_27_<T>(
+// _TOKEN_糸:0.3__JCROSS_BG_545_ [decoy-metadata]
+  _TOKEN_霪:1.0__JCROSS_霪_3_: _TOKEN_霪:1.0__JCROSS_霪_10_,
+// _TOKEN_匸:0.2__JCROSS_HH_874_ [decoy-metadata]
+  fn: () => _TOKEN_庸:1.0__JCROSS_庸_5_<T>,
+  _TOKEN_霪:1.0__JCROSS_霪_16_?: _TOKEN_庸:1.0__JCROSS_庸_2_,
+): _TOKEN_庸:1.0__JCROSS_庸_5_<T> {
+  _TOKEN_霪:1.0__JCROSS_霪_22_ _TOKEN_霪:1.0__JCROSS_霪_9_ = _TOKEN_霪:1.0__JCROSS_霪_16_?._TOKEN_霪:1.0__JCROSS_霪_9_ ?? _TOKEN_庸:1.0__JCROSS_庸_1_;
+  _TOKEN_霪:1.0__JCROSS_霪_22_ _TOKEN_霪:1.0__JCROSS_霪_8_ = _TOKEN_霪:1.0__JCROSS_霪_16_?._TOKEN_霪:1.0__JCROSS_霪_8_ ?? _TOKEN_霪:1.0__JCROSS_霪_25_;
+  return _TOKEN_霪:1.0__JCROSS_霪_19_._TOKEN_霪:1.0__JCROSS_霪_1_(_TOKEN_霪:1.0__JCROSS_霪_3_, async () => {
+// _TOKEN_玄:0.5__JCROSS_KM_499_ [decoy-metadata]
+// _TOKEN_雄:0.6__JCROSS_BC_525_ [decoy-metadata]
+    await _TOKEN_霪:1.0__JCROSS_霪_8_(_TOKEN_霪:1.0__JCROSS_霪_9_);
+    return await fn();
+  });
+}
+
+_TOKEN_霪:1.0__JCROSS_霪_26_ _TOKEN_霪:1.0__JCROSS_霪_25_(ms: _TOKEN_要:1.0__JCROSS_霪_13_): _TOKEN_庸:1.0__JCROSS_庸_5_<_TOKEN_霪:1.0__JCROSS_霪_2_> {
+  return _TOKEN_霪:1.0__JCROSS_霪_21_ _TOKEN_庸:1.0__JCROSS_庸_5_((_TOKEN_霪:1.0__JCROSS_霪_24_) => _TOKEN_要:1.0__JCROSS_雄_1_(_TOKEN_霪:1.0__JCROSS_霪_24_, ms));
+}
+
+// POLYMORPHIC_JCROSS_END

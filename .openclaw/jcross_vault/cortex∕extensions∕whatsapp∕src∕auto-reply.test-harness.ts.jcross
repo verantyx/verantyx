@@ -1,0 +1,265 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:7F784C58 ver:1778221983
+// ⚠️ One-time schema — expires after response
+
+import "./_JCROSS_滴:1.0__ID_滴_121_-_JCROSS_滴:1.0__ID_滴_72_.js";
+import fs _JCROSS_滴:1.0__ID_滴_137_ "_JCROSS_滴:1.0__ID_滴_148_:fs/_JCROSS_滴:1.0__ID_滴_26_";
+import os _JCROSS_滴:1.0__ID_滴_137_ "_JCROSS_滴:1.0__ID_滴_148_:os";
+import _JCROSS_滴:1.0__ID_滴_147_ _JCROSS_滴:1.0__ID_滴_137_ "_JCROSS_滴:1.0__ID_滴_148_:_JCROSS_滴:1.0__ID_滴_147_";
+import * as _JCROSS_滴:1.0__ID_滴_146_ _JCROSS_滴:1.0__ID_滴_137_ "_JCROSS_滴:1.0__ID_滴_1_/_JCROSS_滴:1.0__ID_滴_150_-_JCROSS_滴:1.0__ID_滴_160_/_JCROSS_滴:1.0__ID_滴_5_-_JCROSS_滴:1.0__ID_滴_71_";
+import { _JCROSS_滴:1.0__ID_滴_182_ } _JCROSS_滴:1.0__ID_滴_137_ "_JCROSS_滴:1.0__ID_滴_1_/_JCROSS_滴:1.0__ID_滴_150_-_JCROSS_滴:1.0__ID_滴_160_/_JCROSS_滴:1.0__ID_滴_17_-_JCROSS_滴:1.0__ID_滴_71_";
+import { _JCROSS_案:1.0__ID_滴_116_, _JCROSS_案:1.0__ID_巌_2_ } _JCROSS_滴:1.0__ID_滴_137_ "_JCROSS_滴:1.0__ID_滴_1_/_JCROSS_滴:1.0__ID_滴_150_-_JCROSS_滴:1.0__ID_滴_160_/_JCROSS_滴:1.0__ID_滴_71_-_JCROSS_滴:1.0__ID_滴_141_";
+import { _JCROSS_滴:1.0__ID_滴_175_, _JCROSS_滴:1.0__ID_滴_152_, _JCROSS_滲:1.0__ID_滴_167_, _JCROSS_滲:1.0__ID_滴_179_, vi } _JCROSS_滴:1.0__ID_滴_137_ "_JCROSS_滴:1.0__ID_滴_46_";
+import _JCROSS_滴:1.0__ID_滴_176_ { _JCROSS_廡:1.0__ID_廡_13_, _JCROSS_廡:1.0__ID_廡_14_ } _JCROSS_滴:1.0__ID_滴_137_ "./_JCROSS_滴:1.0__ID_滴_51_.js";
+import {
+  _JCROSS_滴:1.0__ID_滴_76_ as _JCROSS_滴:1.0__ID_滴_151_,
+  _JCROSS_匸:1.0__ID_滴_31_ as _JCROSS_匸:1.0__ID_滴_16_,
+} _JCROSS_滴:1.0__ID_滴_137_ "./_JCROSS_滴:1.0__ID_滴_121_-_JCROSS_滴:1.0__ID_滴_72_.js";
+
+_JCROSS_滴:1.0__ID_滴_62_ { _JCROSS_滴:1.0__ID_滴_76_, _JCROSS_匸:1.0__ID_滴_31_, _JCROSS_匸:1.0__ID_巌_4_ } _JCROSS_滴:1.0__ID_滴_137_ "./_JCROSS_滴:1.0__ID_滴_121_-_JCROSS_滴:1.0__ID_滴_72_.js";
+
+// [metadata-stripped]
+// [metadata-stripped]
+_JCROSS_滴:1.0__ID_滴_176_ _JCROSS_廡:1.0__ID_廡_21_ = any;
+_JCROSS_滴:1.0__ID_滴_176_ _JCROSS_案:1.0__ID_廡_6_ = {
+  _JCROSS_滴:1.0__ID_滴_92_: () => _JCROSS_廡:1.0__ID_廡_22_<_JCROSS_滴:1.0__ID_滴_123_>;
+  _JCROSS_滴:1.0__ID_滴_177_: _JCROSS_廡:1.0__ID_廡_22_<_JCROSS_廡:1.0__ID_廡_14_>;
+// _JCROSS_匸:0.1__ID_VZ_457_ [decoy-metadata]
+  _JCROSS_滴:1.0__ID_滴_98_: () => _JCROSS_滴:1.0__ID_滴_123_;
+  _JCROSS_滴:1.0__ID_滴_91_: () => _JCROSS_廡:1.0__ID_廡_22_<{ _JCROSS_滴:1.0__ID_滴_126_: _JCROSS_滴:1.0__ID_滴_65_ }>;
+  _JCROSS_滴:1.0__ID_滴_170_: () => _JCROSS_廡:1.0__ID_廡_22_<{ _JCROSS_滴:1.0__ID_滴_126_: _JCROSS_滴:1.0__ID_滴_65_ }>;
+  _JCROSS_滴:1.0__ID_滴_87_: () => _JCROSS_廡:1.0__ID_廡_22_<_JCROSS_滴:1.0__ID_滴_123_>;
+  _JCROSS_滴:1.0__ID_滴_171_: () => _JCROSS_廡:1.0__ID_廡_22_<_JCROSS_滴:1.0__ID_滴_123_>;
+};
+
+_JCROSS_滴:1.0__ID_滴_62_ _JCROSS_滴:1.0__ID_滴_30_ _JCROSS_廡:1.0__ID_廡_9_ = "203.0.113.10";
+
+vi._JCROSS_滴:1.0__ID_滴_109_("_JCROSS_滴:1.0__ID_滴_1_/_JCROSS_滴:1.0__ID_滴_150_-_JCROSS_滴:1.0__ID_滴_160_/_JCROSS_滴:1.0__ID_滴_89_-_JCROSS_滴:1.0__ID_滴_71_", () => ({
+  _JCROSS_滴:1.0__ID_滴_95_: vi.fn()._JCROSS_滴:1.0__ID_滴_4_(false),
+  _JCROSS_滴:1.0__ID_滴_48_: vi.fn()._JCROSS_滴:1.0__ID_滴_4_(false),
+  _JCROSS_滴:1.0__ID_滴_110_: vi.fn()._JCROSS_滴:1.0__ID_滴_4_(false),
+  _JCROSS_滴:1.0__ID_滴_130_: vi.fn(),
+  _JCROSS_滴:1.0__ID_滴_184_: vi.fn()._JCROSS_滴:1.0__ID_滴_4_(false),
+  _JCROSS_滴:1.0__ID_滴_99_: (_JCROSS_沈:1.0__ID_滴_101_: _JCROSS_滴:1.0__ID_滴_65_) => `_JCROSS_滴:1.0__ID_滴_41_:${_JCROSS_沈:1.0__ID_滴_101_._JCROSS_滴:1.0__ID_滴_153_() || "_JCROSS_滴:1.0__ID_滴_9_"}`,
+}));
+
+_JCROSS_滴:1.0__ID_滴_62_ async _JCROSS_滴:1.0__ID_滴_111_ _JCROSS_滴:1.0__ID_滴_57_(
+  _JCROSS_滴:1.0__ID_滴_19_: _JCROSS_滴:1.0__ID_滴_65_,
+  _JCROSS_滴:1.0__ID_滴_73_?: { _JCROSS_滴:1.0__ID_滴_22_?: _JCROSS_案:1.0__ID_滴_163_; _JCROSS_滴:1.0__ID_滴_155_?: _JCROSS_案:1.0__ID_滴_163_ },
+): _JCROSS_廡:1.0__ID_廡_22_<_JCROSS_滴:1.0__ID_滴_123_> {
+  _JCROSS_滴:1.0__ID_滴_30_ _JCROSS_滴:1.0__ID_滴_22_ = _JCROSS_滴:1.0__ID_滴_73_?._JCROSS_滴:1.0__ID_滴_22_ ?? 10;
+  _JCROSS_滴:1.0__ID_滴_30_ _JCROSS_滴:1.0__ID_滴_155_ = _JCROSS_滴:1.0__ID_滴_73_?._JCROSS_滴:1.0__ID_滴_155_ ?? 5;
+// [metadata-stripped]
+// [metadata-stripped]
+  try {
+    await fs.rm(_JCROSS_滴:1.0__ID_滴_19_, {
+      _JCROSS_滴:1.0__ID_滴_120_: true,
+      _JCROSS_滲:1.0__ID_滴_134_: true,
+      _JCROSS_滴:1.0__ID_滴_181_: _JCROSS_滴:1.0__ID_滴_22_,
+      _JCROSS_滴:1.0__ID_滴_34_: _JCROSS_滴:1.0__ID_滴_155_,
+    });
+    return;
+  } catch {
+// [metadata-stripped]
+    for (let _JCROSS_滴:1.0__ID_滴_50_ = 0; _JCROSS_滴:1.0__ID_滴_50_ < _JCROSS_滴:1.0__ID_滴_22_; _JCROSS_滴:1.0__ID_滴_50_ += 1) {
+      try {
+        await fs.rm(_JCROSS_滴:1.0__ID_滴_19_, { _JCROSS_滴:1.0__ID_滴_120_: true, _JCROSS_滲:1.0__ID_滴_134_: true });
+        return;
+      } catch (_JCROSS_滴:1.0__ID_滴_21_) {
+        _JCROSS_滴:1.0__ID_滴_30_ _JCROSS_滴:1.0__ID_滴_3_ =
+          _JCROSS_滴:1.0__ID_滴_21_ && _JCROSS_滴:1.0__ID_滴_10_ _JCROSS_滴:1.0__ID_滴_21_ === "_JCROSS_滴:1.0__ID_滴_40_" && "_JCROSS_滴:1.0__ID_滴_3_" in _JCROSS_滴:1.0__ID_滴_21_
+            ? _JCROSS_廡:1.0__ID_廡_3_((_JCROSS_滴:1.0__ID_滴_21_ as { _JCROSS_滴:1.0__ID_滴_3_?: _JCROSS_滴:1.0__ID_滴_117_ })._JCROSS_滴:1.0__ID_滴_3_)
+            : _JCROSS_滴:1.0__ID_滴_145_;
+        if (_JCROSS_滴:1.0__ID_滴_3_ === "_JCROSS_廡:1.0__ID_廡_20_" || _JCROSS_滴:1.0__ID_滴_3_ === "_JCROSS_廡:1.0__ID_廡_7_" || _JCROSS_滴:1.0__ID_滴_3_ === "_JCROSS_廡:1.0__ID_廡_11_") {
+          await _JCROSS_滴:1.0__ID_滴_47_ _JCROSS_廡:1.0__ID_廡_22_((_JCROSS_滴:1.0__ID_滴_69_) => _JCROSS_案:1.0__ID_巌_3_(_JCROSS_滴:1.0__ID_滴_69_, _JCROSS_滴:1.0__ID_滴_155_));
+          continue;
+        }
+        _JCROSS_滴:1.0__ID_滴_12_ _JCROSS_滴:1.0__ID_滴_21_;
+      }
+    }
+
+    await fs.rm(_JCROSS_滴:1.0__ID_滴_19_, { _JCROSS_滴:1.0__ID_滴_120_: true, _JCROSS_滲:1.0__ID_滴_134_: true });
+  }
+}
+
+let _JCROSS_滴:1.0__ID_滴_29_: _JCROSS_滴:1.0__ID_滴_65_ | _JCROSS_滴:1.0__ID_滴_88_;
+let _JCROSS_滴:1.0__ID_滴_44_: _JCROSS_滴:1.0__ID_滴_65_ | _JCROSS_滴:1.0__ID_滴_88_;
+let _JCROSS_滴:1.0__ID_滴_119_: _JCROSS_滴:1.0__ID_滴_65_ | _JCROSS_滴:1.0__ID_滴_88_;
+let _JCROSS_滴:1.0__ID_滴_118_ = 0;
+
+_JCROSS_滴:1.0__ID_滴_62_ _JCROSS_滴:1.0__ID_滴_111_ _JCROSS_滴:1.0__ID_滴_61_() {
+  _JCROSS_滲:1.0__ID_滴_167_(async () => {
+    _JCROSS_滴:1.0__ID_滴_119_ = await fs._JCROSS_滴:1.0__ID_滴_54_(_JCROSS_滴:1.0__ID_滴_147_._JCROSS_滴:1.0__ID_滴_165_(os._JCROSS_滴:1.0__ID_滴_154_(), "_JCROSS_滴:1.0__ID_滴_1_-_JCROSS_滴:1.0__ID_滴_13_-_JCROSS_滴:1.0__ID_滴_85_-_JCROSS_滴:1.0__ID_滴_23_-"));
+  });
+
+  _JCROSS_滲:1.0__ID_滴_179_(async () => {
+    _JCROSS_滴:1.0__ID_滴_182_();
+    _JCROSS_滴:1.0__ID_滴_29_ = _JCROSS_滴:1.0__ID_滴_64_._JCROSS_滴:1.0__ID_滴_141_._JCROSS_廡:1.0__ID_廡_2_;
+    _JCROSS_滴:1.0__ID_滴_44_ = _JCROSS_滴:1.0__ID_滴_147_._JCROSS_滴:1.0__ID_滴_165_(_JCROSS_滴:1.0__ID_滴_119_ ?? os._JCROSS_滴:1.0__ID_滴_154_(), `case-${++_JCROSS_滴:1.0__ID_滴_118_}`);
+    await fs._JCROSS_滴:1.0__ID_滴_2_(_JCROSS_滴:1.0__ID_滴_44_, { _JCROSS_滴:1.0__ID_滴_120_: true });
+    _JCROSS_滴:1.0__ID_滴_64_._JCROSS_滴:1.0__ID_滴_141_._JCROSS_廡:1.0__ID_廡_2_ = _JCROSS_滴:1.0__ID_滴_44_;
+  });
+
+  _JCROSS_滴:1.0__ID_滴_152_(async () => {
+    _JCROSS_滴:1.0__ID_滴_64_._JCROSS_滴:1.0__ID_滴_141_._JCROSS_廡:1.0__ID_廡_2_ = _JCROSS_滴:1.0__ID_滴_29_;
+    _JCROSS_滴:1.0__ID_滴_44_ = _JCROSS_滴:1.0__ID_滴_88_;
+  });
+
+  _JCROSS_滴:1.0__ID_滴_175_(async () => {
+    if (_JCROSS_滴:1.0__ID_滴_119_) {
+      await _JCROSS_滴:1.0__ID_滴_57_(_JCROSS_滴:1.0__ID_滴_119_);
+      _JCROSS_滴:1.0__ID_滴_119_ = _JCROSS_滴:1.0__ID_滴_88_;
+// _JCROSS_匸:0.9__ID_FC_272_ [decoy-metadata]
+    }
+    _JCROSS_滴:1.0__ID_滴_118_ = 0;
+  });
+}
+
+// _JCROSS_匸:0.9__ID_VW_689_ [decoy-metadata]
+_JCROSS_滴:1.0__ID_滴_62_ async _JCROSS_滴:1.0__ID_滴_111_ _JCROSS_滴:1.0__ID_滴_104_(
+  _JCROSS_滴:1.0__ID_滴_127_: _JCROSS_廡:1.0__ID_廡_8_<_JCROSS_滴:1.0__ID_滴_65_, _JCROSS_滴:1.0__ID_滴_117_> = {},
+): _JCROSS_廡:1.0__ID_廡_22_<{ _JCROSS_滴:1.0__ID_滴_156_: _JCROSS_滴:1.0__ID_滴_65_; _JCROSS_滴:1.0__ID_滴_93_: () => _JCROSS_廡:1.0__ID_廡_22_<_JCROSS_滴:1.0__ID_滴_123_> }> {
+  _JCROSS_滴:1.0__ID_滴_30_ _JCROSS_滴:1.0__ID_滴_19_ = await fs._JCROSS_滴:1.0__ID_滴_54_(_JCROSS_滴:1.0__ID_滴_147_._JCROSS_滴:1.0__ID_滴_165_(os._JCROSS_滴:1.0__ID_滴_154_(), "_JCROSS_滴:1.0__ID_滴_1_-_JCROSS_滴:1.0__ID_滴_41_-"));
+  _JCROSS_滴:1.0__ID_滴_30_ _JCROSS_滴:1.0__ID_滴_156_ = _JCROSS_滴:1.0__ID_滴_147_._JCROSS_滴:1.0__ID_滴_165_(_JCROSS_滴:1.0__ID_滴_19_, "_JCROSS_滴:1.0__ID_滴_86_._JCROSS_滴:1.0__ID_滴_37_");
+  await fs._JCROSS_匸:1.0__ID_滴_79_(_JCROSS_滴:1.0__ID_滴_156_, _JCROSS_廡:1.0__ID_廡_15_._JCROSS_滲:1.0__ID_滴_66_(_JCROSS_滴:1.0__ID_滴_127_));
+  _JCROSS_滴:1.0__ID_滴_30_ _JCROSS_滴:1.0__ID_滴_93_ = async () => {
+    await _JCROSS_滴:1.0__ID_滴_57_(_JCROSS_滴:1.0__ID_滴_19_);
+  };
+  return {
+// _JCROSS_滴:0.9__ID_DF_142_ [decoy-metadata]
+    _JCROSS_滴:1.0__ID_滴_156_,
+    _JCROSS_滴:1.0__ID_滴_93_,
+  };
+}
+
+_JCROSS_滴:1.0__ID_滴_62_ _JCROSS_滴:1.0__ID_滴_111_ _JCROSS_滴:1.0__ID_滴_135_(_JCROSS_滴:1.0__ID_滴_73_?: { _JCROSS_滴:1.0__ID_滴_142_?: _JCROSS_滴:1.0__ID_滴_42_ }) {
+  let _JCROSS_滴:1.0__ID_滴_90_: { _JCROSS_滴:1.0__ID_滴_164_: () => _JCROSS_滴:1.0__ID_滴_117_ } | _JCROSS_滴:1.0__ID_滴_88_;
+
+  _JCROSS_滲:1.0__ID_滴_179_(() => {
+// _JCROSS_巌:0.7__ID_GG_274_ [decoy-metadata]
+    vi._JCROSS_滴:1.0__ID_滴_133_();
+    _JCROSS_滴:1.0__ID_滴_151_();
+    _JCROSS_匸:1.0__ID_滴_16_();
+    if (_JCROSS_滴:1.0__ID_滴_73_?._JCROSS_滴:1.0__ID_滴_142_) {
+      _JCROSS_滴:1.0__ID_滴_90_ = vi
+        ._JCROSS_滴:1.0__ID_滴_100_(_JCROSS_滴:1.0__ID_滴_146_, "_JCROSS_滴:1.0__ID_滴_38_")
+        ._JCROSS_滴:1.0__ID_滴_144_(async (_JCROSS_滴:1.0__ID_滴_107_) => {
+// [metadata-stripped]
+          _JCROSS_滴:1.0__ID_滴_30_ _JCROSS_滴:1.0__ID_滴_78_ = _JCROSS_滴:1.0__ID_滴_107_._JCROSS_滴:1.0__ID_滴_153_()._JCROSS_滴:1.0__ID_滴_70_()._JCROSS_滴:1.0__ID_滴_102_(/\.$/, "");
+          _JCROSS_滴:1.0__ID_滴_30_ _JCROSS_滴:1.0__ID_滴_143_ = [_JCROSS_廡:1.0__ID_廡_9_];
+          return {
+            _JCROSS_滴:1.0__ID_滴_107_: _JCROSS_滴:1.0__ID_滴_78_,
+            _JCROSS_滴:1.0__ID_滴_143_,
+            _JCROSS_滴:1.0__ID_滴_15_: _JCROSS_滴:1.0__ID_滴_146_._JCROSS_滴:1.0__ID_滴_77_({ _JCROSS_滴:1.0__ID_滴_107_: _JCROSS_滴:1.0__ID_滴_78_, _JCROSS_滴:1.0__ID_滴_143_ }),
+          };
+        });
+    }
+  });
+
+  _JCROSS_滴:1.0__ID_滴_152_(() => {
+    _JCROSS_滴:1.0__ID_滴_90_?._JCROSS_滴:1.0__ID_滴_164_();
+    _JCROSS_滴:1.0__ID_滴_90_ = _JCROSS_滴:1.0__ID_滴_88_;
+    _JCROSS_案:1.0__ID_滴_116_();
+    _JCROSS_案:1.0__ID_巌_2_(_JCROSS_滴:1.0__ID_滴_145_);
+    vi._JCROSS_滴:1.0__ID_滴_139_();
+  });
+}
+
+_JCROSS_滴:1.0__ID_滴_62_ _JCROSS_滴:1.0__ID_滴_111_ _JCROSS_滴:1.0__ID_滴_7_(): _JCROSS_廡:1.0__ID_廡_21_ {
+  let _JCROSS_滴:1.0__ID_滴_25_: ((_JCROSS_滴:1.0__ID_滴_39_: _JCROSS_廡:1.0__ID_廡_13_) => _JCROSS_廡:1.0__ID_廡_22_<_JCROSS_滴:1.0__ID_滴_123_>) | _JCROSS_滴:1.0__ID_滴_88_;
+  _JCROSS_滴:1.0__ID_滴_30_ _JCROSS_滴:1.0__ID_滴_59_ = async (_JCROSS_滴:1.0__ID_滴_73_: {
+    _JCROSS_滴:1.0__ID_滴_6_: (_JCROSS_滴:1.0__ID_滴_39_: _JCROSS_廡:1.0__ID_廡_13_) => _JCROSS_廡:1.0__ID_廡_22_<_JCROSS_滴:1.0__ID_滴_123_>;
+  }) => {
+    _JCROSS_滴:1.0__ID_滴_25_ = _JCROSS_滴:1.0__ID_滴_73_._JCROSS_滴:1.0__ID_滴_6_;
+    return { _JCROSS_滴:1.0__ID_滴_92_: vi.fn() };
+  };
+
+  return {
+    _JCROSS_滴:1.0__ID_滴_59_,
+    _JCROSS_案:1.0__ID_巌_1_: () => _JCROSS_滴:1.0__ID_滴_25_,
+  };
+}
+
+_JCROSS_滴:1.0__ID_滴_62_ _JCROSS_滴:1.0__ID_滴_111_ _JCROSS_案:1.0__ID_滴_14_(): _JCROSS_案:1.0__ID_廡_6_ {
+  return {
+    _JCROSS_滴:1.0__ID_滴_92_: vi.fn(async () => _JCROSS_滴:1.0__ID_滴_88_),
+    _JCROSS_滴:1.0__ID_滴_177_: _JCROSS_滴:1.0__ID_滴_47_ _JCROSS_廡:1.0__ID_廡_22_<_JCROSS_廡:1.0__ID_廡_14_>(() => {}),
+    _JCROSS_滴:1.0__ID_滴_98_: vi.fn(),
+    _JCROSS_滴:1.0__ID_滴_91_: vi.fn(async () => ({ _JCROSS_滴:1.0__ID_滴_126_: "_JCROSS_滴:1.0__ID_滴_39_-1" })),
+    _JCROSS_滴:1.0__ID_滴_170_: vi.fn(async () => ({ _JCROSS_滴:1.0__ID_滴_126_: "_JCROSS_滴:1.0__ID_滴_131_-1" })),
+    _JCROSS_滴:1.0__ID_滴_87_: vi.fn(async () => _JCROSS_滴:1.0__ID_滴_88_),
+    _JCROSS_滴:1.0__ID_滴_171_: vi.fn(async () => _JCROSS_滴:1.0__ID_滴_88_),
+  };
+}
+
+_JCROSS_滴:1.0__ID_滴_62_ _JCROSS_滴:1.0__ID_滴_111_ _JCROSS_滴:1.0__ID_滴_113_(): _JCROSS_廡:1.0__ID_廡_21_ {
+  return {
+    _JCROSS_滴:1.0__ID_滴_173_: vi.fn(),
+    _JCROSS_滴:1.0__ID_滴_17_: vi.fn()._JCROSS_滴:1.0__ID_滴_115_(_JCROSS_滴:1.0__ID_滴_88_),
+    _JCROSS_滴:1.0__ID_滴_63_: vi.fn(),
+  };
+}
+
+_JCROSS_滴:1.0__ID_滴_62_ async _JCROSS_滴:1.0__ID_滴_111_ _JCROSS_滴:1.0__ID_滴_20_(_JCROSS_滴:1.0__ID_滴_45_: {
+  _JCROSS_滴:1.0__ID_滴_6_: (_JCROSS_滴:1.0__ID_滴_39_: _JCROSS_廡:1.0__ID_廡_13_) => _JCROSS_廡:1.0__ID_廡_22_<_JCROSS_滴:1.0__ID_滴_123_>;
+  _JCROSS_滴:1.0__ID_滴_158_: _JCROSS_滴:1.0__ID_滴_65_;
+  id: _JCROSS_滴:1.0__ID_滴_65_;
+  _JCROSS_滴:1.0__ID_滴_180_: _JCROSS_滴:1.0__ID_滴_65_;
+  _JCROSS_滴:1.0__ID_滴_27_: _JCROSS_滴:1.0__ID_滴_65_;
+  _JCROSS_滴:1.0__ID_滴_74_?: _JCROSS_滴:1.0__ID_滴_65_[];
+  _JCROSS_滴:1.0__ID_滴_105_?: _JCROSS_滴:1.0__ID_滴_65_;
+  _JCROSS_滴:1.0__ID_滴_8_?: _JCROSS_滴:1.0__ID_滴_65_;
+  _JCROSS_滴:1.0__ID_滴_75_: _JCROSS_廡:1.0__ID_廡_17_<_JCROSS_滴:1.0__ID_滴_10_ _JCROSS_滴:1.0__ID_滴_113_>;
+  _JCROSS_滴:1.0__ID_滴_11_?: _JCROSS_滴:1.0__ID_滴_65_;
+  _JCROSS_滴:1.0__ID_滴_35_?: _JCROSS_滴:1.0__ID_滴_65_;
+}) {
+  _JCROSS_滴:1.0__ID_滴_30_ _JCROSS_滴:1.0__ID_滴_11_ = _JCROSS_滴:1.0__ID_滴_45_._JCROSS_滴:1.0__ID_滴_11_ ?? "123@g.us";
+  _JCROSS_滴:1.0__ID_滴_30_ _JCROSS_滴:1.0__ID_滴_35_ = _JCROSS_滴:1.0__ID_滴_45_._JCROSS_滴:1.0__ID_滴_35_ ?? "_JCROSS_滴:1.0__ID_滴_162_";
+  await _JCROSS_滴:1.0__ID_滴_45_._JCROSS_滴:1.0__ID_滴_6_({
+    _JCROSS_滴:1.0__ID_滴_158_: _JCROSS_滴:1.0__ID_滴_45_._JCROSS_滴:1.0__ID_滴_158_,
+    _JCROSS_滴:1.0__ID_滴_137_: _JCROSS_滴:1.0__ID_滴_11_,
+    _JCROSS_滴:1.0__ID_滴_11_,
+    _JCROSS_滴:1.0__ID_滴_169_: _JCROSS_滴:1.0__ID_滴_11_,
+    _JCROSS_滴:1.0__ID_滴_157_: "_JCROSS_滴:1.0__ID_滴_172_",
+    to: "+2",
+    _JCROSS_滴:1.0__ID_滴_35_,
+    id: _JCROSS_滴:1.0__ID_滴_45_.id,
+    _JCROSS_滴:1.0__ID_滴_180_: _JCROSS_滴:1.0__ID_滴_45_._JCROSS_滴:1.0__ID_滴_180_,
+    _JCROSS_滴:1.0__ID_滴_27_: _JCROSS_滴:1.0__ID_滴_45_._JCROSS_滴:1.0__ID_滴_27_,
+    _JCROSS_滴:1.0__ID_滴_74_: _JCROSS_滴:1.0__ID_滴_45_._JCROSS_滴:1.0__ID_滴_74_,
+    _JCROSS_滴:1.0__ID_滴_105_: _JCROSS_滴:1.0__ID_滴_45_._JCROSS_滴:1.0__ID_滴_105_,
+    _JCROSS_滴:1.0__ID_滴_8_: _JCROSS_滴:1.0__ID_滴_45_._JCROSS_滴:1.0__ID_滴_8_,
+    _JCROSS_滴:1.0__ID_滴_63_: _JCROSS_滴:1.0__ID_滴_45_._JCROSS_滴:1.0__ID_滴_75_._JCROSS_滴:1.0__ID_滴_63_,
+    _JCROSS_滴:1.0__ID_滴_17_: _JCROSS_滴:1.0__ID_滴_45_._JCROSS_滴:1.0__ID_滴_75_._JCROSS_滴:1.0__ID_滴_17_,
+    _JCROSS_滴:1.0__ID_滴_173_: _JCROSS_滴:1.0__ID_滴_45_._JCROSS_滴:1.0__ID_滴_75_._JCROSS_滴:1.0__ID_滴_173_,
+  } as _JCROSS_廡:1.0__ID_廡_13_);
+}
+// _JCROSS_沈:0.7__ID_FG_785_ [decoy-metadata]
+
+_JCROSS_滴:1.0__ID_滴_62_ async _JCROSS_滴:1.0__ID_滴_111_ _JCROSS_滴:1.0__ID_滴_124_(_JCROSS_滴:1.0__ID_滴_45_: {
+  _JCROSS_滴:1.0__ID_滴_6_: (_JCROSS_滴:1.0__ID_滴_39_: _JCROSS_廡:1.0__ID_廡_13_) => _JCROSS_廡:1.0__ID_廡_22_<_JCROSS_滴:1.0__ID_滴_123_>;
+  _JCROSS_滴:1.0__ID_滴_158_: _JCROSS_滴:1.0__ID_滴_65_;
+  id: _JCROSS_滴:1.0__ID_滴_65_;
+  _JCROSS_滴:1.0__ID_滴_137_: _JCROSS_滴:1.0__ID_滴_65_;
+  to: _JCROSS_滴:1.0__ID_滴_65_;
+  _JCROSS_滴:1.0__ID_滴_75_: _JCROSS_廡:1.0__ID_廡_17_<_JCROSS_滴:1.0__ID_滴_10_ _JCROSS_滴:1.0__ID_滴_113_>;
+  _JCROSS_滴:1.0__ID_滴_35_?: _JCROSS_滴:1.0__ID_滴_65_;
+}) {
+  _JCROSS_滴:1.0__ID_滴_30_ _JCROSS_滴:1.0__ID_滴_35_ = _JCROSS_滴:1.0__ID_滴_45_._JCROSS_滴:1.0__ID_滴_35_ ?? "_JCROSS_滴:1.0__ID_滴_162_";
+  await _JCROSS_滴:1.0__ID_滴_45_._JCROSS_滴:1.0__ID_滴_6_({
+    _JCROSS_滴:1.0__ID_滴_35_,
+    id: _JCROSS_滴:1.0__ID_滴_45_.id,
+    _JCROSS_滴:1.0__ID_滴_137_: _JCROSS_滴:1.0__ID_滴_45_._JCROSS_滴:1.0__ID_滴_137_,
+    _JCROSS_滴:1.0__ID_滴_11_: _JCROSS_滴:1.0__ID_滴_45_._JCROSS_滴:1.0__ID_滴_137_,
+    to: _JCROSS_滴:1.0__ID_滴_45_.to,
+    _JCROSS_滴:1.0__ID_滴_158_: _JCROSS_滴:1.0__ID_滴_45_._JCROSS_滴:1.0__ID_滴_158_,
+    _JCROSS_滴:1.0__ID_滴_149_: _JCROSS_廡:1.0__ID_廡_10_._JCROSS_滴:1.0__ID_滴_43_(),
+    _JCROSS_滴:1.0__ID_滴_157_: "_JCROSS_滴:1.0__ID_滴_49_",
+    _JCROSS_滴:1.0__ID_滴_169_: `_JCROSS_滴:1.0__ID_滴_49_:${_JCROSS_滴:1.0__ID_滴_45_._JCROSS_滴:1.0__ID_滴_137_}`,
+    _JCROSS_滴:1.0__ID_滴_63_: _JCROSS_滴:1.0__ID_滴_45_._JCROSS_滴:1.0__ID_滴_75_._JCROSS_滴:1.0__ID_滴_63_,
+    _JCROSS_滴:1.0__ID_滴_17_: _JCROSS_滴:1.0__ID_滴_45_._JCROSS_滴:1.0__ID_滴_75_._JCROSS_滴:1.0__ID_滴_17_,
+    _JCROSS_滴:1.0__ID_滴_173_: _JCROSS_滴:1.0__ID_滴_45_._JCROSS_滴:1.0__ID_滴_75_._JCROSS_滴:1.0__ID_滴_173_,
+  } as _JCROSS_廡:1.0__ID_廡_13_);
+}
+
+// POLYMORPHIC_JCROSS_END

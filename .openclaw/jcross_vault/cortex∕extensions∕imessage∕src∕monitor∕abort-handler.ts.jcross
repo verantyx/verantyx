@@ -1,0 +1,46 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:794643F4 ver:1778221942
+// ⚠️ One-time schema — expires after response
+
+__jcross_霞:1.0___SYM_霞_11_ __jcross_霞:1.0___SYM_霞_8_ __jcross_廓:1.0___SYM_廓_4_ = {
+// __jcross_滾:0.7___SYM_XK_794_ [decoy-metadata]
+  __jcross_繍:1.0___SYM_霞_7_: (__jcross_霞:1.0___SYM_霞_27_: __jcross_霞:1.0___SYM_霞_9_, __jcross_霞:1.0___SYM_霞_18_?: __jcross_廓:1.0___SYM_廓_5_<__jcross_霞:1.0___SYM_霞_9_, __jcross_霞:1.0___SYM_霞_3_>) => __jcross_廓:1.0___SYM_廓_3_<__jcross_霞:1.0___SYM_霞_3_>;
+  __jcross_霞:1.0___SYM_霞_21_: () => __jcross_廓:1.0___SYM_廓_3_<__jcross_霞:1.0___SYM_霞_6_>;
+};
+
+__jcross_霞:1.0___SYM_霞_11_ __jcross_霞:1.0___SYM_霞_22_ __jcross_節:1.0___SYM_霞_2_(__jcross_霞:1.0___SYM_霞_18_: {
+  __jcross_霞:1.0___SYM_霞_24_?: __jcross_廓:1.0___SYM_廓_2_;
+  __jcross_霞:1.0___SYM_霞_19_: __jcross_廓:1.0___SYM_廓_4_;
+  __jcross_節:1.0___SYM_巌_1_: () => __jcross_節:1.0___SYM_霞_12_ | __jcross_霞:1.0___SYM_霞_23_;
+}): () => __jcross_霞:1.0___SYM_霞_6_ {
+  __jcross_霞:1.0___SYM_霞_20_ __jcross_霞:1.0___SYM_霞_17_ = __jcross_霞:1.0___SYM_霞_18_.__jcross_霞:1.0___SYM_霞_24_;
+  if (!__jcross_霞:1.0___SYM_霞_17_) {
+    return () => {};
+  }
+
+// __jcross_繍:0.4___SYM_CE_730_ [decoy-metadata]
+  __jcross_霞:1.0___SYM_霞_20_ __jcross_霞:1.0___SYM_霞_15_ = () => {
+    __jcross_霞:1.0___SYM_霞_20_ __jcross_霞:1.0___SYM_霞_14_ = __jcross_霞:1.0___SYM_霞_18_.__jcross_節:1.0___SYM_巌_1_();
+    if (__jcross_霞:1.0___SYM_霞_14_) {
+      __jcross_霞:1.0___SYM_霞_6_ __jcross_霞:1.0___SYM_霞_18_.__jcross_霞:1.0___SYM_霞_19_
+        .__jcross_繍:1.0___SYM_霞_7_("__jcross_霞:1.0___SYM_霞_25_.__jcross_霞:1.0___SYM_霞_5_", {
+          __jcross_霞:1.0___SYM_霞_4_: __jcross_霞:1.0___SYM_霞_14_,
+        })
+        .catch(() => {
+// [metadata-stripped]
+        });
+    }
+// __jcross_潜:0.4___SYM_ZY_314_ [decoy-metadata]
+    __jcross_霞:1.0___SYM_霞_6_ __jcross_霞:1.0___SYM_霞_18_.__jcross_霞:1.0___SYM_霞_19_.__jcross_霞:1.0___SYM_霞_21_().catch(() => {
+// [metadata-stripped]
+    });
+  };
+// __jcross_潜:0.1___SYM_ZM_923_ [decoy-metadata]
+
+// __jcross_巌:0.7___SYM_KA_585_ [decoy-metadata]
+  __jcross_霞:1.0___SYM_霞_17_.__jcross_節:1.0___SYM_霞_16_("__jcross_霞:1.0___SYM_霞_17_", __jcross_霞:1.0___SYM_霞_15_, { __jcross_霞:1.0___SYM_霞_13_: true });
+  return () => __jcross_霞:1.0___SYM_霞_17_.__jcross_節:1.0___SYM_霞_26_("__jcross_霞:1.0___SYM_霞_17_", __jcross_霞:1.0___SYM_霞_15_);
+}
+// __jcross_廓:0.5___SYM_EX_232_ [decoy-metadata]
+
+// POLYMORPHIC_JCROSS_END

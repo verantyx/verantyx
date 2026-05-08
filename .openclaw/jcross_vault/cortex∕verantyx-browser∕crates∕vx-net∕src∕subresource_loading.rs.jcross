@@ -1,0 +1,120 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:53B17319 ver:1778220561
+// ⚠️ One-time schema — expires after response
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+
+_TOKEN_霰:1.0__OPAQUE_霰_19_ _TOKEN_霰:1.0__OPAQUE_霰_58_::_TOKEN_霰:1.0__OPAQUE_霰_61_::_TOKEN_廊:1.0__OPAQUE_廊_49_;
+
+// [metadata-stripped]
+// [metadata-stripped]
+_TOKEN_霰:1.0__OPAQUE_霰_12_ enum _TOKEN_廊:1.0__OPAQUE_廊_62_ { _TOKEN_廊:1.0__OPAQUE_廊_38_, _TOKEN_廊:1.0__OPAQUE_廊_30_, _TOKEN_廊:1.0__OPAQUE_廊_4_, _TOKEN_廊:1.0__OPAQUE_廊_33_, _TOKEN_廊:1.0__OPAQUE_廊_46_ }
+
+// [metadata-stripped]
+// [metadata-stripped]
+_TOKEN_霰:1.0__OPAQUE_霰_12_ enum _TOKEN_廊:1.0__OPAQUE_廊_61_ { _TOKEN_廊:1.0__OPAQUE_廊_47_, _TOKEN_廊:1.0__OPAQUE_廊_32_, _TOKEN_廊:1.0__OPAQUE_廊_26_, _TOKEN_廊:1.0__OPAQUE_廊_15_, _TOKEN_則:1.0__OPAQUE_廉_7_, _TOKEN_廊:1.0__OPAQUE_廊_36_, _TOKEN_廊:1.0__OPAQUE_廊_60_ }
+
+// [metadata-stripped]
+// [metadata-stripped]
+_TOKEN_霰:1.0__OPAQUE_霰_12_ _TOKEN_霰:1.0__OPAQUE_霰_11_uct _TOKEN_函:1.0__OPAQUE_廊_10_ {
+    _TOKEN_霰:1.0__OPAQUE_霰_12_ _TOKEN_紬:1.0__OPAQUE_霰_73_: _TOKEN_廊:1.0__OPAQUE_廊_20_,
+    _TOKEN_霰:1.0__OPAQUE_霰_12_ _TOKEN_霰:1.0__OPAQUE_霰_27_: _TOKEN_廊:1.0__OPAQUE_廊_62_,
+    _TOKEN_霰:1.0__OPAQUE_霰_12_ _TOKEN_霰:1.0__OPAQUE_霰_4_: _TOKEN_廊:1.0__OPAQUE_廊_61_,
+    _TOKEN_霰:1.0__OPAQUE_霰_12_ _TOKEN_霰:1.0__OPAQUE_霰_31_: _TOKEN_霰:1.0__OPAQUE_霰_106_,
+    _TOKEN_霰:1.0__OPAQUE_霰_12_ _TOKEN_霰:1.0__OPAQUE_霰_34_: _TOKEN_霰:1.0__OPAQUE_霰_106_,
+}
+
+// [metadata-stripped]
+_TOKEN_霰:1.0__OPAQUE_霰_12_ _TOKEN_霰:1.0__OPAQUE_霰_11_uct _TOKEN_函:1.0__OPAQUE_廊_31_ {
+// [metadata-stripped]
+    _TOKEN_霰:1.0__OPAQUE_霰_12_ _TOKEN_霰:1.0__OPAQUE_霰_9_: _TOKEN_廊:1.0__OPAQUE_廊_49_<_TOKEN_霰:1.0__OPAQUE_霰_17_, _TOKEN_廊:1.0__OPAQUE_廊_44_<_TOKEN_函:1.0__OPAQUE_廊_10_>>,
+    _TOKEN_霰:1.0__OPAQUE_霰_12_ _TOKEN_霰:1.0__OPAQUE_霰_75_: _TOKEN_霰:1.0__OPAQUE_霰_106_,
+    _TOKEN_霰:1.0__OPAQUE_霰_12_ _TOKEN_函:1.0__OPAQUE_霰_113_: _TOKEN_霰:1.0__OPAQUE_霰_17_,
+}
+
+_TOKEN_霰:1.0__OPAQUE_霰_42_ _TOKEN_函:1.0__OPAQUE_廊_31_ {
+    _TOKEN_霰:1.0__OPAQUE_霰_12_ fn _TOKEN_霰:1.0__OPAQUE_霰_105_() -> _TOKEN_廊:1.0__OPAQUE_廊_43_ {
+        _TOKEN_廊:1.0__OPAQUE_廊_43_ {
+            _TOKEN_霰:1.0__OPAQUE_霰_9_: _TOKEN_廊:1.0__OPAQUE_廊_49_::_TOKEN_霰:1.0__OPAQUE_霰_105_(),
+            _TOKEN_霰:1.0__OPAQUE_霰_75_: false,
+            _TOKEN_函:1.0__OPAQUE_霰_113_: 0,
+// _TOKEN_紬:0.7__OPAQUE_DH_820_ [decoy-metadata]
+        }
+    }
+// _TOKEN_廉:0.9__OPAQUE_EA_352_ [decoy-metadata]
+
+// [metadata-stripped]
+// _TOKEN_浪:0.7__OPAQUE_VZ_590_ [decoy-metadata]
+    _TOKEN_霰:1.0__OPAQUE_霰_12_ fn _TOKEN_函:1.0__OPAQUE_霰_76_(&_TOKEN_霰:1.0__OPAQUE_霰_60_ self, _TOKEN_霰:1.0__OPAQUE_霰_49_: _TOKEN_霰:1.0__OPAQUE_霰_17_, _TOKEN_紬:1.0__OPAQUE_霰_73_: &_TOKEN_霰:1.0__OPAQUE_霰_11_, _TOKEN_霰:1.0__OPAQUE_霰_4_: _TOKEN_廊:1.0__OPAQUE_廊_61_, _TOKEN_霰:1.0__OPAQUE_霰_27_: _TOKEN_廊:1.0__OPAQUE_廊_62_) {
+        let _TOKEN_霰:1.0__OPAQUE_霰_51_ = self._TOKEN_霰:1.0__OPAQUE_霰_9_._TOKEN_霰:1.0__OPAQUE_霰_112_(_TOKEN_霰:1.0__OPAQUE_霰_49_)._TOKEN_霰:1.0__OPAQUE_霰_30_();
+        
+// [metadata-stripped]
+        if _TOKEN_霰:1.0__OPAQUE_霰_51_._TOKEN_則:1.0__OPAQUE_霰_91_().any(|q| q._TOKEN_紬:1.0__OPAQUE_霰_73_ == _TOKEN_紬:1.0__OPAQUE_霰_73_) {
+            return;
+        }
+
+        _TOKEN_霰:1.0__OPAQUE_霰_51_._TOKEN_霰:1.0__OPAQUE_霰_109_(_TOKEN_函:1.0__OPAQUE_廊_10_ {
+// _TOKEN_廉:0.2__OPAQUE_VZ_716_ [decoy-metadata]
+            _TOKEN_紬:1.0__OPAQUE_霰_73_: _TOKEN_紬:1.0__OPAQUE_霰_73_._TOKEN_霰:1.0__OPAQUE_霰_70_(),
+            _TOKEN_霰:1.0__OPAQUE_霰_27_,
+            _TOKEN_霰:1.0__OPAQUE_霰_4_: _TOKEN_霰:1.0__OPAQUE_霰_4_._TOKEN_霰:1.0__OPAQUE_霰_88_(),
+            _TOKEN_霰:1.0__OPAQUE_霰_31_: false, // _TOKEN_廊:1.0__OPAQUE_廊_24_
+            _TOKEN_霰:1.0__OPAQUE_霰_34_: false,
+        });
+
+        if _TOKEN_霰:1.0__OPAQUE_霰_27_ == _TOKEN_廊:1.0__OPAQUE_廊_62_::_TOKEN_廊:1.0__OPAQUE_廊_38_ || _TOKEN_霰:1.0__OPAQUE_霰_27_ == _TOKEN_廊:1.0__OPAQUE_廊_62_::_TOKEN_廊:1.0__OPAQUE_廊_30_ {
+            self._TOKEN_函:1.0__OPAQUE_霰_113_ += 1;
+// [metadata-stripped]
+        } else if self._TOKEN_霰:1.0__OPAQUE_霰_75_ {
+// [metadata-stripped]
+        } else {
+// [metadata-stripped]
+        }
+    }
+
+// [metadata-stripped]
+    _TOKEN_霰:1.0__OPAQUE_霰_12_ fn _TOKEN_則:1.0__OPAQUE_廉_4_(&_TOKEN_霰:1.0__OPAQUE_霰_60_ self, _TOKEN_霰:1.0__OPAQUE_霰_86_: _TOKEN_霰:1.0__OPAQUE_霰_106_) {
+        self._TOKEN_霰:1.0__OPAQUE_霰_75_ = _TOKEN_霰:1.0__OPAQUE_霰_86_;
+        if _TOKEN_霰:1.0__OPAQUE_霰_86_ {
+// [metadata-stripped]
+            for _TOKEN_霰:1.0__OPAQUE_霰_51_ in self._TOKEN_霰:1.0__OPAQUE_霰_9_._TOKEN_霰:1.0__OPAQUE_霰_48_() {
+                for _TOKEN_霰:1.0__OPAQUE_霰_89_ in _TOKEN_霰:1.0__OPAQUE_霰_51_._TOKEN_霰:1.0__OPAQUE_霰_71_() {
+                    if !_TOKEN_霰:1.0__OPAQUE_霰_89_._TOKEN_霰:1.0__OPAQUE_霰_34_ && (_TOKEN_霰:1.0__OPAQUE_霰_89_._TOKEN_霰:1.0__OPAQUE_霰_27_ == _TOKEN_廊:1.0__OPAQUE_廊_62_::_TOKEN_廊:1.0__OPAQUE_廊_33_ || _TOKEN_霰:1.0__OPAQUE_霰_89_._TOKEN_霰:1.0__OPAQUE_霰_27_ == _TOKEN_廊:1.0__OPAQUE_廊_62_::_TOKEN_廊:1.0__OPAQUE_廊_46_) {
+                        _TOKEN_霰:1.0__OPAQUE_霰_89_._TOKEN_霰:1.0__OPAQUE_霰_34_ = true; // _TOKEN_廊:1.0__OPAQUE_廊_41_ _TOKEN_霰:1.0__OPAQUE_霰_102_
+                    }
+                }
+            }
+// _TOKEN_函:0.1__OPAQUE_WC_183_ [decoy-metadata]
+        }
+    }
+
+// [metadata-stripped]
+    _TOKEN_霰:1.0__OPAQUE_霰_12_ fn _TOKEN_霰:1.0__OPAQUE_霰_94_(&_TOKEN_霰:1.0__OPAQUE_霰_60_ self, _TOKEN_霰:1.0__OPAQUE_霰_49_: _TOKEN_霰:1.0__OPAQUE_霰_17_, _TOKEN_紬:1.0__OPAQUE_霰_73_: &_TOKEN_霰:1.0__OPAQUE_霰_11_) -> _TOKEN_霰:1.0__OPAQUE_霰_106_ {
+        if let _TOKEN_廊:1.0__OPAQUE_廊_55_(_TOKEN_霰:1.0__OPAQUE_霰_51_) = self._TOKEN_霰:1.0__OPAQUE_霰_9_._TOKEN_則:1.0__OPAQUE_廉_3_(&_TOKEN_霰:1.0__OPAQUE_霰_49_) {
+            for _TOKEN_霰:1.0__OPAQUE_霰_89_ in _TOKEN_霰:1.0__OPAQUE_霰_51_._TOKEN_霰:1.0__OPAQUE_霰_71_() {
+                if _TOKEN_霰:1.0__OPAQUE_霰_89_._TOKEN_紬:1.0__OPAQUE_霰_73_ == _TOKEN_紬:1.0__OPAQUE_霰_73_ && !_TOKEN_霰:1.0__OPAQUE_霰_89_._TOKEN_霰:1.0__OPAQUE_霰_34_ {
+// _TOKEN_霰:0.6__OPAQUE_CH_611_ [decoy-metadata]
+                    _TOKEN_霰:1.0__OPAQUE_霰_89_._TOKEN_霰:1.0__OPAQUE_霰_34_ = true;
+                    return true;
+                }
+            }
+        }
+        false
+    }
+
+// [metadata-stripped]
+    _TOKEN_霰:1.0__OPAQUE_霰_12_ fn _TOKEN_霰:1.0__OPAQUE_霰_15_(&self, _TOKEN_霰:1.0__OPAQUE_霰_49_: _TOKEN_霰:1.0__OPAQUE_霰_17_) -> _TOKEN_廊:1.0__OPAQUE_廊_20_ {
+        let _TOKEN_霰:1.0__OPAQUE_霰_97_ = self._TOKEN_霰:1.0__OPAQUE_霰_9_._TOKEN_則:1.0__OPAQUE_廉_2_(&_TOKEN_霰:1.0__OPAQUE_霰_49_)._TOKEN_霰:1.0__OPAQUE_霰_5_(0, |q| q._TOKEN_霰:1.0__OPAQUE_霰_13_());
+        _TOKEN_浪:1.0__OPAQUE_霰_65_!("🔍 _TOKEN_廊:1.0__OPAQUE_廊_3_ _TOKEN_函:1.0__OPAQUE_廊_21_ (_TOKEN_廊:1.0__OPAQUE_廊_48_ #{}): _TOKEN_廊:1.0__OPAQUE_廊_6_ _TOKEN_函:1.0__OPAQUE_廊_58_ _TOKEN_廊:1.0__OPAQUE_廊_50_: {} | _TOKEN_廊:1.0__OPAQUE_廊_57_ _TOKEN_廊:1.0__OPAQUE_廊_38_ _TOKEN_廊:1.0__OPAQUE_廊_1_: {} | _TOKEN_廊:1.0__OPAQUE_廊_46_ _TOKEN_廊:1.0__OPAQUE_廊_14_: {}", 
+            _TOKEN_霰:1.0__OPAQUE_霰_49_, _TOKEN_霰:1.0__OPAQUE_霰_97_, self._TOKEN_函:1.0__OPAQUE_霰_113_, self._TOKEN_霰:1.0__OPAQUE_霰_75_)
+    }
+}
+
+// POLYMORPHIC_JCROSS_END

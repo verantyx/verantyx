@@ -1,0 +1,317 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:A81D4302 ver:1778218383
+// ⚠️ One-time schema — expires after response
+
+// [metadata-stripped]
+"""
+_TOKEN_廳:1.0__JCROSS_廳_42_ _TOKEN_廳:1.0__JCROSS_廳_8_ × _TOKEN_廳:1.0__JCROSS_廳_7_ V2 _TOKEN_廳:1.0__JCROSS_廳_32_ _TOKEN_廳:1.0__JCROSS_廳_65_
+_TOKEN_廳:1.0__JCROSS_廳_43_ _TOKEN_靄:1.0__JCROSS_靄_44_ _TOKEN_靄:1.0__JCROSS_靄_36_ _TOKEN_靄:1.0__JCROSS_靄_210_._TOKEN_靄:1.0__JCROSS_靄_125_ _TOKEN_靄:1.0__JCROSS_靄_99_ (_TOKEN_靄:1.0__JCROSS_靄_275_ _TOKEN_箱:1.0__JCROSS_靄_192_)
+_TOKEN_廳:1.0__JCROSS_廳_36_ _TOKEN_靄:1.0__JCROSS_靄_120_ _TOKEN_靄:1.0__JCROSS_靄_215_ _TOKEN_靄:1.0__JCROSS_靄_83_ _TOKEN_廳:1.0__JCROSS_廳_72_, _TOKEN_靄:1.0__JCROSS_靄_124_ _TOKEN_靄:1.0__JCROSS_靄_215_ _TOKEN_靄:1.0__JCROSS_靄_139_,
+_TOKEN_靄:1.0__JCROSS_靄_272_ _TOKEN_靄:1.0__JCROSS_靄_151_ _TOKEN_靄:1.0__JCROSS_靄_25_:_TOKEN_靄:1.0__JCROSS_靄_196_ _TOKEN_靄:1.0__JCROSS_靄_215_ _TOKEN_廳:1.0__JCROSS_廳_1_.
+"""
+
+import _TOKEN_靄:1.0__JCROSS_靄_125_
+import _TOKEN_靄:1.0__JCROSS_靄_115_
+import _TOKEN_縁:1.0__JCROSS_靄_153_._TOKEN_縁:1.0__JCROSS_靄_33_
+import _TOKEN_縁:1.0__JCROSS_靄_153_._TOKEN_靄:1.0__JCROSS_靄_204_
+import re
+
+// [metadata-stripped]
+_TOKEN_廳:1.0__JCROSS_廳_40_    = "/_TOKEN_廳:1.0__JCROSS_廳_33_/_TOKEN_靄:1.0__JCROSS_靄_66_/_TOKEN_靄:1.0__JCROSS_靄_217_-_TOKEN_靄:1.0__JCROSS_靄_92_/_TOKEN_靄:1.0__JCROSS_靄_285_/_TOKEN_廳:1.0__JCROSS_廳_7_/_TOKEN_靄:1.0__JCROSS_靄_277_/_TOKEN_靄:1.0__JCROSS_靄_210_._TOKEN_靄:1.0__JCROSS_靄_125_"
+_TOKEN_廳:1.0__JCROSS_廳_59_ = "/_TOKEN_廳:1.0__JCROSS_廳_33_/_TOKEN_靄:1.0__JCROSS_靄_66_/_TOKEN_靄:1.0__JCROSS_靄_217_-_TOKEN_靄:1.0__JCROSS_靄_92_/_TOKEN_靄:1.0__JCROSS_靄_110_-_TOKEN_靄:1.0__JCROSS_靄_278_/_TOKEN_靄:1.0__JCROSS_靄_222_/_TOKEN_靄:1.0__JCROSS_靄_105_/_TOKEN_処:1.0__JCROSS_靄_238_.js"
+_TOKEN_廳:1.0__JCROSS_廳_14_    = "_TOKEN_靄:1.0__JCROSS_靄_25_:26b"
+_TOKEN_縁:1.0__JCROSS_廳_11_      = "_TOKEN_縁:1.0__JCROSS_靄_287_://_TOKEN_靄:1.0__JCROSS_靄_261_:11434/_TOKEN_縁:1.0__JCROSS_靄_170_/_TOKEN_靄:1.0__JCROSS_靄_218_"
+_TOKEN_廳:1.0__JCROSS_廳_24_   = 500
+_TOKEN_廳:1.0__JCROSS_廳_13_        = "/_TOKEN_靄:1.0__JCROSS_靄_244_/_TOKEN_靄:1.0__JCROSS_靄_164_/_TOKEN_靄:1.0__JCROSS_靄_10_/_TOKEN_靄:1.0__JCROSS_靄_37_"
+_TOKEN_廳:1.0__JCROSS_廳_53_   = 2500  # _TOKEN_処:1.0__JCROSS_靄_211_ for _TOKEN_靄:1.0__JCROSS_靄_25_:26b _TOKEN_靄:1.0__JCROSS_靄_59_ _TOKEN_靄:1.0__JCROSS_靄_247_
+
+
+// _TOKEN_処:0.4__JCROSS_LD_625_ [decoy-metadata]
+// _TOKEN_縁:0.9__JCROSS_XA_966_ [decoy-metadata]
+// [metadata-stripped]
+class _TOKEN_廳:1.0__JCROSS_廳_61_:
+    _TOKEN_靄:1.0__JCROSS_靄_42_ _TOKEN_靄:1.0__JCROSS_靄_11_(self, _TOKEN_靄:1.0__JCROSS_靄_184_: _TOKEN_靄:1.0__JCROSS_靄_219_, _TOKEN_靄:1.0__JCROSS_靄_252_: _TOKEN_靄:1.0__JCROSS_靄_255_) -> _TOKEN_靄:1.0__JCROSS_靄_219_:
+        _TOKEN_靄:1.0__JCROSS_靄_32_   = _TOKEN_靄:1.0__JCROSS_靄_125_._TOKEN_靄:1.0__JCROSS_靄_166_({"_TOKEN_靄:1.0__JCROSS_靄_193_": "2.0", "id": 0, "_TOKEN_靄:1.0__JCROSS_靄_30_": "_TOKEN_靄:1.0__JCROSS_靄_81_", "_TOKEN_靄:1.0__JCROSS_靄_6_": {
+            "_TOKEN_靄:1.0__JCROSS_靄_289_": "2024-11-05", "_TOKEN_靄:1.0__JCROSS_靄_88_": {},
+            "_TOKEN_靄:1.0__JCROSS_靄_100_": {"_TOKEN_靄:1.0__JCROSS_靄_55_": "_TOKEN_靄:1.0__JCROSS_靄_286_", "_TOKEN_靄:1.0__JCROSS_靄_89_": "1.0"}
+        }}) + "\n"
+        _TOKEN_泡:1.0__JCROSS_靄_134_ = _TOKEN_靄:1.0__JCROSS_靄_125_._TOKEN_靄:1.0__JCROSS_靄_166_({"_TOKEN_靄:1.0__JCROSS_靄_193_": "2.0", "_TOKEN_靄:1.0__JCROSS_靄_30_": "_TOKEN_泡:1.0__JCROSS_靄_4_/_TOKEN_靄:1.0__JCROSS_靄_86_", "_TOKEN_靄:1.0__JCROSS_靄_6_": {}}) + "\n"
+        _TOKEN_靄:1.0__JCROSS_靄_257_   = _TOKEN_靄:1.0__JCROSS_靄_125_._TOKEN_靄:1.0__JCROSS_靄_166_({"_TOKEN_靄:1.0__JCROSS_靄_193_": "2.0", "id": 1, "_TOKEN_靄:1.0__JCROSS_靄_30_": "_TOKEN_靄:1.0__JCROSS_靄_160_/_TOKEN_靄:1.0__JCROSS_靄_259_",
+            "_TOKEN_靄:1.0__JCROSS_靄_6_": {"_TOKEN_靄:1.0__JCROSS_靄_55_": _TOKEN_靄:1.0__JCROSS_靄_184_, "_TOKEN_靄:1.0__JCROSS_靄_252_": _TOKEN_靄:1.0__JCROSS_靄_252_}}) + "\n"
+
+        try:
+            _TOKEN_靄:1.0__JCROSS_靄_198_ = _TOKEN_靄:1.0__JCROSS_靄_115_._TOKEN_廳:1.0__JCROSS_廳_17_(
+                [_TOKEN_廳:1.0__JCROSS_廳_13_, _TOKEN_廳:1.0__JCROSS_廳_59_],
+                _TOKEN_靄:1.0__JCROSS_靄_8_=_TOKEN_靄:1.0__JCROSS_靄_115_._TOKEN_廳:1.0__JCROSS_廳_47_, _TOKEN_靄:1.0__JCROSS_靄_189_=_TOKEN_靄:1.0__JCROSS_靄_115_._TOKEN_廳:1.0__JCROSS_廳_47_, _TOKEN_靄:1.0__JCROSS_靄_98_=_TOKEN_靄:1.0__JCROSS_靄_115_._TOKEN_廳:1.0__JCROSS_廳_4_
+            )
+            _TOKEN_靄:1.0__JCROSS_靄_263_ = (_TOKEN_靄:1.0__JCROSS_靄_32_ + _TOKEN_泡:1.0__JCROSS_靄_134_ + _TOKEN_靄:1.0__JCROSS_靄_257_)._TOKEN_靄:1.0__JCROSS_靄_31_()
+            _TOKEN_靄:1.0__JCROSS_靄_189_, _ = _TOKEN_靄:1.0__JCROSS_靄_198_._TOKEN_靄:1.0__JCROSS_靄_265_(_TOKEN_靄:1.0__JCROSS_靄_108_=_TOKEN_靄:1.0__JCROSS_靄_263_, _TOKEN_靄:1.0__JCROSS_靄_132_=30)
+
+            for _TOKEN_靄:1.0__JCROSS_靄_136_ in _TOKEN_靄:1.0__JCROSS_靄_189_._TOKEN_靄:1.0__JCROSS_靄_283_()._TOKEN_靄:1.0__JCROSS_靄_47_():
+                _TOKEN_靄:1.0__JCROSS_靄_136_ = _TOKEN_靄:1.0__JCROSS_靄_136_._TOKEN_靄:1.0__JCROSS_靄_106_()
+                if _TOKEN_靄:1.0__JCROSS_靄_127_ _TOKEN_靄:1.0__JCROSS_靄_136_._TOKEN_靄:1.0__JCROSS_靄_157_("{"):
+                    continue
+                try:
+                    _TOKEN_靄:1.0__JCROSS_靄_277_ = _TOKEN_靄:1.0__JCROSS_靄_125_._TOKEN_箱:1.0__JCROSS_靄_61_(_TOKEN_靄:1.0__JCROSS_靄_136_)
+                    if _TOKEN_靄:1.0__JCROSS_靄_277_._TOKEN_処:1.0__JCROSS_縁_2_("id") == 1:
+                        _TOKEN_靄:1.0__JCROSS_靄_138_ = _TOKEN_靄:1.0__JCROSS_靄_277_._TOKEN_処:1.0__JCROSS_縁_2_("_TOKEN_靄:1.0__JCROSS_靄_142_", {})._TOKEN_処:1.0__JCROSS_縁_2_("_TOKEN_靄:1.0__JCROSS_靄_138_", [])
+                        if _TOKEN_靄:1.0__JCROSS_靄_229_(_TOKEN_靄:1.0__JCROSS_靄_138_, _TOKEN_靄:1.0__JCROSS_靄_16_) _TOKEN_靄:1.0__JCROSS_靄_274_ _TOKEN_靄:1.0__JCROSS_靄_138_:
+                            return _TOKEN_靄:1.0__JCROSS_靄_138_[0]._TOKEN_処:1.0__JCROSS_縁_2_("_TOKEN_靄:1.0__JCROSS_靄_45_", "")
+                _TOKEN_靄:1.0__JCROSS_靄_40_ _TOKEN_靄:1.0__JCROSS_靄_125_._TOKEN_廳:1.0__JCROSS_廳_62_:
+                    continue
+        _TOKEN_靄:1.0__JCROSS_靄_40_ _TOKEN_廳:1.0__JCROSS_廳_68_ as e:
+            return f"[_TOKEN_廳:1.0__JCROSS_廳_72_ _TOKEN_廳:1.0__JCROSS_廳_64_: {e}]"
+        return ""
+
+    _TOKEN_靄:1.0__JCROSS_靄_42_ _TOKEN_靄:1.0__JCROSS_靄_295_(self, _TOKEN_靄:1.0__JCROSS_靄_114_: _TOKEN_靄:1.0__JCROSS_靄_219_, _TOKEN_靄:1.0__JCROSS_靄_149_: _TOKEN_靄:1.0__JCROSS_靄_219_, _TOKEN_靄:1.0__JCROSS_靄_118_: _TOKEN_靄:1.0__JCROSS_靄_16_, _TOKEN_靄:1.0__JCROSS_靄_175_: _TOKEN_靄:1.0__JCROSS_靄_219_) -> _TOKEN_靄:1.0__JCROSS_靄_71_:
+        _TOKEN_靄:1.0__JCROSS_靄_142_ = self._TOKEN_靄:1.0__JCROSS_靄_11_("_TOKEN_靄:1.0__JCROSS_靄_83_", {
+            "_TOKEN_靄:1.0__JCROSS_靄_93_": _TOKEN_靄:1.0__JCROSS_靄_114_, "_TOKEN_靄:1.0__JCROSS_靄_154_": _TOKEN_靄:1.0__JCROSS_靄_149_,
+            "_TOKEN_靄:1.0__JCROSS_靄_284_": _TOKEN_靄:1.0__JCROSS_靄_118_, "_TOKEN_靄:1.0__JCROSS_靄_22_": _TOKEN_靄:1.0__JCROSS_靄_175_
+        })
+        return "[_TOKEN_廳:1.0__JCROSS_廳_72_ _TOKEN_廳:1.0__JCROSS_廳_64_" _TOKEN_靄:1.0__JCROSS_靄_127_ in _TOKEN_靄:1.0__JCROSS_靄_142_
+
+    _TOKEN_靄:1.0__JCROSS_靄_42_ _TOKEN_靄:1.0__JCROSS_靄_14_(self, _TOKEN_靄:1.0__JCROSS_靄_68_: _TOKEN_靄:1.0__JCROSS_靄_255_) -> _TOKEN_靄:1.0__JCROSS_靄_219_:
+        return self._TOKEN_靄:1.0__JCROSS_靄_11_("_TOKEN_靄:1.0__JCROSS_靄_139_", {"_TOKEN_靄:1.0__JCROSS_靄_183_": _TOKEN_靄:1.0__JCROSS_靄_68_})
+
+
+// [metadata-stripped]
+_TOKEN_靄:1.0__JCROSS_靄_42_ _TOKEN_靄:1.0__JCROSS_靄_220_(_TOKEN_靄:1.0__JCROSS_靄_101_: _TOKEN_靄:1.0__JCROSS_靄_219_, _TOKEN_靄:1.0__JCROSS_靄_271_: _TOKEN_靄:1.0__JCROSS_靄_219_) -> _TOKEN_靄:1.0__JCROSS_靄_219_:
+    _TOKEN_靄:1.0__JCROSS_靄_3_ = f"""_TOKEN_廳:1.0__JCROSS_廳_27_ is a _TOKEN_靄:1.0__JCROSS_靄_199_. _TOKEN_処:1.0__JCROSS_廳_52_ _TOKEN_靄:1.0__JCROSS_靄_44_ _TOKEN_靄:1.0__JCROSS_靄_101_ _TOKEN_靄:1.0__JCROSS_靄_151_ _TOKEN_廳:1.0__JCROSS_廳_55_ _TOKEN_靄:1.0__JCROSS_靄_44_ _TOKEN_靄:1.0__JCROSS_靄_239_ _TOKEN_靄:1.0__JCROSS_靄_212_(s) _TOKEN_靄:1.0__JCROSS_靄_18_ _TOKEN_靄:1.0__JCROSS_靄_44_ _TOKEN_靄:1.0__JCROSS_靄_199_. No _TOKEN_靄:1.0__JCROSS_靄_174_.
+
+_TOKEN_廳:1.0__JCROSS_廳_29_:
+{_TOKEN_靄:1.0__JCROSS_靄_271_[:_TOKEN_廳:1.0__JCROSS_廳_53_]}
+
+_TOKEN_廳:1.0__JCROSS_廳_25_: {_TOKEN_靄:1.0__JCROSS_靄_101_}
+_TOKEN_処:1.0__JCROSS_廳_52_ (_TOKEN_靄:1.0__JCROSS_靄_239_ _TOKEN_靄:1.0__JCROSS_靄_39_ _TOKEN_靄:1.0__JCROSS_靄_180_):"""
+
+    _TOKEN_箱:1.0__JCROSS_靄_201_ = _TOKEN_靄:1.0__JCROSS_靄_125_._TOKEN_靄:1.0__JCROSS_靄_166_({
+        "_TOKEN_靄:1.0__JCROSS_靄_247_": _TOKEN_廳:1.0__JCROSS_廳_14_,
+        "_TOKEN_靄:1.0__JCROSS_靄_3_": _TOKEN_靄:1.0__JCROSS_靄_3_,
+        "_TOKEN_靄:1.0__JCROSS_靄_34_": _TOKEN_廳:1.0__JCROSS_廳_3_,
+        "_TOKEN_靄:1.0__JCROSS_靄_242_": {"_TOKEN_靄:1.0__JCROSS_靄_12_": 0.0, "_TOKEN_靄:1.0__JCROSS_靄_243_": 2048}
+    })._TOKEN_靄:1.0__JCROSS_靄_31_()
+
+    try:
+        _TOKEN_靄:1.0__JCROSS_靄_235_ = _TOKEN_縁:1.0__JCROSS_靄_153_._TOKEN_縁:1.0__JCROSS_靄_33_._TOKEN_縁:1.0__JCROSS_廳_21_(
+            _TOKEN_縁:1.0__JCROSS_廳_11_, _TOKEN_靄:1.0__JCROSS_靄_277_=_TOKEN_箱:1.0__JCROSS_靄_201_,
+            _TOKEN_靄:1.0__JCROSS_靄_9_={"_TOKEN_廳:1.0__JCROSS_廳_12_-_TOKEN_廳:1.0__JCROSS_廳_69_": "_TOKEN_靄:1.0__JCROSS_靄_279_/_TOKEN_靄:1.0__JCROSS_靄_125_"}
+        )
+        _TOKEN_靄:1.0__JCROSS_靄_151_ _TOKEN_縁:1.0__JCROSS_靄_153_._TOKEN_縁:1.0__JCROSS_靄_33_._TOKEN_縁:1.0__JCROSS_靄_51_(_TOKEN_靄:1.0__JCROSS_靄_235_, _TOKEN_靄:1.0__JCROSS_靄_132_=300) as _TOKEN_靄:1.0__JCROSS_靄_168_:
+            _TOKEN_靄:1.0__JCROSS_靄_277_ = _TOKEN_靄:1.0__JCROSS_靄_125_._TOKEN_箱:1.0__JCROSS_靄_61_(_TOKEN_靄:1.0__JCROSS_靄_168_._TOKEN_靄:1.0__JCROSS_靄_126_())
+            _TOKEN_靄:1.0__JCROSS_靄_175_ = _TOKEN_靄:1.0__JCROSS_靄_277_._TOKEN_処:1.0__JCROSS_縁_2_("_TOKEN_靄:1.0__JCROSS_靄_226_", "")._TOKEN_靄:1.0__JCROSS_靄_106_()
+// [metadata-stripped]
+// [metadata-stripped]
+            if "</_TOKEN_靄:1.0__JCROSS_靄_35_>" in _TOKEN_靄:1.0__JCROSS_靄_175_:
+                _TOKEN_靄:1.0__JCROSS_靄_175_ = _TOKEN_靄:1.0__JCROSS_靄_175_._TOKEN_靄:1.0__JCROSS_靄_266_("</_TOKEN_靄:1.0__JCROSS_靄_35_>")[-1]._TOKEN_靄:1.0__JCROSS_靄_106_()
+            return _TOKEN_靄:1.0__JCROSS_靄_175_
+    _TOKEN_靄:1.0__JCROSS_靄_40_ _TOKEN_縁:1.0__JCROSS_靄_153_._TOKEN_靄:1.0__JCROSS_靄_204_._TOKEN_縁:1.0__JCROSS_廳_30_:
+        return "[_TOKEN_廳:1.0__JCROSS_廳_1_ _TOKEN_靄:1.0__JCROSS_靄_127_ _TOKEN_靄:1.0__JCROSS_靄_23_ - is it _TOKEN_靄:1.0__JCROSS_靄_178_?]"
+
+
+// [metadata-stripped]
+_TOKEN_靄:1.0__JCROSS_靄_42_ _TOKEN_靄:1.0__JCROSS_靄_62_(_TOKEN_靄:1.0__JCROSS_靄_101_: _TOKEN_靄:1.0__JCROSS_靄_219_) -> _TOKEN_靄:1.0__JCROSS_靄_255_:
+    q = _TOKEN_靄:1.0__JCROSS_靄_101_._TOKEN_処:1.0__JCROSS_靄_28_()
+    if any(w in q for w in ["_TOKEN_靄:1.0__JCROSS_靄_48_", "_TOKEN_靄:1.0__JCROSS_靄_91_", "_TOKEN_靄:1.0__JCROSS_靄_20_", "_TOKEN_靄:1.0__JCROSS_靄_276_", "_TOKEN_靄:1.0__JCROSS_靄_172_", "_TOKEN_靄:1.0__JCROSS_靄_54_", "_TOKEN_靄:1.0__JCROSS_靄_187_"]):
+        return {"時": 1.0, "標": 0.8, "記": 0.6}
+    if any(w in q for w in ["where", "_TOKEN_靄:1.0__JCROSS_靄_249_", "_TOKEN_靄:1.0__JCROSS_靄_150_", "_TOKEN_靄:1.0__JCROSS_靄_177_", "_TOKEN_靄:1.0__JCROSS_靄_254_", "_TOKEN_靄:1.0__JCROSS_靄_250_"]):
+        return {"場": 1.0, "標": 0.8, "視": 0.5}
+    if any(w in q for w in ["_TOKEN_靄:1.0__JCROSS_靄_234_", "_TOKEN_靄:1.0__JCROSS_靄_213_", "_TOKEN_靄:1.0__JCROSS_靄_55_", "_TOKEN_靄:1.0__JCROSS_靄_280_", "_TOKEN_靄:1.0__JCROSS_靄_80_", "_TOKEN_靄:1.0__JCROSS_靄_27_", "_TOKEN_靄:1.0__JCROSS_靄_195_"]):
+        return {"標": 1.0, "記": 0.9, "認": 0.6}
+    if any(w in q for w in ["_TOKEN_靄:1.0__JCROSS_靄_231_", "_TOKEN_靄:1.0__JCROSS_靄_227_", "_TOKEN_靄:1.0__JCROSS_靄_202_", "_TOKEN_靄:1.0__JCROSS_靄_79_", "_TOKEN_靄:1.0__JCROSS_靄_268_", "_TOKEN_処:1.0__JCROSS_靄_111_"]):
+        return {"量": 1.0, "標": 0.8, "記": 0.5}
+    return {"標": 1.0, "認": 0.8, "記": 0.6}
+
+
+_TOKEN_靄:1.0__JCROSS_靄_42_ _TOKEN_靄:1.0__JCROSS_靄_104_(_TOKEN_靄:1.0__JCROSS_靄_271_: _TOKEN_靄:1.0__JCROSS_靄_219_, _TOKEN_靄:1.0__JCROSS_靄_101_: _TOKEN_靄:1.0__JCROSS_靄_219_, _TOKEN_靄:1.0__JCROSS_靄_179_: _TOKEN_靄:1.0__JCROSS_靄_206_ = 10) -> _TOKEN_靄:1.0__JCROSS_靄_219_:
+    """_TOKEN_廳:1.0__JCROSS_廳_57_ a _TOKEN_靄:1.0__JCROSS_靄_190_ _TOKEN_廳:1.0__JCROSS_廳_72_ _TOKEN_靄:1.0__JCROSS_靄_271_, _TOKEN_靄:1.0__JCROSS_靄_96_ _TOKEN_靄:1.0__JCROSS_靄_78_ _TOKEN_靄:1.0__JCROSS_靄_194_ _TOKEN_靄:1.0__JCROSS_靄_291_ to _TOKEN_靄:1.0__JCROSS_靄_44_ _TOKEN_靄:1.0__JCROSS_靄_101_."""
+    _TOKEN_靄:1.0__JCROSS_靄_78_ = [l for l in _TOKEN_靄:1.0__JCROSS_靄_271_._TOKEN_靄:1.0__JCROSS_靄_47_() if l._TOKEN_靄:1.0__JCROSS_靄_106_()]
+    _TOKEN_秘:1.0__JCROSS_靄_208_ = [w._TOKEN_処:1.0__JCROSS_靄_28_() for w in _TOKEN_靄:1.0__JCROSS_靄_101_._TOKEN_靄:1.0__JCROSS_靄_266_() if _TOKEN_靄:1.0__JCROSS_靄_84_(w) > 3]
+    if _TOKEN_靄:1.0__JCROSS_靄_127_ _TOKEN_靄:1.0__JCROSS_靄_78_ or _TOKEN_靄:1.0__JCROSS_靄_127_ _TOKEN_秘:1.0__JCROSS_靄_208_:
+        return _TOKEN_靄:1.0__JCROSS_靄_271_[:_TOKEN_廳:1.0__JCROSS_廳_53_]
+
+    _TOKEN_靄:1.0__JCROSS_靄_1_ = []
+    for i, _TOKEN_靄:1.0__JCROSS_靄_136_ in _TOKEN_靄:1.0__JCROSS_靄_158_(_TOKEN_靄:1.0__JCROSS_靄_78_):
+        ll = _TOKEN_靄:1.0__JCROSS_靄_136_._TOKEN_処:1.0__JCROSS_靄_28_()
+        _TOKEN_靄:1.0__JCROSS_靄_90_ = _TOKEN_靄:1.0__JCROSS_靄_171_(1 for k in _TOKEN_秘:1.0__JCROSS_靄_208_ if k in ll)
+        _TOKEN_靄:1.0__JCROSS_靄_1_._TOKEN_靄:1.0__JCROSS_靄_65_((_TOKEN_靄:1.0__JCROSS_靄_90_, i))
+
+    _TOKEN_靄:1.0__JCROSS_靄_292_, _TOKEN_靄:1.0__JCROSS_靄_188_ = _TOKEN_靄:1.0__JCROSS_靄_203_(_TOKEN_靄:1.0__JCROSS_靄_1_, _TOKEN_秘:1.0__JCROSS_靄_103_=_TOKEN_靄:1.0__JCROSS_靄_133_ x: x[0])
+    _TOKEN_靄:1.0__JCROSS_靄_147_ = _TOKEN_靄:1.0__JCROSS_靄_203_(0, _TOKEN_靄:1.0__JCROSS_靄_188_ - _TOKEN_靄:1.0__JCROSS_靄_179_ // 2)
+    _TOKEN_靄:1.0__JCROSS_靄_228_   = _TOKEN_靄:1.0__JCROSS_靄_112_(_TOKEN_靄:1.0__JCROSS_靄_84_(_TOKEN_靄:1.0__JCROSS_靄_78_), _TOKEN_靄:1.0__JCROSS_靄_188_ + _TOKEN_靄:1.0__JCROSS_靄_179_ // 2 + 1)
+    return "\n"._TOKEN_靄:1.0__JCROSS_靄_205_(_TOKEN_靄:1.0__JCROSS_靄_78_[_TOKEN_靄:1.0__JCROSS_靄_147_:_TOKEN_靄:1.0__JCROSS_靄_228_])[:_TOKEN_廳:1.0__JCROSS_廳_53_]
+
+
+// [metadata-stripped]
+_TOKEN_靄:1.0__JCROSS_靄_42_ _TOKEN_秘:1.0__JCROSS_靄_281_(_TOKEN_靄:1.0__JCROSS_靄_76_: _TOKEN_靄:1.0__JCROSS_靄_219_, _TOKEN_靄:1.0__JCROSS_靄_119_: _TOKEN_靄:1.0__JCROSS_靄_219_) -> _TOKEN_靄:1.0__JCROSS_靄_290_:
+    if _TOKEN_靄:1.0__JCROSS_靄_127_ _TOKEN_靄:1.0__JCROSS_靄_119_ or "_TOKEN_靄:1.0__JCROSS_靄_29_'t _TOKEN_靄:1.0__JCROSS_靄_225_" in _TOKEN_靄:1.0__JCROSS_靄_119_._TOKEN_処:1.0__JCROSS_靄_28_() or "_TOKEN_靄:1.0__JCROSS_靄_127_ _TOKEN_靄:1.0__JCROSS_靄_23_" in _TOKEN_靄:1.0__JCROSS_靄_119_._TOKEN_処:1.0__JCROSS_靄_28_():
+        return 0.0
+// _TOKEN_縁:0.8__JCROSS_HB_326_ [decoy-metadata]
+    _TOKEN_靄:1.0__JCROSS_靄_224_ = re._TOKEN_靄:1.0__JCROSS_靄_141_(r'[^\w\s]', ' ', _TOKEN_靄:1.0__JCROSS_靄_76_._TOKEN_処:1.0__JCROSS_靄_28_())
+    _TOKEN_靄:1.0__JCROSS_靄_245_ = re._TOKEN_靄:1.0__JCROSS_靄_141_(r'[^\w\s]', ' ', _TOKEN_靄:1.0__JCROSS_靄_119_._TOKEN_処:1.0__JCROSS_靄_28_())
+    _TOKEN_秘:1.0__JCROSS_靄_208_ = [w for w in _TOKEN_靄:1.0__JCROSS_靄_224_._TOKEN_靄:1.0__JCROSS_靄_266_() if _TOKEN_靄:1.0__JCROSS_靄_84_(w) > 3]
+    if _TOKEN_靄:1.0__JCROSS_靄_127_ _TOKEN_秘:1.0__JCROSS_靄_208_:
+        return 1.0 if _TOKEN_靄:1.0__JCROSS_靄_224_._TOKEN_靄:1.0__JCROSS_靄_106_() in _TOKEN_靄:1.0__JCROSS_靄_245_ else 0.0
+    _TOKEN_靄:1.0__JCROSS_靄_216_ = _TOKEN_靄:1.0__JCROSS_靄_171_(1 for w in _TOKEN_秘:1.0__JCROSS_靄_208_ if w in _TOKEN_靄:1.0__JCROSS_靄_245_)
+    return _TOKEN_靄:1.0__JCROSS_靄_216_ / _TOKEN_靄:1.0__JCROSS_靄_84_(_TOKEN_秘:1.0__JCROSS_靄_208_)
+
+
+// [metadata-stripped]
+_TOKEN_靄:1.0__JCROSS_靄_42_ _TOKEN_靄:1.0__JCROSS_靄_262_():
+    _TOKEN_靄:1.0__JCROSS_靄_70_("=" * 65)
+    _TOKEN_靄:1.0__JCROSS_靄_70_("  _TOKEN_廳:1.0__JCROSS_廳_42_ _TOKEN_廳:1.0__JCROSS_廳_8_ × _TOKEN_廳:1.0__JCROSS_廳_7_ _TOKEN_廳:1.0__JCROSS_廳_32_ _TOKEN_廳:1.0__JCROSS_廳_65_")
+    _TOKEN_靄:1.0__JCROSS_靄_70_(f"  _TOKEN_廳:1.0__JCROSS_廳_35_: _TOKEN_靄:1.0__JCROSS_靄_97_ (500 _TOKEN_靄:1.0__JCROSS_靄_260_) | _TOKEN_廳:1.0__JCROSS_廳_2_: {_TOKEN_廳:1.0__JCROSS_廳_24_}")
+// _TOKEN_処:0.2__JCROSS_MM_531_ [decoy-metadata]
+    _TOKEN_靄:1.0__JCROSS_靄_70_(f"  _TOKEN_廳:1.0__JCROSS_廳_23_: {_TOKEN_廳:1.0__JCROSS_廳_14_}")
+    _TOKEN_靄:1.0__JCROSS_靄_70_("=" * 65)
+
+// [metadata-stripped]
+    _TOKEN_靄:1.0__JCROSS_靄_151_ open(_TOKEN_廳:1.0__JCROSS_廳_40_) as f:
+        _TOKEN_靄:1.0__JCROSS_靄_99_ = _TOKEN_靄:1.0__JCROSS_靄_125_._TOKEN_箱:1.0__JCROSS_靄_129_(f)
+
+// [metadata-stripped]
+    _TOKEN_靄:1.0__JCROSS_靄_77_ = _TOKEN_靄:1.0__JCROSS_靄_99_[:_TOKEN_廳:1.0__JCROSS_廳_24_]
+
+    _TOKEN_靄:1.0__JCROSS_靄_105_ = _TOKEN_廳:1.0__JCROSS_廳_61_()
+    _TOKEN_靄:1.0__JCROSS_靄_74_ = []
+
+    for i, _TOKEN_靄:1.0__JCROSS_靄_53_ in _TOKEN_靄:1.0__JCROSS_靄_158_(_TOKEN_靄:1.0__JCROSS_靄_77_):
+        _TOKEN_靄:1.0__JCROSS_靄_2_ = _TOKEN_靄:1.0__JCROSS_靄_53_["_TOKEN_靄:1.0__JCROSS_靄_293_"]
+        _TOKEN_靄:1.0__JCROSS_靄_101_ = _TOKEN_靄:1.0__JCROSS_靄_53_["_TOKEN_靄:1.0__JCROSS_靄_101_"]
+        _TOKEN_靄:1.0__JCROSS_靄_76_ = _TOKEN_靄:1.0__JCROSS_靄_53_["_TOKEN_処:1.0__JCROSS_靄_241_"]
+        _TOKEN_靄:1.0__JCROSS_靄_120_ = _TOKEN_靄:1.0__JCROSS_靄_53_._TOKEN_処:1.0__JCROSS_縁_2_("_TOKEN_靄:1.0__JCROSS_靄_121_", [])
+        _TOKEN_靄:1.0__JCROSS_靄_116_ = _TOKEN_靄:1.0__JCROSS_靄_53_._TOKEN_処:1.0__JCROSS_縁_2_("_TOKEN_靄:1.0__JCROSS_靄_116_", [])
+        _TOKEN_靄:1.0__JCROSS_靄_135_ = _TOKEN_靄:1.0__JCROSS_靄_53_._TOKEN_処:1.0__JCROSS_縁_2_("_TOKEN_靄:1.0__JCROSS_靄_135_", [])
+
+        _TOKEN_靄:1.0__JCROSS_靄_70_(f"\n[{i+1}/{_TOKEN_廳:1.0__JCROSS_廳_24_}] {_TOKEN_靄:1.0__JCROSS_靄_2_}")
+        _TOKEN_靄:1.0__JCROSS_靄_70_(f"  Q: {_TOKEN_靄:1.0__JCROSS_靄_101_}")
+        _TOKEN_靄:1.0__JCROSS_靄_70_(f"  _TOKEN_廳:1.0__JCROSS_廳_22_: {_TOKEN_靄:1.0__JCROSS_靄_76_}")
+        _TOKEN_靄:1.0__JCROSS_靄_70_(f"  _TOKEN_廳:1.0__JCROSS_廳_26_ to _TOKEN_靄:1.0__JCROSS_靄_162_: {_TOKEN_靄:1.0__JCROSS_靄_84_(_TOKEN_靄:1.0__JCROSS_靄_120_)} | _TOKEN_処:1.0__JCROSS_廳_52_ in: {_TOKEN_靄:1.0__JCROSS_靄_116_}")
+
+// [metadata-stripped]
+// [metadata-stripped]
+        import os as _TOKEN_靄:1.0__JCROSS_靄_214_, _TOKEN_靄:1.0__JCROSS_靄_20_ as _TOKEN_靄:1.0__JCROSS_靄_50_, _TOKEN_靄:1.0__JCROSS_靄_197_ as _TOKEN_靄:1.0__JCROSS_靄_137_
+        _TOKEN_靄:1.0__JCROSS_靄_73_ = (_TOKEN_靄:1.0__JCROSS_靄_53_._TOKEN_処:1.0__JCROSS_縁_2_("_TOKEN_靄:1.0__JCROSS_靄_116_") or [_TOKEN_廳:1.0__JCROSS_廳_70_])[0]
+        _TOKEN_靄:1.0__JCROSS_靄_131_ = _TOKEN_靄:1.0__JCROSS_靄_214_._TOKEN_靄:1.0__JCROSS_靄_94_._TOKEN_処:1.0__JCROSS_靄_186_("~/._TOKEN_靄:1.0__JCROSS_靄_233_/_TOKEN_靄:1.0__JCROSS_靄_128_/_TOKEN_靄:1.0__JCROSS_靄_156_")
+        _TOKEN_靄:1.0__JCROSS_靄_185_ = _TOKEN_廳:1.0__JCROSS_廳_70_
+        _TOKEN_靄:1.0__JCROSS_靄_152_ = 0
+
+        for j, _TOKEN_靄:1.0__JCROSS_靄_49_ in _TOKEN_靄:1.0__JCROSS_靄_158_(_TOKEN_靄:1.0__JCROSS_靄_120_):
+            if _TOKEN_靄:1.0__JCROSS_靄_127_ _TOKEN_靄:1.0__JCROSS_靄_229_(_TOKEN_靄:1.0__JCROSS_靄_49_, _TOKEN_靄:1.0__JCROSS_靄_16_):
+                continue
+            _TOKEN_靄:1.0__JCROSS_靄_175_ = "\n"._TOKEN_靄:1.0__JCROSS_靄_205_([
+                f"{_TOKEN_靄:1.0__JCROSS_靄_109_._TOKEN_処:1.0__JCROSS_縁_2_('_TOKEN_靄:1.0__JCROSS_靄_161_','?')._TOKEN_処:1.0__JCROSS_靄_21_()}: {_TOKEN_靄:1.0__JCROSS_靄_109_._TOKEN_処:1.0__JCROSS_縁_2_('_TOKEN_靄:1.0__JCROSS_靄_138_','')[:300]}"
+                for _TOKEN_靄:1.0__JCROSS_靄_109_ in _TOKEN_靄:1.0__JCROSS_靄_49_ if _TOKEN_靄:1.0__JCROSS_靄_229_(_TOKEN_靄:1.0__JCROSS_靄_109_, _TOKEN_靄:1.0__JCROSS_靄_255_)
+            ])
+            if _TOKEN_靄:1.0__JCROSS_靄_127_ _TOKEN_靄:1.0__JCROSS_靄_175_._TOKEN_靄:1.0__JCROSS_靄_106_():
+                continue
+
+            _TOKEN_靄:1.0__JCROSS_靄_223_ = _TOKEN_靄:1.0__JCROSS_靄_135_[j] if j < _TOKEN_靄:1.0__JCROSS_靄_84_(_TOKEN_靄:1.0__JCROSS_靄_135_) else f"_TOKEN_靄:1.0__JCROSS_靄_43_{j}"
+            _TOKEN_処:1.0__JCROSS_靄_95_ = (_TOKEN_靄:1.0__JCROSS_靄_223_ == _TOKEN_靄:1.0__JCROSS_靄_73_)
+            if _TOKEN_靄:1.0__JCROSS_靄_127_ _TOKEN_処:1.0__JCROSS_靄_95_ _TOKEN_靄:1.0__JCROSS_靄_274_ _TOKEN_靄:1.0__JCROSS_靄_152_ >= 10:
+                continue
+
+            _TOKEN_靄:1.0__JCROSS_靄_149_ = f"_TOKEN_廳:1.0__JCROSS_廳_20_ {_TOKEN_靄:1.0__JCROSS_靄_223_}: {_TOKEN_靄:1.0__JCROSS_靄_175_[:100]}"
+            _TOKEN_靄:1.0__JCROSS_靄_118_ = []
+            for k, _TOKEN_靄:1.0__JCROSS_靄_109_ in _TOKEN_靄:1.0__JCROSS_靄_158_(_TOKEN_靄:1.0__JCROSS_靄_49_[:5]):
+                if _TOKEN_靄:1.0__JCROSS_靄_229_(_TOKEN_靄:1.0__JCROSS_靄_109_, _TOKEN_靄:1.0__JCROSS_靄_255_):
+                    c = _TOKEN_靄:1.0__JCROSS_靄_109_._TOKEN_処:1.0__JCROSS_縁_2_("_TOKEN_靄:1.0__JCROSS_靄_138_", "")[:60]._TOKEN_靄:1.0__JCROSS_靄_140_('"', "'")
+                    _TOKEN_靄:1.0__JCROSS_靄_118_._TOKEN_靄:1.0__JCROSS_靄_65_(f'OP._TOKEN_廳:1.0__JCROSS_廳_34_("_TOKEN_靄:1.0__JCROSS_靄_7_{k}", "{c}")')
+
+// [metadata-stripped]
+            if _TOKEN_処:1.0__JCROSS_靄_95_:
+                _TOKEN_泡:1.0__JCROSS_靄_19_ = _TOKEN_処:1.0__JCROSS_縁_1_(_TOKEN_靄:1.0__JCROSS_靄_214_._TOKEN_靄:1.0__JCROSS_靄_181_(_TOKEN_靄:1.0__JCROSS_靄_131_)) if _TOKEN_靄:1.0__JCROSS_靄_214_._TOKEN_靄:1.0__JCROSS_靄_94_._TOKEN_靄:1.0__JCROSS_靄_64_(_TOKEN_靄:1.0__JCROSS_靄_131_) else _TOKEN_処:1.0__JCROSS_縁_1_()
+
+            _TOKEN_靄:1.0__JCROSS_靄_105_._TOKEN_靄:1.0__JCROSS_靄_295_(
+                _TOKEN_靄:1.0__JCROSS_靄_114_="[標: 1.0] [記: 0.9] [認: 0.7]",
+                _TOKEN_靄:1.0__JCROSS_靄_149_=_TOKEN_靄:1.0__JCROSS_靄_149_, _TOKEN_靄:1.0__JCROSS_靄_118_=_TOKEN_靄:1.0__JCROSS_靄_118_, _TOKEN_靄:1.0__JCROSS_靄_175_=_TOKEN_靄:1.0__JCROSS_靄_175_
+            )
+            _TOKEN_靄:1.0__JCROSS_靄_152_ += 1
+
+            if _TOKEN_処:1.0__JCROSS_靄_95_:
+                _TOKEN_処:1.0__JCROSS_靄_288_ = _TOKEN_処:1.0__JCROSS_縁_1_(_TOKEN_靄:1.0__JCROSS_靄_214_._TOKEN_靄:1.0__JCROSS_靄_181_(_TOKEN_靄:1.0__JCROSS_靄_131_)) if _TOKEN_靄:1.0__JCROSS_靄_214_._TOKEN_靄:1.0__JCROSS_靄_94_._TOKEN_靄:1.0__JCROSS_靄_64_(_TOKEN_靄:1.0__JCROSS_靄_131_) else _TOKEN_処:1.0__JCROSS_縁_1_()
+                _TOKEN_箱:1.0__JCROSS_靄_46_ = _TOKEN_靄:1.0__JCROSS_靄_16_(_TOKEN_処:1.0__JCROSS_靄_288_ - _TOKEN_泡:1.0__JCROSS_靄_19_)
+                if _TOKEN_箱:1.0__JCROSS_靄_46_:
+                    _TOKEN_靄:1.0__JCROSS_靄_185_ = _TOKEN_靄:1.0__JCROSS_靄_214_._TOKEN_靄:1.0__JCROSS_靄_94_._TOKEN_靄:1.0__JCROSS_靄_205_(_TOKEN_靄:1.0__JCROSS_靄_131_, _TOKEN_箱:1.0__JCROSS_靄_46_[0])
+                _TOKEN_靄:1.0__JCROSS_靄_70_(f"  ✓ _TOKEN_処:1.0__JCROSS_廳_52_ _TOKEN_靄:1.0__JCROSS_靄_49_ ({_TOKEN_靄:1.0__JCROSS_靄_223_}) _TOKEN_靄:1.0__JCROSS_靄_152_ → _TOKEN_靄:1.0__JCROSS_靄_37_: {_TOKEN_箱:1.0__JCROSS_靄_46_[0] if _TOKEN_箱:1.0__JCROSS_靄_46_ else '_TOKEN_靄:1.0__JCROSS_靄_127_ _TOKEN_靄:1.0__JCROSS_靄_207_'}")
+
+        _TOKEN_靄:1.0__JCROSS_靄_70_(f"  → _TOKEN_廳:1.0__JCROSS_廳_44_ {_TOKEN_靄:1.0__JCROSS_靄_152_} _TOKEN_靄:1.0__JCROSS_靄_120_ _TOKEN_靄:1.0__JCROSS_靄_163_ _TOKEN_廳:1.0__JCROSS_廳_46_")
+
+// [metadata-stripped]
+        import re as _TOKEN_靄:1.0__JCROSS_靄_67_
+        if _TOKEN_靄:1.0__JCROSS_靄_185_ _TOKEN_靄:1.0__JCROSS_靄_274_ _TOKEN_靄:1.0__JCROSS_靄_214_._TOKEN_靄:1.0__JCROSS_靄_94_._TOKEN_靄:1.0__JCROSS_靄_64_(_TOKEN_靄:1.0__JCROSS_靄_185_):
+            _TOKEN_靄:1.0__JCROSS_靄_151_ open(_TOKEN_靄:1.0__JCROSS_靄_185_, _TOKEN_靄:1.0__JCROSS_靄_72_="_TOKEN_靄:1.0__JCROSS_靄_232_-8") as fh:
+                _TOKEN_靄:1.0__JCROSS_靄_253_ = fh._TOKEN_靄:1.0__JCROSS_靄_126_()
+// [metadata-stripped]
+            _TOKEN_靄:1.0__JCROSS_靄_270_ = _TOKEN_靄:1.0__JCROSS_靄_67_._TOKEN_靄:1.0__JCROSS_靄_230_(r'【原文】\s*([\s\S]*)', _TOKEN_靄:1.0__JCROSS_靄_253_)
+            _TOKEN_靄:1.0__JCROSS_靄_113_ = _TOKEN_靄:1.0__JCROSS_靄_270_._TOKEN_靄:1.0__JCROSS_靄_102_(1)._TOKEN_靄:1.0__JCROSS_靄_106_() if _TOKEN_靄:1.0__JCROSS_靄_270_ else _TOKEN_靄:1.0__JCROSS_靄_253_
+            _TOKEN_靄:1.0__JCROSS_靄_82_ = _TOKEN_靄:1.0__JCROSS_靄_104_(_TOKEN_靄:1.0__JCROSS_靄_113_, _TOKEN_靄:1.0__JCROSS_靄_101_)
+            _TOKEN_靄:1.0__JCROSS_靄_70_(f"  → 【原文】 _TOKEN_靄:1.0__JCROSS_靄_75_: {_TOKEN_靄:1.0__JCROSS_靄_84_(_TOKEN_靄:1.0__JCROSS_靄_113_)} _TOKEN_靄:1.0__JCROSS_靄_13_ → _TOKEN_靄:1.0__JCROSS_靄_82_ {_TOKEN_靄:1.0__JCROSS_靄_84_(_TOKEN_靄:1.0__JCROSS_靄_82_)} _TOKEN_靄:1.0__JCROSS_靄_13_")
+            _TOKEN_靄:1.0__JCROSS_靄_70_(f"  _TOKEN_靄:1.0__JCROSS_靄_176_: {_TOKEN_靄:1.0__JCROSS_靄_82_[:200]._TOKEN_靄:1.0__JCROSS_靄_140_(_TOKEN_靄:1.0__JCROSS_靄_182_(10), ' | ')}")
+        else:
+// [metadata-stripped]
+            _TOKEN_靄:1.0__JCROSS_靄_56_ = _TOKEN_靄:1.0__JCROSS_靄_62_(_TOKEN_靄:1.0__JCROSS_靄_101_)
+            _TOKEN_靄:1.0__JCROSS_靄_5_ = _TOKEN_靄:1.0__JCROSS_靄_105_._TOKEN_靄:1.0__JCROSS_靄_14_(_TOKEN_靄:1.0__JCROSS_靄_56_)
+            _TOKEN_靄:1.0__JCROSS_靄_236_ = _TOKEN_靄:1.0__JCROSS_靄_67_._TOKEN_靄:1.0__JCROSS_靄_267_(r'-> ID: (\S+)', _TOKEN_靄:1.0__JCROSS_靄_5_)[:5]
+            _TOKEN_靄:1.0__JCROSS_靄_240_ = []
+            for _TOKEN_靄:1.0__JCROSS_靄_107_ in _TOKEN_靄:1.0__JCROSS_靄_236_:
+                _TOKEN_靄:1.0__JCROSS_靄_148_ = _TOKEN_靄:1.0__JCROSS_靄_214_._TOKEN_靄:1.0__JCROSS_靄_94_._TOKEN_靄:1.0__JCROSS_靄_205_(_TOKEN_靄:1.0__JCROSS_靄_131_, _TOKEN_靄:1.0__JCROSS_靄_107_ + "._TOKEN_靄:1.0__JCROSS_靄_122_")
+                if _TOKEN_靄:1.0__JCROSS_靄_214_._TOKEN_靄:1.0__JCROSS_靄_94_._TOKEN_靄:1.0__JCROSS_靄_64_(_TOKEN_靄:1.0__JCROSS_靄_148_):
+                    _TOKEN_靄:1.0__JCROSS_靄_151_ open(_TOKEN_靄:1.0__JCROSS_靄_148_, _TOKEN_靄:1.0__JCROSS_靄_72_="_TOKEN_靄:1.0__JCROSS_靄_232_-8") as fh:
+                        _TOKEN_靄:1.0__JCROSS_靄_240_._TOKEN_靄:1.0__JCROSS_靄_65_(fh._TOKEN_靄:1.0__JCROSS_靄_126_())
+            _TOKEN_靄:1.0__JCROSS_靄_82_ = _TOKEN_靄:1.0__JCROSS_靄_104_("\n\n"._TOKEN_靄:1.0__JCROSS_靄_205_(_TOKEN_靄:1.0__JCROSS_靄_240_), _TOKEN_靄:1.0__JCROSS_靄_101_)
+            _TOKEN_靄:1.0__JCROSS_靄_70_(f"  → _TOKEN_廳:1.0__JCROSS_廳_9_ _TOKEN_靄:1.0__JCROSS_靄_130_ _TOKEN_靄:1.0__JCROSS_靄_230_ → _TOKEN_靄:1.0__JCROSS_靄_82_ {_TOKEN_靄:1.0__JCROSS_靄_84_(_TOKEN_靄:1.0__JCROSS_靄_82_)} _TOKEN_靄:1.0__JCROSS_靄_13_")
+            _TOKEN_靄:1.0__JCROSS_靄_70_(f"  _TOKEN_靄:1.0__JCROSS_靄_176_: {_TOKEN_靄:1.0__JCROSS_靄_82_[:200]._TOKEN_靄:1.0__JCROSS_靄_140_(_TOKEN_靄:1.0__JCROSS_靄_182_(10), ' | ')}")
+
+// [metadata-stripped]
+        _TOKEN_靄:1.0__JCROSS_靄_70_(f"  → _TOKEN_廳:1.0__JCROSS_廳_45_ {_TOKEN_廳:1.0__JCROSS_廳_14_}...")
+        _TOKEN_処:1.0__JCROSS_靄_241_ = _TOKEN_靄:1.0__JCROSS_靄_220_(_TOKEN_靄:1.0__JCROSS_靄_101_, _TOKEN_靄:1.0__JCROSS_靄_82_)
+        _TOKEN_靄:1.0__JCROSS_靄_70_(f"  _TOKEN_廳:1.0__JCROSS_廳_38_: {_TOKEN_処:1.0__JCROSS_靄_241_[:200]}")
+
+// [metadata-stripped]
+        _TOKEN_靄:1.0__JCROSS_靄_90_ = _TOKEN_秘:1.0__JCROSS_靄_281_(_TOKEN_靄:1.0__JCROSS_靄_76_, _TOKEN_処:1.0__JCROSS_靄_241_)
+        _TOKEN_靄:1.0__JCROSS_靄_69_ = "✅" if _TOKEN_靄:1.0__JCROSS_靄_90_ >= 0.5 else ("⚠️" if _TOKEN_靄:1.0__JCROSS_靄_90_ > 0 else "❌")
+        _TOKEN_靄:1.0__JCROSS_靄_70_(f"  _TOKEN_廳:1.0__JCROSS_廳_71_: {_TOKEN_靄:1.0__JCROSS_靄_90_:.0%} {_TOKEN_靄:1.0__JCROSS_靄_69_}")
+
+        _TOKEN_靄:1.0__JCROSS_靄_74_._TOKEN_靄:1.0__JCROSS_靄_65_({
+            "id": _TOKEN_靄:1.0__JCROSS_靄_2_,
+            "_TOKEN_靄:1.0__JCROSS_靄_101_": _TOKEN_靄:1.0__JCROSS_靄_101_,
+            "_TOKEN_靄:1.0__JCROSS_靄_76_": _TOKEN_靄:1.0__JCROSS_靄_76_,
+            "_TOKEN_靄:1.0__JCROSS_靄_119_": _TOKEN_処:1.0__JCROSS_靄_241_,
+            "_TOKEN_靄:1.0__JCROSS_靄_159_": _TOKEN_靄:1.0__JCROSS_靄_84_(_TOKEN_靄:1.0__JCROSS_靄_82_),
+            "_TOKEN_靄:1.0__JCROSS_靄_165_": _TOKEN_靄:1.0__JCROSS_靄_152_,
+            "_TOKEN_秘:1.0__JCROSS_靄_281_": _TOKEN_靄:1.0__JCROSS_靄_17_(_TOKEN_靄:1.0__JCROSS_靄_90_, 3)
+        })
+
+// [metadata-stripped]
+    _TOKEN_靄:1.0__JCROSS_靄_70_("\n" + "=" * 65)
+    _TOKEN_靄:1.0__JCROSS_靄_70_("_TOKEN_廳:1.0__JCROSS_廳_39_ _TOKEN_廳:1.0__JCROSS_廳_51_ _TOKEN_廳:1.0__JCROSS_廳_63_")
+    _TOKEN_靄:1.0__JCROSS_靄_70_("=" * 65)
+    _TOKEN_靄:1.0__JCROSS_靄_155_ = _TOKEN_靄:1.0__JCROSS_靄_171_(1 for r in _TOKEN_靄:1.0__JCROSS_靄_74_ if r["_TOKEN_秘:1.0__JCROSS_靄_281_"] >= 0.5)
+    _TOKEN_靄:1.0__JCROSS_靄_63_ = _TOKEN_靄:1.0__JCROSS_靄_171_(1 for r in _TOKEN_靄:1.0__JCROSS_靄_74_ if 0 < r["_TOKEN_秘:1.0__JCROSS_靄_281_"] < 0.5)
+    _TOKEN_靄:1.0__JCROSS_靄_248_ = _TOKEN_靄:1.0__JCROSS_靄_171_(1 for r in _TOKEN_靄:1.0__JCROSS_靄_74_ if r["_TOKEN_秘:1.0__JCROSS_靄_281_"] == 0)
+// _TOKEN_縁:0.8__JCROSS_VG_990_ [decoy-metadata]
+    _TOKEN_靄:1.0__JCROSS_靄_251_ = _TOKEN_靄:1.0__JCROSS_靄_171_(r["_TOKEN_秘:1.0__JCROSS_靄_281_"] for r in _TOKEN_靄:1.0__JCROSS_靄_74_) / _TOKEN_靄:1.0__JCROSS_靄_84_(_TOKEN_靄:1.0__JCROSS_靄_74_) if _TOKEN_靄:1.0__JCROSS_靄_74_ else 0
+
+    _TOKEN_靄:1.0__JCROSS_靄_70_(f"✅ _TOKEN_廳:1.0__JCROSS_廳_19_ (≥50%):   {_TOKEN_靄:1.0__JCROSS_靄_155_}/{_TOKEN_廳:1.0__JCROSS_廳_24_}")
+    _TOKEN_靄:1.0__JCROSS_靄_70_(f"⚠️  _TOKEN_廳:1.0__JCROSS_廳_60_:       {_TOKEN_靄:1.0__JCROSS_靄_63_}/{_TOKEN_廳:1.0__JCROSS_廳_24_}")
+    _TOKEN_靄:1.0__JCROSS_靄_70_(f"❌ _TOKEN_廳:1.0__JCROSS_廳_66_ (0%):     {_TOKEN_靄:1.0__JCROSS_靄_248_}/{_TOKEN_廳:1.0__JCROSS_廳_24_}")
+    _TOKEN_靄:1.0__JCROSS_靄_70_(f"📊 _TOKEN_廳:1.0__JCROSS_廳_50_ _TOKEN_靄:1.0__JCROSS_靄_90_:     {_TOKEN_靄:1.0__JCROSS_靄_251_:.1%}")
+    _TOKEN_靄:1.0__JCROSS_靄_70_()
+
+    for r in _TOKEN_靄:1.0__JCROSS_靄_74_:
+        _TOKEN_靄:1.0__JCROSS_靄_69_ = "✅" if r["_TOKEN_秘:1.0__JCROSS_靄_281_"] >= 0.5 else ("⚠️" if r["_TOKEN_秘:1.0__JCROSS_靄_281_"] > 0 else "❌")
+        _TOKEN_靄:1.0__JCROSS_靄_70_(f"  {_TOKEN_靄:1.0__JCROSS_靄_69_} {r['id']}: {r['_TOKEN_秘:1.0__JCROSS_靄_281_']:.0%} | _TOKEN_靄:1.0__JCROSS_靄_82_={r['_TOKEN_靄:1.0__JCROSS_靄_159_']}ch | _TOKEN_靄:1.0__JCROSS_靄_85_: {r['_TOKEN_靄:1.0__JCROSS_靄_119_'][:40]}")
+// _TOKEN_処:0.8__JCROSS_VY_854_ [decoy-metadata]
+
+// [metadata-stripped]
+    _TOKEN_靄:1.0__JCROSS_靄_57_ = "/_TOKEN_廳:1.0__JCROSS_廳_33_/_TOKEN_靄:1.0__JCROSS_靄_66_/_TOKEN_靄:1.0__JCROSS_靄_217_-_TOKEN_靄:1.0__JCROSS_靄_92_/_TOKEN_靄:1.0__JCROSS_靄_110_-_TOKEN_靄:1.0__JCROSS_靄_278_/_TOKEN_靄:1.0__JCROSS_靄_167_/_TOKEN_靄:1.0__JCROSS_靄_143_._TOKEN_靄:1.0__JCROSS_靄_125_"
+    _TOKEN_靄:1.0__JCROSS_靄_151_ open(_TOKEN_靄:1.0__JCROSS_靄_57_, "w") as f:
+        _TOKEN_靄:1.0__JCROSS_靄_125_._TOKEN_靄:1.0__JCROSS_靄_221_({"_TOKEN_靄:1.0__JCROSS_靄_149_": {"_TOKEN_靄:1.0__JCROSS_靄_144_": _TOKEN_靄:1.0__JCROSS_靄_155_, "_TOKEN_靄:1.0__JCROSS_靄_246_": _TOKEN_靄:1.0__JCROSS_靄_63_, "_TOKEN_靄:1.0__JCROSS_靄_117_": _TOKEN_靄:1.0__JCROSS_靄_248_, "_TOKEN_靄:1.0__JCROSS_靄_26_": _TOKEN_靄:1.0__JCROSS_靄_251_},
+                   "_TOKEN_靄:1.0__JCROSS_靄_74_": _TOKEN_靄:1.0__JCROSS_靄_74_}, f, _TOKEN_靄:1.0__JCROSS_靄_237_=2, _TOKEN_靄:1.0__JCROSS_靄_256_=_TOKEN_廳:1.0__JCROSS_廳_3_)
+    _TOKEN_靄:1.0__JCROSS_靄_70_(f"\_TOKEN_箱:1.0__JCROSS_靄_200_ to: {_TOKEN_靄:1.0__JCROSS_靄_57_}")
+
+
+if _TOKEN_靄:1.0__JCROSS_靄_87_ == "_TOKEN_靄:1.0__JCROSS_靄_264_":
+    _TOKEN_靄:1.0__JCROSS_靄_262_()
+
+// POLYMORPHIC_JCROSS_END

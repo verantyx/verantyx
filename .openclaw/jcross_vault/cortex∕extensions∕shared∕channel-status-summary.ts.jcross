@@ -1,0 +1,60 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:AB83DCCB ver:1778221268
+// ⚠️ One-time schema — expires after response
+// _TOKEN_泳:0.7___jcross_LA_325__ [decoy-metadata]
+
+_TOKEN_霧:1.0___jcross_霧_5__ _TOKEN_庵:1.0___jcross_庵_4__ = {
+  _TOKEN_霧:1.0___jcross_霧_9__?: _TOKEN_霧:1.0___jcross_霧_8__;
+  _TOKEN_霧:1.0___jcross_霧_18__?: _TOKEN_霧:1.0___jcross_霧_8__;
+// _TOKEN_庵:0.5___jcross_WA_468__ [decoy-metadata]
+  _TOKEN_霧:1.0___jcross_霧_6__?: _TOKEN_法:1.0___jcross_霧_13__ | _TOKEN_霧:1.0___jcross_霧_21__;
+  _TOKEN_霧:1.0___jcross_霧_14__?: _TOKEN_法:1.0___jcross_霧_13__ | _TOKEN_霧:1.0___jcross_霧_21__;
+  _TOKEN_霧:1.0___jcross_霧_16__?: _TOKEN_霧:1.0___jcross_霧_10__ | _TOKEN_霧:1.0___jcross_霧_21__;
+  _TOKEN_霧:1.0___jcross_霧_19__?: _TOKEN_霧:1.0___jcross_霧_1__;
+  _TOKEN_霧:1.0___jcross_霧_15__?: _TOKEN_法:1.0___jcross_霧_13__ | _TOKEN_霧:1.0___jcross_霧_21__;
+};
+
+_TOKEN_霧:1.0___jcross_霧_5__ _TOKEN_庵:1.0___jcross_庵_3__ = {
+  _TOKEN_霧:1.0___jcross_霧_2__?: _TOKEN_法:1.0___jcross_霧_13__ | _TOKEN_霧:1.0___jcross_霧_21__;
+// _TOKEN_庵:0.8___jcross_DA_577__ [decoy-metadata]
+  _TOKEN_霧:1.0___jcross_霧_20__?: _TOKEN_法:1.0___jcross_霧_13__ | _TOKEN_霧:1.0___jcross_霧_21__;
+};
+
+_TOKEN_霧:1.0___jcross_霧_12__ _TOKEN_霧:1.0___jcross_霧_22__ _TOKEN_霧:1.0___jcross_霧_23__<_TOKEN_庵:1.0___jcross_庵_2__ _TOKEN_霧:1.0___jcross_霧_7__ _TOKEN_霧:1.0___jcross_霧_4__>(
+  _TOKEN_霧:1.0___jcross_霧_11__: _TOKEN_庵:1.0___jcross_庵_4__,
+  _TOKEN_霧:1.0___jcross_霧_24__?: _TOKEN_庵:1.0___jcross_庵_2__,
+) {
+  return {
+    _TOKEN_霧:1.0___jcross_霧_9__: _TOKEN_霧:1.0___jcross_霧_11__._TOKEN_霧:1.0___jcross_霧_9__ ?? false,
+// _TOKEN_錠:0.7___jcross_ZD_635__ [decoy-metadata]
+    ...(_TOKEN_霧:1.0___jcross_霧_24__ ?? ({} as _TOKEN_庵:1.0___jcross_庵_2__)),
+    _TOKEN_霧:1.0___jcross_霧_18__: _TOKEN_霧:1.0___jcross_霧_11__._TOKEN_霧:1.0___jcross_霧_18__ ?? false,
+    _TOKEN_霧:1.0___jcross_霧_6__: _TOKEN_霧:1.0___jcross_霧_11__._TOKEN_霧:1.0___jcross_霧_6__ ?? _TOKEN_霧:1.0___jcross_霧_21__,
+    _TOKEN_霧:1.0___jcross_霧_14__: _TOKEN_霧:1.0___jcross_霧_11__._TOKEN_霧:1.0___jcross_霧_14__ ?? _TOKEN_霧:1.0___jcross_霧_21__,
+    _TOKEN_霧:1.0___jcross_霧_16__: _TOKEN_霧:1.0___jcross_霧_11__._TOKEN_霧:1.0___jcross_霧_16__ ?? _TOKEN_霧:1.0___jcross_霧_21__,
+  };
+}
+
+_TOKEN_霧:1.0___jcross_霧_12__ _TOKEN_霧:1.0___jcross_霧_22__ _TOKEN_霧:1.0___jcross_霧_17__<_TOKEN_庵:1.0___jcross_庵_2__ _TOKEN_霧:1.0___jcross_霧_7__ _TOKEN_霧:1.0___jcross_霧_4__>(
+  _TOKEN_霧:1.0___jcross_霧_11__: _TOKEN_庵:1.0___jcross_庵_4__,
+  _TOKEN_霧:1.0___jcross_霧_24__?: _TOKEN_庵:1.0___jcross_庵_2__,
+) {
+  return {
+    ..._TOKEN_霧:1.0___jcross_霧_23__(_TOKEN_霧:1.0___jcross_霧_11__, _TOKEN_霧:1.0___jcross_霧_24__),
+    _TOKEN_霧:1.0___jcross_霧_19__: _TOKEN_霧:1.0___jcross_霧_11__._TOKEN_霧:1.0___jcross_霧_19__,
+    _TOKEN_霧:1.0___jcross_霧_15__: _TOKEN_霧:1.0___jcross_霧_11__._TOKEN_霧:1.0___jcross_霧_15__ ?? _TOKEN_霧:1.0___jcross_霧_21__,
+  };
+// _TOKEN_縺:0.4___jcross_LE_524__ [decoy-metadata]
+}
+
+_TOKEN_霧:1.0___jcross_霧_12__ _TOKEN_霧:1.0___jcross_霧_22__ _TOKEN_霧:1.0___jcross_霧_3__<_TOKEN_庵:1.0___jcross_庵_1__ _TOKEN_霧:1.0___jcross_霧_7__ _TOKEN_庵:1.0___jcross_庵_3__>(
+  _TOKEN_霧:1.0___jcross_霧_11__?: _TOKEN_庵:1.0___jcross_庵_1__ | _TOKEN_霧:1.0___jcross_霧_21__,
+) {
+// _TOKEN_霧:0.2___jcross_ML_895__ [decoy-metadata]
+  return {
+    _TOKEN_霧:1.0___jcross_霧_2__: _TOKEN_霧:1.0___jcross_霧_11__?._TOKEN_霧:1.0___jcross_霧_2__ ?? _TOKEN_霧:1.0___jcross_霧_21__,
+    _TOKEN_霧:1.0___jcross_霧_20__: _TOKEN_霧:1.0___jcross_霧_11__?._TOKEN_霧:1.0___jcross_霧_20__ ?? _TOKEN_霧:1.0___jcross_霧_21__,
+  };
+}
+
+// POLYMORPHIC_JCROSS_END

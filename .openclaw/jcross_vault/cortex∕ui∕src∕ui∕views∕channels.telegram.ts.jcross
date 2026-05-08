@@ -1,0 +1,132 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:856C9ACE ver:1778220118
+// ⚠️ One-time schema — expires after response
+
+import { __ast_沫:1.0___OPAQUE_沫_48_, __ast_沫:1.0___OPAQUE_沫_57_ } __ast_沫:1.0___OPAQUE_沫_45_ "__ast_沫:1.0___OPAQUE_沫_16_";
+import { __ast_浪:1.0___OPAQUE_沫_29_ } __ast_沫:1.0___OPAQUE_沫_45_ "../__ast_浪:1.0___OPAQUE_沫_44_.ts";
+import __ast_沫:1.0___OPAQUE_沫_25_ { __ast_墟:1.0___OPAQUE_墟_3_, __ast_墟:1.0___OPAQUE_墟_5_ } __ast_沫:1.0___OPAQUE_沫_45_ "../__ast_沫:1.0___OPAQUE_沫_54_.ts";
+import { __ast_沫:1.0___OPAQUE_沫_50_ } __ast_沫:1.0___OPAQUE_沫_45_ "./__ast_沫:1.0___OPAQUE_沫_49_.__ast_沫:1.0___OPAQUE_沫_66_.ts";
+import __ast_沫:1.0___OPAQUE_沫_25_ { __ast_墟:1.0___OPAQUE_墟_2_ } __ast_沫:1.0___OPAQUE_沫_45_ "./__ast_沫:1.0___OPAQUE_沫_49_.__ast_沫:1.0___OPAQUE_沫_54_.ts";
+
+__ast_沫:1.0___OPAQUE_沫_15_ __ast_沫:1.0___OPAQUE_沫_65_ __ast_沫:1.0___OPAQUE_沫_2_(__ast_沫:1.0___OPAQUE_沫_3_: {
+  __ast_沫:1.0___OPAQUE_沫_62_: __ast_墟:1.0___OPAQUE_墟_2_;
+  __ast_沫:1.0___OPAQUE_沫_35_?: __ast_墟:1.0___OPAQUE_墟_5_;
+  __ast_沫:1.0___OPAQUE_沫_7_: __ast_墟:1.0___OPAQUE_墟_3_[];
+  __ast_沫:1.0___OPAQUE_沫_28_: __ast_沫:1.0___OPAQUE_沫_22_;
+}) {
+  __ast_沫:1.0___OPAQUE_沫_21_ { __ast_沫:1.0___OPAQUE_沫_62_, __ast_沫:1.0___OPAQUE_沫_35_, __ast_沫:1.0___OPAQUE_沫_7_, __ast_沫:1.0___OPAQUE_沫_28_ } = __ast_沫:1.0___OPAQUE_沫_3_;
+  __ast_沫:1.0___OPAQUE_沫_21_ __ast_沫:1.0___OPAQUE_沫_23_ = __ast_沫:1.0___OPAQUE_沫_7_.__ast_沫:1.0___OPAQUE_沫_33_ > 1;
+
+  __ast_沫:1.0___OPAQUE_沫_21_ __ast_沫:1.0___OPAQUE_沫_41_ = (__ast_沫:1.0___OPAQUE_沫_26_: __ast_墟:1.0___OPAQUE_墟_3_) => {
+// __ast_沫:0.6___OPAQUE_AL_297_ [decoy-metadata]
+    __ast_沫:1.0___OPAQUE_沫_21_ __ast_沫:1.0___OPAQUE_沫_43_ = __ast_沫:1.0___OPAQUE_沫_26_.__ast_沫:1.0___OPAQUE_沫_43_ as { __ast_沫:1.0___OPAQUE_沫_8_?: { __ast_沫:1.0___OPAQUE_沫_13_?: __ast_沫:1.0___OPAQUE_沫_12_ } } | __ast_沫:1.0___OPAQUE_沫_11_;
+    __ast_沫:1.0___OPAQUE_沫_21_ __ast_沫:1.0___OPAQUE_沫_19_ = __ast_沫:1.0___OPAQUE_沫_43_?.__ast_沫:1.0___OPAQUE_沫_8_?.__ast_沫:1.0___OPAQUE_沫_13_;
+    __ast_沫:1.0___OPAQUE_沫_21_ __ast_沫:1.0___OPAQUE_沫_4_ = __ast_沫:1.0___OPAQUE_沫_26_.__ast_沫:1.0___OPAQUE_沫_55_ || __ast_沫:1.0___OPAQUE_沫_26_.__ast_沫:1.0___OPAQUE_沫_39_;
+    return __ast_沫:1.0___OPAQUE_沫_48_`
+      <__ast_沫:1.0___OPAQUE_沫_38_ class="__ast_沫:1.0___OPAQUE_沫_26_-__ast_沫:1.0___OPAQUE_沫_42_">
+        <__ast_沫:1.0___OPAQUE_沫_38_ class="__ast_沫:1.0___OPAQUE_沫_26_-__ast_沫:1.0___OPAQUE_沫_42_-__ast_式:1.0___OPAQUE_沫_36_">
+// __ast_燦:0.1___OPAQUE_CA_485_ [decoy-metadata]
+          <__ast_沫:1.0___OPAQUE_沫_38_ class="__ast_沫:1.0___OPAQUE_沫_26_-__ast_沫:1.0___OPAQUE_沫_42_-__ast_沫:1.0___OPAQUE_沫_56_">
+            ${__ast_沫:1.0___OPAQUE_沫_19_ ? `@${__ast_沫:1.0___OPAQUE_沫_19_}` : __ast_沫:1.0___OPAQUE_沫_4_}
+          </__ast_沫:1.0___OPAQUE_沫_38_>
+          <__ast_沫:1.0___OPAQUE_沫_38_ class="__ast_沫:1.0___OPAQUE_沫_26_-__ast_沫:1.0___OPAQUE_沫_42_-id">${__ast_沫:1.0___OPAQUE_沫_26_.__ast_沫:1.0___OPAQUE_沫_39_}</__ast_沫:1.0___OPAQUE_沫_38_>
+        </__ast_沫:1.0___OPAQUE_沫_38_>
+        <__ast_沫:1.0___OPAQUE_沫_38_ class="__ast_沫:1.0___OPAQUE_沫_24_-__ast_沫:1.0___OPAQUE_沫_46_ __ast_沫:1.0___OPAQUE_沫_26_-__ast_沫:1.0___OPAQUE_沫_42_-__ast_沫:1.0___OPAQUE_沫_24_">
+          <__ast_沫:1.0___OPAQUE_沫_38_>
+            <__ast_沫:1.0___OPAQUE_沫_68_ class="__ast_沫:1.0___OPAQUE_沫_4_">__ast_墟:1.0___OPAQUE_墟_6_</__ast_沫:1.0___OPAQUE_沫_68_>
+            <__ast_沫:1.0___OPAQUE_沫_68_>${__ast_沫:1.0___OPAQUE_沫_26_.__ast_沫:1.0___OPAQUE_沫_31_ ? "__ast_墟:1.0___OPAQUE_墟_1_" : "No"}</__ast_沫:1.0___OPAQUE_沫_68_>
+          </__ast_沫:1.0___OPAQUE_沫_38_>
+          <__ast_沫:1.0___OPAQUE_沫_38_>
+            <__ast_沫:1.0___OPAQUE_沫_68_ class="__ast_沫:1.0___OPAQUE_沫_4_">__ast_墟:1.0___OPAQUE_墟_4_</__ast_沫:1.0___OPAQUE_沫_68_>
+            <__ast_沫:1.0___OPAQUE_沫_68_>${__ast_沫:1.0___OPAQUE_沫_26_.__ast_沫:1.0___OPAQUE_沫_6_ ? "__ast_墟:1.0___OPAQUE_墟_1_" : "No"}</__ast_沫:1.0___OPAQUE_沫_68_>
+          </__ast_沫:1.0___OPAQUE_沫_38_>
+          <__ast_沫:1.0___OPAQUE_沫_38_>
+            <__ast_沫:1.0___OPAQUE_沫_68_ class="__ast_沫:1.0___OPAQUE_沫_4_">__ast_墟:1.0___OPAQUE_墟_9_ __ast_沫:1.0___OPAQUE_沫_67_</__ast_沫:1.0___OPAQUE_沫_68_>
+            <__ast_沫:1.0___OPAQUE_沫_68_>${__ast_沫:1.0___OPAQUE_沫_26_.__ast_沫:1.0___OPAQUE_沫_61_ ? __ast_浪:1.0___OPAQUE_沫_29_(__ast_沫:1.0___OPAQUE_沫_26_.__ast_沫:1.0___OPAQUE_沫_61_) : "n/a"}</__ast_沫:1.0___OPAQUE_沫_68_>
+          </__ast_沫:1.0___OPAQUE_沫_38_>
+          ${
+            __ast_沫:1.0___OPAQUE_沫_26_.__ast_沫:1.0___OPAQUE_沫_20_
+              ? __ast_沫:1.0___OPAQUE_沫_48_`
+                <__ast_沫:1.0___OPAQUE_沫_38_ class="__ast_沫:1.0___OPAQUE_沫_26_-__ast_沫:1.0___OPAQUE_沫_42_-__ast_沫:1.0___OPAQUE_沫_34_">
+                  ${__ast_沫:1.0___OPAQUE_沫_26_.__ast_沫:1.0___OPAQUE_沫_20_}
+                </__ast_沫:1.0___OPAQUE_沫_38_>
+              `
+              : __ast_沫:1.0___OPAQUE_沫_57_
+// __ast_匵:0.1___OPAQUE_DX_455_ [decoy-metadata]
+          }
+        </__ast_沫:1.0___OPAQUE_沫_38_>
+      </__ast_沫:1.0___OPAQUE_沫_38_>
+    `;
+  };
+
+  return __ast_沫:1.0___OPAQUE_沫_48_`
+    <__ast_沫:1.0___OPAQUE_沫_38_ class="__ast_沫:1.0___OPAQUE_沫_42_">
+      <__ast_沫:1.0___OPAQUE_沫_38_ class="__ast_沫:1.0___OPAQUE_沫_42_-__ast_沫:1.0___OPAQUE_沫_56_">__ast_墟:1.0___OPAQUE_墟_10_</__ast_沫:1.0___OPAQUE_沫_38_>
+      <__ast_沫:1.0___OPAQUE_沫_38_ class="__ast_沫:1.0___OPAQUE_沫_42_-__ast_沫:1.0___OPAQUE_沫_27_">__ast_墟:1.0___OPAQUE_墟_11_ __ast_沫:1.0___OPAQUE_沫_24_ __ast_沫:1.0___OPAQUE_沫_9_ __ast_沫:1.0___OPAQUE_沫_51_ __ast_沫:1.0___OPAQUE_沫_32_.</__ast_沫:1.0___OPAQUE_沫_38_>
+      ${__ast_沫:1.0___OPAQUE_沫_28_}
+
+      ${
+        __ast_沫:1.0___OPAQUE_沫_23_
+          ? __ast_沫:1.0___OPAQUE_沫_48_`
+            <__ast_沫:1.0___OPAQUE_沫_38_ class="__ast_沫:1.0___OPAQUE_沫_26_-__ast_沫:1.0___OPAQUE_沫_42_-__ast_沫:1.0___OPAQUE_沫_46_">
+              ${__ast_沫:1.0___OPAQUE_沫_7_.__ast_沫:1.0___OPAQUE_沫_14_((__ast_沫:1.0___OPAQUE_沫_26_) => __ast_沫:1.0___OPAQUE_沫_41_(__ast_沫:1.0___OPAQUE_沫_26_))}
+            </__ast_沫:1.0___OPAQUE_沫_38_>
+          `
+          : __ast_沫:1.0___OPAQUE_沫_48_`
+            <__ast_沫:1.0___OPAQUE_沫_38_ class="__ast_沫:1.0___OPAQUE_沫_24_-__ast_沫:1.0___OPAQUE_沫_46_" __ast_沫:1.0___OPAQUE_沫_64_="__ast_沫:1.0___OPAQUE_沫_60_-__ast_沫:1.0___OPAQUE_沫_59_: 16px;">
+              <__ast_沫:1.0___OPAQUE_沫_38_>
+                <__ast_沫:1.0___OPAQUE_沫_68_ class="__ast_沫:1.0___OPAQUE_沫_4_">__ast_墟:1.0___OPAQUE_墟_4_</__ast_沫:1.0___OPAQUE_沫_68_>
+                <__ast_沫:1.0___OPAQUE_沫_68_>${__ast_沫:1.0___OPAQUE_沫_35_?.__ast_沫:1.0___OPAQUE_沫_6_ ? "__ast_墟:1.0___OPAQUE_墟_1_" : "No"}</__ast_沫:1.0___OPAQUE_沫_68_>
+              </__ast_沫:1.0___OPAQUE_沫_38_>
+              <__ast_沫:1.0___OPAQUE_沫_38_>
+                <__ast_沫:1.0___OPAQUE_沫_68_ class="__ast_沫:1.0___OPAQUE_沫_4_">__ast_墟:1.0___OPAQUE_墟_6_</__ast_沫:1.0___OPAQUE_沫_68_>
+                <__ast_沫:1.0___OPAQUE_沫_68_>${__ast_沫:1.0___OPAQUE_沫_35_?.__ast_沫:1.0___OPAQUE_沫_31_ ? "__ast_墟:1.0___OPAQUE_墟_1_" : "No"}</__ast_沫:1.0___OPAQUE_沫_68_>
+              </__ast_沫:1.0___OPAQUE_沫_38_>
+              <__ast_沫:1.0___OPAQUE_沫_38_>
+                <__ast_沫:1.0___OPAQUE_沫_68_ class="__ast_沫:1.0___OPAQUE_沫_4_">__ast_墟:1.0___OPAQUE_墟_7_</__ast_沫:1.0___OPAQUE_沫_68_>
+                <__ast_沫:1.0___OPAQUE_沫_68_>${__ast_沫:1.0___OPAQUE_沫_35_?.__ast_沫:1.0___OPAQUE_沫_30_ ?? "n/a"}</__ast_沫:1.0___OPAQUE_沫_68_>
+              </__ast_沫:1.0___OPAQUE_沫_38_>
+              <__ast_沫:1.0___OPAQUE_沫_38_>
+                <__ast_沫:1.0___OPAQUE_沫_68_ class="__ast_沫:1.0___OPAQUE_沫_4_">__ast_墟:1.0___OPAQUE_墟_9_ __ast_沫:1.0___OPAQUE_沫_37_</__ast_沫:1.0___OPAQUE_沫_68_>
+                <__ast_沫:1.0___OPAQUE_沫_68_>${__ast_沫:1.0___OPAQUE_沫_35_?.__ast_沫:1.0___OPAQUE_沫_52_ ? __ast_浪:1.0___OPAQUE_沫_29_(__ast_沫:1.0___OPAQUE_沫_35_.__ast_沫:1.0___OPAQUE_沫_52_) : "n/a"}</__ast_沫:1.0___OPAQUE_沫_68_>
+// __ast_墟:0.9___OPAQUE_ZH_507_ [decoy-metadata]
+              </__ast_沫:1.0___OPAQUE_沫_38_>
+              <__ast_沫:1.0___OPAQUE_沫_38_>
+                <__ast_沫:1.0___OPAQUE_沫_68_ class="__ast_沫:1.0___OPAQUE_沫_4_">__ast_墟:1.0___OPAQUE_墟_9_ __ast_沫:1.0___OPAQUE_沫_43_</__ast_沫:1.0___OPAQUE_沫_68_>
+                <__ast_沫:1.0___OPAQUE_沫_68_>${__ast_沫:1.0___OPAQUE_沫_35_?.__ast_沫:1.0___OPAQUE_沫_10_ ? __ast_浪:1.0___OPAQUE_沫_29_(__ast_沫:1.0___OPAQUE_沫_35_.__ast_沫:1.0___OPAQUE_沫_10_) : "n/a"}</__ast_沫:1.0___OPAQUE_沫_68_>
+              </__ast_沫:1.0___OPAQUE_沫_38_>
+            </__ast_沫:1.0___OPAQUE_沫_38_>
+          `
+// __ast_墟:0.9___OPAQUE_YB_533_ [decoy-metadata]
+      }
+
+      ${
+        __ast_沫:1.0___OPAQUE_沫_35_?.__ast_沫:1.0___OPAQUE_沫_20_
+          ? __ast_沫:1.0___OPAQUE_沫_48_`<__ast_沫:1.0___OPAQUE_沫_38_ class="__ast_沫:1.0___OPAQUE_沫_53_ __ast_式:1.0___OPAQUE_沫_17_" __ast_沫:1.0___OPAQUE_沫_64_="__ast_沫:1.0___OPAQUE_沫_60_-__ast_沫:1.0___OPAQUE_沫_59_: 12px;">
+            ${__ast_沫:1.0___OPAQUE_沫_35_.__ast_沫:1.0___OPAQUE_沫_20_}
+          </__ast_沫:1.0___OPAQUE_沫_38_>`
+          : __ast_沫:1.0___OPAQUE_沫_57_
+      }
+
+      ${
+        __ast_沫:1.0___OPAQUE_沫_35_?.__ast_沫:1.0___OPAQUE_沫_43_
+          ? __ast_沫:1.0___OPAQUE_沫_48_`<__ast_沫:1.0___OPAQUE_沫_38_ class="__ast_沫:1.0___OPAQUE_沫_53_" __ast_沫:1.0___OPAQUE_沫_64_="__ast_沫:1.0___OPAQUE_沫_60_-__ast_沫:1.0___OPAQUE_沫_59_: 12px;">
+            __ast_墟:1.0___OPAQUE_墟_8_ ${__ast_沫:1.0___OPAQUE_沫_35_.__ast_沫:1.0___OPAQUE_沫_43_.ok ? "ok" : "__ast_沫:1.0___OPAQUE_沫_18_"} ·
+            ${__ast_沫:1.0___OPAQUE_沫_35_.__ast_沫:1.0___OPAQUE_沫_43_.__ast_沫:1.0___OPAQUE_沫_24_ ?? ""} ${__ast_沫:1.0___OPAQUE_沫_35_.__ast_沫:1.0___OPAQUE_沫_43_.__ast_沫:1.0___OPAQUE_沫_34_ ?? ""}
+          </__ast_沫:1.0___OPAQUE_沫_38_>`
+          : __ast_沫:1.0___OPAQUE_沫_57_
+      }
+
+      ${__ast_沫:1.0___OPAQUE_沫_50_({ __ast_沫:1.0___OPAQUE_沫_58_: "__ast_沫:1.0___OPAQUE_沫_35_", __ast_沫:1.0___OPAQUE_沫_62_ })}
+
+      <__ast_沫:1.0___OPAQUE_沫_38_ class="__ast_沫:1.0___OPAQUE_沫_40_" __ast_沫:1.0___OPAQUE_沫_64_="__ast_沫:1.0___OPAQUE_沫_60_-__ast_沫:1.0___OPAQUE_沫_59_: 12px;">
+        <__ast_沫:1.0___OPAQUE_沫_63_ class="__ast_沫:1.0___OPAQUE_沫_47_" @__ast_沫:1.0___OPAQUE_沫_1_=${() => __ast_沫:1.0___OPAQUE_沫_62_.__ast_沫:1.0___OPAQUE_沫_5_(true)}>
+          __ast_墟:1.0___OPAQUE_墟_8_
+        </__ast_沫:1.0___OPAQUE_沫_63_>
+      </__ast_沫:1.0___OPAQUE_沫_38_>
+// __ast_匵:0.6___OPAQUE_FZ_325_ [decoy-metadata]
+    </__ast_沫:1.0___OPAQUE_沫_38_>
+  `;
+}
+
+// POLYMORPHIC_JCROSS_END

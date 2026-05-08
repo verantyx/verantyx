@@ -1,0 +1,82 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:9906CD16 ver:1778220336
+// ⚠️ One-time schema — expires after response
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+
+__ast_霢:1.0___JCROSS_霢_10_ __ast_霢:1.0___JCROSS_霢_41_::{__ast_廟:1.0___JCROSS_廟_16_, __ast_廟:1.0___JCROSS_廟_1_};
+__ast_霢:1.0___JCROSS_霢_10_ __ast_霢:1.0___JCROSS_霢_37_::__ast_霢:1.0___JCROSS_霢_36_::__ast_廟:1.0___JCROSS_廟_14_;
+
+// __ast_奥:0.8___JCROSS_KD_914_ [decoy-metadata]
+// [metadata-stripped]
+__ast_霢:1.0___JCROSS_霢_5_ enum __ast_廟:1.0___JCROSS_廟_2_ {
+    __ast_廟:1.0___JCROSS_廟_8_,  // __ast_廟:1.0___JCROSS_廟_13_ __ast_霢:1.0___JCROSS_霢_28_ (__ast_廟:1.0___JCROSS_廟_5_ in __ast_霢:1.0___JCROSS_霢_59_)
+    __ast_廟:1.0___JCROSS_廟_26_,   // __ast_廟:1.0___JCROSS_廟_15_ __ast_霢:1.0___JCROSS_霢_69_ __ast_霢:1.0___JCROSS_霢_7_ __ast_霢:1.0___JCROSS_霢_65_ __ast_霢:1.0___JCROSS_霢_42_
+    __ast_廟:1.0___JCROSS_廟_10_,    // __ast_廟:1.0___JCROSS_廟_18_ __ast_霢:1.0___JCROSS_霢_64_ or __ast_霢:1.0___JCROSS_霢_4_ __ast_霢:1.0___JCROSS_霢_18_
+    __ast_廟:1.0___JCROSS_廟_31_,   // __ast_廟:1.0___JCROSS_廟_25_-__ast_霢:1.0___JCROSS_霢_62_ __ast_霢:1.0___JCROSS_霢_67_ __ast_霢:1.0___JCROSS_霢_17_/__ast_霢:1.0___JCROSS_霢_15_
+}
+
+__ast_霢:1.0___JCROSS_霢_32_ __ast_廟:1.0___JCROSS_廟_2_ {
+    __ast_霢:1.0___JCROSS_霢_5_ fn __ast_霢:1.0___JCROSS_霢_34_(&self) -> &'static __ast_霢:1.0___JCROSS_霢_50_ {
+        __ast_霢:1.0___JCROSS_霢_24_ self {
+// __ast_廟:0.3___JCROSS_CM_380_ [decoy-metadata]
+            __ast_廟:1.0___JCROSS_廟_2_::__ast_廟:1.0___JCROSS_廟_8_ => "__ast_廟:1.0___JCROSS_廟_6_",
+// __ast_礎:0.7___JCROSS_ZY_511_ [decoy-metadata]
+            __ast_廟:1.0___JCROSS_廟_2_::__ast_廟:1.0___JCROSS_廟_26_ => "__ast_廟:1.0___JCROSS_廟_7_",
+            __ast_廟:1.0___JCROSS_廟_2_::__ast_廟:1.0___JCROSS_廟_10_ => "__ast_廟:1.0___JCROSS_廟_21_",
+            __ast_廟:1.0___JCROSS_廟_2_::__ast_廟:1.0___JCROSS_廟_31_ => "__ast_廟:1.0___JCROSS_廟_19_",
+        }
+    }
+}
+
+__ast_霢:1.0___JCROSS_霢_5_ __ast_霢:1.0___JCROSS_霢_50_uct __ast_廟:1.0___JCROSS_廟_4_;
+
+__ast_霢:1.0___JCROSS_霢_32_ __ast_廟:1.0___JCROSS_廟_4_ {
+// [metadata-stripped]
+    __ast_霢:1.0___JCROSS_霢_5_ fn __ast_霢:1.0___JCROSS_霢_12_(__ast_霢:1.0___JCROSS_霢_21_: &[(__ast_霢:1.0___JCROSS_霢_53_, __ast_廟:1.0___JCROSS_廟_9_, __ast_霢:1.0___JCROSS_霢_27_, __ast_霢:1.0___JCROSS_霢_27_)]) -> __ast_廟:1.0___JCROSS_廟_1_ {
+        let __ast_霢:1.0___JCROSS_霢_35_ __ast_霢:1.0___JCROSS_霢_49_ = __ast_廟:1.0___JCROSS_廟_14_::__ast_霢:1.0___JCROSS_霢_54_();
+        for (id, __ast_霢:1.0___JCROSS_霢_66_, x, y) in __ast_霢:1.0___JCROSS_霢_21_ {
+            let __ast_奥:1.0___JCROSS_霢_31_ = __ast_湧:1.0___JCROSS_霢_16_!("__ast_霢:1.0___JCROSS_霢_43_{}", id);
+            let __ast_霢:1.0___JCROSS_霢_61_ = __ast_湧:1.0___JCROSS_霢_16_!("\"{}\" at ({:.0}, {:.0})", __ast_霢:1.0___JCROSS_霢_66_, x, y);
+            __ast_霢:1.0___JCROSS_霢_49_.__ast_霢:1.0___JCROSS_霢_58_(__ast_奥:1.0___JCROSS_霢_31_, __ast_霢:1.0___JCROSS_霢_61_);
+        }
+
+        __ast_廟:1.0___JCROSS_廟_1_ {
+            __ast_霢:1.0___JCROSS_霢_51_: __ast_廟:1.0___JCROSS_廟_2_::__ast_廟:1.0___JCROSS_廟_8_.__ast_霢:1.0___JCROSS_霢_34_().__ast_霢:1.0___JCROSS_霢_47_(),
+            __ast_霢:1.0___JCROSS_霢_49_,
+            __ast_霢:1.0___JCROSS_霢_57_: "__ast_廟:1.0___JCROSS_廟_17_-__ast_霢:1.0___JCROSS_霢_3_ __ast_霢:1.0___JCROSS_霢_8_ __ast_霢:1.0___JCROSS_霢_21_ in __ast_霢:1.0___JCROSS_霢_45_ __ast_霢:1.0___JCROSS_霢_23_ __ast_霢:1.0___JCROSS_霢_56_.".__ast_霢:1.0___JCROSS_霢_47_(),
+        }
+    }
+
+// __ast_奥:0.7___JCROSS_HW_182_ [decoy-metadata]
+// [metadata-stripped]
+    __ast_霢:1.0___JCROSS_霢_5_ fn __ast_霢:1.0___JCROSS_霢_48_(__ast_縞:1.0___JCROSS_霢_38_: &__ast_霢:1.0___JCROSS_霢_50_, __ast_霢:1.0___JCROSS_霢_33_: &__ast_霢:1.0___JCROSS_霢_50_, __ast_霢:1.0___JCROSS_霢_42_: &__ast_霢:1.0___JCROSS_霢_50_) -> __ast_廟:1.0___JCROSS_廟_1_ {
+// __ast_奥:0.1___JCROSS_XK_884_ [decoy-metadata]
+        let __ast_霢:1.0___JCROSS_霢_35_ __ast_霢:1.0___JCROSS_霢_49_ = __ast_廟:1.0___JCROSS_廟_14_::__ast_霢:1.0___JCROSS_霢_54_();
+        __ast_霢:1.0___JCROSS_霢_49_.__ast_霢:1.0___JCROSS_霢_58_("__ast_縞:1.0___JCROSS_霢_38_".__ast_霢:1.0___JCROSS_霢_47_(), __ast_縞:1.0___JCROSS_霢_38_.__ast_霢:1.0___JCROSS_霢_47_());
+        __ast_霢:1.0___JCROSS_霢_49_.__ast_霢:1.0___JCROSS_霢_58_("__ast_霢:1.0___JCROSS_霢_33_".__ast_霢:1.0___JCROSS_霢_47_(), __ast_霢:1.0___JCROSS_霢_33_.__ast_霢:1.0___JCROSS_霢_47_());
+        __ast_霢:1.0___JCROSS_霢_49_.__ast_霢:1.0___JCROSS_霢_58_("__ast_霢:1.0___JCROSS_霢_13_".__ast_霢:1.0___JCROSS_霢_47_(), __ast_霢:1.0___JCROSS_霢_42_.__ast_霢:1.0___JCROSS_霢_47_());
+
+        __ast_廟:1.0___JCROSS_廟_1_ {
+            __ast_霢:1.0___JCROSS_霢_51_: __ast_廟:1.0___JCROSS_廟_2_::__ast_廟:1.0___JCROSS_廟_26_.__ast_霢:1.0___JCROSS_霢_34_().__ast_霢:1.0___JCROSS_霢_47_(),
+            __ast_霢:1.0___JCROSS_霢_49_,
+            __ast_霢:1.0___JCROSS_霢_57_: "__ast_廟:1.0___JCROSS_廟_3_ __ast_霢:1.0___JCROSS_霢_46_ __ast_霢:1.0___JCROSS_霢_2_ __ast_霢:1.0___JCROSS_霢_7_ __ast_霢:1.0___JCROSS_霢_22_-__ast_霢:1.0___JCROSS_霢_30_ __ast_霢:1.0___JCROSS_霢_67_ __ast_霢:1.0___JCROSS_霢_68_.".__ast_霢:1.0___JCROSS_霢_47_(),
+        }
+    }
+}
+
+// __ast_縞:0.2___JCROSS_KG_779_ [decoy-metadata]
+// [metadata-stripped]
+__ast_霢:1.0___JCROSS_霢_5_ __ast_霢:1.0___JCROSS_霢_9_ __ast_廟:1.0___JCROSS_廟_28_ {
+    fn __ast_霢:1.0___JCROSS_霢_26_(&__ast_霢:1.0___JCROSS_霢_35_ self, __ast_縞:1.0___JCROSS_霢_38_: &__ast_霢:1.0___JCROSS_霢_50_, __ast_霢:1.0___JCROSS_霢_33_: &__ast_霢:1.0___JCROSS_霢_50_, __ast_霢:1.0___JCROSS_霢_42_: &__ast_霢:1.0___JCROSS_霢_50_);
+}
+
+__ast_霢:1.0___JCROSS_霢_32_ __ast_廟:1.0___JCROSS_廟_28_ for __ast_廟:1.0___JCROSS_廟_16_ {
+    fn __ast_霢:1.0___JCROSS_霢_26_(&__ast_霢:1.0___JCROSS_霢_35_ self, __ast_縞:1.0___JCROSS_霢_38_: &__ast_霢:1.0___JCROSS_霢_50_, __ast_霢:1.0___JCROSS_霢_33_: &__ast_霢:1.0___JCROSS_霢_50_, __ast_霢:1.0___JCROSS_霢_42_: &__ast_霢:1.0___JCROSS_霢_50_) {
+        self.__ast_霢:1.0___JCROSS_霢_11_(__ast_廟:1.0___JCROSS_廟_4_::__ast_霢:1.0___JCROSS_霢_48_(__ast_縞:1.0___JCROSS_霢_38_, __ast_霢:1.0___JCROSS_霢_33_, __ast_霢:1.0___JCROSS_霢_42_));
+    }
+}
+
+// POLYMORPHIC_JCROSS_END

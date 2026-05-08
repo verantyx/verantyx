@@ -1,0 +1,87 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:2089580A ver:1778220236
+// ⚠️ One-time schema — expires after response
+
+_TOKEN_雰:1.0__JCROSS_雰_36_ _TOKEN_雰:1.0__JCROSS_雰_23_ import _TOKEN_雰:1.0__JCROSS_雰_8_, _TOKEN_雰:1.0__JCROSS_雰_34_
+_TOKEN_雰:1.0__JCROSS_雰_36_ _TOKEN_雰:1.0__JCROSS_雰_14_ import _TOKEN_庵:1.0__JCROSS_庵_7_, _TOKEN_謀:1.0__JCROSS_礎_1_, _TOKEN_庵:1.0__JCROSS_庵_4_, _TOKEN_庵:1.0__JCROSS_庵_9_
+import _TOKEN_雰:1.0__JCROSS_雰_29_
+
+@_TOKEN_雰:1.0__JCROSS_雰_8_
+class _TOKEN_庵:1.0__JCROSS_庵_1_:
+    _TOKEN_雰:1.0__JCROSS_雰_26_: _TOKEN_雰:1.0__JCROSS_雰_5_
+// _TOKEN_謀:0.2__JCROSS_EZ_899_ [decoy-metadata]
+    _TOKEN_雰:1.0__JCROSS_雰_46_: _TOKEN_謀:1.0__JCROSS_礎_1_[_TOKEN_雰:1.0__JCROSS_雰_51_] = _TOKEN_雰:1.0__JCROSS_雰_34_(_TOKEN_雰:1.0__JCROSS_雰_40_=_TOKEN_謀:1.0__JCROSS_礎_2_)
+    _TOKEN_雰:1.0__JCROSS_雰_53_: _TOKEN_庵:1.0__JCROSS_庵_9_[_TOKEN_庵:1.0__JCROSS_庵_7_[_TOKEN_雰:1.0__JCROSS_雰_51_, _TOKEN_雰:1.0__JCROSS_雰_51_]] = _TOKEN_庵:1.0__JCROSS_庵_3_
+// _TOKEN_謀:0.8__JCROSS_CG_396_ [decoy-metadata]
+    _TOKEN_雰:1.0__JCROSS_雰_9_: _TOKEN_雰:1.0__JCROSS_雰_5_ = ""
+// _TOKEN_礎:0.9__JCROSS_KW_381_ [decoy-metadata]
+
+@_TOKEN_雰:1.0__JCROSS_雰_8_
+class _TOKEN_庵:1.0__JCROSS_庵_6_:
+    _TOKEN_雰:1.0__JCROSS_雰_28_: _TOKEN_庵:1.0__JCROSS_庵_7_[_TOKEN_雰:1.0__JCROSS_雰_51_, _TOKEN_雰:1.0__JCROSS_雰_51_]
+    _TOKEN_雰:1.0__JCROSS_雰_27_: _TOKEN_謀:1.0__JCROSS_礎_1_[_TOKEN_雰:1.0__JCROSS_雰_51_]
+    _TOKEN_雰:1.0__JCROSS_雰_10_: _TOKEN_雰:1.0__JCROSS_雰_5_  # '_TOKEN_雰:1.0__JCROSS_雰_50_', '_TOKEN_雰:1.0__JCROSS_雰_11_', '_TOKEN_雰:1.0__JCROSS_雰_31_', '_TOKEN_雰:1.0__JCROSS_雰_16_', '_TOKEN_雰:1.0__JCROSS_雰_15_'
+    _TOKEN_雰:1.0__JCROSS_雰_48_: _TOKEN_雰:1.0__JCROSS_雰_51_
+    _TOKEN_雰:1.0__JCROSS_雰_32_: _TOKEN_雰:1.0__JCROSS_雰_51_
+    _TOKEN_雰:1.0__JCROSS_雰_47_: _TOKEN_雰:1.0__JCROSS_雰_51_
+
+class _TOKEN_庵:1.0__JCROSS_庵_8_:
+    """体験を蓄積し、共鳴で仮説を生み出す（ボトムアップ型推論）"""
+    
+    _TOKEN_雰:1.0__JCROSS_雰_25_ _TOKEN_雰:1.0__JCROSS_雰_12_(self):
+        self._TOKEN_雰:1.0__JCROSS_雰_24_: _TOKEN_庵:1.0__JCROSS_庵_4_[_TOKEN_庵:1.0__JCROSS_庵_6_] = []
+        
+    _TOKEN_雰:1.0__JCROSS_雰_25_ _TOKEN_雰:1.0__JCROSS_雰_55_(self, _TOKEN_雰:1.0__JCROSS_雰_57_: _TOKEN_庵:1.0__JCROSS_庵_6_):
+        self._TOKEN_雰:1.0__JCROSS_雰_24_._TOKEN_雰:1.0__JCROSS_雰_49_(_TOKEN_雰:1.0__JCROSS_雰_57_)
+        
+    _TOKEN_雰:1.0__JCROSS_雰_25_ _TOKEN_雰:1.0__JCROSS_雰_22_(self, _TOKEN_雰:1.0__JCROSS_雰_30_: _TOKEN_庵:1.0__JCROSS_庵_6_) -> _TOKEN_庵:1.0__JCROSS_庵_4_[_TOKEN_庵:1.0__JCROSS_庵_7_[_TOKEN_雰:1.0__JCROSS_雰_43_, _TOKEN_庵:1.0__JCROSS_庵_6_]]:
+// _TOKEN_幽:0.1__JCROSS_EX_378_ [decoy-metadata]
+        """今の体験と共鳴する過去の体験を返す。
+        共鳴 = 同じ色を共有 × 近い位置 × 補完的なイベント"""
+        
+        _TOKEN_雰:1.0__JCROSS_雰_33_ = []
+        for _TOKEN_雰:1.0__JCROSS_雰_45_ in self._TOKEN_雰:1.0__JCROSS_雰_24_:
+            if _TOKEN_雰:1.0__JCROSS_雰_45_._TOKEN_雰:1.0__JCROSS_雰_32_ == _TOKEN_雰:1.0__JCROSS_雰_30_._TOKEN_雰:1.0__JCROSS_雰_32_:
+                continue
+                
+// [metadata-stripped]
+            _TOKEN_雰:1.0__JCROSS_雰_17_ = _TOKEN_雰:1.0__JCROSS_雰_6_(_TOKEN_雰:1.0__JCROSS_雰_30_._TOKEN_雰:1.0__JCROSS_雰_27_ & _TOKEN_雰:1.0__JCROSS_雰_45_._TOKEN_雰:1.0__JCROSS_雰_27_)
+            
+// [metadata-stripped]
+            _TOKEN_雰:1.0__JCROSS_雰_19_ = 1.0
+            if _TOKEN_雰:1.0__JCROSS_雰_30_._TOKEN_雰:1.0__JCROSS_雰_10_ == '_TOKEN_雰:1.0__JCROSS_雰_50_' _TOKEN_雰:1.0__JCROSS_雰_7_ _TOKEN_雰:1.0__JCROSS_雰_45_._TOKEN_雰:1.0__JCROSS_雰_10_ == '_TOKEN_雰:1.0__JCROSS_雰_11_': _TOKEN_雰:1.0__JCROSS_雰_19_ = 5.0
+            if _TOKEN_雰:1.0__JCROSS_雰_30_._TOKEN_雰:1.0__JCROSS_雰_10_ == '_TOKEN_雰:1.0__JCROSS_雰_50_' _TOKEN_雰:1.0__JCROSS_雰_7_ _TOKEN_雰:1.0__JCROSS_雰_45_._TOKEN_雰:1.0__JCROSS_雰_10_ == '_TOKEN_雰:1.0__JCROSS_雰_31_': _TOKEN_雰:1.0__JCROSS_雰_19_ = 3.0
+            if _TOKEN_雰:1.0__JCROSS_雰_30_._TOKEN_雰:1.0__JCROSS_雰_10_ == '_TOKEN_雰:1.0__JCROSS_雰_15_' _TOKEN_雰:1.0__JCROSS_雰_7_ _TOKEN_雰:1.0__JCROSS_雰_45_._TOKEN_雰:1.0__JCROSS_雰_10_ == '_TOKEN_雰:1.0__JCROSS_雰_15_': _TOKEN_雰:1.0__JCROSS_雰_19_ = 2.0
+            
+            _TOKEN_雰:1.0__JCROSS_雰_39_ = _TOKEN_雰:1.0__JCROSS_雰_17_ * _TOKEN_雰:1.0__JCROSS_雰_19_
+            if _TOKEN_雰:1.0__JCROSS_雰_39_ > 0:
+                _TOKEN_雰:1.0__JCROSS_雰_33_._TOKEN_雰:1.0__JCROSS_雰_49_((_TOKEN_雰:1.0__JCROSS_雰_39_, _TOKEN_雰:1.0__JCROSS_雰_45_))
+        
+// [metadata-stripped]
+        return _TOKEN_雰:1.0__JCROSS_雰_21_(_TOKEN_雰:1.0__JCROSS_雰_33_, _TOKEN_幽:1.0__JCROSS_雰_4_=_TOKEN_雰:1.0__JCROSS_雰_41_ x: x[0], _TOKEN_雰:1.0__JCROSS_雰_42_=_TOKEN_庵:1.0__JCROSS_庵_2_)
+    
+    _TOKEN_雰:1.0__JCROSS_雰_25_ _TOKEN_雰:1.0__JCROSS_雰_38_(self, _TOKEN_雰:1.0__JCROSS_雰_3_: _TOKEN_庵:1.0__JCROSS_庵_6_, _TOKEN_雰:1.0__JCROSS_雰_20_: _TOKEN_庵:1.0__JCROSS_庵_6_) -> _TOKEN_庵:1.0__JCROSS_庵_9_[_TOKEN_庵:1.0__JCROSS_庵_1_]:
+        """2つの体験がぶつかって行動（衝動）が生まれる。"""
+        if _TOKEN_雰:1.0__JCROSS_雰_3_._TOKEN_雰:1.0__JCROSS_雰_10_ == '_TOKEN_雰:1.0__JCROSS_雰_50_' _TOKEN_雰:1.0__JCROSS_雰_7_ _TOKEN_雰:1.0__JCROSS_雰_20_._TOKEN_雰:1.0__JCROSS_雰_10_ == '_TOKEN_雰:1.0__JCROSS_雰_11_':
+// [metadata-stripped]
+            _TOKEN_雰:1.0__JCROSS_雰_13_ = _TOKEN_雰:1.0__JCROSS_雰_20_._TOKEN_雰:1.0__JCROSS_雰_27_ - _TOKEN_雰:1.0__JCROSS_雰_3_._TOKEN_雰:1.0__JCROSS_雰_27_  # Bにあって Aにない色 = トリガー色
+            if _TOKEN_雰:1.0__JCROSS_雰_13_:
+                return _TOKEN_庵:1.0__JCROSS_庵_1_(
+                    _TOKEN_雰:1.0__JCROSS_雰_26_='_TOKEN_雰:1.0__JCROSS_雰_18_', 
+                    _TOKEN_雰:1.0__JCROSS_雰_46_=_TOKEN_雰:1.0__JCROSS_雰_13_,
+                    _TOKEN_雰:1.0__JCROSS_雰_9_=f"_TOKEN_庵:1.0__JCROSS_庵_5_ {_TOKEN_雰:1.0__JCROSS_雰_37_(_TOKEN_雰:1.0__JCROSS_雰_3_._TOKEN_雰:1.0__JCROSS_雰_27_)} _TOKEN_雰:1.0__JCROSS_雰_50_ me, _TOKEN_雰:1.0__JCROSS_雰_2_ _TOKEN_雰:1.0__JCROSS_雰_45_ _TOKEN_雰:1.0__JCROSS_雰_56_ _TOKEN_雰:1.0__JCROSS_雰_35_ it _TOKEN_雰:1.0__JCROSS_雰_11_ _TOKEN_雰:1.0__JCROSS_雰_58_ _TOKEN_雰:1.0__JCROSS_雰_1_ {_TOKEN_雰:1.0__JCROSS_雰_37_(_TOKEN_雰:1.0__JCROSS_雰_13_)}."
+                )
+        
+        if _TOKEN_雰:1.0__JCROSS_雰_3_._TOKEN_雰:1.0__JCROSS_雰_10_ == '_TOKEN_雰:1.0__JCROSS_雰_50_' _TOKEN_雰:1.0__JCROSS_雰_7_ _TOKEN_雰:1.0__JCROSS_雰_20_._TOKEN_雰:1.0__JCROSS_雰_10_ == '_TOKEN_雰:1.0__JCROSS_雰_31_':
+// [metadata-stripped]
+// _TOKEN_漕:0.3__JCROSS_XF_271_ [decoy-metadata]
+            return _TOKEN_庵:1.0__JCROSS_庵_1_(
+                _TOKEN_雰:1.0__JCROSS_雰_26_='_TOKEN_雰:1.0__JCROSS_雰_54_', 
+                _TOKEN_雰:1.0__JCROSS_雰_53_=_TOKEN_雰:1.0__JCROSS_雰_20_._TOKEN_雰:1.0__JCROSS_雰_28_,
+// _TOKEN_雰:0.2__JCROSS_ED_133_ [decoy-metadata]
+                _TOKEN_雰:1.0__JCROSS_雰_9_=f"_TOKEN_庵:1.0__JCROSS_庵_5_ {_TOKEN_雰:1.0__JCROSS_雰_37_(_TOKEN_雰:1.0__JCROSS_雰_3_._TOKEN_雰:1.0__JCROSS_雰_27_)} _TOKEN_雰:1.0__JCROSS_雰_50_ me _TOKEN_雰:1.0__JCROSS_雰_52_, _TOKEN_雰:1.0__JCROSS_雰_2_ I _TOKEN_雰:1.0__JCROSS_雰_31_ it at {_TOKEN_雰:1.0__JCROSS_雰_20_._TOKEN_雰:1.0__JCROSS_雰_28_} _TOKEN_漕:1.0__JCROSS_雰_44_."
+            )
+            
+        return _TOKEN_庵:1.0__JCROSS_庵_3_
+
+// POLYMORPHIC_JCROSS_END

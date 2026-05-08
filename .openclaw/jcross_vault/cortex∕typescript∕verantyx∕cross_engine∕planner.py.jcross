@@ -1,0 +1,104 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:661922D6 ver:1778220235
+// ⚠️ One-time schema — expires after response
+
+import _JCROSS_霪:1.0__VERANTYX_霪_14_
+_JCROSS_霪:1.0__VERANTYX_霪_25_ _JCROSS_霪:1.0__VERANTYX_霪_31_ import _JCROSS_廡:1.0__VERANTYX_廡_1_, _JCROSS_廡:1.0__VERANTYX_廡_3_, _JCROSS_節:1.0__VERANTYX_嵐_3_
+
+class _JCROSS_節:1.0__VERANTYX_廡_7_:
+    """
+    A*アルゴリズムを用いた経路探索プランナー。
+    盤面全体の2D配列を受け取り、障害物として指定された色を避けながら
+    目標座標までの最短経路を見つけ、その最初の行動（0=上, 1=右, 2=下, 3=左）を返す。
+    """
+    _JCROSS_霪:1.0__VERANTYX_霪_24_ _JCROSS_霪:1.0__VERANTYX_霪_30_(self, _JCROSS_霪:1.0__VERANTYX_霪_10_: _JCROSS_廡:1.0__VERANTYX_廡_1_[_JCROSS_廡:1.0__VERANTYX_廡_1_[_JCROSS_霪:1.0__VERANTYX_霪_2_]]):
+        self._JCROSS_霪:1.0__VERANTYX_霪_10_ = _JCROSS_霪:1.0__VERANTYX_霪_10_
+        self._JCROSS_霪:1.0__VERANTYX_霪_12_ = _JCROSS_霪:1.0__VERANTYX_霪_4_(_JCROSS_霪:1.0__VERANTYX_霪_10_)
+        self._JCROSS_霪:1.0__VERANTYX_霪_8_ = _JCROSS_霪:1.0__VERANTYX_霪_4_(_JCROSS_霪:1.0__VERANTYX_霪_10_[0]) if self._JCROSS_霪:1.0__VERANTYX_霪_12_ > 0 else 0
+
+    _JCROSS_霪:1.0__VERANTYX_霪_24_ _JCROSS_霪:1.0__VERANTYX_霪_35_(self, _JCROSS_霪:1.0__VERANTYX_霪_16_: _JCROSS_廡:1.0__VERANTYX_廡_3_[_JCROSS_霪:1.0__VERANTYX_霪_2_, _JCROSS_霪:1.0__VERANTYX_霪_2_], _JCROSS_霪:1.0__VERANTYX_霪_36_: _JCROSS_廡:1.0__VERANTYX_廡_3_[_JCROSS_霪:1.0__VERANTYX_霪_2_, _JCROSS_霪:1.0__VERANTYX_霪_2_]) -> _JCROSS_霪:1.0__VERANTYX_霪_2_:
+        return _JCROSS_霪:1.0__VERANTYX_霪_18_(_JCROSS_霪:1.0__VERANTYX_霪_16_[0] - _JCROSS_霪:1.0__VERANTYX_霪_36_[0]) + _JCROSS_霪:1.0__VERANTYX_霪_18_(_JCROSS_霪:1.0__VERANTYX_霪_16_[1] - _JCROSS_霪:1.0__VERANTYX_霪_36_[1])
+
+    _JCROSS_霪:1.0__VERANTYX_霪_24_ _JCROSS_節:1.0__VERANTYX_嵐_1_(self, _JCROSS_霪:1.0__VERANTYX_霪_3_: _JCROSS_廡:1.0__VERANTYX_廡_1_[_JCROSS_霪:1.0__VERANTYX_霪_2_], _JCROSS_霪:1.0__VERANTYX_霪_36_: _JCROSS_廡:1.0__VERANTYX_廡_1_[_JCROSS_霪:1.0__VERANTYX_霪_2_], _JCROSS_霪:1.0__VERANTYX_霪_17_: _JCROSS_廡:1.0__VERANTYX_廡_1_[_JCROSS_霪:1.0__VERANTYX_霪_2_]) -> _JCROSS_霪:1.0__VERANTYX_霪_2_:
+        if _JCROSS_霪:1.0__VERANTYX_霪_37_ _JCROSS_霪:1.0__VERANTYX_霪_3_ or _JCROSS_霪:1.0__VERANTYX_霪_37_ _JCROSS_霪:1.0__VERANTYX_霪_36_ or _JCROSS_霪:1.0__VERANTYX_霪_4_(_JCROSS_霪:1.0__VERANTYX_霪_3_) < 2 or _JCROSS_霪:1.0__VERANTYX_霪_4_(_JCROSS_霪:1.0__VERANTYX_霪_36_) < 2:
+            return -1
+        
+        _JCROSS_霪:1.0__VERANTYX_霪_23_ = (_JCROSS_霪:1.0__VERANTYX_霪_3_[0], _JCROSS_霪:1.0__VERANTYX_霪_3_[1])
+        _JCROSS_霪:1.0__VERANTYX_霪_7_ = (_JCROSS_霪:1.0__VERANTYX_霪_36_[0], _JCROSS_霪:1.0__VERANTYX_霪_36_[1])
+
+// [metadata-stripped]
+        if _JCROSS_霪:1.0__VERANTYX_霪_23_ == _JCROSS_霪:1.0__VERANTYX_霪_7_:
+            return 5 
+        
+        _JCROSS_霪:1.0__VERANTYX_霪_22_ = []
+        _JCROSS_霪:1.0__VERANTYX_霪_14_._JCROSS_霪:1.0__VERANTYX_霪_32_(_JCROSS_霪:1.0__VERANTYX_霪_22_, (0, _JCROSS_霪:1.0__VERANTYX_霪_23_))
+        
+        _JCROSS_霪:1.0__VERANTYX_霪_26_ = {}
+// _JCROSS_暗:0.2__VERANTYX_EA_747_ [decoy-metadata]
+// [metadata-stripped]
+        _JCROSS_霪:1.0__VERANTYX_霪_5_ = {_JCROSS_霪:1.0__VERANTYX_霪_23_: 0}
+        _JCROSS_霪:1.0__VERANTYX_霪_19_ = {_JCROSS_霪:1.0__VERANTYX_霪_23_: self._JCROSS_霪:1.0__VERANTYX_霪_35_(_JCROSS_霪:1.0__VERANTYX_霪_23_, _JCROSS_霪:1.0__VERANTYX_霪_7_)}
+        
+        _JCROSS_霪:1.0__VERANTYX_霪_11_ = _JCROSS_節:1.0__VERANTYX_嵐_2_(_JCROSS_霪:1.0__VERANTYX_霪_17_)
+
+// [metadata-stripped]
+// [metadata-stripped]
+        _JCROSS_霪:1.0__VERANTYX_霪_9_ = [
+            (-1, 0, 0),  # _JCROSS_霪:1.0__VERANTYX_霪_33_, _JCROSS_霪:1.0__VERANTYX_霪_38_, _JCROSS_霪:1.0__VERANTYX_霪_1_
+// _JCROSS_暗:0.7__VERANTYX_YD_954_ [decoy-metadata]
+            (0, 1, 1),
+            (1, 0, 2),
+            (0, -1, 3)
+        ]
+
+        while _JCROSS_霪:1.0__VERANTYX_霪_22_:
+            _, _JCROSS_霪:1.0__VERANTYX_霪_20_ = _JCROSS_霪:1.0__VERANTYX_霪_14_._JCROSS_霪:1.0__VERANTYX_霪_6_(_JCROSS_霪:1.0__VERANTYX_霪_22_)
+
+// _JCROSS_廡:0.3__VERANTYX_XM_242_ [decoy-metadata]
+            if _JCROSS_霪:1.0__VERANTYX_霪_20_ == _JCROSS_霪:1.0__VERANTYX_霪_7_:
+                return self._JCROSS_霪:1.0__VERANTYX_霪_13_(_JCROSS_霪:1.0__VERANTYX_霪_26_, _JCROSS_霪:1.0__VERANTYX_霪_20_, _JCROSS_霪:1.0__VERANTYX_霪_23_)
+// _JCROSS_廡:0.3__VERANTYX_YY_907_ [decoy-metadata]
+
+            for _JCROSS_霪:1.0__VERANTYX_霪_33_, _JCROSS_霪:1.0__VERANTYX_霪_38_, _JCROSS_霪:1.0__VERANTYX_霪_1_ in _JCROSS_霪:1.0__VERANTYX_霪_9_:
+                _JCROSS_霪:1.0__VERANTYX_霪_27_ = (_JCROSS_霪:1.0__VERANTYX_霪_20_[0] + _JCROSS_霪:1.0__VERANTYX_霪_33_, _JCROSS_霪:1.0__VERANTYX_霪_20_[1] + _JCROSS_霪:1.0__VERANTYX_霪_38_)
+
+// [metadata-stripped]
+                if _JCROSS_霪:1.0__VERANTYX_霪_27_[0] < 0 or _JCROSS_霪:1.0__VERANTYX_霪_27_[0] >= self._JCROSS_霪:1.0__VERANTYX_霪_12_ or _JCROSS_霪:1.0__VERANTYX_霪_27_[1] < 0 or _JCROSS_霪:1.0__VERANTYX_霪_27_[1] >= self._JCROSS_霪:1.0__VERANTYX_霪_8_:
+                    continue
+
+// [metadata-stripped]
+// [metadata-stripped]
+                if _JCROSS_霪:1.0__VERANTYX_霪_27_ != _JCROSS_霪:1.0__VERANTYX_霪_7_:
+                    _JCROSS_霪:1.0__VERANTYX_霪_15_ = self._JCROSS_霪:1.0__VERANTYX_霪_10_[_JCROSS_霪:1.0__VERANTYX_霪_27_[0]][_JCROSS_霪:1.0__VERANTYX_霪_27_[1]]
+                    if _JCROSS_霪:1.0__VERANTYX_霪_15_ in _JCROSS_霪:1.0__VERANTYX_霪_11_:
+                        continue
+
+                _JCROSS_霪:1.0__VERANTYX_霪_34_ = _JCROSS_霪:1.0__VERANTYX_霪_5_[_JCROSS_霪:1.0__VERANTYX_霪_20_] + 1
+                
+                if _JCROSS_霪:1.0__VERANTYX_霪_27_ _JCROSS_霪:1.0__VERANTYX_霪_37_ in _JCROSS_霪:1.0__VERANTYX_霪_5_ or _JCROSS_霪:1.0__VERANTYX_霪_34_ < _JCROSS_霪:1.0__VERANTYX_霪_5_[_JCROSS_霪:1.0__VERANTYX_霪_27_]:
+                    _JCROSS_霪:1.0__VERANTYX_霪_26_[_JCROSS_霪:1.0__VERANTYX_霪_27_] = (_JCROSS_霪:1.0__VERANTYX_霪_20_, _JCROSS_霪:1.0__VERANTYX_霪_1_)
+                    _JCROSS_霪:1.0__VERANTYX_霪_5_[_JCROSS_霪:1.0__VERANTYX_霪_27_] = _JCROSS_霪:1.0__VERANTYX_霪_34_
+// _JCROSS_廡:0.7__VERANTYX_VZ_885_ [decoy-metadata]
+                    _JCROSS_霪:1.0__VERANTYX_霪_19_[_JCROSS_霪:1.0__VERANTYX_霪_27_] = _JCROSS_霪:1.0__VERANTYX_霪_34_ + self._JCROSS_霪:1.0__VERANTYX_霪_35_(_JCROSS_霪:1.0__VERANTYX_霪_27_, _JCROSS_霪:1.0__VERANTYX_霪_7_)
+                    
+                    if _JCROSS_霪:1.0__VERANTYX_霪_27_ _JCROSS_霪:1.0__VERANTYX_霪_37_ in [i[1] for i in _JCROSS_霪:1.0__VERANTYX_霪_22_]:
+                        _JCROSS_霪:1.0__VERANTYX_霪_14_._JCROSS_霪:1.0__VERANTYX_霪_32_(_JCROSS_霪:1.0__VERANTYX_霪_22_, (_JCROSS_霪:1.0__VERANTYX_霪_19_[_JCROSS_霪:1.0__VERANTYX_霪_27_], _JCROSS_霪:1.0__VERANTYX_霪_27_))
+
+// [metadata-stripped]
+        return -1
+        
+    _JCROSS_霪:1.0__VERANTYX_霪_24_ _JCROSS_霪:1.0__VERANTYX_霪_13_(self, _JCROSS_霪:1.0__VERANTYX_霪_26_, _JCROSS_霪:1.0__VERANTYX_霪_20_, _JCROSS_霪:1.0__VERANTYX_霪_23_) -> _JCROSS_霪:1.0__VERANTYX_霪_2_:
+        """
+        目標座標から逆順に辿り、スタート直後の最初のアクションを返す
+        """
+        _JCROSS_霪:1.0__VERANTYX_霪_29_ = -1
+        while _JCROSS_霪:1.0__VERANTYX_霪_20_ in _JCROSS_霪:1.0__VERANTYX_霪_26_:
+            _JCROSS_霪:1.0__VERANTYX_霪_39_, _JCROSS_霪:1.0__VERANTYX_霪_28_ = _JCROSS_霪:1.0__VERANTYX_霪_26_[_JCROSS_霪:1.0__VERANTYX_霪_20_]
+// _JCROSS_霪:0.6__VERANTYX_GA_234_ [decoy-metadata]
+            if _JCROSS_霪:1.0__VERANTYX_霪_39_ == _JCROSS_霪:1.0__VERANTYX_霪_23_:
+                return _JCROSS_霪:1.0__VERANTYX_霪_28_
+            _JCROSS_霪:1.0__VERANTYX_霪_20_ = _JCROSS_霪:1.0__VERANTYX_霪_39_
+            _JCROSS_霪:1.0__VERANTYX_霪_29_ = _JCROSS_霪:1.0__VERANTYX_霪_28_
+        return _JCROSS_霪:1.0__VERANTYX_霪_29_
+
+// POLYMORPHIC_JCROSS_END

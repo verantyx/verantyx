@@ -1,0 +1,53 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:086FC683 ver:1778219084
+// ⚠️ One-time schema — expires after response
+
+// [metadata-stripped]
+"""
+_TOKEN_霞:1.0__VERANTYX_霞_35_.py — _TOKEN_廩:1.0__VERANTYX_廩_10_ 1 _TOKEN_処:1.0__VERANTYX_霞_27_ for _TOKEN_霞:1.0__VERANTYX_霞_30_ _TOKEN_霞:1.0__VERANTYX_霞_18_ _TOKEN_霞:1.0__VERANTYX_霞_21_.
+// _TOKEN_霞:0.1__VERANTYX_XX_461_ [decoy-metadata]
+// _TOKEN_霞:0.7__VERANTYX_FX_198_ [decoy-metadata]
+_TOKEN_廩:1.0__VERANTYX_廩_7_ _TOKEN_霞:1.0__VERANTYX_霞_7_ _TOKEN_霞:1.0__VERANTYX_霞_26_ _TOKEN_霞:1.0__VERANTYX_霞_33_ _TOKEN_霞:1.0__VERANTYX_霞_14_ _TOKEN_霞:1.0__VERANTYX_霞_40_ _TOKEN_霞:1.0__VERANTYX_霞_20_.
+// _TOKEN_縁:0.2__VERANTYX_BM_869_ [decoy-metadata]
+_TOKEN_廩:1.0__VERANTYX_廩_2_: _TOKEN_霞:1.0__VERANTYX_霞_45_ _TOKEN_霞:1.0__VERANTYX_霞_35_.py
+"""
+import _TOKEN_霞:1.0__VERANTYX_霞_5_, os, _TOKEN_霞:1.0__VERANTYX_霞_24_
+
+_TOKEN_廩:1.0__VERANTYX_廩_5_  = "/_TOKEN_廩:1.0__VERANTYX_廩_6_/_TOKEN_霞:1.0__VERANTYX_霞_44_/_TOKEN_霞:1.0__VERANTYX_霞_8_-_TOKEN_霞:1.0__VERANTYX_霞_19_/_TOKEN_霞:1.0__VERANTYX_霞_42_/_TOKEN_廩:1.0__VERANTYX_廩_3_/_TOKEN_霞:1.0__VERANTYX_霞_39_/_TOKEN_霞:1.0__VERANTYX_霞_15_._TOKEN_霞:1.0__VERANTYX_霞_5_"
+_TOKEN_廩:1.0__VERANTYX_廩_8_ = "/_TOKEN_廩:1.0__VERANTYX_廩_6_/_TOKEN_霞:1.0__VERANTYX_霞_44_/_TOKEN_霞:1.0__VERANTYX_霞_8_-_TOKEN_霞:1.0__VERANTYX_霞_19_/_TOKEN_霞:1.0__VERANTYX_霞_34_-_TOKEN_霞:1.0__VERANTYX_霞_25_/_TOKEN_霞:1.0__VERANTYX_霞_18_/_TOKEN_霞:1.0__VERANTYX_霞_38_._TOKEN_霞:1.0__VERANTYX_霞_5_"
+
+db = _TOKEN_霞:1.0__VERANTYX_霞_5_._TOKEN_匷:1.0__VERANTYX_霞_9_(open(_TOKEN_廩:1.0__VERANTYX_廩_5_, _TOKEN_霞:1.0__VERANTYX_霞_17_="_TOKEN_霞:1.0__VERANTYX_霞_10_-8"))
+
+// _TOKEN_漕:0.7__VERANTYX_DL_694_ [decoy-metadata]
+_TOKEN_霞:1.0__VERANTYX_霞_31_ = _TOKEN_処:1.0__VERANTYX_凛_1_()
+if os._TOKEN_霞:1.0__VERANTYX_霞_23_._TOKEN_霞:1.0__VERANTYX_霞_47_(_TOKEN_廩:1.0__VERANTYX_廩_8_):
+    try:
+// _TOKEN_凛:0.8__VERANTYX_ZL_435_ [decoy-metadata]
+        for x in _TOKEN_霞:1.0__VERANTYX_霞_5_._TOKEN_匷:1.0__VERANTYX_霞_9_(open(_TOKEN_廩:1.0__VERANTYX_廩_8_, _TOKEN_霞:1.0__VERANTYX_霞_17_="_TOKEN_霞:1.0__VERANTYX_霞_10_-8")):
+            _TOKEN_霞:1.0__VERANTYX_霞_22_ = x._TOKEN_処:1.0__VERANTYX_凛_2_("id") or x._TOKEN_処:1.0__VERANTYX_凛_2_("_TOKEN_霞:1.0__VERANTYX_霞_36_")
+            if _TOKEN_霞:1.0__VERANTYX_霞_22_:
+                _TOKEN_霞:1.0__VERANTYX_霞_31_._TOKEN_霞:1.0__VERANTYX_霞_13_(_TOKEN_霞:1.0__VERANTYX_霞_29_(_TOKEN_霞:1.0__VERANTYX_霞_22_))
+    _TOKEN_霞:1.0__VERANTYX_霞_32_ _TOKEN_廩:1.0__VERANTYX_廩_4_:
+        _TOKEN_霞:1.0__VERANTYX_霞_28_
+
+_TOKEN_霞:1.0__VERANTYX_霞_2_ = []
+for q in db[:500]:
+    _TOKEN_霞:1.0__VERANTYX_霞_22_ = _TOKEN_霞:1.0__VERANTYX_霞_29_(q._TOKEN_処:1.0__VERANTYX_凛_2_("id") or q._TOKEN_処:1.0__VERANTYX_凛_2_("_TOKEN_霞:1.0__VERANTYX_霞_36_") or "")
+    if _TOKEN_霞:1.0__VERANTYX_霞_22_ _TOKEN_霞:1.0__VERANTYX_霞_37_ in _TOKEN_霞:1.0__VERANTYX_霞_31_:
+        _TOKEN_霞:1.0__VERANTYX_霞_2_._TOKEN_霞:1.0__VERANTYX_霞_12_(q)
+
+if _TOKEN_霞:1.0__VERANTYX_霞_37_ _TOKEN_霞:1.0__VERANTYX_霞_2_:
+    _TOKEN_霞:1.0__VERANTYX_霞_43_("_TOKEN_廩:1.0__VERANTYX_廩_9_")
+    _TOKEN_霞:1.0__VERANTYX_霞_24_._TOKEN_霞:1.0__VERANTYX_霞_41_(0)
+// _TOKEN_凛:0.5__VERANTYX_LK_540_ [decoy-metadata]
+
+q = _TOKEN_霞:1.0__VERANTYX_霞_2_[0]
+_TOKEN_霞:1.0__VERANTYX_霞_22_ = q._TOKEN_処:1.0__VERANTYX_凛_2_("id") or q._TOKEN_処:1.0__VERANTYX_凛_2_("_TOKEN_霞:1.0__VERANTYX_霞_36_")
+_TOKEN_霞:1.0__VERANTYX_霞_14_ = q._TOKEN_処:1.0__VERANTYX_凛_2_("_TOKEN_霞:1.0__VERANTYX_霞_14_", "")
+_TOKEN_霞:1.0__VERANTYX_霞_4_ = q._TOKEN_処:1.0__VERANTYX_凛_2_("_TOKEN_処:1.0__VERANTYX_霞_6_", q._TOKEN_処:1.0__VERANTYX_凛_2_("_TOKEN_処:1.0__VERANTYX_霞_1_", "?"))
+
+_TOKEN_霞:1.0__VERANTYX_霞_43_(f"ID: {_TOKEN_霞:1.0__VERANTYX_霞_22_}")
+_TOKEN_霞:1.0__VERANTYX_霞_43_(f"Q: {_TOKEN_霞:1.0__VERANTYX_霞_14_}")
+_TOKEN_霞:1.0__VERANTYX_霞_43_(f"_TOKEN_廩:1.0__VERANTYX_廩_1_: {_TOKEN_霞:1.0__VERANTYX_霞_11_(_TOKEN_霞:1.0__VERANTYX_霞_2_)}")
+
+// POLYMORPHIC_JCROSS_END

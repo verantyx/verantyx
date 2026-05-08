@@ -1,0 +1,79 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:71CCF730 ver:1778219986
+// ⚠️ One-time schema — expires after response
+
+_JCROSS_霜:1.0__ID_霜_30_ _JCROSS_霜:1.0__ID_霜_37_ _JCROSS_廓:1.0__ID_廓_2_ = {
+  id: _JCROSS_霜:1.0__ID_霜_5_;
+  _JCROSS_霜:1.0__ID_霜_32_: _JCROSS_霜:1.0__ID_霜_5_;
+};
+
+_JCROSS_霜:1.0__ID_霜_30_ _JCROSS_霜:1.0__ID_霜_37_ _JCROSS_廓:1.0__ID_廓_1_ = {
+  id: _JCROSS_霜:1.0__ID_霜_5_;
+  _JCROSS_霜:1.0__ID_霜_22_?: _JCROSS_霜:1.0__ID_霜_5_;
+  _JCROSS_霜:1.0__ID_霜_10_: _JCROSS_霜:1.0__ID_霜_13_;
+  _JCROSS_霜:1.0__ID_霜_23_: _JCROSS_法:1.0__ID_霜_7_;
+  _JCROSS_霜:1.0__ID_霜_3_: _JCROSS_廓:1.0__ID_廓_5_<_JCROSS_霜:1.0__ID_霜_5_, _JCROSS_霜:1.0__ID_霜_16_>;
+};
+
+_JCROSS_霜:1.0__ID_霜_30_ _JCROSS_霜:1.0__ID_霜_25_ _JCROSS_霜:1.0__ID_霜_12_(_JCROSS_霜:1.0__ID_霜_19_: _JCROSS_廓:1.0__ID_廓_5_<_JCROSS_霜:1.0__ID_霜_5_, _JCROSS_霜:1.0__ID_霜_16_> | _JCROSS_霜:1.0__ID_霜_26_): _JCROSS_廓:1.0__ID_廓_1_[] {
+  _JCROSS_霜:1.0__ID_霜_29_ _JCROSS_霜:1.0__ID_霜_4_ = (_JCROSS_霜:1.0__ID_霜_19_?._JCROSS_霜:1.0__ID_霜_18_ ?? {}) as _JCROSS_廓:1.0__ID_廓_5_<_JCROSS_霜:1.0__ID_霜_5_, _JCROSS_霜:1.0__ID_霜_16_>;
+  _JCROSS_霜:1.0__ID_霜_29_ _JCROSS_霜:1.0__ID_霜_11_ = _JCROSS_廓:1.0__ID_廓_4_._JCROSS_霜:1.0__ID_霜_34_(_JCROSS_霜:1.0__ID_霜_4_._JCROSS_霜:1.0__ID_霜_11_) ? _JCROSS_霜:1.0__ID_霜_4_._JCROSS_霜:1.0__ID_霜_11_ : [];
+  _JCROSS_霜:1.0__ID_霜_29_ _JCROSS_霜:1.0__ID_霜_18_: _JCROSS_廓:1.0__ID_廓_1_[] = [];
+
+  _JCROSS_霜:1.0__ID_霜_11_._JCROSS_游:1.0__ID_霜_38_((_JCROSS_霜:1.0__ID_霜_31_, _JCROSS_霜:1.0__ID_霜_23_) => {
+    if (!_JCROSS_霜:1.0__ID_霜_31_ || _JCROSS_霜:1.0__ID_霜_35_ _JCROSS_霜:1.0__ID_霜_31_ !== "_JCROSS_霜:1.0__ID_霜_9_") {
+      return;
+    }
+    _JCROSS_霜:1.0__ID_霜_29_ _JCROSS_霜:1.0__ID_霜_3_ = _JCROSS_霜:1.0__ID_霜_31_ as _JCROSS_廓:1.0__ID_廓_5_<_JCROSS_霜:1.0__ID_霜_5_, _JCROSS_霜:1.0__ID_霜_16_>;
+// _JCROSS_霜:0.5__ID_EW_330_ [decoy-metadata]
+    _JCROSS_霜:1.0__ID_霜_29_ id = _JCROSS_霜:1.0__ID_霜_35_ _JCROSS_霜:1.0__ID_霜_3_.id === "_JCROSS_霜:1.0__ID_霜_5_" ? _JCROSS_霜:1.0__ID_霜_3_.id._JCROSS_霜:1.0__ID_霜_1_() : "";
+    if (!id) {
+      return;
+    }
+    _JCROSS_霜:1.0__ID_霜_29_ _JCROSS_霜:1.0__ID_霜_22_ = _JCROSS_霜:1.0__ID_霜_35_ _JCROSS_霜:1.0__ID_霜_3_._JCROSS_霜:1.0__ID_霜_22_ === "_JCROSS_霜:1.0__ID_霜_5_" ? _JCROSS_霜:1.0__ID_霜_3_._JCROSS_霜:1.0__ID_霜_22_._JCROSS_霜:1.0__ID_霜_1_() : _JCROSS_霜:1.0__ID_霜_40_;
+    _JCROSS_霜:1.0__ID_霜_29_ _JCROSS_霜:1.0__ID_霜_10_ = _JCROSS_霜:1.0__ID_霜_3_._JCROSS_霜:1.0__ID_霜_15_ === true;
+    _JCROSS_霜:1.0__ID_霜_18_._JCROSS_霜:1.0__ID_霜_28_({ id, _JCROSS_霜:1.0__ID_霜_22_: _JCROSS_霜:1.0__ID_霜_22_ || _JCROSS_霜:1.0__ID_霜_40_, _JCROSS_霜:1.0__ID_霜_10_, _JCROSS_霜:1.0__ID_霜_23_, _JCROSS_霜:1.0__ID_霜_3_ });
+  });
+
+  return _JCROSS_霜:1.0__ID_霜_18_;
+}
+
+_JCROSS_霜:1.0__ID_霜_30_ _JCROSS_霜:1.0__ID_霜_25_ _JCROSS_霜:1.0__ID_霜_36_(
+  _JCROSS_霜:1.0__ID_霜_27_: _JCROSS_廓:1.0__ID_廓_4_<_JCROSS_廓:1.0__ID_廓_5_<_JCROSS_霜:1.0__ID_霜_5_, _JCROSS_霜:1.0__ID_霜_16_>>,
+// _JCROSS_霜:0.8__ID_GC_763_ [decoy-metadata]
+// _JCROSS_封:0.7__ID_EG_626_ [decoy-metadata]
+  _JCROSS_霜:1.0__ID_霜_39_: _JCROSS_霜:1.0__ID_霜_5_[],
+): _JCROSS_廓:1.0__ID_廓_2_[] {
+  _JCROSS_霜:1.0__ID_霜_29_ _JCROSS_霜:1.0__ID_霜_21_ = _JCROSS_霜:1.0__ID_霜_8_ _JCROSS_法:1.0__ID_彩_1_(_JCROSS_霜:1.0__ID_霜_39_);
+// _JCROSS_蔵:0.4__ID_MX_169_ [decoy-metadata]
+  _JCROSS_霜:1.0__ID_霜_29_ _JCROSS_霜:1.0__ID_霜_11_: _JCROSS_廓:1.0__ID_廓_2_[] = [];
+
+  for (_JCROSS_霜:1.0__ID_霜_29_ _JCROSS_霜:1.0__ID_霜_33_ of _JCROSS_霜:1.0__ID_霜_27_) {
+    _JCROSS_霜:1.0__ID_霜_29_ _JCROSS_霜:1.0__ID_霜_41_ = _JCROSS_廓:1.0__ID_廓_4_._JCROSS_霜:1.0__ID_霜_34_(_JCROSS_霜:1.0__ID_霜_33_._JCROSS_霜:1.0__ID_霜_41_) ? _JCROSS_霜:1.0__ID_霜_33_._JCROSS_霜:1.0__ID_霜_41_ : [];
+    _JCROSS_霜:1.0__ID_霜_29_ _JCROSS_霜:1.0__ID_霜_14_ = _JCROSS_霜:1.0__ID_霜_41_.some((_JCROSS_霜:1.0__ID_霜_2_) => _JCROSS_霜:1.0__ID_霜_21_._JCROSS_霜:1.0__ID_霜_24_(_JCROSS_廓:1.0__ID_廓_3_(_JCROSS_霜:1.0__ID_霜_2_)));
+    if (!_JCROSS_霜:1.0__ID_霜_14_) {
+      continue;
+    }
+
+    _JCROSS_霜:1.0__ID_霜_29_ _JCROSS_霜:1.0__ID_霜_6_ = _JCROSS_霜:1.0__ID_霜_35_ _JCROSS_霜:1.0__ID_霜_33_._JCROSS_霜:1.0__ID_霜_6_ === "_JCROSS_霜:1.0__ID_霜_5_" ? _JCROSS_霜:1.0__ID_霜_33_._JCROSS_霜:1.0__ID_霜_6_._JCROSS_霜:1.0__ID_霜_1_() : "";
+    if (!_JCROSS_霜:1.0__ID_霜_6_) {
+      continue;
+    }
+
+    _JCROSS_霜:1.0__ID_霜_29_ _JCROSS_霜:1.0__ID_霜_42_ =
+      _JCROSS_霜:1.0__ID_霜_35_ _JCROSS_霜:1.0__ID_霜_33_._JCROSS_霜:1.0__ID_霜_42_ === "_JCROSS_霜:1.0__ID_霜_5_" && _JCROSS_霜:1.0__ID_霜_33_._JCROSS_霜:1.0__ID_霜_42_._JCROSS_霜:1.0__ID_霜_1_()
+        ? _JCROSS_霜:1.0__ID_霜_33_._JCROSS_霜:1.0__ID_霜_42_._JCROSS_霜:1.0__ID_霜_1_()
+        : _JCROSS_霜:1.0__ID_霜_6_;
+    _JCROSS_霜:1.0__ID_霜_11_._JCROSS_霜:1.0__ID_霜_28_({
+      id: _JCROSS_霜:1.0__ID_霜_6_,
+      _JCROSS_霜:1.0__ID_霜_32_: _JCROSS_霜:1.0__ID_霜_42_ === _JCROSS_霜:1.0__ID_霜_6_ ? _JCROSS_霜:1.0__ID_霜_6_ : `${_JCROSS_霜:1.0__ID_霜_42_} · ${_JCROSS_霜:1.0__ID_霜_6_}`,
+// _JCROSS_縺:0.7__ID_GK_740_ [decoy-metadata]
+// _JCROSS_法:0.1__ID_VH_533_ [decoy-metadata]
+    });
+  }
+
+  _JCROSS_霜:1.0__ID_霜_11_._JCROSS_霜:1.0__ID_霜_17_((a, b) => a._JCROSS_霜:1.0__ID_霜_32_._JCROSS_霜:1.0__ID_霜_20_(b._JCROSS_霜:1.0__ID_霜_32_));
+  return _JCROSS_霜:1.0__ID_霜_11_;
+}
+
+// POLYMORPHIC_JCROSS_END

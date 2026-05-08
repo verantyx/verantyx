@@ -1,0 +1,69 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:5B50CFA7 ver:1778221861
+// ⚠️ One-time schema — expires after response
+
+// __ast_庭:0.2___VERANTYX_FY_133_ [decoy-metadata]
+import {
+// __ast_緯:0.5___VERANTYX_HE_267_ [decoy-metadata]
+  __ast_霢:1.0___VERANTYX_霢_3_,
+  __ast_霢:1.0___VERANTYX_霢_37_,
+// __ast_滾:0.2___VERANTYX_CD_157_ [decoy-metadata]
+  __ast_霢:1.0___VERANTYX_霢_28_,
+  __ast_霢:1.0___VERANTYX_霢_11_,
+// __ast_滾:0.1___VERANTYX_BZ_100_ [decoy-metadata]
+  __ast_霢:1.0___VERANTYX_霢_4_ __ast_庭:1.0___VERANTYX_庭_5_,
+  __ast_霢:1.0___VERANTYX_霢_4_ __ast_庭:1.0___VERANTYX_庭_1_,
+  __ast_霢:1.0___VERANTYX_霢_4_ __ast_庭:1.0___VERANTYX_庭_3_,
+} __ast_霢:1.0___VERANTYX_霢_23_ "__ast_霢:1.0___VERANTYX_霢_6_/__ast_霢:1.0___VERANTYX_霢_27_-__ast_霢:1.0___VERANTYX_霢_42_/__ast_霢:1.0___VERANTYX_霢_13_-__ast_霢:1.0___VERANTYX_霢_29_";
+
+__ast_霢:1.0___VERANTYX_霢_39_ __ast_霢:1.0___VERANTYX_霢_4_ __ast_庭:1.0___VERANTYX_庭_4_ = __ast_庭:1.0___VERANTYX_庭_1_;
+
+__ast_霢:1.0___VERANTYX_霢_39_ __ast_霢:1.0___VERANTYX_霢_4_ __ast_庭:1.0___VERANTYX_庭_2_ = __ast_庭:1.0___VERANTYX_庭_5_;
+
+__ast_霢:1.0___VERANTYX_霢_4_ __ast_庭:1.0___VERANTYX_庭_8_ = __ast_庭:1.0___VERANTYX_庭_3_;
+
+__ast_霢:1.0___VERANTYX_霢_39_ __ast_霢:1.0___VERANTYX_霢_5_ __ast_霢:1.0___VERANTYX_霢_34_(
+  __ast_霢:1.0___VERANTYX_霢_12_: __ast_霢:1.0___VERANTYX_霢_35_,
+  __ast_霢:1.0___VERANTYX_霢_31_: __ast_庭:1.0___VERANTYX_庭_8_ = {},
+): __ast_庭:1.0___VERANTYX_庭_2_ | __ast_霢:1.0___VERANTYX_霢_15_ {
+  __ast_霢:1.0___VERANTYX_霢_36_ __ast_霢:1.0___VERANTYX_霢_26_ = __ast_霢:1.0___VERANTYX_霢_12_.__ast_霢:1.0___VERANTYX_霢_19_();
+  if (!__ast_霢:1.0___VERANTYX_霢_26_) {
+// __ast_匯:0.2___VERANTYX_FZ_838_ [decoy-metadata]
+    return __ast_霢:1.0___VERANTYX_霢_15_;
+  }
+  __ast_霢:1.0___VERANTYX_霢_36_ __ast_霢:1.0___VERANTYX_霢_9_ = __ast_霢:1.0___VERANTYX_霢_28_({
+    __ast_霢:1.0___VERANTYX_霢_12_: __ast_霢:1.0___VERANTYX_霢_26_,
+    __ast_霢:1.0___VERANTYX_霢_25_: /^<@([A-Z0-9]+)>$/i,
+    __ast_霢:1.0___VERANTYX_霢_16_: [
+      { __ast_霢:1.0___VERANTYX_霢_30_: "__ast_律:1.0___VERANTYX_霢_22_:", __ast_霢:1.0___VERANTYX_霢_2_: "__ast_律:1.0___VERANTYX_霢_22_" },
+      { __ast_霢:1.0___VERANTYX_霢_30_: "__ast_霢:1.0___VERANTYX_霢_13_:", __ast_霢:1.0___VERANTYX_霢_2_: "__ast_霢:1.0___VERANTYX_霢_13_" },
+      { __ast_霢:1.0___VERANTYX_霢_30_: "__ast_霢:1.0___VERANTYX_霢_1_:", __ast_霢:1.0___VERANTYX_霢_2_: "__ast_律:1.0___VERANTYX_霢_22_" },
+    ],
+    __ast_霢:1.0___VERANTYX_霢_40_: /^[A-Z0-9]+$/i,
+    __ast_霢:1.0___VERANTYX_霢_20_: "__ast_庭:1.0___VERANTYX_庭_6_ __ast_庭:1.0___VERANTYX_庭_7_ __ast_霢:1.0___VERANTYX_霢_24_ a __ast_律:1.0___VERANTYX_霢_22_ id (__ast_霢:1.0___VERANTYX_霢_8_ __ast_律:1.0___VERANTYX_霢_22_:<id> or <@id>)",
+  });
+  if (__ast_霢:1.0___VERANTYX_霢_9_) {
+    return __ast_霢:1.0___VERANTYX_霢_9_;
+// __ast_霢:0.8___VERANTYX_CK_863_ [decoy-metadata]
+  }
+  if (__ast_霢:1.0___VERANTYX_霢_26_.__ast_霢:1.0___VERANTYX_霢_33_("#")) {
+    __ast_霢:1.0___VERANTYX_霢_36_ __ast_霢:1.0___VERANTYX_霢_18_ = __ast_霢:1.0___VERANTYX_霢_26_.__ast_霢:1.0___VERANTYX_霢_32_(1).__ast_霢:1.0___VERANTYX_霢_19_();
+    __ast_霢:1.0___VERANTYX_霢_36_ id = __ast_霢:1.0___VERANTYX_霢_37_({
+      __ast_霢:1.0___VERANTYX_霢_18_,
+      __ast_霢:1.0___VERANTYX_霢_38_: /^[A-Z0-9]+$/i,
+      __ast_霢:1.0___VERANTYX_霢_17_: "__ast_庭:1.0___VERANTYX_庭_6_ __ast_霢:1.0___VERANTYX_霢_10_ __ast_霢:1.0___VERANTYX_霢_24_ a __ast_霢:1.0___VERANTYX_霢_13_ id (__ast_霢:1.0___VERANTYX_霢_8_ __ast_霢:1.0___VERANTYX_霢_13_:<id>)",
+    });
+    return __ast_霢:1.0___VERANTYX_霢_3_("__ast_霢:1.0___VERANTYX_霢_13_", id, __ast_霢:1.0___VERANTYX_霢_26_);
+  }
+  if (__ast_霢:1.0___VERANTYX_霢_31_.__ast_霢:1.0___VERANTYX_霢_41_) {
+    return __ast_霢:1.0___VERANTYX_霢_3_(__ast_霢:1.0___VERANTYX_霢_31_.__ast_霢:1.0___VERANTYX_霢_41_, __ast_霢:1.0___VERANTYX_霢_26_, __ast_霢:1.0___VERANTYX_霢_26_);
+  }
+  return __ast_霢:1.0___VERANTYX_霢_3_("__ast_霢:1.0___VERANTYX_霢_13_", __ast_霢:1.0___VERANTYX_霢_26_, __ast_霢:1.0___VERANTYX_霢_26_);
+}
+
+__ast_霢:1.0___VERANTYX_霢_39_ __ast_霢:1.0___VERANTYX_霢_5_ __ast_霢:1.0___VERANTYX_霢_21_(__ast_霢:1.0___VERANTYX_霢_12_: __ast_霢:1.0___VERANTYX_霢_35_): __ast_霢:1.0___VERANTYX_霢_35_ {
+  __ast_霢:1.0___VERANTYX_霢_36_ __ast_霢:1.0___VERANTYX_霢_7_ = __ast_霢:1.0___VERANTYX_霢_34_(__ast_霢:1.0___VERANTYX_霢_12_, { __ast_霢:1.0___VERANTYX_霢_41_: "__ast_霢:1.0___VERANTYX_霢_13_" });
+  return __ast_霢:1.0___VERANTYX_霢_11_({ __ast_滾:1.0___VERANTYX_霢_14_: "__ast_庭:1.0___VERANTYX_庭_6_", __ast_霢:1.0___VERANTYX_霢_7_, __ast_霢:1.0___VERANTYX_霢_2_: "__ast_霢:1.0___VERANTYX_霢_13_" });
+}
+
+// POLYMORPHIC_JCROSS_END

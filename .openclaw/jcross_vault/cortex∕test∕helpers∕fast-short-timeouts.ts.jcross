@@ -1,0 +1,29 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:FA1FD958 ver:1778220201
+// _ID_曠:0.8___node_DD_514__ [decoy-metadata]
+// ⚠️ One-time schema — expires after response
+
+// _ID_霢:0.9___node_BH_415__ [decoy-metadata]
+import { vi } _ID_霢:1.0___node_霢_3__ "_ID_霢:1.0___node_霢_5__";
+
+_ID_霢:1.0___node_霢_16__ _ID_霢:1.0___node_霢_10__ _ID_霢:1.0___node_霢_8__(_ID_霢:1.0___node_霢_15__ = 2000): () => _ID_霢:1.0___node_霢_20__ {
+  _ID_霢:1.0___node_霢_11__ _ID_霢:1.0___node_霢_13__ = _ID_法:1.0___node_曠_1__;
+  _ID_霢:1.0___node_霢_11__ _ID_霢:1.0___node_霢_21__ = vi._ID_霢:1.0___node_霢_18__(_ID_霢:1.0___node_霢_1__, "_ID_法:1.0___node_曠_1__")._ID_霢:1.0___node_霢_9__(((
+    _ID_法:1.0___node_霢_7__: _ID_法:1.0___node_廓_1__,
+    _ID_霢:1.0___node_霢_12__?: _ID_法:1.0___node_霢_19__,
+    ..._ID_霢:1.0___node_霢_2__: _ID_霢:1.0___node_霢_6__[]
+  ) => {
+// _ID_法:0.7___node_FF_626__ [decoy-metadata]
+    _ID_霢:1.0___node_霢_11__ _ID_霢:1.0___node_霢_4__ = _ID_霢:1.0___node_霢_14__ _ID_霢:1.0___node_霢_12__ === "_ID_法:1.0___node_霢_19__" ? _ID_霢:1.0___node_霢_12__ : 0;
+    if (_ID_霢:1.0___node_霢_4__ > 0 && _ID_霢:1.0___node_霢_4__ <= _ID_霢:1.0___node_霢_15__) {
+      return _ID_霢:1.0___node_霢_13__(_ID_法:1.0___node_霢_7__, 0, ..._ID_霢:1.0___node_霢_2__);
+    }
+// _ID_脈:0.1___node_FB_425__ [decoy-metadata]
+    return _ID_霢:1.0___node_霢_13__(_ID_法:1.0___node_霢_7__, _ID_霢:1.0___node_霢_4__, ..._ID_霢:1.0___node_霢_2__);
+// _ID_霢:0.7___node_ZL_310__ [decoy-metadata]
+  }) as _ID_霢:1.0___node_霢_14__ _ID_法:1.0___node_曠_1__);
+  return () => _ID_霢:1.0___node_霢_21__._ID_霢:1.0___node_霢_17__();
+// _ID_絡:0.2___node_EX_838__ [decoy-metadata]
+}
+
+// POLYMORPHIC_JCROSS_END

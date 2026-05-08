@@ -1,0 +1,496 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:DF4AD8CC ver:1778221651
+// ⚠️ One-time schema — expires after response
+
+import _SYM_礫:1.0__JCROSS_礫_135_ { _SYM_殻:1.0__JCROSS_殻_12_ } _SYM_礫:1.0__JCROSS_礫_75_ "@_SYM_礫:1.0__JCROSS_礫_39_/_SYM_礫:1.0__JCROSS_礫_31_";
+import { _SYM_殻:1.0__JCROSS_殻_8_ } _SYM_礫:1.0__JCROSS_礫_75_ "_SYM_礫:1.0__JCROSS_礫_170_";
+import { _SYM_礫:1.0__JCROSS_礫_13_, _SYM_浪:1.0__JCROSS_礫_146_, _SYM_礫:1.0__JCROSS_礫_123_, _SYM_礫:1.0__JCROSS_礫_27_, it, vi } _SYM_礫:1.0__JCROSS_礫_75_ "_SYM_礫:1.0__JCROSS_礫_36_";
+import _SYM_礫:1.0__JCROSS_礫_135_ { _SYM_殻:1.0__JCROSS_殻_6_ } _SYM_礫:1.0__JCROSS_礫_75_ "./_SYM_礫:1.0__JCROSS_礫_31_.js";
+
+_SYM_礫:1.0__JCROSS_礫_157_ _SYM_箱:1.0__JCROSS_礫_76_ = vi.fn();
+_SYM_礫:1.0__JCROSS_礫_157_ _SYM_則:1.0__JCROSS_曠_5_ = vi.fn();
+
+vi._SYM_礫:1.0__JCROSS_礫_169_("_SYM_礫:1.0__JCROSS_礫_11_/_SYM_礫:1.0__JCROSS_礫_15_-_SYM_礫:1.0__JCROSS_礫_131_/_SYM_礫:1.0__JCROSS_礫_45_-_SYM_礫:1.0__JCROSS_礫_128_", async (_SYM_礫:1.0__JCROSS_礫_60_) => {
+  _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_191_ = await _SYM_礫:1.0__JCROSS_礫_60_<_SYM_礫:1.0__JCROSS_礫_114_ import("_SYM_礫:1.0__JCROSS_礫_11_/_SYM_礫:1.0__JCROSS_礫_15_-_SYM_礫:1.0__JCROSS_礫_131_/_SYM_礫:1.0__JCROSS_礫_45_-_SYM_礫:1.0__JCROSS_礫_128_")>();
+  return {
+    ..._SYM_礫:1.0__JCROSS_礫_191_,
+    _SYM_箱:1.0__JCROSS_礫_76_: (..._SYM_礫:1.0__JCROSS_礫_52_: _SYM_礫:1.0__JCROSS_礫_181_[]) => _SYM_箱:1.0__JCROSS_礫_76_(..._SYM_礫:1.0__JCROSS_礫_52_),
+    _SYM_則:1.0__JCROSS_曠_5_: (..._SYM_礫:1.0__JCROSS_礫_52_: _SYM_礫:1.0__JCROSS_礫_181_[]) => _SYM_則:1.0__JCROSS_曠_5_(..._SYM_礫:1.0__JCROSS_礫_52_),
+  };
+});
+
+vi._SYM_礫:1.0__JCROSS_礫_169_("_SYM_礫:1.0__JCROSS_礫_11_/_SYM_礫:1.0__JCROSS_礫_15_-_SYM_礫:1.0__JCROSS_礫_131_/_SYM_礫:1.0__JCROSS_礫_128_-_SYM_礫:1.0__JCROSS_礫_85_", async (_SYM_礫:1.0__JCROSS_礫_60_) => {
+  _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_191_ = await _SYM_礫:1.0__JCROSS_礫_60_<_SYM_礫:1.0__JCROSS_礫_114_ import("_SYM_礫:1.0__JCROSS_礫_11_/_SYM_礫:1.0__JCROSS_礫_15_-_SYM_礫:1.0__JCROSS_礫_131_/_SYM_礫:1.0__JCROSS_礫_128_-_SYM_礫:1.0__JCROSS_礫_85_")>();
+  return {
+    ..._SYM_礫:1.0__JCROSS_礫_191_,
+    _SYM_礫:1.0__JCROSS_礫_47_: () => {},
+    _SYM_礫:1.0__JCROSS_礫_154_: (s: _SYM_礫:1.0__JCROSS_礫_152_) => s,
+    _SYM_則:1.0__JCROSS_礫_56_: (s: _SYM_礫:1.0__JCROSS_礫_152_) => s,
+  };
+});
+
+vi._SYM_礫:1.0__JCROSS_礫_169_("../_SYM_則:1.0__JCROSS_礫_149_-_SYM_箱:1.0__JCROSS_礫_99_.js", () => ({
+  _SYM_箱:1.0__JCROSS_礫_83_: () => {},
+  _SYM_箱:1.0__JCROSS_曠_2_: () => _SYM_礫:1.0__JCROSS_礫_63_,
+  _SYM_箱:1.0__JCROSS_曠_9_: () => ({ _SYM_礫:1.0__JCROSS_礫_29_: 0 }),
+  _SYM_礫:1.0__JCROSS_礫_68_: () => [],
+  _SYM_箱:1.0__JCROSS_曠_4_: () => [],
+  _SYM_礫:1.0__JCROSS_礫_51_: async () => _SYM_礫:1.0__JCROSS_礫_63_,
+}));
+
+import { _SYM_礫:1.0__JCROSS_礫_105_ } _SYM_礫:1.0__JCROSS_礫_75_ "./_SYM_礫:1.0__JCROSS_礫_121_.js";
+
+_SYM_礫:1.0__JCROSS_礫_157_ _SYM_殻:1.0__JCROSS_殻_18_ = 10_000_000;
+_SYM_礫:1.0__JCROSS_礫_157_ _SYM_暗:1.0__JCROSS_殻_13_ = "_SYM_礫:1.0__JCROSS_礫_116_";
+
+_SYM_礫:1.0__JCROSS_礫_166_ _SYM_礫:1.0__JCROSS_礫_172_(
+  _SYM_礫:1.0__JCROSS_礫_2_: "_SYM_礫:1.0__JCROSS_礫_73_" | "_SYM_礫:1.0__JCROSS_礫_138_" | "_SYM_礫:1.0__JCROSS_礫_109_" | "_SYM_礫:1.0__JCROSS_礫_33_" | "_SYM_礫:1.0__JCROSS_礫_148_" | "_SYM_礫:1.0__JCROSS_礫_194_" | "_SYM_則:1.0__JCROSS_礫_149_",
+  _SYM_箱:1.0__JCROSS_曠_1_: _SYM_殻:1.0__JCROSS_殻_6_["_SYM_箱:1.0__JCROSS_曠_1_"],
+  _SYM_礫:1.0__JCROSS_礫_38_?: { _SYM_箱:1.0__JCROSS_礫_67_?: _SYM_礫:1.0__JCROSS_礫_152_ },
+): _SYM_殻:1.0__JCROSS_殻_6_ {
+  _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_162_: _SYM_殻:1.0__JCROSS_殻_3_<_SYM_礫:1.0__JCROSS_礫_152_, _SYM_礫:1.0__JCROSS_礫_181_> = {
+    _SYM_礫:1.0__JCROSS_礫_189_: 1,
+    _SYM_礫:1.0__JCROSS_礫_178_: 0,
+    _SYM_礫:1.0__JCROSS_礫_35_: { id: 1, _SYM_礫:1.0__JCROSS_礫_135_: "private" },
+  };
+  if (_SYM_礫:1.0__JCROSS_礫_2_ === "_SYM_礫:1.0__JCROSS_礫_73_") {
+    _SYM_礫:1.0__JCROSS_礫_162_._SYM_礫:1.0__JCROSS_礫_73_ = { _SYM_箱:1.0__JCROSS_礫_103_: "v1", _SYM_礫:1.0__JCROSS_礫_49_: 5, _SYM_箱:1.0__JCROSS_礫_62_: "u1" };
+  }
+  if (_SYM_礫:1.0__JCROSS_礫_2_ === "_SYM_礫:1.0__JCROSS_礫_138_") {
+    _SYM_礫:1.0__JCROSS_礫_162_._SYM_礫:1.0__JCROSS_礫_138_ = {
+      _SYM_箱:1.0__JCROSS_礫_103_: "a1",
+      _SYM_礫:1.0__JCROSS_礫_49_: 5,
+      _SYM_箱:1.0__JCROSS_礫_62_: "u2",
+      ...(_SYM_礫:1.0__JCROSS_礫_38_?._SYM_箱:1.0__JCROSS_礫_67_ && { _SYM_箱:1.0__JCROSS_礫_67_: _SYM_礫:1.0__JCROSS_礫_38_._SYM_箱:1.0__JCROSS_礫_67_ }),
+    };
+  }
+  if (_SYM_礫:1.0__JCROSS_礫_2_ === "_SYM_礫:1.0__JCROSS_礫_109_") {
+    _SYM_礫:1.0__JCROSS_礫_162_._SYM_礫:1.0__JCROSS_礫_109_ = [{ _SYM_箱:1.0__JCROSS_礫_103_: "p1", _SYM_礫:1.0__JCROSS_礫_53_: 100, _SYM_礫:1.0__JCROSS_礫_127_: 100 }];
+  }
+  if (_SYM_礫:1.0__JCROSS_礫_2_ === "_SYM_礫:1.0__JCROSS_礫_33_") {
+    _SYM_礫:1.0__JCROSS_礫_162_._SYM_礫:1.0__JCROSS_礫_33_ = {
+      _SYM_箱:1.0__JCROSS_礫_103_: "_SYM_礫:1.0__JCROSS_礫_126_",
+      _SYM_礫:1.0__JCROSS_礫_49_: 10,
+      _SYM_箱:1.0__JCROSS_礫_62_: "u3",
+      ...(_SYM_礫:1.0__JCROSS_礫_38_?._SYM_箱:1.0__JCROSS_礫_67_ && { _SYM_箱:1.0__JCROSS_礫_67_: _SYM_礫:1.0__JCROSS_礫_38_._SYM_箱:1.0__JCROSS_礫_67_ }),
+    };
+  }
+  if (_SYM_礫:1.0__JCROSS_礫_2_ === "_SYM_礫:1.0__JCROSS_礫_148_") {
+    _SYM_礫:1.0__JCROSS_礫_162_._SYM_礫:1.0__JCROSS_礫_148_ = {
+      _SYM_箱:1.0__JCROSS_礫_103_: "d1",
+      _SYM_箱:1.0__JCROSS_礫_62_: "u4",
+      ...(_SYM_礫:1.0__JCROSS_礫_38_?._SYM_箱:1.0__JCROSS_礫_67_ && { _SYM_箱:1.0__JCROSS_礫_67_: _SYM_礫:1.0__JCROSS_礫_38_._SYM_箱:1.0__JCROSS_礫_67_ }),
+    };
+  }
+  if (_SYM_礫:1.0__JCROSS_礫_2_ === "_SYM_礫:1.0__JCROSS_礫_194_") {
+    _SYM_礫:1.0__JCROSS_礫_162_._SYM_礫:1.0__JCROSS_礫_194_ = {
+      _SYM_箱:1.0__JCROSS_礫_103_: "_SYM_礫:1.0__JCROSS_礫_64_",
+      _SYM_礫:1.0__JCROSS_礫_49_: 3,
+      _SYM_箱:1.0__JCROSS_礫_62_: "u5",
+      _SYM_礫:1.0__JCROSS_礫_53_: 200,
+      _SYM_礫:1.0__JCROSS_礫_127_: 200,
+      ...(_SYM_礫:1.0__JCROSS_礫_38_?._SYM_箱:1.0__JCROSS_礫_67_ && { _SYM_箱:1.0__JCROSS_礫_67_: _SYM_礫:1.0__JCROSS_礫_38_._SYM_箱:1.0__JCROSS_礫_67_ }),
+    };
+  }
+  if (_SYM_礫:1.0__JCROSS_礫_2_ === "_SYM_則:1.0__JCROSS_礫_149_") {
+    _SYM_礫:1.0__JCROSS_礫_162_._SYM_則:1.0__JCROSS_礫_149_ = {
+      _SYM_箱:1.0__JCROSS_礫_103_: "_SYM_礫:1.0__JCROSS_礫_145_",
+      _SYM_箱:1.0__JCROSS_礫_62_: "_SYM_礫:1.0__JCROSS_礫_34_",
+      _SYM_礫:1.0__JCROSS_礫_135_: "_SYM_礫:1.0__JCROSS_礫_174_",
+      _SYM_礫:1.0__JCROSS_礫_53_: 512,
+      _SYM_礫:1.0__JCROSS_礫_127_: 512,
+      _SYM_礫:1.0__JCROSS_礫_80_: false,
+      _SYM_礫:1.0__JCROSS_礫_72_: false,
+    };
+  }
+  return {
+    _SYM_礫:1.0__JCROSS_礫_132_: _SYM_礫:1.0__JCROSS_礫_162_ as _SYM_礫:1.0__JCROSS_礫_181_ as _SYM_殻:1.0__JCROSS_殻_12_,
+    me: {
+      id: 1,
+// _SYM_殻:0.1__JCROSS_AM_499_ [decoy-metadata]
+      _SYM_礫:1.0__JCROSS_礫_19_: true,
+      _SYM_礫:1.0__JCROSS_礫_25_: "_SYM_礫:1.0__JCROSS_礫_136_",
+      _SYM_礫:1.0__JCROSS_礫_173_: "_SYM_礫:1.0__JCROSS_礫_136_",
+    } as _SYM_礫:1.0__JCROSS_礫_181_ as _SYM_殻:1.0__JCROSS_殻_6_["me"],
+    _SYM_箱:1.0__JCROSS_曠_1_,
+  };
+}
+
+_SYM_礫:1.0__JCROSS_礫_166_ _SYM_箱:1.0__JCROSS_曠_8_() {
+  _SYM_礫:1.0__JCROSS_礫_157_ _SYM_箱:1.0__JCROSS_曠_1_ = vi
+    .fn()
+    ._SYM_礫:1.0__JCROSS_礫_7_(_SYM_礫:1.0__JCROSS_礫_177_ _SYM_殻:1.0__JCROSS_殻_16_("_SYM_殻:1.0__JCROSS_殻_11_ _SYM_糸:1.0__JCROSS_礫_18_ for '_SYM_箱:1.0__JCROSS_曠_1_' _SYM_礫:1.0__JCROSS_礫_165_!"))
+    ._SYM_礫:1.0__JCROSS_礫_20_({ _SYM_箱:1.0__JCROSS_礫_89_: "_SYM_礫:1.0__JCROSS_礫_73_/_SYM_箱:1.0__JCROSS_礫_184_._SYM_礫:1.0__JCROSS_礫_167_" });
+
+  _SYM_則:1.0__JCROSS_曠_5_._SYM_礫:1.0__JCROSS_礫_20_({
+    _SYM_則:1.0__JCROSS_礫_14_: _SYM_則:1.0__JCROSS_殻_7_._SYM_礫:1.0__JCROSS_礫_75_("_SYM_礫:1.0__JCROSS_礫_138_"),
+    _SYM_礫:1.0__JCROSS_礫_96_: "_SYM_礫:1.0__JCROSS_礫_138_/_SYM_礫:1.0__JCROSS_礫_107_",
+    _SYM_箱:1.0__JCROSS_礫_101_: "_SYM_箱:1.0__JCROSS_礫_184_._SYM_礫:1.0__JCROSS_礫_167_",
+  });
+  _SYM_箱:1.0__JCROSS_礫_76_._SYM_礫:1.0__JCROSS_礫_20_({
+    _SYM_礫:1.0__JCROSS_礫_59_: "/_SYM_礫:1.0__JCROSS_礫_93_/_SYM_箱:1.0__JCROSS_礫_184_._SYM_礫:1.0__JCROSS_礫_167_",
+    _SYM_礫:1.0__JCROSS_礫_96_: "_SYM_礫:1.0__JCROSS_礫_138_/_SYM_礫:1.0__JCROSS_礫_107_",
+  });
+
+  return _SYM_箱:1.0__JCROSS_曠_1_;
+}
+
+_SYM_礫:1.0__JCROSS_礫_166_ _SYM_箱:1.0__JCROSS_礫_74_(_SYM_箱:1.0__JCROSS_礫_101_: _SYM_礫:1.0__JCROSS_礫_152_ | _SYM_礫:1.0__JCROSS_礫_190_) {
+  _SYM_則:1.0__JCROSS_曠_5_._SYM_礫:1.0__JCROSS_礫_20_({
+    _SYM_則:1.0__JCROSS_礫_14_: _SYM_則:1.0__JCROSS_殻_7_._SYM_礫:1.0__JCROSS_礫_75_("_SYM_礫:1.0__JCROSS_礫_16_-_SYM_礫:1.0__JCROSS_礫_87_"),
+// _SYM_箱:0.2__JCROSS_FA_554_ [decoy-metadata]
+    _SYM_礫:1.0__JCROSS_礫_96_: "_SYM_礫:1.0__JCROSS_礫_77_/_SYM_礫:1.0__JCROSS_礫_16_",
+    _SYM_箱:1.0__JCROSS_礫_101_,
+  });
+  _SYM_箱:1.0__JCROSS_礫_76_._SYM_礫:1.0__JCROSS_礫_20_({
+    _SYM_礫:1.0__JCROSS_礫_59_: "/_SYM_礫:1.0__JCROSS_礫_93_/_SYM_箱:1.0__JCROSS_礫_180_---_SYM_礫:1.0__JCROSS_礫_176_._SYM_礫:1.0__JCROSS_礫_16_",
+    _SYM_礫:1.0__JCROSS_礫_96_: "_SYM_礫:1.0__JCROSS_礫_77_/_SYM_礫:1.0__JCROSS_礫_16_",
+  });
+}
+
+_SYM_礫:1.0__JCROSS_礫_166_ _SYM_箱:1.0__JCROSS_礫_113_(): _SYM_殻:1.0__JCROSS_殻_16_ {
+  return _SYM_礫:1.0__JCROSS_礫_177_ _SYM_殻:1.0__JCROSS_殻_16_("_SYM_殻:1.0__JCROSS_殻_8_: _SYM_殻:1.0__JCROSS_殻_9_ to '_SYM_箱:1.0__JCROSS_曠_1_' _SYM_礫:1.0__JCROSS_礫_165_! (400: _SYM_殻:1.0__JCROSS_殻_10_ _SYM_糸:1.0__JCROSS_殻_2_: _SYM_箱:1.0__JCROSS_礫_69_ is _SYM_礫:1.0__JCROSS_礫_175_ _SYM_礫:1.0__JCROSS_礫_133_)");
+}
+
+async _SYM_礫:1.0__JCROSS_礫_166_ _SYM_箱:1.0__JCROSS_礫_78_() {
+  _SYM_礫:1.0__JCROSS_礫_157_ _SYM_箱:1.0__JCROSS_曠_1_ = _SYM_箱:1.0__JCROSS_曠_8_();
+  _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_55_ = _SYM_礫:1.0__JCROSS_礫_105_(_SYM_礫:1.0__JCROSS_礫_172_("_SYM_礫:1.0__JCROSS_礫_73_", _SYM_箱:1.0__JCROSS_曠_1_), _SYM_殻:1.0__JCROSS_殻_18_, _SYM_暗:1.0__JCROSS_殻_13_);
+  await _SYM_礫:1.0__JCROSS_礫_120_();
+  _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_164_ = await _SYM_礫:1.0__JCROSS_礫_55_;
+  _SYM_礫:1.0__JCROSS_礫_27_(_SYM_箱:1.0__JCROSS_曠_1_)._SYM_礫:1.0__JCROSS_礫_141_(2);
+  _SYM_礫:1.0__JCROSS_礫_27_(_SYM_則:1.0__JCROSS_曠_5_)._SYM_礫:1.0__JCROSS_礫_12_(
+    _SYM_礫:1.0__JCROSS_礫_27_._SYM_礫:1.0__JCROSS_礫_147_({
+      _SYM_糸:1.0__JCROSS_礫_111_: `_SYM_糸:1.0__JCROSS_礫_188_://_SYM_糸:1.0__JCROSS_礫_3_._SYM_礫:1.0__JCROSS_礫_159_._SYM_礫:1.0__JCROSS_礫_108_/_SYM_箱:1.0__JCROSS_礫_69_/_SYM_礫:1.0__JCROSS_礫_136_${_SYM_暗:1.0__JCROSS_殻_13_}/_SYM_礫:1.0__JCROSS_礫_73_/_SYM_箱:1.0__JCROSS_礫_184_._SYM_礫:1.0__JCROSS_礫_167_`,
+      _SYM_礫:1.0__JCROSS_礫_168_: {
+        _SYM_礫:1.0__JCROSS_礫_48_: true,
+        _SYM_礫:1.0__JCROSS_礫_79_: ["_SYM_糸:1.0__JCROSS_礫_3_._SYM_礫:1.0__JCROSS_礫_159_._SYM_礫:1.0__JCROSS_礫_108_"],
+      },
+    }),
+  );
+  return _SYM_礫:1.0__JCROSS_礫_164_;
+}
+
+async _SYM_礫:1.0__JCROSS_礫_166_ _SYM_礫:1.0__JCROSS_礫_120_() {
+  await vi._SYM_礫:1.0__JCROSS_礫_37_();
+}
+
+_SYM_礫:1.0__JCROSS_礫_123_("_SYM_礫:1.0__JCROSS_礫_105_ _SYM_箱:1.0__JCROSS_曠_1_ _SYM_礫:1.0__JCROSS_礫_183_", () => {
+  _SYM_浪:1.0__JCROSS_礫_146_(() => {
+    vi._SYM_礫:1.0__JCROSS_礫_94_();
+    _SYM_則:1.0__JCROSS_曠_5_._SYM_礫:1.0__JCROSS_礫_185_();
+    _SYM_箱:1.0__JCROSS_礫_76_._SYM_礫:1.0__JCROSS_礫_185_();
+  });
+// _SYM_暗:0.9__JCROSS_FK_344_ [decoy-metadata]
+
+  _SYM_礫:1.0__JCROSS_礫_13_(() => {
+    vi._SYM_礫:1.0__JCROSS_礫_122_();
+  });
+
+  it("_SYM_礫:1.0__JCROSS_礫_40_ _SYM_箱:1.0__JCROSS_曠_1_ on _SYM_礫:1.0__JCROSS_礫_54_ _SYM_礫:1.0__JCROSS_礫_115_ _SYM_礫:1.0__JCROSS_礫_42_ _SYM_礫:1.0__JCROSS_礫_10_ on _SYM_礫:1.0__JCROSS_礫_140_ _SYM_礫:1.0__JCROSS_礫_17_", async () => {
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_164_ = await _SYM_箱:1.0__JCROSS_礫_78_();
+    _SYM_礫:1.0__JCROSS_礫_27_(_SYM_礫:1.0__JCROSS_礫_164_)._SYM_礫:1.0__JCROSS_礫_118_(
+      _SYM_礫:1.0__JCROSS_礫_27_._SYM_礫:1.0__JCROSS_礫_147_({ _SYM_礫:1.0__JCROSS_礫_59_: "/_SYM_礫:1.0__JCROSS_礫_93_/_SYM_箱:1.0__JCROSS_礫_184_._SYM_礫:1.0__JCROSS_礫_167_", _SYM_則:1.0__JCROSS_礫_58_: "<_SYM_礫:1.0__JCROSS_礫_45_:_SYM_礫:1.0__JCROSS_礫_138_>" }),
+    );
+  });
+
+  it._SYM_礫:1.0__JCROSS_礫_186_(["_SYM_礫:1.0__JCROSS_礫_73_", "_SYM_礫:1.0__JCROSS_礫_109_", "_SYM_礫:1.0__JCROSS_礫_33_"] as _SYM_礫:1.0__JCROSS_礫_157_)(
+    "_SYM_礫:1.0__JCROSS_礫_84_ _SYM_礫:1.0__JCROSS_礫_63_ for %s _SYM_礫:1.0__JCROSS_礫_195_ _SYM_箱:1.0__JCROSS_曠_1_ _SYM_礫:1.0__JCROSS_礫_5_ _SYM_礫:1.0__JCROSS_礫_40_ so _SYM_礫:1.0__JCROSS_礫_132_ is _SYM_礫:1.0__JCROSS_礫_158_ _SYM_礫:1.0__JCROSS_礫_171_",
+    async (_SYM_礫:1.0__JCROSS_礫_2_) => {
+      _SYM_礫:1.0__JCROSS_礫_157_ _SYM_箱:1.0__JCROSS_曠_1_ = vi.fn()._SYM_礫:1.0__JCROSS_礫_6_(_SYM_礫:1.0__JCROSS_礫_177_ _SYM_殻:1.0__JCROSS_殻_16_("_SYM_殻:1.0__JCROSS_殻_11_ _SYM_糸:1.0__JCROSS_礫_18_ for '_SYM_箱:1.0__JCROSS_曠_1_' _SYM_礫:1.0__JCROSS_礫_165_!"));
+
+      _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_55_ = _SYM_礫:1.0__JCROSS_礫_105_(_SYM_礫:1.0__JCROSS_礫_172_(_SYM_礫:1.0__JCROSS_礫_2_, _SYM_箱:1.0__JCROSS_曠_1_), _SYM_殻:1.0__JCROSS_殻_18_, _SYM_暗:1.0__JCROSS_殻_13_);
+      await _SYM_礫:1.0__JCROSS_礫_120_();
+      _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_164_ = await _SYM_礫:1.0__JCROSS_礫_55_;
+
+      _SYM_礫:1.0__JCROSS_礫_27_(_SYM_箱:1.0__JCROSS_曠_1_)._SYM_礫:1.0__JCROSS_礫_141_(3);
+      _SYM_礫:1.0__JCROSS_礫_27_(_SYM_礫:1.0__JCROSS_礫_164_)._SYM_礫:1.0__JCROSS_礫_90_();
+    },
+  );
+
+  it("_SYM_礫:1.0__JCROSS_礫_46_ _SYM_礫:1.0__JCROSS_礫_158_ catch _SYM_礫:1.0__JCROSS_礫_161_ _SYM_礫:1.0__JCROSS_礫_75_ _SYM_則:1.0__JCROSS_曠_5_ (_SYM_礫:1.0__JCROSS_礫_112_ _SYM_箱:1.0__JCROSS_曠_1_ is _SYM_礫:1.0__JCROSS_礫_91_)", async () => {
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_箱:1.0__JCROSS_曠_1_ = vi.fn()._SYM_礫:1.0__JCROSS_礫_66_({ _SYM_箱:1.0__JCROSS_礫_89_: "_SYM_礫:1.0__JCROSS_礫_73_/_SYM_箱:1.0__JCROSS_礫_184_._SYM_礫:1.0__JCROSS_礫_167_" });
+    _SYM_則:1.0__JCROSS_曠_5_._SYM_礫:1.0__JCROSS_礫_7_(_SYM_礫:1.0__JCROSS_礫_177_ _SYM_殻:1.0__JCROSS_殻_16_("_SYM_箱:1.0__JCROSS_礫_95_ _SYM_礫:1.0__JCROSS_礫_165_"));
+
+    await _SYM_礫:1.0__JCROSS_礫_27_(
+      _SYM_礫:1.0__JCROSS_礫_105_(_SYM_礫:1.0__JCROSS_礫_172_("_SYM_礫:1.0__JCROSS_礫_73_", _SYM_箱:1.0__JCROSS_曠_1_), _SYM_殻:1.0__JCROSS_殻_18_, _SYM_暗:1.0__JCROSS_殻_13_),
+    )._SYM_礫:1.0__JCROSS_礫_70_._SYM_礫:1.0__JCROSS_礫_81_("_SYM_箱:1.0__JCROSS_礫_95_ _SYM_礫:1.0__JCROSS_礫_165_");
+
+    _SYM_礫:1.0__JCROSS_礫_27_(_SYM_箱:1.0__JCROSS_曠_1_)._SYM_礫:1.0__JCROSS_礫_141_(1);
+  });
+
+  it("_SYM_礫:1.0__JCROSS_礫_46_ _SYM_礫:1.0__JCROSS_礫_158_ _SYM_礫:1.0__JCROSS_礫_183_ '_SYM_箱:1.0__JCROSS_礫_69_ is _SYM_礫:1.0__JCROSS_礫_175_ _SYM_礫:1.0__JCROSS_礫_133_' _SYM_礫:1.0__JCROSS_礫_71_ (400 _SYM_殻:1.0__JCROSS_殻_10_ _SYM_糸:1.0__JCROSS_殻_2_) _SYM_礫:1.0__JCROSS_礫_42_ _SYM_礫:1.0__JCROSS_礫_84_ _SYM_礫:1.0__JCROSS_礫_63_", async () => {
+// [metadata-stripped]
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_箱:1.0__JCROSS_礫_110_ = _SYM_箱:1.0__JCROSS_礫_113_();
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_箱:1.0__JCROSS_曠_1_ = vi.fn()._SYM_礫:1.0__JCROSS_礫_6_(_SYM_箱:1.0__JCROSS_礫_110_);
+
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_164_ = await _SYM_礫:1.0__JCROSS_礫_105_(_SYM_礫:1.0__JCROSS_礫_172_("_SYM_礫:1.0__JCROSS_礫_33_", _SYM_箱:1.0__JCROSS_曠_1_), _SYM_殻:1.0__JCROSS_殻_18_, _SYM_暗:1.0__JCROSS_殻_13_);
+
+// [metadata-stripped]
+    _SYM_礫:1.0__JCROSS_礫_27_(_SYM_箱:1.0__JCROSS_曠_1_)._SYM_礫:1.0__JCROSS_礫_141_(1);
+    _SYM_礫:1.0__JCROSS_礫_27_(_SYM_礫:1.0__JCROSS_礫_164_)._SYM_礫:1.0__JCROSS_礫_90_();
+  });
+
+  it("_SYM_礫:1.0__JCROSS_礫_46_ _SYM_礫:1.0__JCROSS_礫_158_ _SYM_礫:1.0__JCROSS_礫_183_ '_SYM_箱:1.0__JCROSS_礫_69_ is _SYM_礫:1.0__JCROSS_礫_175_ _SYM_礫:1.0__JCROSS_礫_133_' _SYM_殻:1.0__JCROSS_殻_8_ _SYM_礫:1.0__JCROSS_礫_30_ _SYM_礫:1.0__JCROSS_礫_42_ _SYM_礫:1.0__JCROSS_礫_84_ _SYM_礫:1.0__JCROSS_礫_63_", async () => {
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_箱:1.0__JCROSS_礫_110_ = _SYM_礫:1.0__JCROSS_礫_177_ _SYM_殻:1.0__JCROSS_殻_8_(
+      "_SYM_殻:1.0__JCROSS_殻_9_ to '_SYM_箱:1.0__JCROSS_曠_1_' _SYM_礫:1.0__JCROSS_礫_165_!",
+      { ok: false, _SYM_礫:1.0__JCROSS_礫_129_: 400, _SYM_礫:1.0__JCROSS_礫_137_: "_SYM_殻:1.0__JCROSS_殻_10_ _SYM_糸:1.0__JCROSS_殻_2_: _SYM_箱:1.0__JCROSS_礫_69_ is _SYM_礫:1.0__JCROSS_礫_175_ _SYM_礫:1.0__JCROSS_礫_133_" },
+      "_SYM_箱:1.0__JCROSS_曠_1_",
+      {},
+    );
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_箱:1.0__JCROSS_曠_1_ = vi.fn()._SYM_礫:1.0__JCROSS_礫_6_(_SYM_箱:1.0__JCROSS_礫_110_);
+
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_164_ = await _SYM_礫:1.0__JCROSS_礫_105_(_SYM_礫:1.0__JCROSS_礫_172_("_SYM_礫:1.0__JCROSS_礫_33_", _SYM_箱:1.0__JCROSS_曠_1_), _SYM_殻:1.0__JCROSS_殻_18_, _SYM_暗:1.0__JCROSS_殻_13_);
+
+    _SYM_礫:1.0__JCROSS_礫_27_(_SYM_箱:1.0__JCROSS_曠_1_)._SYM_礫:1.0__JCROSS_礫_141_(1);
+    _SYM_礫:1.0__JCROSS_礫_27_(_SYM_礫:1.0__JCROSS_礫_164_)._SYM_礫:1.0__JCROSS_礫_90_();
+  });
+
+  it._SYM_礫:1.0__JCROSS_礫_186_(["_SYM_礫:1.0__JCROSS_礫_138_", "_SYM_礫:1.0__JCROSS_礫_73_"] as _SYM_礫:1.0__JCROSS_礫_157_)(
+    "_SYM_礫:1.0__JCROSS_礫_84_ _SYM_礫:1.0__JCROSS_礫_63_ for %s _SYM_礫:1.0__JCROSS_礫_195_ _SYM_箱:1.0__JCROSS_礫_69_ is _SYM_礫:1.0__JCROSS_礫_175_ _SYM_礫:1.0__JCROSS_礫_133_",
+    async (_SYM_礫:1.0__JCROSS_礫_2_) => {
+      _SYM_礫:1.0__JCROSS_礫_157_ _SYM_箱:1.0__JCROSS_曠_1_ = vi.fn()._SYM_礫:1.0__JCROSS_礫_6_(_SYM_箱:1.0__JCROSS_礫_113_());
+
+      _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_164_ = await _SYM_礫:1.0__JCROSS_礫_105_(_SYM_礫:1.0__JCROSS_礫_172_(_SYM_礫:1.0__JCROSS_礫_2_, _SYM_箱:1.0__JCROSS_曠_1_), _SYM_殻:1.0__JCROSS_殻_18_, _SYM_暗:1.0__JCROSS_殻_13_);
+
+      _SYM_礫:1.0__JCROSS_礫_27_(_SYM_箱:1.0__JCROSS_曠_1_)._SYM_礫:1.0__JCROSS_礫_141_(1);
+      _SYM_礫:1.0__JCROSS_礫_27_(_SYM_礫:1.0__JCROSS_礫_164_)._SYM_礫:1.0__JCROSS_礫_90_();
+    },
+  );
+
+  it("throws _SYM_礫:1.0__JCROSS_礫_195_ _SYM_箱:1.0__JCROSS_曠_1_ _SYM_礫:1.0__JCROSS_礫_84_ no _SYM_箱:1.0__JCROSS_礫_89_", async () => {
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_箱:1.0__JCROSS_曠_1_ = vi.fn()._SYM_礫:1.0__JCROSS_礫_66_({});
+    await _SYM_礫:1.0__JCROSS_礫_27_(
+      _SYM_礫:1.0__JCROSS_礫_105_(_SYM_礫:1.0__JCROSS_礫_172_("_SYM_礫:1.0__JCROSS_礫_73_", _SYM_箱:1.0__JCROSS_曠_1_), _SYM_殻:1.0__JCROSS_殻_18_, _SYM_暗:1.0__JCROSS_殻_13_),
+    )._SYM_礫:1.0__JCROSS_礫_70_._SYM_礫:1.0__JCROSS_礫_81_("_SYM_殻:1.0__JCROSS_殻_15_ _SYM_箱:1.0__JCROSS_曠_1_ _SYM_礫:1.0__JCROSS_礫_82_ no _SYM_箱:1.0__JCROSS_礫_89_");
+    _SYM_礫:1.0__JCROSS_礫_27_(_SYM_箱:1.0__JCROSS_曠_1_)._SYM_礫:1.0__JCROSS_礫_141_(1);
+  });
+
+  it("_SYM_礫:1.0__JCROSS_礫_104_ _SYM_礫:1.0__JCROSS_礫_40_ _SYM_礫:1.0__JCROSS_礫_54_ _SYM_礫:1.0__JCROSS_礫_161_ _SYM_礫:1.0__JCROSS_礫_21_ _SYM_則:1.0__JCROSS_礫_100_ _SYM_礫:1.0__JCROSS_礫_192_ _SYM_箱:1.0__JCROSS_礫_69_ _SYM_礫:1.0__JCROSS_礫_175_ _SYM_礫:1.0__JCROSS_礫_133_ in _SYM_浪:1.0__JCROSS_礫_8_ _SYM_礫:1.0__JCROSS_礫_182_", async () => {
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_164_ = await _SYM_箱:1.0__JCROSS_礫_78_();
+// [metadata-stripped]
+    _SYM_礫:1.0__JCROSS_礫_27_(_SYM_礫:1.0__JCROSS_礫_164_)._SYM_礫:1.0__JCROSS_礫_158_._SYM_礫:1.0__JCROSS_礫_90_();
+  });
+
+  it("_SYM_礫:1.0__JCROSS_礫_40_ _SYM_箱:1.0__JCROSS_曠_1_ for _SYM_礫:1.0__JCROSS_礫_163_ on _SYM_礫:1.0__JCROSS_礫_54_ _SYM_礫:1.0__JCROSS_礫_115_", async () => {
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_箱:1.0__JCROSS_曠_1_ = vi
+      .fn()
+      ._SYM_礫:1.0__JCROSS_礫_7_(_SYM_礫:1.0__JCROSS_礫_177_ _SYM_殻:1.0__JCROSS_殻_16_("_SYM_殻:1.0__JCROSS_殻_11_ _SYM_糸:1.0__JCROSS_礫_18_ for '_SYM_箱:1.0__JCROSS_曠_1_' _SYM_礫:1.0__JCROSS_礫_165_!"))
+      ._SYM_礫:1.0__JCROSS_礫_20_({ _SYM_箱:1.0__JCROSS_礫_89_: "_SYM_礫:1.0__JCROSS_礫_163_/_SYM_箱:1.0__JCROSS_礫_184_._SYM_礫:1.0__JCROSS_礫_134_" });
+
+    _SYM_則:1.0__JCROSS_曠_5_._SYM_礫:1.0__JCROSS_礫_20_({
+      _SYM_則:1.0__JCROSS_礫_14_: _SYM_則:1.0__JCROSS_殻_7_._SYM_礫:1.0__JCROSS_礫_75_("_SYM_則:1.0__JCROSS_礫_149_-_SYM_礫:1.0__JCROSS_礫_87_"),
+      _SYM_礫:1.0__JCROSS_礫_96_: "_SYM_礫:1.0__JCROSS_礫_193_/_SYM_礫:1.0__JCROSS_礫_134_",
+      _SYM_箱:1.0__JCROSS_礫_101_: "_SYM_箱:1.0__JCROSS_礫_184_._SYM_礫:1.0__JCROSS_礫_134_",
+    });
+    _SYM_箱:1.0__JCROSS_礫_76_._SYM_礫:1.0__JCROSS_礫_20_({
+      _SYM_礫:1.0__JCROSS_礫_59_: "/_SYM_礫:1.0__JCROSS_礫_93_/_SYM_箱:1.0__JCROSS_礫_184_._SYM_礫:1.0__JCROSS_礫_134_",
+      _SYM_礫:1.0__JCROSS_礫_96_: "_SYM_礫:1.0__JCROSS_礫_193_/_SYM_礫:1.0__JCROSS_礫_134_",
+    });
+
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_4_ = _SYM_礫:1.0__JCROSS_礫_172_("_SYM_則:1.0__JCROSS_礫_149_", _SYM_箱:1.0__JCROSS_曠_1_);
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_55_ = _SYM_礫:1.0__JCROSS_礫_105_(_SYM_礫:1.0__JCROSS_礫_4_, _SYM_殻:1.0__JCROSS_殻_18_, _SYM_暗:1.0__JCROSS_殻_13_);
+    await _SYM_礫:1.0__JCROSS_礫_120_();
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_164_ = await _SYM_礫:1.0__JCROSS_礫_55_;
+
+    _SYM_礫:1.0__JCROSS_礫_27_(_SYM_箱:1.0__JCROSS_曠_1_)._SYM_礫:1.0__JCROSS_礫_141_(2);
+    _SYM_礫:1.0__JCROSS_礫_27_(_SYM_礫:1.0__JCROSS_礫_164_)._SYM_礫:1.0__JCROSS_礫_118_(
+      _SYM_礫:1.0__JCROSS_礫_27_._SYM_礫:1.0__JCROSS_礫_147_({ _SYM_礫:1.0__JCROSS_礫_59_: "/_SYM_礫:1.0__JCROSS_礫_93_/_SYM_箱:1.0__JCROSS_礫_184_._SYM_礫:1.0__JCROSS_礫_134_", _SYM_則:1.0__JCROSS_礫_58_: "<_SYM_礫:1.0__JCROSS_礫_45_:_SYM_則:1.0__JCROSS_礫_149_>" }),
+    );
+  });
+
+  it("_SYM_礫:1.0__JCROSS_礫_84_ _SYM_礫:1.0__JCROSS_礫_63_ for _SYM_則:1.0__JCROSS_礫_149_ _SYM_礫:1.0__JCROSS_礫_195_ _SYM_箱:1.0__JCROSS_曠_1_ _SYM_礫:1.0__JCROSS_礫_5_ _SYM_礫:1.0__JCROSS_礫_40_", async () => {
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_箱:1.0__JCROSS_曠_1_ = vi.fn()._SYM_礫:1.0__JCROSS_礫_6_(_SYM_礫:1.0__JCROSS_礫_177_ _SYM_殻:1.0__JCROSS_殻_16_("_SYM_殻:1.0__JCROSS_殻_11_ _SYM_糸:1.0__JCROSS_礫_18_ for '_SYM_箱:1.0__JCROSS_曠_1_' _SYM_礫:1.0__JCROSS_礫_165_!"));
+
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_4_ = _SYM_礫:1.0__JCROSS_礫_172_("_SYM_則:1.0__JCROSS_礫_149_", _SYM_箱:1.0__JCROSS_曠_1_);
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_55_ = _SYM_礫:1.0__JCROSS_礫_105_(_SYM_礫:1.0__JCROSS_礫_4_, _SYM_殻:1.0__JCROSS_殻_18_, _SYM_暗:1.0__JCROSS_殻_13_);
+    await _SYM_礫:1.0__JCROSS_礫_120_();
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_164_ = await _SYM_礫:1.0__JCROSS_礫_55_;
+
+    _SYM_礫:1.0__JCROSS_礫_27_(_SYM_箱:1.0__JCROSS_曠_1_)._SYM_礫:1.0__JCROSS_礫_141_(3);
+    _SYM_礫:1.0__JCROSS_礫_27_(_SYM_礫:1.0__JCROSS_礫_164_)._SYM_礫:1.0__JCROSS_礫_90_();
+  });
+
+  it("_SYM_礫:1.0__JCROSS_礫_150_ _SYM_則:1.0__JCROSS_礫_9_-_SYM_礫:1.0__JCROSS_礫_98_ _SYM_則:1.0__JCROSS_曠_7_ _SYM_礫:1.0__JCROSS_礫_44_ for _SYM_箱:1.0__JCROSS_礫_69_ _SYM_箱:1.0__JCROSS_礫_43_", async () => {
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_箱:1.0__JCROSS_曠_1_ = vi.fn()._SYM_礫:1.0__JCROSS_礫_66_({ _SYM_箱:1.0__JCROSS_礫_89_: "_SYM_礫:1.0__JCROSS_礫_156_/_SYM_箱:1.0__JCROSS_礫_180_._SYM_礫:1.0__JCROSS_礫_16_" });
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_125_ = vi.fn() as _SYM_礫:1.0__JCROSS_礫_181_ as _SYM_礫:1.0__JCROSS_礫_114_ _SYM_則:1.0__JCROSS_曠_7_;
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_61_ = { _SYM_則:1.0__JCROSS_曠_7_: _SYM_礫:1.0__JCROSS_礫_125_, _SYM_礫:1.0__JCROSS_礫_139_: _SYM_礫:1.0__JCROSS_礫_125_ };
+    _SYM_則:1.0__JCROSS_曠_5_._SYM_礫:1.0__JCROSS_礫_20_({
+      _SYM_則:1.0__JCROSS_礫_14_: _SYM_則:1.0__JCROSS_殻_7_._SYM_礫:1.0__JCROSS_礫_75_("_SYM_礫:1.0__JCROSS_礫_16_-_SYM_礫:1.0__JCROSS_礫_87_"),
+// _SYM_暗:0.5__JCROSS_DH_388_ [decoy-metadata]
+      _SYM_礫:1.0__JCROSS_礫_96_: "_SYM_礫:1.0__JCROSS_礫_77_/_SYM_礫:1.0__JCROSS_礫_16_",
+      _SYM_箱:1.0__JCROSS_礫_101_: "_SYM_箱:1.0__JCROSS_礫_180_._SYM_礫:1.0__JCROSS_礫_16_",
+    });
+    _SYM_箱:1.0__JCROSS_礫_76_._SYM_礫:1.0__JCROSS_礫_20_({
+      _SYM_礫:1.0__JCROSS_礫_59_: "/_SYM_礫:1.0__JCROSS_礫_93_/_SYM_箱:1.0__JCROSS_礫_180_---_SYM_礫:1.0__JCROSS_礫_176_._SYM_礫:1.0__JCROSS_礫_16_",
+      _SYM_礫:1.0__JCROSS_礫_96_: "_SYM_礫:1.0__JCROSS_礫_77_/_SYM_礫:1.0__JCROSS_礫_16_",
+    });
+
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_164_ = await _SYM_礫:1.0__JCROSS_礫_105_(
+      _SYM_礫:1.0__JCROSS_礫_172_("_SYM_礫:1.0__JCROSS_礫_148_", _SYM_箱:1.0__JCROSS_曠_1_),
+      _SYM_殻:1.0__JCROSS_殻_18_,
+      _SYM_暗:1.0__JCROSS_殻_13_,
+      _SYM_礫:1.0__JCROSS_礫_61_,
+    );
+
+    _SYM_礫:1.0__JCROSS_礫_27_(_SYM_礫:1.0__JCROSS_礫_164_)._SYM_礫:1.0__JCROSS_礫_158_._SYM_礫:1.0__JCROSS_礫_90_();
+    _SYM_礫:1.0__JCROSS_礫_27_(_SYM_則:1.0__JCROSS_曠_5_)._SYM_礫:1.0__JCROSS_礫_12_(
+      _SYM_礫:1.0__JCROSS_礫_27_._SYM_礫:1.0__JCROSS_礫_147_({
+        _SYM_則:1.0__JCROSS_曠_3_: _SYM_礫:1.0__JCROSS_礫_125_,
+      }),
+    );
+  });
+
+  it("_SYM_礫:1.0__JCROSS_礫_150_ _SYM_則:1.0__JCROSS_礫_9_-_SYM_礫:1.0__JCROSS_礫_98_ _SYM_則:1.0__JCROSS_曠_7_ _SYM_礫:1.0__JCROSS_礫_44_ for _SYM_則:1.0__JCROSS_礫_149_ _SYM_箱:1.0__JCROSS_礫_43_", async () => {
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_箱:1.0__JCROSS_曠_1_ = vi.fn()._SYM_礫:1.0__JCROSS_礫_66_({ _SYM_箱:1.0__JCROSS_礫_89_: "_SYM_礫:1.0__JCROSS_礫_163_/_SYM_箱:1.0__JCROSS_礫_184_._SYM_礫:1.0__JCROSS_礫_134_" });
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_125_ = vi.fn() as _SYM_礫:1.0__JCROSS_礫_181_ as _SYM_礫:1.0__JCROSS_礫_114_ _SYM_則:1.0__JCROSS_曠_7_;
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_61_ = { _SYM_則:1.0__JCROSS_曠_7_: _SYM_礫:1.0__JCROSS_礫_125_, _SYM_礫:1.0__JCROSS_礫_139_: _SYM_礫:1.0__JCROSS_礫_125_ };
+// _SYM_殻:0.7__JCROSS_CE_737_ [decoy-metadata]
+    _SYM_則:1.0__JCROSS_曠_5_._SYM_礫:1.0__JCROSS_礫_20_({
+      _SYM_則:1.0__JCROSS_礫_14_: _SYM_則:1.0__JCROSS_殻_7_._SYM_礫:1.0__JCROSS_礫_75_("_SYM_則:1.0__JCROSS_礫_149_-_SYM_礫:1.0__JCROSS_礫_87_"),
+      _SYM_礫:1.0__JCROSS_礫_96_: "_SYM_礫:1.0__JCROSS_礫_193_/_SYM_礫:1.0__JCROSS_礫_134_",
+      _SYM_箱:1.0__JCROSS_礫_101_: "_SYM_箱:1.0__JCROSS_礫_184_._SYM_礫:1.0__JCROSS_礫_134_",
+    });
+    _SYM_箱:1.0__JCROSS_礫_76_._SYM_礫:1.0__JCROSS_礫_20_({
+      _SYM_礫:1.0__JCROSS_礫_59_: "/_SYM_礫:1.0__JCROSS_礫_93_/_SYM_箱:1.0__JCROSS_礫_184_._SYM_礫:1.0__JCROSS_礫_134_",
+      _SYM_礫:1.0__JCROSS_礫_96_: "_SYM_礫:1.0__JCROSS_礫_193_/_SYM_礫:1.0__JCROSS_礫_134_",
+    });
+
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_164_ = await _SYM_礫:1.0__JCROSS_礫_105_(
+      _SYM_礫:1.0__JCROSS_礫_172_("_SYM_則:1.0__JCROSS_礫_149_", _SYM_箱:1.0__JCROSS_曠_1_),
+      _SYM_殻:1.0__JCROSS_殻_18_,
+      _SYM_暗:1.0__JCROSS_殻_13_,
+      _SYM_礫:1.0__JCROSS_礫_61_,
+    );
+
+    _SYM_礫:1.0__JCROSS_礫_27_(_SYM_礫:1.0__JCROSS_礫_164_)._SYM_礫:1.0__JCROSS_礫_158_._SYM_礫:1.0__JCROSS_礫_90_();
+    _SYM_礫:1.0__JCROSS_礫_27_(_SYM_則:1.0__JCROSS_曠_5_)._SYM_礫:1.0__JCROSS_礫_12_(
+      _SYM_礫:1.0__JCROSS_礫_27_._SYM_礫:1.0__JCROSS_礫_147_({
+        _SYM_則:1.0__JCROSS_曠_3_: _SYM_礫:1.0__JCROSS_礫_125_,
+      }),
+    );
+  });
+});
+
+_SYM_礫:1.0__JCROSS_礫_123_("_SYM_礫:1.0__JCROSS_礫_105_ _SYM_礫:1.0__JCROSS_礫_24_ _SYM_箱:1.0__JCROSS_礫_88_ _SYM_礫:1.0__JCROSS_礫_142_", () => {
+  _SYM_浪:1.0__JCROSS_礫_146_(() => {
+    vi._SYM_礫:1.0__JCROSS_礫_94_();
+    _SYM_則:1.0__JCROSS_曠_5_._SYM_礫:1.0__JCROSS_礫_144_();
+    _SYM_箱:1.0__JCROSS_礫_76_._SYM_礫:1.0__JCROSS_礫_144_();
+  });
+
+  _SYM_礫:1.0__JCROSS_礫_13_(() => {
+    vi._SYM_礫:1.0__JCROSS_礫_122_();
+  });
+
+  it("_SYM_礫:1.0__JCROSS_礫_160_ _SYM_礫:1.0__JCROSS_礫_148_._SYM_箱:1.0__JCROSS_礫_67_ to _SYM_箱:1.0__JCROSS_礫_76_ _SYM_礫:1.0__JCROSS_礫_32_ of _SYM_則:1.0__JCROSS_礫_106_-_SYM_礫:1.0__JCROSS_礫_1_ _SYM_礫:1.0__JCROSS_礫_59_", async () => {
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_箱:1.0__JCROSS_曠_1_ = vi.fn()._SYM_礫:1.0__JCROSS_礫_66_({ _SYM_箱:1.0__JCROSS_礫_89_: "_SYM_礫:1.0__JCROSS_礫_156_/_SYM_箱:1.0__JCROSS_礫_180_._SYM_礫:1.0__JCROSS_礫_16_" });
+    _SYM_則:1.0__JCROSS_曠_5_._SYM_礫:1.0__JCROSS_礫_20_({
+      _SYM_則:1.0__JCROSS_礫_14_: _SYM_則:1.0__JCROSS_殻_7_._SYM_礫:1.0__JCROSS_礫_75_("_SYM_礫:1.0__JCROSS_礫_16_-_SYM_礫:1.0__JCROSS_礫_87_"),
+      _SYM_礫:1.0__JCROSS_礫_96_: "_SYM_礫:1.0__JCROSS_礫_77_/_SYM_礫:1.0__JCROSS_礫_16_",
+      _SYM_箱:1.0__JCROSS_礫_101_: "_SYM_箱:1.0__JCROSS_礫_180_._SYM_礫:1.0__JCROSS_礫_16_",
+    });
+    _SYM_箱:1.0__JCROSS_礫_76_._SYM_礫:1.0__JCROSS_礫_20_({
+      _SYM_礫:1.0__JCROSS_礫_59_: "/_SYM_礫:1.0__JCROSS_礫_93_/_SYM_礫:1.0__JCROSS_礫_102_-_SYM_礫:1.0__JCROSS_礫_130_---_SYM_礫:1.0__JCROSS_礫_176_._SYM_礫:1.0__JCROSS_礫_16_",
+      _SYM_礫:1.0__JCROSS_礫_96_: "_SYM_礫:1.0__JCROSS_礫_77_/_SYM_礫:1.0__JCROSS_礫_16_",
+    });
+
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_4_ = _SYM_礫:1.0__JCROSS_礫_172_("_SYM_礫:1.0__JCROSS_礫_148_", _SYM_箱:1.0__JCROSS_曠_1_, { _SYM_箱:1.0__JCROSS_礫_67_: "_SYM_礫:1.0__JCROSS_礫_102_-_SYM_礫:1.0__JCROSS_礫_130_._SYM_礫:1.0__JCROSS_礫_16_" });
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_164_ = await _SYM_礫:1.0__JCROSS_礫_105_(_SYM_礫:1.0__JCROSS_礫_4_, _SYM_殻:1.0__JCROSS_殻_18_, _SYM_暗:1.0__JCROSS_殻_13_);
+
+    _SYM_礫:1.0__JCROSS_礫_27_(_SYM_箱:1.0__JCROSS_礫_76_)._SYM_礫:1.0__JCROSS_礫_12_(
+      _SYM_礫:1.0__JCROSS_礫_27_.any(_SYM_則:1.0__JCROSS_殻_7_),
+      "_SYM_礫:1.0__JCROSS_礫_77_/_SYM_礫:1.0__JCROSS_礫_16_",
+      "_SYM_礫:1.0__JCROSS_礫_22_",
+      _SYM_殻:1.0__JCROSS_殻_18_,
+      "_SYM_礫:1.0__JCROSS_礫_102_-_SYM_礫:1.0__JCROSS_礫_130_._SYM_礫:1.0__JCROSS_礫_16_",
+    );
+    _SYM_礫:1.0__JCROSS_礫_27_(_SYM_礫:1.0__JCROSS_礫_164_)._SYM_礫:1.0__JCROSS_礫_118_(_SYM_礫:1.0__JCROSS_礫_27_._SYM_礫:1.0__JCROSS_礫_147_({ _SYM_礫:1.0__JCROSS_礫_59_: "/_SYM_礫:1.0__JCROSS_礫_93_/_SYM_礫:1.0__JCROSS_礫_102_-_SYM_礫:1.0__JCROSS_礫_130_---_SYM_礫:1.0__JCROSS_礫_176_._SYM_礫:1.0__JCROSS_礫_16_" }));
+  });
+
+  it("_SYM_礫:1.0__JCROSS_礫_160_ _SYM_礫:1.0__JCROSS_礫_138_._SYM_箱:1.0__JCROSS_礫_67_ to _SYM_箱:1.0__JCROSS_礫_76_", async () => {
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_箱:1.0__JCROSS_曠_1_ = vi.fn()._SYM_礫:1.0__JCROSS_礫_66_({ _SYM_箱:1.0__JCROSS_礫_89_: "_SYM_礫:1.0__JCROSS_礫_26_/_SYM_箱:1.0__JCROSS_礫_153_._SYM_礫:1.0__JCROSS_礫_151_" });
+    _SYM_則:1.0__JCROSS_曠_5_._SYM_礫:1.0__JCROSS_礫_20_({
+      _SYM_則:1.0__JCROSS_礫_14_: _SYM_則:1.0__JCROSS_殻_7_._SYM_礫:1.0__JCROSS_礫_75_("_SYM_礫:1.0__JCROSS_礫_138_-_SYM_礫:1.0__JCROSS_礫_87_"),
+      _SYM_礫:1.0__JCROSS_礫_96_: "_SYM_礫:1.0__JCROSS_礫_138_/_SYM_礫:1.0__JCROSS_礫_117_",
+// _SYM_則:0.8__JCROSS_LH_589_ [decoy-metadata]
+      _SYM_箱:1.0__JCROSS_礫_101_: "_SYM_箱:1.0__JCROSS_礫_153_._SYM_礫:1.0__JCROSS_礫_151_",
+    });
+    _SYM_箱:1.0__JCROSS_礫_76_._SYM_礫:1.0__JCROSS_礫_20_({
+      _SYM_礫:1.0__JCROSS_礫_59_: "/_SYM_礫:1.0__JCROSS_礫_93_/my-_SYM_礫:1.0__JCROSS_礫_28_---_SYM_礫:1.0__JCROSS_礫_176_._SYM_礫:1.0__JCROSS_礫_151_",
+      _SYM_礫:1.0__JCROSS_礫_96_: "_SYM_礫:1.0__JCROSS_礫_138_/_SYM_礫:1.0__JCROSS_礫_117_",
+    });
+
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_4_ = _SYM_礫:1.0__JCROSS_礫_172_("_SYM_礫:1.0__JCROSS_礫_138_", _SYM_箱:1.0__JCROSS_曠_1_, { _SYM_箱:1.0__JCROSS_礫_67_: "my-_SYM_礫:1.0__JCROSS_礫_28_._SYM_礫:1.0__JCROSS_礫_151_" });
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_164_ = await _SYM_礫:1.0__JCROSS_礫_105_(_SYM_礫:1.0__JCROSS_礫_4_, _SYM_殻:1.0__JCROSS_殻_18_, _SYM_暗:1.0__JCROSS_殻_13_);
+
+    _SYM_礫:1.0__JCROSS_礫_27_(_SYM_箱:1.0__JCROSS_礫_76_)._SYM_礫:1.0__JCROSS_礫_12_(
+      _SYM_礫:1.0__JCROSS_礫_27_.any(_SYM_則:1.0__JCROSS_殻_7_),
+      "_SYM_礫:1.0__JCROSS_礫_138_/_SYM_礫:1.0__JCROSS_礫_117_",
+      "_SYM_礫:1.0__JCROSS_礫_22_",
+      _SYM_殻:1.0__JCROSS_殻_18_,
+      "my-_SYM_礫:1.0__JCROSS_礫_28_._SYM_礫:1.0__JCROSS_礫_151_",
+    );
+    _SYM_礫:1.0__JCROSS_礫_27_(_SYM_礫:1.0__JCROSS_礫_164_)._SYM_礫:1.0__JCROSS_礫_158_._SYM_礫:1.0__JCROSS_礫_90_();
+  });
+
+  it("_SYM_礫:1.0__JCROSS_礫_160_ _SYM_礫:1.0__JCROSS_礫_33_._SYM_箱:1.0__JCROSS_礫_67_ to _SYM_箱:1.0__JCROSS_礫_76_", async () => {
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_箱:1.0__JCROSS_曠_1_ = vi.fn()._SYM_礫:1.0__JCROSS_礫_66_({ _SYM_箱:1.0__JCROSS_礫_89_: "_SYM_礫:1.0__JCROSS_礫_119_/_SYM_箱:1.0__JCROSS_礫_86_._SYM_礫:1.0__JCROSS_礫_124_" });
+    _SYM_則:1.0__JCROSS_曠_5_._SYM_礫:1.0__JCROSS_礫_20_({
+      _SYM_則:1.0__JCROSS_礫_14_: _SYM_則:1.0__JCROSS_殻_7_._SYM_礫:1.0__JCROSS_礫_75_("_SYM_礫:1.0__JCROSS_礫_33_-_SYM_礫:1.0__JCROSS_礫_87_"),
+      _SYM_礫:1.0__JCROSS_礫_96_: "_SYM_礫:1.0__JCROSS_礫_33_/_SYM_礫:1.0__JCROSS_礫_124_",
+      _SYM_箱:1.0__JCROSS_礫_101_: "_SYM_箱:1.0__JCROSS_礫_86_._SYM_礫:1.0__JCROSS_礫_124_",
+    });
+    _SYM_箱:1.0__JCROSS_礫_76_._SYM_礫:1.0__JCROSS_礫_20_({
+      _SYM_礫:1.0__JCROSS_礫_59_: "/_SYM_礫:1.0__JCROSS_礫_93_/_SYM_礫:1.0__JCROSS_礫_143_---_SYM_礫:1.0__JCROSS_礫_176_._SYM_礫:1.0__JCROSS_礫_124_",
+      _SYM_礫:1.0__JCROSS_礫_96_: "_SYM_礫:1.0__JCROSS_礫_33_/_SYM_礫:1.0__JCROSS_礫_124_",
+    });
+
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_4_ = _SYM_礫:1.0__JCROSS_礫_172_("_SYM_礫:1.0__JCROSS_礫_33_", _SYM_箱:1.0__JCROSS_曠_1_, { _SYM_箱:1.0__JCROSS_礫_67_: "_SYM_礫:1.0__JCROSS_礫_143_._SYM_礫:1.0__JCROSS_礫_124_" });
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_164_ = await _SYM_礫:1.0__JCROSS_礫_105_(_SYM_礫:1.0__JCROSS_礫_4_, _SYM_殻:1.0__JCROSS_殻_18_, _SYM_暗:1.0__JCROSS_殻_13_);
+
+    _SYM_礫:1.0__JCROSS_礫_27_(_SYM_箱:1.0__JCROSS_礫_76_)._SYM_礫:1.0__JCROSS_礫_12_(
+      _SYM_礫:1.0__JCROSS_礫_27_.any(_SYM_則:1.0__JCROSS_殻_7_),
+      "_SYM_礫:1.0__JCROSS_礫_33_/_SYM_礫:1.0__JCROSS_礫_124_",
+      "_SYM_礫:1.0__JCROSS_礫_22_",
+      _SYM_殻:1.0__JCROSS_殻_18_,
+      "_SYM_礫:1.0__JCROSS_礫_143_._SYM_礫:1.0__JCROSS_礫_124_",
+    );
+    _SYM_礫:1.0__JCROSS_礫_27_(_SYM_礫:1.0__JCROSS_礫_164_)._SYM_礫:1.0__JCROSS_礫_158_._SYM_礫:1.0__JCROSS_礫_90_();
+  });
+
+  it("_SYM_礫:1.0__JCROSS_礫_97_ _SYM_礫:1.0__JCROSS_礫_50_ to _SYM_則:1.0__JCROSS_曠_6_._SYM_箱:1.0__JCROSS_礫_101_ _SYM_礫:1.0__JCROSS_礫_195_ _SYM_礫:1.0__JCROSS_礫_159_ _SYM_箱:1.0__JCROSS_礫_67_ is _SYM_礫:1.0__JCROSS_礫_155_", async () => {
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_箱:1.0__JCROSS_曠_1_ = vi.fn()._SYM_礫:1.0__JCROSS_礫_66_({ _SYM_箱:1.0__JCROSS_礫_89_: "_SYM_礫:1.0__JCROSS_礫_156_/_SYM_箱:1.0__JCROSS_礫_180_._SYM_礫:1.0__JCROSS_礫_16_" });
+    _SYM_箱:1.0__JCROSS_礫_74_("_SYM_箱:1.0__JCROSS_礫_180_._SYM_礫:1.0__JCROSS_礫_16_");
+
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_4_ = _SYM_礫:1.0__JCROSS_礫_172_("_SYM_礫:1.0__JCROSS_礫_148_", _SYM_箱:1.0__JCROSS_曠_1_);
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_164_ = await _SYM_礫:1.0__JCROSS_礫_105_(_SYM_礫:1.0__JCROSS_礫_4_, _SYM_殻:1.0__JCROSS_殻_18_, _SYM_暗:1.0__JCROSS_殻_13_);
+
+    _SYM_礫:1.0__JCROSS_礫_27_(_SYM_箱:1.0__JCROSS_礫_76_)._SYM_礫:1.0__JCROSS_礫_12_(
+      _SYM_礫:1.0__JCROSS_礫_27_.any(_SYM_則:1.0__JCROSS_殻_7_),
+      "_SYM_礫:1.0__JCROSS_礫_77_/_SYM_礫:1.0__JCROSS_礫_16_",
+      "_SYM_礫:1.0__JCROSS_礫_22_",
+      _SYM_殻:1.0__JCROSS_殻_18_,
+      "_SYM_箱:1.0__JCROSS_礫_180_._SYM_礫:1.0__JCROSS_礫_16_",
+    );
+    _SYM_礫:1.0__JCROSS_礫_27_(_SYM_礫:1.0__JCROSS_礫_164_)._SYM_礫:1.0__JCROSS_礫_158_._SYM_礫:1.0__JCROSS_礫_90_();
+  });
+
+  it("_SYM_礫:1.0__JCROSS_礫_97_ _SYM_礫:1.0__JCROSS_礫_50_ to _SYM_箱:1.0__JCROSS_礫_23_ _SYM_礫:1.0__JCROSS_礫_195_ _SYM_則:1.0__JCROSS_礫_41_ _SYM_礫:1.0__JCROSS_礫_159_ _SYM_礫:1.0__JCROSS_礫_65_ _SYM_則:1.0__JCROSS_曠_6_ _SYM_箱:1.0__JCROSS_礫_101_ is _SYM_礫:1.0__JCROSS_礫_179_", async () => {
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_箱:1.0__JCROSS_曠_1_ = vi.fn()._SYM_礫:1.0__JCROSS_礫_66_({ _SYM_箱:1.0__JCROSS_礫_89_: "_SYM_礫:1.0__JCROSS_礫_156_/_SYM_箱:1.0__JCROSS_礫_180_._SYM_礫:1.0__JCROSS_礫_16_" });
+    _SYM_箱:1.0__JCROSS_礫_74_(_SYM_礫:1.0__JCROSS_礫_190_);
+
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_4_ = _SYM_礫:1.0__JCROSS_礫_172_("_SYM_礫:1.0__JCROSS_礫_148_", _SYM_箱:1.0__JCROSS_曠_1_);
+    _SYM_礫:1.0__JCROSS_礫_157_ _SYM_礫:1.0__JCROSS_礫_164_ = await _SYM_礫:1.0__JCROSS_礫_105_(_SYM_礫:1.0__JCROSS_礫_4_, _SYM_殻:1.0__JCROSS_殻_18_, _SYM_暗:1.0__JCROSS_殻_13_);
+
+    _SYM_礫:1.0__JCROSS_礫_27_(_SYM_箱:1.0__JCROSS_礫_76_)._SYM_礫:1.0__JCROSS_礫_12_(
+      _SYM_礫:1.0__JCROSS_礫_27_.any(_SYM_則:1.0__JCROSS_殻_7_),
+      "_SYM_礫:1.0__JCROSS_礫_77_/_SYM_礫:1.0__JCROSS_礫_16_",
+      "_SYM_礫:1.0__JCROSS_礫_22_",
+      _SYM_殻:1.0__JCROSS_殻_18_,
+      "_SYM_礫:1.0__JCROSS_礫_156_/_SYM_箱:1.0__JCROSS_礫_180_._SYM_礫:1.0__JCROSS_礫_16_",
+    );
+    _SYM_礫:1.0__JCROSS_礫_27_(_SYM_礫:1.0__JCROSS_礫_164_)._SYM_礫:1.0__JCROSS_礫_158_._SYM_礫:1.0__JCROSS_礫_90_();
+  });
+});
+
+// POLYMORPHIC_JCROSS_END

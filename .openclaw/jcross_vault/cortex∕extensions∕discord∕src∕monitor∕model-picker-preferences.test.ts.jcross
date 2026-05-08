@@ -1,0 +1,79 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:73AF45F8 ver:1778220855
+// ⚠️ One-time schema — expires after response
+
+import fs _SYM_塵:1.0___jcross_塵_8__ "_SYM_塵:1.0___jcross_塵_35__:fs/_SYM_塵:1.0___jcross_塵_1__";
+import os _SYM_塵:1.0___jcross_塵_8__ "_SYM_塵:1.0___jcross_塵_35__:os";
+import _SYM_塵:1.0___jcross_塵_14__ _SYM_塵:1.0___jcross_塵_8__ "_SYM_塵:1.0___jcross_塵_35__:_SYM_塵:1.0___jcross_塵_14__";
+import { _SYM_塵:1.0___jcross_塵_41__, _SYM_塵:1.0___jcross_塵_7__, _SYM_塵:1.0___jcross_塵_59__, it } _SYM_塵:1.0___jcross_塵_8__ "_SYM_塵:1.0___jcross_塵_66__";
+import {
+  _SYM_塵:1.0___jcross_塵_13__,
+  _SYM_塵:1.0___jcross_塵_26__,
+// _SYM_緯:0.5___jcross_HM_306__ [decoy-metadata]
+} _SYM_塵:1.0___jcross_塵_8__ "./_SYM_塵:1.0___jcross_塵_37__-_SYM_則:1.0___jcross_塵_29__-_SYM_塵:1.0___jcross_塵_2__.js";
+
+_SYM_塵:1.0___jcross_塵_38__ _SYM_塵:1.0___jcross_塵_15__: _SYM_塵:1.0___jcross_塵_65__[] = [];
+
+// _SYM_廴:0.9___jcross_EA_757__ [decoy-metadata]
+async _SYM_塵:1.0___jcross_塵_31__ _SYM_塵:1.0___jcross_塵_11__(): _SYM_廴:1.0___jcross_廴_1__<_SYM_廴:1.0___jcross_廴_4__._SYM_廴:1.0___jcross_廴_3__> {
+  _SYM_塵:1.0___jcross_塵_38__ _SYM_塵:1.0___jcross_塵_51__ = await fs._SYM_塵:1.0___jcross_塵_40__(_SYM_塵:1.0___jcross_塵_14__._SYM_塵:1.0___jcross_塵_21__(os._SYM_塵:1.0___jcross_塵_47__(), "_SYM_塵:1.0___jcross_塵_55__-_SYM_塵:1.0___jcross_塵_37__-_SYM_則:1.0___jcross_塵_29__-"));
+  _SYM_塵:1.0___jcross_塵_15__._SYM_塵:1.0___jcross_塵_36__(_SYM_塵:1.0___jcross_塵_51__);
+  return { ..._SYM_塵:1.0___jcross_塵_42__._SYM_塵:1.0___jcross_塵_23__, _SYM_廴:1.0___jcross_廴_2__: _SYM_塵:1.0___jcross_塵_51__ };
+}
+
+_SYM_塵:1.0___jcross_塵_41__(async () => {
+  await _SYM_廴:1.0___jcross_廴_1__._SYM_塵:1.0___jcross_塵_32__(
+    _SYM_塵:1.0___jcross_塵_15__._SYM_塵:1.0___jcross_塵_58__(0)._SYM_塵:1.0___jcross_塵_22__(async (_SYM_塵:1.0___jcross_塵_51__) => {
+      await fs.rm(_SYM_塵:1.0___jcross_塵_51__, { _SYM_塵:1.0___jcross_塵_45__: true, _SYM_涌:1.0___jcross_塵_44__: true });
+    }),
+// _SYM_廴:0.5___jcross_HZ_376__ [decoy-metadata]
+  );
+});
+
+_SYM_塵:1.0___jcross_塵_7__("_SYM_塵:1.0___jcross_塵_56__ _SYM_塵:1.0___jcross_塵_37__ _SYM_則:1.0___jcross_塵_29__ _SYM_塵:1.0___jcross_塵_2__", () => {
+  it("_SYM_塵:1.0___jcross_塵_5__ _SYM_塵:1.0___jcross_塵_24__ _SYM_塵:1.0___jcross_塵_50__ in _SYM_塵:1.0___jcross_塵_6__ _SYM_則:1.0___jcross_塵_18__ _SYM_塵:1.0___jcross_塵_33__ _SYM_塵:1.0___jcross_塵_60__", async () => {
+    _SYM_塵:1.0___jcross_塵_38__ _SYM_塵:1.0___jcross_塵_23__ = await _SYM_塵:1.0___jcross_塵_11__();
+    _SYM_塵:1.0___jcross_塵_38__ _SYM_塵:1.0___jcross_塵_52__ = { _SYM_塵:1.0___jcross_塵_12__: "123" };
+
+    await _SYM_塵:1.0___jcross_塵_26__({ _SYM_塵:1.0___jcross_塵_23__, _SYM_塵:1.0___jcross_塵_52__, _SYM_塵:1.0___jcross_塵_16__: "_SYM_塵:1.0___jcross_塵_3__/_SYM_塵:1.0___jcross_塵_30__-4o" });
+    await _SYM_塵:1.0___jcross_塵_26__({ _SYM_塵:1.0___jcross_塵_23__, _SYM_塵:1.0___jcross_塵_52__, _SYM_塵:1.0___jcross_塵_16__: "_SYM_塵:1.0___jcross_塵_3__/_SYM_塵:1.0___jcross_塵_30__-4.1" });
+    await _SYM_塵:1.0___jcross_塵_26__({ _SYM_塵:1.0___jcross_塵_23__, _SYM_塵:1.0___jcross_塵_52__, _SYM_塵:1.0___jcross_塵_16__: "_SYM_塵:1.0___jcross_塵_3__/_SYM_塵:1.0___jcross_塵_30__-4o" });
+
+    _SYM_塵:1.0___jcross_塵_38__ _SYM_塵:1.0___jcross_塵_24__ = await _SYM_塵:1.0___jcross_塵_13__({ _SYM_塵:1.0___jcross_塵_23__, _SYM_塵:1.0___jcross_塵_52__ });
+    _SYM_塵:1.0___jcross_塵_59__(_SYM_塵:1.0___jcross_塵_24__)._SYM_塵:1.0___jcross_塵_62__(["_SYM_塵:1.0___jcross_塵_3__/_SYM_塵:1.0___jcross_塵_30__-4o", "_SYM_塵:1.0___jcross_塵_3__/_SYM_塵:1.0___jcross_塵_30__-4.1"]);
+  });
+
+  it("_SYM_塵:1.0___jcross_塵_9__ _SYM_塵:1.0___jcross_塵_24__ _SYM_塵:1.0___jcross_塵_50__ _SYM_塵:1.0___jcross_塵_20__ an _SYM_塵:1.0___jcross_塵_63__", async () => {
+    _SYM_塵:1.0___jcross_塵_38__ _SYM_塵:1.0___jcross_塵_23__ = await _SYM_塵:1.0___jcross_塵_11__();
+    _SYM_塵:1.0___jcross_塵_38__ _SYM_塵:1.0___jcross_塵_52__ = { _SYM_塵:1.0___jcross_塵_12__: "456" };
+
+    await _SYM_塵:1.0___jcross_塵_26__({ _SYM_塵:1.0___jcross_塵_23__, _SYM_塵:1.0___jcross_塵_52__, _SYM_塵:1.0___jcross_塵_16__: "_SYM_塵:1.0___jcross_塵_3__/_SYM_塵:1.0___jcross_塵_30__-4o" });
+    await _SYM_塵:1.0___jcross_塵_26__({ _SYM_塵:1.0___jcross_塵_23__, _SYM_塵:1.0___jcross_塵_52__, _SYM_塵:1.0___jcross_塵_16__: "_SYM_塵:1.0___jcross_塵_3__/_SYM_塵:1.0___jcross_塵_30__-4.1" });
+
+// _SYM_塵:0.4___jcross_WE_825__ [decoy-metadata]
+    _SYM_塵:1.0___jcross_塵_38__ _SYM_塵:1.0___jcross_塵_24__ = await _SYM_塵:1.0___jcross_塵_13__({
+      _SYM_塵:1.0___jcross_塵_23__,
+      _SYM_塵:1.0___jcross_塵_52__,
+      _SYM_塵:1.0___jcross_塵_53__: _SYM_塵:1.0___jcross_塵_43__ _SYM_則:1.0___jcross_煌_1__(["_SYM_塵:1.0___jcross_塵_3__/_SYM_塵:1.0___jcross_塵_30__-4.1"]),
+    });
+    _SYM_塵:1.0___jcross_塵_59__(_SYM_塵:1.0___jcross_塵_24__)._SYM_塵:1.0___jcross_塵_62__(["_SYM_塵:1.0___jcross_塵_3__/_SYM_塵:1.0___jcross_塵_30__-4.1"]);
+  });
+
+  it("_SYM_塵:1.0___jcross_塵_39__ _SYM_塵:1.0___jcross_塵_61__ to an _SYM_塵:1.0___jcross_塵_10__ _SYM_塵:1.0___jcross_塵_19__ _SYM_塵:1.0___jcross_塵_28__ _SYM_塵:1.0___jcross_塵_46__ _SYM_匷:1.0___jcross_塵_54__ is _SYM_塵:1.0___jcross_塵_27__", async () => {
+    _SYM_塵:1.0___jcross_塵_38__ _SYM_塵:1.0___jcross_塵_23__ = await _SYM_塵:1.0___jcross_塵_11__();
+    _SYM_塵:1.0___jcross_塵_38__ _SYM_塵:1.0___jcross_塵_4__ = _SYM_塵:1.0___jcross_塵_23__._SYM_廴:1.0___jcross_廴_2__ as _SYM_塵:1.0___jcross_塵_65__;
+    _SYM_塵:1.0___jcross_塵_38__ _SYM_匷:1.0___jcross_塵_25__ = _SYM_塵:1.0___jcross_塵_14__._SYM_塵:1.0___jcross_塵_21__(_SYM_塵:1.0___jcross_塵_4__, "_SYM_塵:1.0___jcross_塵_56__", "_SYM_塵:1.0___jcross_塵_37__-_SYM_則:1.0___jcross_塵_29__-_SYM_塵:1.0___jcross_塵_2__._SYM_塵:1.0___jcross_塵_49__");
+    await fs._SYM_塵:1.0___jcross_塵_64__(_SYM_塵:1.0___jcross_塵_14__._SYM_塵:1.0___jcross_塵_34__(_SYM_匷:1.0___jcross_塵_25__), { _SYM_塵:1.0___jcross_塵_45__: true });
+    await fs._SYM_匷:1.0___jcross_塵_17__(_SYM_匷:1.0___jcross_塵_25__, "{_SYM_塵:1.0___jcross_塵_48__-_SYM_塵:1.0___jcross_塵_49__", "_SYM_塵:1.0___jcross_塵_57__-8");
+
+    _SYM_塵:1.0___jcross_塵_38__ _SYM_塵:1.0___jcross_塵_24__ = await _SYM_塵:1.0___jcross_塵_13__({
+      _SYM_塵:1.0___jcross_塵_23__,
+      _SYM_塵:1.0___jcross_塵_52__: { _SYM_塵:1.0___jcross_塵_12__: "789" },
+    });
+// _SYM_則:0.9___jcross_AW_458__ [decoy-metadata]
+    _SYM_塵:1.0___jcross_塵_59__(_SYM_塵:1.0___jcross_塵_24__)._SYM_塵:1.0___jcross_塵_62__([]);
+  });
+// _SYM_匷:0.1___jcross_KA_306__ [decoy-metadata]
+});
+
+// POLYMORPHIC_JCROSS_END

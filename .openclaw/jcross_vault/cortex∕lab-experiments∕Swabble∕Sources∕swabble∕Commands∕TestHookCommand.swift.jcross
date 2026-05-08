@@ -1,0 +1,42 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:89108F76 ver:1778220715
+// ⚠️ One-time schema — expires after response
+// __jcross_錬:0.5___ASTNODE_XZ_232_ [decoy-metadata]
+
+// __jcross_廱:0.2___ASTNODE_EB_500_ [decoy-metadata]
+import __jcross_則:1.0___ASTNODE_廱_10_
+import __jcross_廱:1.0___ASTNODE_廱_14_
+// __jcross_錬:0.6___ASTNODE_WL_628_ [decoy-metadata]
+import __jcross_廱:1.0___ASTNODE_廱_13_
+
+// __jcross_玄:0.1___ASTNODE_FK_902_ [decoy-metadata]
+// __jcross_錬:0.5___ASTNODE_BC_783_ [decoy-metadata]
+@__jcross_廱:1.0___ASTNODE_廱_1_
+struct __jcross_廱:1.0___ASTNODE_廱_8_: __jcross_廱:1.0___ASTNODE_廱_20_ {
+    @__jcross_廱:1.0___ASTNODE_廱_16_(__jcross_霧:1.0___ASTNODE_霧_20_: "__jcross_廱:1.0___ASTNODE_廱_17_ to __jcross_霧:1.0___ASTNODE_霧_23_ to __jcross_霧:1.0___ASTNODE_霧_30_") var __jcross_霧:1.0___ASTNODE_霧_3_: __jcross_廱:1.0___ASTNODE_廱_6_
+    @__jcross_廱:1.0___ASTNODE_廱_2_(__jcross_霧:1.0___ASTNODE_霧_16_: .__jcross_霧:1.0___ASTNODE_霧_22_("__jcross_霧:1.0___ASTNODE_霧_10_"), __jcross_霧:1.0___ASTNODE_霧_20_: "__jcross_廱:1.0___ASTNODE_廱_19_ to __jcross_霧:1.0___ASTNODE_霧_10_ __jcross_廱:1.0___ASTNODE_廱_12_") var __jcross_霧:1.0___ASTNODE_霧_17_: __jcross_廱:1.0___ASTNODE_廱_6_?
+
+    static var __jcross_霧:1.0___ASTNODE_霧_26_: __jcross_廱:1.0___ASTNODE_廱_4_ {
+        __jcross_廱:1.0___ASTNODE_廱_4_(__jcross_霧:1.0___ASTNODE_霧_8_: "__jcross_霧:1.0___ASTNODE_霧_15_-__jcross_霧:1.0___ASTNODE_霧_30_", __jcross_霧:1.0___ASTNODE_霧_25_: "__jcross_廱:1.0___ASTNODE_廱_15_ __jcross_霧:1.0___ASTNODE_霧_18_ __jcross_霧:1.0___ASTNODE_霧_6_ __jcross_霧:1.0___ASTNODE_霧_30_ __jcross_霧:1.0___ASTNODE_霧_19_ __jcross_霧:1.0___ASTNODE_霧_3_")
+// __jcross_則:0.8___ASTNODE_HX_128_ [decoy-metadata]
+    }
+
+    init() {}
+
+    init(__jcross_霧:1.0___ASTNODE_霧_5_: __jcross_廱:1.0___ASTNODE_廱_7_) {
+        self.init()
+        if let __jcross_霧:1.0___ASTNODE_霧_31_ = __jcross_霧:1.0___ASTNODE_霧_5_.__jcross_霧:1.0___ASTNODE_霧_31_.__jcross_霧:1.0___ASTNODE_霧_12_ { __jcross_霧:1.0___ASTNODE_霧_3_ = __jcross_霧:1.0___ASTNODE_霧_31_ }
+        if let __jcross_霧:1.0___ASTNODE_霧_13_ = __jcross_霧:1.0___ASTNODE_霧_5_.__jcross_霧:1.0___ASTNODE_霧_14_["__jcross_霧:1.0___ASTNODE_霧_10_"]?.__jcross_霧:1.0___ASTNODE_霧_21_ { __jcross_霧:1.0___ASTNODE_霧_17_ = __jcross_霧:1.0___ASTNODE_霧_13_ }
+    }
+
+    mutating func __jcross_霧:1.0___ASTNODE_霧_28_() async throws {
+        let __jcross_霧:1.0___ASTNODE_霧_13_ = try __jcross_匣:1.0___ASTNODE_廱_3_.__jcross_匣:1.0___ASTNODE_霧_4_(at: __jcross_縁:1.0___ASTNODE_霧_29_)
+        let __jcross_霧:1.0___ASTNODE_霧_7_ = __jcross_廱:1.0___ASTNODE_廱_11_(__jcross_霧:1.0___ASTNODE_霧_10_: __jcross_霧:1.0___ASTNODE_霧_13_)
+        try await __jcross_霧:1.0___ASTNODE_霧_7_.__jcross_霧:1.0___ASTNODE_霧_28_(__jcross_霧:1.0___ASTNODE_霧_2_: __jcross_廱:1.0___ASTNODE_廱_5_(__jcross_霧:1.0___ASTNODE_霧_3_: __jcross_霧:1.0___ASTNODE_霧_3_, __jcross_霧:1.0___ASTNODE_霧_24_: __jcross_廱:1.0___ASTNODE_廱_9_()))
+        __jcross_霧:1.0___ASTNODE_霧_11_("__jcross_霧:1.0___ASTNODE_霧_30_ __jcross_霧:1.0___ASTNODE_霧_27_")
+    }
+
+    private var __jcross_縁:1.0___ASTNODE_霧_29_: __jcross_縁:1.0___ASTNODE_廱_18_? { __jcross_霧:1.0___ASTNODE_霧_17_.__jcross_霧:1.0___ASTNODE_霧_9_ { __jcross_縁:1.0___ASTNODE_廱_18_(__jcross_縁:1.0___ASTNODE_霧_1_: $0) } }
+}
+
+// POLYMORPHIC_JCROSS_END

@@ -1,0 +1,86 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:8D5D45CE ver:1778220531
+// ⚠️ One-time schema — expires after response
+
+_ASTNODE_霰:1.0___ast_霰_12__ _ASTNODE_霰:1.0___ast_霰_32__::_ASTNODE_霰:1.0___ast_霰_35__::_ASTNODE_廡:1.0___ast_廡_21__;
+_ASTNODE_霰:1.0___ast_霰_12__ _ASTNODE_霰:1.0___ast_霰_32__::_ASTNODE_霰:1.0___ast_霰_2__::{_ASTNODE_廡:1.0___ast_廡_15__, _ASTNODE_廡:1.0___ast_廡_11__};
+_ASTNODE_霰:1.0___ast_霰_12__ _ASTNODE_霰:1.0___ast_霰_38__::{_ASTNODE_霰:1.0___ast_霰_58__, _ASTNODE_霰:1.0___ast_霰_42__};
+_ASTNODE_霰:1.0___ast_霰_12__ _ASTNODE_霰:1.0___ast_霰_66__::_ASTNODE_廡:1.0___ast_廡_8__;
+
+_ASTNODE_霰:1.0___ast_霰_7__ _ASTNODE_霰:1.0___ast_霰_23__ _ASTNODE_匵:1.0___ast_廡_13__ = _ASTNODE_廡:1.0___ast_廡_10__;
+
+// [metadata-stripped]
+// _ASTNODE_匵:0.7___ast_KM_959__ [decoy-metadata]
+_ASTNODE_霰:1.0___ast_霰_7__ _ASTNODE_霰:1.0___ast_霰_6__uct _ASTNODE_図:1.0___ast_廡_16__ {
+    _ASTNODE_霰:1.0___ast_霰_41__: _ASTNODE_廡:1.0___ast_廡_11__,
+    _ASTNODE_霰:1.0___ast_霰_18__: _ASTNODE_廡:1.0___ast_廡_21__<_ASTNODE_匵:1.0___ast_廡_13__, _ASTNODE_廡:1.0___ast_廡_11__>,
+    _ASTNODE_霰:1.0___ast_霰_5__: _ASTNODE_廡:1.0___ast_廡_21__<_ASTNODE_廡:1.0___ast_廡_11__, _ASTNODE_匵:1.0___ast_廡_13__>,
+}
+
+_ASTNODE_霰:1.0___ast_霰_21__ _ASTNODE_図:1.0___ast_廡_16__ {
+    _ASTNODE_霰:1.0___ast_霰_7__ fn _ASTNODE_霰:1.0___ast_霰_60__(_ASTNODE_霰:1.0___ast_霰_41__: _ASTNODE_霰:1.0___ast_霰_21__ _ASTNODE_廡:1.0___ast_廡_22__<_ASTNODE_廡:1.0___ast_廡_15__>) -> _ASTNODE_廡:1.0___ast_廡_19__ {
+        _ASTNODE_廡:1.0___ast_廡_19__ {
+            _ASTNODE_霰:1.0___ast_霰_41__: _ASTNODE_霰:1.0___ast_霰_41__._ASTNODE_霰:1.0___ast_霰_61__()._ASTNODE_霰:1.0___ast_霰_57__(),
+            _ASTNODE_霰:1.0___ast_霰_18__: _ASTNODE_廡:1.0___ast_廡_21__::_ASTNODE_霰:1.0___ast_霰_60__(),
+// _ASTNODE_縫:0.9___ast_EW_437__ [decoy-metadata]
+            _ASTNODE_霰:1.0___ast_霰_5__: _ASTNODE_廡:1.0___ast_廡_21__::_ASTNODE_霰:1.0___ast_霰_60__(),
+        }
+    }
+
+// [metadata-stripped]
+// [metadata-stripped]
+    _ASTNODE_霰:1.0___ast_霰_7__ fn _ASTNODE_図:1.0___ast_霰_16__(&_ASTNODE_霰:1.0___ast_霰_34__ self, _ASTNODE_霰:1.0___ast_霰_2__: _ASTNODE_霰:1.0___ast_霰_21__ _ASTNODE_廡:1.0___ast_廡_22__<_ASTNODE_廡:1.0___ast_廡_15__>) -> _ASTNODE_霰:1.0___ast_霰_40__::_ASTNODE_廡:1.0___ast_廡_1__<_ASTNODE_匵:1.0___ast_廡_13__> {
+        let _ASTNODE_霰:1.0___ast_霰_2__ = _ASTNODE_霰:1.0___ast_霰_2__._ASTNODE_霰:1.0___ast_霰_61__();
+        
+// [metadata-stripped]
+        let _ASTNODE_霰:1.0___ast_霰_30__ = if _ASTNODE_霰:1.0___ast_霰_2__._ASTNODE_霰:1.0___ast_霰_47__() {
+            _ASTNODE_霰:1.0___ast_霰_2__._ASTNODE_霰:1.0___ast_霰_57__()
+        } else {
+            self._ASTNODE_霰:1.0___ast_霰_41__._ASTNODE_霰:1.0___ast_霰_17__(_ASTNODE_霰:1.0___ast_霰_2__)
+        };
+
+// _ASTNODE_縫:0.8___ast_HD_347__ [decoy-metadata]
+        let _ASTNODE_霰:1.0___ast_霰_36__ = _ASTNODE_霰:1.0___ast_霰_30__._ASTNODE_霰:1.0___ast_霰_33__()._ASTNODE_霰:1.0___ast_霰_43__(_ASTNODE_霰:1.0___ast_霰_30__);
+        
+        if !_ASTNODE_霰:1.0___ast_霰_36__._ASTNODE_霰:1.0___ast_霰_54__(&self._ASTNODE_霰:1.0___ast_霰_41__) {
+            _ASTNODE_霰:1.0___ast_霰_42__!("[_ASTNODE_図:1.0___ast_廡_9__] _ASTNODE_廡:1.0___ast_廡_6__ _ASTNODE_霰:1.0___ast_霰_9__: _ASTNODE_廡:1.0___ast_廡_18__ to _ASTNODE_図:1.0___ast_霰_16__ _ASTNODE_霰:1.0___ast_霰_52__ _ASTNODE_霰:1.0___ast_霰_2__ {:?}", _ASTNODE_霰:1.0___ast_霰_36__);
+            return _ASTNODE_廡:1.0___ast_廡_20__(_ASTNODE_霰:1.0___ast_霰_40__::_ASTNODE_霰:1.0___ast_霰_40__!("_ASTNODE_廡:1.0___ast_廡_15__ _ASTNODE_霰:1.0___ast_霰_24__ of _ASTNODE_霰:1.0___ast_霰_62__ _ASTNODE_霰:1.0___ast_霰_28__"));
+        }
+
+        if let _ASTNODE_廡:1.0___ast_廡_25__(_ASTNODE_霰:1.0___ast_霰_65__) = self._ASTNODE_霰:1.0___ast_霰_5__._ASTNODE_図:1.0___ast_燦_1__(&_ASTNODE_霰:1.0___ast_霰_36__) {
+            return Ok(_ASTNODE_霰:1.0___ast_霰_65__._ASTNODE_霰:1.0___ast_霰_50__());
+        }
+
+        let _ASTNODE_霰:1.0___ast_霰_67__ = _ASTNODE_濫:1.0___ast_霰_39__!("_ASTNODE_廡:1.0___ast_廡_17__-{}", _ASTNODE_廡:1.0___ast_廡_8__::_ASTNODE_霰:1.0___ast_霰_20__()._ASTNODE_霰:1.0___ast_霰_15__()._ASTNODE_霰:1.0___ast_霰_44__()[..8]._ASTNODE_霰:1.0___ast_霰_29__());
+        self._ASTNODE_霰:1.0___ast_霰_18__._ASTNODE_霰:1.0___ast_霰_37__(_ASTNODE_霰:1.0___ast_霰_67__._ASTNODE_霰:1.0___ast_霰_50__(), _ASTNODE_霰:1.0___ast_霰_36__._ASTNODE_霰:1.0___ast_霰_50__());
+        self._ASTNODE_霰:1.0___ast_霰_5__._ASTNODE_霰:1.0___ast_霰_37__(_ASTNODE_霰:1.0___ast_霰_36__, _ASTNODE_霰:1.0___ast_霰_67__._ASTNODE_霰:1.0___ast_霰_50__());
+
+        _ASTNODE_霰:1.0___ast_霰_58__!("[_ASTNODE_図:1.0___ast_廡_9__] _ASTNODE_廡:1.0___ast_廡_3__ {} -> {:?}", _ASTNODE_霰:1.0___ast_霰_67__, _ASTNODE_霰:1.0___ast_霰_2__._ASTNODE_霰:1.0___ast_霰_3__());
+        Ok(_ASTNODE_霰:1.0___ast_霰_67__)
+// _ASTNODE_匵:0.4___ast_EH_158__ [decoy-metadata]
+    }
+
+// [metadata-stripped]
+    _ASTNODE_霰:1.0___ast_霰_7__ fn _ASTNODE_霰:1.0___ast_霰_4__(&self, id: &_ASTNODE_霰:1.0___ast_霰_6__) -> _ASTNODE_霰:1.0___ast_霰_40__::_ASTNODE_廡:1.0___ast_廡_1__<_ASTNODE_廡:1.0___ast_廡_11__> {
+        self._ASTNODE_霰:1.0___ast_霰_18__._ASTNODE_図:1.0___ast_燦_1__(id)
+            ._ASTNODE_霰:1.0___ast_霰_8__()
+            ._ASTNODE_霰:1.0___ast_霰_22__(|| _ASTNODE_霰:1.0___ast_霰_40__::_ASTNODE_霰:1.0___ast_霰_40__!("_ASTNODE_廡:1.0___ast_廡_2__ _ASTNODE_廡:1.0___ast_廡_27__ _ASTNODE_匵:1.0___ast_廡_5__ ID: {}", id))
+    }
+
+// [metadata-stripped]
+    _ASTNODE_霰:1.0___ast_霰_7__ fn _ASTNODE_霰:1.0___ast_霰_27__(&self, _ASTNODE_霰:1.0___ast_霰_2__: _ASTNODE_霰:1.0___ast_霰_21__ _ASTNODE_廡:1.0___ast_廡_22__<_ASTNODE_廡:1.0___ast_廡_15__>) -> _ASTNODE_霰:1.0___ast_霰_63__ {
+        let _ASTNODE_霰:1.0___ast_霰_2__ = _ASTNODE_霰:1.0___ast_霰_2__._ASTNODE_霰:1.0___ast_霰_61__();
+// _ASTNODE_匵:0.9___ast_HW_224__ [decoy-metadata]
+        let _ASTNODE_霰:1.0___ast_霰_30__ = if _ASTNODE_霰:1.0___ast_霰_2__._ASTNODE_霰:1.0___ast_霰_47__() {
+            _ASTNODE_霰:1.0___ast_霰_2__._ASTNODE_霰:1.0___ast_霰_57__()
+        } else {
+// _ASTNODE_匵:0.8___ast_AV_716__ [decoy-metadata]
+            self._ASTNODE_霰:1.0___ast_霰_41__._ASTNODE_霰:1.0___ast_霰_17__(_ASTNODE_霰:1.0___ast_霰_2__)
+        };
+        
+        let _ASTNODE_霰:1.0___ast_霰_36__ = _ASTNODE_霰:1.0___ast_霰_30__._ASTNODE_霰:1.0___ast_霰_33__()._ASTNODE_霰:1.0___ast_霰_43__(_ASTNODE_霰:1.0___ast_霰_30__);
+        _ASTNODE_霰:1.0___ast_霰_36__._ASTNODE_霰:1.0___ast_霰_54__(&self._ASTNODE_霰:1.0___ast_霰_41__)
+    }
+}
+
+// POLYMORPHIC_JCROSS_END

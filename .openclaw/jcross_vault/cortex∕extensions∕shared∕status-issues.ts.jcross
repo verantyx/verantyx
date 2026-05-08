@@ -1,0 +1,30 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:E0F327BA ver:1778221268
+// ⚠️ One-time schema — expires after response
+
+_JCROSS_粒:1.0__ID_粒_9_ _JCROSS_粒:1.0__ID_粒_16_ _JCROSS_粒:1.0__ID_粒_13_<_JCROSS_廷:1.0__ID_廷_2_ _JCROSS_粒:1.0__ID_粒_6_ _JCROSS_粒:1.0__ID_粒_7_>(
+  _JCROSS_粒:1.0__ID_粒_12_: _JCROSS_粒:1.0__ID_粒_1_,
+  _JCROSS_粒:1.0__ID_粒_4_: _JCROSS_粒:1.0__ID_粒_18_ _JCROSS_廷:1.0__ID_廷_2_[],
+): _JCROSS_廷:1.0__ID_廷_3_<_JCROSS_廷:1.0__ID_廷_2_, _JCROSS_粒:1.0__ID_粒_1_> | _JCROSS_粒:1.0__ID_粒_17_ {
+  if (!_JCROSS_粒:1.0__ID_粒_12_ || _JCROSS_粒:1.0__ID_粒_14_ _JCROSS_粒:1.0__ID_粒_12_ !== "_JCROSS_粒:1.0__ID_粒_5_") {
+    return _JCROSS_粒:1.0__ID_粒_17_;
+  }
+  _JCROSS_粒:1.0__ID_粒_15_ _JCROSS_粒:1.0__ID_粒_2_ = _JCROSS_粒:1.0__ID_粒_12_ as _JCROSS_廷:1.0__ID_廷_3_<_JCROSS_粒:1.0__ID_粒_7_, _JCROSS_粒:1.0__ID_粒_1_>;
+  _JCROSS_粒:1.0__ID_粒_15_ _JCROSS_粒:1.0__ID_粒_19_ = {} as _JCROSS_廷:1.0__ID_廷_3_<_JCROSS_廷:1.0__ID_廷_2_, _JCROSS_粒:1.0__ID_粒_1_>;
+  for (_JCROSS_粒:1.0__ID_粒_15_ _JCROSS_粒:1.0__ID_粒_3_ of _JCROSS_粒:1.0__ID_粒_4_) {
+// _JCROSS_計:0.9__ID_AW_794_ [decoy-metadata]
+    _JCROSS_粒:1.0__ID_粒_19_[_JCROSS_粒:1.0__ID_粒_3_] = _JCROSS_粒:1.0__ID_粒_2_[_JCROSS_粒:1.0__ID_粒_3_];
+// _JCROSS_計:0.4__ID_MM_432_ [decoy-metadata]
+  }
+// _JCROSS_滲:0.3__ID_VV_800_ [decoy-metadata]
+  return _JCROSS_粒:1.0__ID_粒_19_;
+// _JCROSS_錬:0.7__ID_LY_432_ [decoy-metadata]
+}
+// _JCROSS_粒:0.3__ID_ZC_228_ [decoy-metadata]
+
+_JCROSS_粒:1.0__ID_粒_9_ _JCROSS_粒:1.0__ID_粒_16_ _JCROSS_粒:1.0__ID_粒_8_(_JCROSS_粒:1.0__ID_粒_12_: _JCROSS_粒:1.0__ID_粒_1_): _JCROSS_粒:1.0__ID_粒_7_ | _JCROSS_粒:1.0__ID_粒_11_ {
+  return _JCROSS_粒:1.0__ID_粒_14_ _JCROSS_粒:1.0__ID_粒_12_ === "_JCROSS_粒:1.0__ID_粒_7_" ? _JCROSS_粒:1.0__ID_粒_12_ : _JCROSS_粒:1.0__ID_粒_14_ _JCROSS_粒:1.0__ID_粒_12_ === "_JCROSS_計:1.0__ID_粒_10_" ? _JCROSS_廷:1.0__ID_廷_1_(_JCROSS_粒:1.0__ID_粒_12_) : _JCROSS_粒:1.0__ID_粒_11_;
+// _JCROSS_廷:0.1__ID_MZ_904_ [decoy-metadata]
+}
+
+// POLYMORPHIC_JCROSS_END

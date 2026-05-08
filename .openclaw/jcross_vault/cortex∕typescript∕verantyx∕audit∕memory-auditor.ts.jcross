@@ -1,0 +1,241 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:051B67E3 ver:1778220251
+// ⚠️ One-time schema — expires after response
+
+/**
+ * _TOKEN_廴:1.0__SYM_廴_5_ — _TOKEN_廴:1.0__SYM_廴_29_ _TOKEN_廴:1.0__SYM_廴_2_ _TOKEN_霩:1.0__SYM_霩_16_ _TOKEN_霩:1.0__SYM_霩_20_ for _TOKEN_霩:1.0__SYM_霩_44_
+ * _TOKEN_廴:1.0__SYM_廴_18_ _TOKEN_廴:1.0__SYM_廴_27_ in private _TOKEN_霩:1.0__SYM_霩_109_ as _TOKEN_霩:1.0__SYM_霩_96_ _TOKEN_霩:1.0__SYM_霩_88_
+ */
+
+import { _TOKEN_匹:1.0__SYM_霩_105_, _TOKEN_匹:1.0__SYM_霩_37_, _TOKEN_霩:1.0__SYM_霩_42_, _TOKEN_霩:1.0__SYM_霩_113_, _TOKEN_匹:1.0__SYM_霩_69_ } _TOKEN_霩:1.0__SYM_霩_119_ "fs";
+import { _TOKEN_霩:1.0__SYM_霩_120_, _TOKEN_霩:1.0__SYM_霩_58_ } _TOKEN_霩:1.0__SYM_霩_119_ "_TOKEN_霩:1.0__SYM_霩_106_";
+import { _TOKEN_廴:1.0__SYM_廴_6_ } _TOKEN_霩:1.0__SYM_霩_119_ "./_TOKEN_霩:1.0__SYM_霩_111_-_TOKEN_霩:1.0__SYM_霩_67_.js";
+
+_TOKEN_霩:1.0__SYM_霩_64_ _TOKEN_霩:1.0__SYM_霩_93_ _TOKEN_廴:1.0__SYM_廴_30_ {
+  _TOKEN_霩:1.0__SYM_霩_27_: _TOKEN_霩:1.0__SYM_霩_92_;
+  _TOKEN_霩:1.0__SYM_霩_65_: _TOKEN_霩:1.0__SYM_霩_92_;
+  _TOKEN_霩:1.0__SYM_霩_55_: "_TOKEN_廴:1.0__SYM_廴_20_" | "_TOKEN_廴:1.0__SYM_廴_19_" | "_TOKEN_廴:1.0__SYM_廴_32_";
+  _TOKEN_霩:1.0__SYM_霩_17_: _TOKEN_道:1.0__SYM_霩_41_;
+  _TOKEN_霩:1.0__SYM_霩_15_: _TOKEN_霩:1.0__SYM_霩_92_[];
+  _TOKEN_霩:1.0__SYM_霩_29_: _TOKEN_霩:1.0__SYM_霩_92_[];
+  _TOKEN_霩:1.0__SYM_霩_23_: _TOKEN_霩:1.0__SYM_霩_92_;
+  _TOKEN_霩:1.0__SYM_霩_68_: _TOKEN_霩:1.0__SYM_霩_92_;
+}
+
+_TOKEN_霩:1.0__SYM_霩_64_ _TOKEN_霩:1.0__SYM_霩_93_ _TOKEN_廴:1.0__SYM_廴_16_ {
+  _TOKEN_霩:1.0__SYM_霩_9_: _TOKEN_道:1.0__SYM_霩_41_;
+  _TOKEN_湧:1.0__SYM_霩_36_: _TOKEN_道:1.0__SYM_霩_41_;
+  _TOKEN_霩:1.0__SYM_霩_44_: _TOKEN_道:1.0__SYM_霩_41_;
+  _TOKEN_霩:1.0__SYM_霩_117_: _TOKEN_道:1.0__SYM_霩_41_;
+  _TOKEN_霩:1.0__SYM_霩_33_: _TOKEN_廴:1.0__SYM_廴_30_[];
+}
+
+_TOKEN_霩:1.0__SYM_霩_64_ class _TOKEN_廴:1.0__SYM_廴_5_ {
+  private _TOKEN_霩:1.0__SYM_霩_67_: _TOKEN_廴:1.0__SYM_廴_6_;
+  private _TOKEN_霩:1.0__SYM_霩_10_: _TOKEN_霩:1.0__SYM_霩_92_;
+
+  _TOKEN_霩:1.0__SYM_霩_62_(_TOKEN_霩:1.0__SYM_霩_67_: _TOKEN_廴:1.0__SYM_廴_6_, _TOKEN_霩:1.0__SYM_霩_10_: _TOKEN_霩:1.0__SYM_霩_92_) {
+    _TOKEN_霩:1.0__SYM_霩_70_._TOKEN_霩:1.0__SYM_霩_67_ = _TOKEN_霩:1.0__SYM_霩_67_;
+    _TOKEN_霩:1.0__SYM_霩_70_._TOKEN_霩:1.0__SYM_霩_10_ = _TOKEN_霩:1.0__SYM_霩_10_;
+// [metadata-stripped]
+    for (_TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_65_ of ["_TOKEN_湧:1.0__SYM_霩_36_", "_TOKEN_霩:1.0__SYM_霩_121_", "_TOKEN_霩:1.0__SYM_霩_25_"]) {
+      _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_87_ = _TOKEN_霩:1.0__SYM_霩_120_(_TOKEN_霩:1.0__SYM_霩_10_, _TOKEN_霩:1.0__SYM_霩_65_);
+      if (!_TOKEN_霩:1.0__SYM_霩_42_(_TOKEN_霩:1.0__SYM_霩_87_)) {_TOKEN_霩:1.0__SYM_霩_113_(_TOKEN_霩:1.0__SYM_霩_87_, { _TOKEN_霩:1.0__SYM_霩_101_: true });}
+    }
+// _TOKEN_凛:0.3__SYM_CD_528_ [decoy-metadata]
+  }
+
+  async _TOKEN_霩:1.0__SYM_霩_54_(_TOKEN_霩:1.0__SYM_霩_65_: _TOKEN_霩:1.0__SYM_霩_92_, _TOKEN_霩:1.0__SYM_霩_45_: _TOKEN_霩:1.0__SYM_霩_92_): _TOKEN_廴:1.0__SYM_廴_15_<_TOKEN_廴:1.0__SYM_廴_30_> {
+    _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_匹:1.0__SYM_霩_90_ = _TOKEN_霩:1.0__SYM_霩_120_(_TOKEN_霩:1.0__SYM_霩_70_._TOKEN_霩:1.0__SYM_霩_10_, _TOKEN_霩:1.0__SYM_霩_65_, _TOKEN_霩:1.0__SYM_霩_45_._TOKEN_霩:1.0__SYM_霩_104_(".md") ? _TOKEN_霩:1.0__SYM_霩_45_ : `${_TOKEN_霩:1.0__SYM_霩_45_}.md`);
+    if (!_TOKEN_霩:1.0__SYM_霩_42_(_TOKEN_匹:1.0__SYM_霩_90_)) {
+      _TOKEN_霩:1.0__SYM_霩_19_ _TOKEN_霩:1.0__SYM_霩_53_ _TOKEN_廴:1.0__SYM_廴_21_(`_TOKEN_廴:1.0__SYM_廴_12_ _TOKEN_霩:1.0__SYM_霩_4_ _TOKEN_霩:1.0__SYM_霩_49_: ${_TOKEN_匹:1.0__SYM_霩_90_}`);
+    }
+
+    _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_114_ = _TOKEN_匹:1.0__SYM_霩_105_(_TOKEN_匹:1.0__SYM_霩_90_, "_TOKEN_霩:1.0__SYM_霩_76_-8");
+
+    _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_39_ = `以下の技術文書の正確性を検証してください。
+
+// [metadata-stripped]
+${_TOKEN_霩:1.0__SYM_霩_114_}
+
+// [metadata-stripped]
+1. 判定: _TOKEN_廴:1.0__SYM_廴_20_ / _TOKEN_廴:1.0__SYM_廴_19_ / _TOKEN_廴:1.0__SYM_廴_32_
+2. 矛盾点: (ある場合リストアップ)
+3. 根拠: (判定の理由)
+4. 信頼度: 0.0〜1.0
+
+事実に基づいて客観的に回答してください。`;
+
+    _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_21_ = await _TOKEN_霩:1.0__SYM_霩_70_._TOKEN_霩:1.0__SYM_霩_67_._TOKEN_霩:1.0__SYM_霩_26_(_TOKEN_霩:1.0__SYM_霩_39_, `メモリ監査: ${_TOKEN_霩:1.0__SYM_霩_65_}/${_TOKEN_霩:1.0__SYM_霩_45_}`, 90_000);
+    _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_12_ = _TOKEN_霩:1.0__SYM_霩_70_._TOKEN_霩:1.0__SYM_霩_85_(_TOKEN_霩:1.0__SYM_霩_21_._TOKEN_霩:1.0__SYM_霩_6_);
+
+    _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_28_: _TOKEN_廴:1.0__SYM_廴_30_ = {
+      _TOKEN_霩:1.0__SYM_霩_27_: _TOKEN_霩:1.0__SYM_霩_45_,
+      _TOKEN_霩:1.0__SYM_霩_65_,
+      _TOKEN_霩:1.0__SYM_霩_55_: _TOKEN_霩:1.0__SYM_霩_12_._TOKEN_霩:1.0__SYM_霩_55_,
+      _TOKEN_霩:1.0__SYM_霩_17_: _TOKEN_霩:1.0__SYM_霩_12_._TOKEN_霩:1.0__SYM_霩_17_,
+// _TOKEN_廴:0.4__SYM_KH_113_ [decoy-metadata]
+      _TOKEN_霩:1.0__SYM_霩_15_: _TOKEN_霩:1.0__SYM_霩_12_._TOKEN_霩:1.0__SYM_霩_15_,
+      _TOKEN_霩:1.0__SYM_霩_29_: _TOKEN_霩:1.0__SYM_霩_12_._TOKEN_霩:1.0__SYM_霩_29_,
+      _TOKEN_霩:1.0__SYM_霩_23_: _TOKEN_霩:1.0__SYM_霩_21_._TOKEN_霩:1.0__SYM_霩_6_,
+      _TOKEN_霩:1.0__SYM_霩_68_: _TOKEN_霩:1.0__SYM_霩_53_ _TOKEN_廴:1.0__SYM_廴_1_()._TOKEN_霩:1.0__SYM_霩_7_(),
+    };
+// _TOKEN_廴:0.3__SYM_BH_718_ [decoy-metadata]
+
+// [metadata-stripped]
+    _TOKEN_霩:1.0__SYM_霩_70_._TOKEN_霩:1.0__SYM_霩_38_(_TOKEN_霩:1.0__SYM_霩_28_);
+
+// [metadata-stripped]
+    if (_TOKEN_霩:1.0__SYM_霩_28_._TOKEN_霩:1.0__SYM_霩_55_ === "_TOKEN_廴:1.0__SYM_廴_20_") {
+      _TOKEN_霩:1.0__SYM_霩_70_._TOKEN_湧:1.0__SYM_霩_50_(_TOKEN_霩:1.0__SYM_霩_65_, _TOKEN_霩:1.0__SYM_霩_45_, _TOKEN_霩:1.0__SYM_霩_28_);
+    } else if (_TOKEN_霩:1.0__SYM_霩_28_._TOKEN_霩:1.0__SYM_霩_55_ === "_TOKEN_廴:1.0__SYM_廴_19_") {
+      _TOKEN_霩:1.0__SYM_霩_70_._TOKEN_霩:1.0__SYM_霩_81_(_TOKEN_霩:1.0__SYM_霩_65_, _TOKEN_霩:1.0__SYM_霩_45_);
+    }
+
+    return _TOKEN_霩:1.0__SYM_霩_28_;
+  }
+
+  async _TOKEN_霩:1.0__SYM_霩_43_(_TOKEN_霩:1.0__SYM_霩_65_: _TOKEN_霩:1.0__SYM_霩_92_): _TOKEN_廴:1.0__SYM_廴_15_<_TOKEN_廴:1.0__SYM_廴_30_[]> {
+    _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_87_ = _TOKEN_霩:1.0__SYM_霩_120_(_TOKEN_霩:1.0__SYM_霩_70_._TOKEN_霩:1.0__SYM_霩_10_, _TOKEN_霩:1.0__SYM_霩_65_);
+    if (!_TOKEN_霩:1.0__SYM_霩_42_(_TOKEN_霩:1.0__SYM_霩_87_)) {return [];}
+
+    _TOKEN_霩:1.0__SYM_霩_75_ { _TOKEN_霩:1.0__SYM_霩_71_ } = await import("fs");
+    _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_匹:1.0__SYM_霩_18_ = _TOKEN_霩:1.0__SYM_霩_71_(_TOKEN_霩:1.0__SYM_霩_87_)._TOKEN_道:1.0__SYM_霩_125_((f) => f._TOKEN_霩:1.0__SYM_霩_104_(".md"));
+    _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_84_: _TOKEN_廴:1.0__SYM_廴_30_[] = [];
+// _TOKEN_匹:0.5__SYM_DM_496_ [decoy-metadata]
+
+    for (_TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_匹:1.0__SYM_霩_14_ of _TOKEN_匹:1.0__SYM_霩_18_) {
+      try {
+        _TOKEN_霩:1.0__SYM_霩_75_ r = await _TOKEN_霩:1.0__SYM_霩_70_._TOKEN_霩:1.0__SYM_霩_54_(_TOKEN_霩:1.0__SYM_霩_65_, _TOKEN_匹:1.0__SYM_霩_14_);
+        _TOKEN_霩:1.0__SYM_霩_84_._TOKEN_霩:1.0__SYM_霩_78_(r);
+      } catch (e: any) {
+        _TOKEN_霩:1.0__SYM_霩_89_._TOKEN_霩:1.0__SYM_霩_116_(`_TOKEN_廴:1.0__SYM_廴_9_ _TOKEN_霩:1.0__SYM_霩_30_ for ${_TOKEN_霩:1.0__SYM_霩_65_}/${_TOKEN_匹:1.0__SYM_霩_14_}: ${e._TOKEN_霩:1.0__SYM_霩_61_}`);
+      }
+    }
+    return _TOKEN_霩:1.0__SYM_霩_84_;
+  }
+
+  async _TOKEN_霩:1.0__SYM_霩_97_(): _TOKEN_廴:1.0__SYM_廴_15_<_TOKEN_廴:1.0__SYM_廴_16_> {
+    _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_56_: _TOKEN_廴:1.0__SYM_廴_30_[] = [];
+    for (_TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_65_ of ["_TOKEN_霩:1.0__SYM_霩_115_", "_TOKEN_霩:1.0__SYM_霩_47_", "_TOKEN_霩:1.0__SYM_霩_100_", "_TOKEN_霩:1.0__SYM_霩_79_"]) {
+      _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_84_ = await _TOKEN_霩:1.0__SYM_霩_70_._TOKEN_霩:1.0__SYM_霩_43_(_TOKEN_霩:1.0__SYM_霩_65_);
+      _TOKEN_霩:1.0__SYM_霩_56_._TOKEN_霩:1.0__SYM_霩_78_(..._TOKEN_霩:1.0__SYM_霩_84_);
+    }
+    return {
+      _TOKEN_霩:1.0__SYM_霩_9_: _TOKEN_霩:1.0__SYM_霩_56_._TOKEN_霩:1.0__SYM_霩_48_,
+      _TOKEN_湧:1.0__SYM_霩_36_: _TOKEN_霩:1.0__SYM_霩_56_._TOKEN_道:1.0__SYM_霩_125_((r) => r._TOKEN_霩:1.0__SYM_霩_55_ === "_TOKEN_廴:1.0__SYM_廴_20_")._TOKEN_霩:1.0__SYM_霩_48_,
+      _TOKEN_霩:1.0__SYM_霩_44_: _TOKEN_霩:1.0__SYM_霩_56_._TOKEN_道:1.0__SYM_霩_125_((r) => r._TOKEN_霩:1.0__SYM_霩_55_ === "_TOKEN_廴:1.0__SYM_廴_19_")._TOKEN_霩:1.0__SYM_霩_48_,
+      _TOKEN_霩:1.0__SYM_霩_117_: _TOKEN_霩:1.0__SYM_霩_56_._TOKEN_道:1.0__SYM_霩_125_((r) => r._TOKEN_霩:1.0__SYM_霩_55_ === "_TOKEN_廴:1.0__SYM_廴_32_")._TOKEN_霩:1.0__SYM_霩_48_,
+      _TOKEN_霩:1.0__SYM_霩_33_: _TOKEN_霩:1.0__SYM_霩_56_,
+    };
+  }
+
+// [metadata-stripped]
+
+  private _TOKEN_霩:1.0__SYM_霩_85_(_TOKEN_霩:1.0__SYM_霩_6_: _TOKEN_霩:1.0__SYM_霩_92_): {
+    _TOKEN_霩:1.0__SYM_霩_55_: "_TOKEN_廴:1.0__SYM_廴_20_" | "_TOKEN_廴:1.0__SYM_廴_19_" | "_TOKEN_廴:1.0__SYM_廴_32_";
+    _TOKEN_霩:1.0__SYM_霩_17_: _TOKEN_道:1.0__SYM_霩_41_;
+    _TOKEN_霩:1.0__SYM_霩_15_: _TOKEN_霩:1.0__SYM_霩_92_[];
+    _TOKEN_霩:1.0__SYM_霩_29_: _TOKEN_霩:1.0__SYM_霩_92_[];
+  } {
+    _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_道:1.0__SYM_霩_31_ = _TOKEN_霩:1.0__SYM_霩_6_._TOKEN_霩:1.0__SYM_霩_99_();
+
+// [metadata-stripped]
+    let _TOKEN_霩:1.0__SYM_霩_55_: "_TOKEN_廴:1.0__SYM_廴_20_" | "_TOKEN_廴:1.0__SYM_廴_19_" | "_TOKEN_廴:1.0__SYM_廴_32_" = "_TOKEN_廴:1.0__SYM_廴_32_";
+    if (/_TOKEN_湧:1.0__SYM_霩_36_|正確|問題なし/._TOKEN_霩:1.0__SYM_霩_72_(_TOKEN_道:1.0__SYM_霩_31_)) {_TOKEN_霩:1.0__SYM_霩_55_ = "_TOKEN_廴:1.0__SYM_廴_20_";}
+    else if (/_TOKEN_霩:1.0__SYM_霩_46_|誤り|不正確|ハルシネーション/._TOKEN_霩:1.0__SYM_霩_72_(_TOKEN_道:1.0__SYM_霩_31_)) {_TOKEN_霩:1.0__SYM_霩_55_ = "_TOKEN_廴:1.0__SYM_廴_19_";}
+
+// [metadata-stripped]
+    let _TOKEN_霩:1.0__SYM_霩_17_ = 0.5;
+    _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_35_ = _TOKEN_霩:1.0__SYM_霩_6_._TOKEN_霩:1.0__SYM_霩_80_(/(?:信頼度|_TOKEN_霩:1.0__SYM_霩_17_)[:\s]*([0-9]+\.?[0-9]*)/i);
+    if (_TOKEN_霩:1.0__SYM_霩_35_) {
+      _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_5_ = _TOKEN_霩:1.0__SYM_霩_122_(_TOKEN_霩:1.0__SYM_霩_35_[1]);
+      if (_TOKEN_霩:1.0__SYM_霩_5_ >= 0 && _TOKEN_霩:1.0__SYM_霩_5_ <= 1) {_TOKEN_霩:1.0__SYM_霩_17_ = _TOKEN_霩:1.0__SYM_霩_5_;}
+      else if (_TOKEN_霩:1.0__SYM_霩_5_ > 1 && _TOKEN_霩:1.0__SYM_霩_5_ <= 100) {_TOKEN_霩:1.0__SYM_霩_17_ = _TOKEN_霩:1.0__SYM_霩_5_ / 100;}
+    }
+
+// [metadata-stripped]
+    _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_15_: _TOKEN_霩:1.0__SYM_霩_92_[] = [];
+    _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_66_ = _TOKEN_霩:1.0__SYM_霩_6_._TOKEN_霩:1.0__SYM_霩_80_(/(?:矛盾点|_TOKEN_霩:1.0__SYM_霩_15_?)[:\s]*([\s\S]*?)(?:\n(?:根拠|_TOKEN_霩:1.0__SYM_霩_86_|信頼度|_TOKEN_霩:1.0__SYM_霩_17_)|$)/i);
+    if (_TOKEN_霩:1.0__SYM_霩_66_) {
+      _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_98_ = _TOKEN_霩:1.0__SYM_霩_66_[1]._TOKEN_霩:1.0__SYM_霩_2_("\n")._TOKEN_霩:1.0__SYM_霩_60_((l) => l._TOKEN_霩:1.0__SYM_霩_124_(/^[-*•]\s*/, "")._TOKEN_霩:1.0__SYM_霩_40_())._TOKEN_道:1.0__SYM_霩_125_(_TOKEN_廴:1.0__SYM_廴_10_);
+      _TOKEN_霩:1.0__SYM_霩_15_._TOKEN_霩:1.0__SYM_霩_78_(..._TOKEN_霩:1.0__SYM_霩_98_._TOKEN_道:1.0__SYM_霩_125_((l) => l._TOKEN_霩:1.0__SYM_霩_48_ > 2 && !/^なし$|^_TOKEN_霩:1.0__SYM_霩_108_$/i._TOKEN_霩:1.0__SYM_霩_72_(l)));
+    }
+
+// [metadata-stripped]
+    _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_29_: _TOKEN_霩:1.0__SYM_霩_92_[] = [];
+    _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_123_ = _TOKEN_霩:1.0__SYM_霩_6_._TOKEN_霩:1.0__SYM_霩_80_(/(?:根拠|_TOKEN_霩:1.0__SYM_霩_86_ _TOKEN_霩:1.0__SYM_霩_3_?)[:\s]*([\s\S]*?)(?:\n(?:信頼度|_TOKEN_霩:1.0__SYM_霩_17_)|$)/i);
+    if (_TOKEN_霩:1.0__SYM_霩_123_) {
+      _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_98_ = _TOKEN_霩:1.0__SYM_霩_123_[1]._TOKEN_霩:1.0__SYM_霩_2_("\n")._TOKEN_霩:1.0__SYM_霩_60_((l) => l._TOKEN_霩:1.0__SYM_霩_124_(/^[-*•]\s*/, "")._TOKEN_霩:1.0__SYM_霩_40_())._TOKEN_道:1.0__SYM_霩_125_(_TOKEN_廴:1.0__SYM_廴_10_);
+      _TOKEN_霩:1.0__SYM_霩_29_._TOKEN_霩:1.0__SYM_霩_78_(..._TOKEN_霩:1.0__SYM_霩_98_._TOKEN_道:1.0__SYM_霩_125_((l) => l._TOKEN_霩:1.0__SYM_霩_48_ > 2));
+    }
+
+    return { _TOKEN_霩:1.0__SYM_霩_55_, _TOKEN_霩:1.0__SYM_霩_17_, _TOKEN_霩:1.0__SYM_霩_15_, _TOKEN_霩:1.0__SYM_霩_29_ };
+  }
+
+  private _TOKEN_霩:1.0__SYM_霩_38_(_TOKEN_霩:1.0__SYM_霩_21_: _TOKEN_廴:1.0__SYM_廴_30_): _TOKEN_霩:1.0__SYM_霩_24_ {
+    _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_74_ = _TOKEN_霩:1.0__SYM_霩_120_(_TOKEN_霩:1.0__SYM_霩_70_._TOKEN_霩:1.0__SYM_霩_10_, "_TOKEN_霩:1.0__SYM_霩_121_");
+// _TOKEN_凛:0.4__SYM_BB_910_ [decoy-metadata]
+    _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_11_ = _TOKEN_霩:1.0__SYM_霩_53_ _TOKEN_廴:1.0__SYM_廴_1_()._TOKEN_霩:1.0__SYM_霩_7_()._TOKEN_霩:1.0__SYM_霩_124_(/[:.]/g, "-");
+    _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_52_ = _TOKEN_霩:1.0__SYM_霩_120_(_TOKEN_霩:1.0__SYM_霩_74_, `_TOKEN_霩:1.0__SYM_霩_118_${_TOKEN_霩:1.0__SYM_霩_11_}_${_TOKEN_霩:1.0__SYM_霩_21_._TOKEN_霩:1.0__SYM_霩_27_._TOKEN_霩:1.0__SYM_霩_124_(/\.md$/, "")}.md`);
+
+    _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_114_ = `---
+_TOKEN_霩:1.0__SYM_霩_45_: _TOKEN_廴:1.0__SYM_廴_9_ _TOKEN_廴:1.0__SYM_廴_33_ ${_TOKEN_霩:1.0__SYM_霩_21_._TOKEN_霩:1.0__SYM_霩_68_}
+_TOKEN_霩:1.0__SYM_霩_1_: _TOKEN_霩:1.0__SYM_霩_121_
+_TOKEN_霩:1.0__SYM_霩_68_: ${_TOKEN_霩:1.0__SYM_霩_21_._TOKEN_霩:1.0__SYM_霩_68_}
+_TOKEN_霩:1.0__SYM_霩_32_: ${_TOKEN_霩:1.0__SYM_霩_21_._TOKEN_霩:1.0__SYM_霩_65_}/${_TOKEN_霩:1.0__SYM_霩_21_._TOKEN_霩:1.0__SYM_霩_27_}
+_TOKEN_霩:1.0__SYM_霩_55_: ${_TOKEN_霩:1.0__SYM_霩_21_._TOKEN_霩:1.0__SYM_霩_55_}
+_TOKEN_霩:1.0__SYM_霩_17_: ${_TOKEN_霩:1.0__SYM_霩_21_._TOKEN_霩:1.0__SYM_霩_17_}
+---
+
+// [metadata-stripped]
+- _TOKEN_廴:1.0__SYM_廴_22_: ${_TOKEN_霩:1.0__SYM_霩_21_._TOKEN_霩:1.0__SYM_霩_65_}/${_TOKEN_霩:1.0__SYM_霩_21_._TOKEN_霩:1.0__SYM_霩_27_}
+- _TOKEN_廴:1.0__SYM_廴_8_: ${_TOKEN_霩:1.0__SYM_霩_21_._TOKEN_霩:1.0__SYM_霩_55_}
+- _TOKEN_廴:1.0__SYM_廴_26_: ${_TOKEN_霩:1.0__SYM_霩_21_._TOKEN_霩:1.0__SYM_霩_17_}
+- _TOKEN_廴:1.0__SYM_廴_17_: ${_TOKEN_霩:1.0__SYM_霩_21_._TOKEN_霩:1.0__SYM_霩_15_._TOKEN_霩:1.0__SYM_霩_48_ > 0 ? _TOKEN_霩:1.0__SYM_霩_21_._TOKEN_霩:1.0__SYM_霩_15_._TOKEN_霩:1.0__SYM_霩_120_("; ") : "_TOKEN_霩:1.0__SYM_霩_108_"}
+- _TOKEN_廴:1.0__SYM_廴_23_ _TOKEN_霩:1.0__SYM_霩_3_: ${_TOKEN_霩:1.0__SYM_霩_21_._TOKEN_霩:1.0__SYM_霩_29_._TOKEN_霩:1.0__SYM_霩_48_ > 0 ? _TOKEN_霩:1.0__SYM_霩_21_._TOKEN_霩:1.0__SYM_霩_29_._TOKEN_霩:1.0__SYM_霩_120_("; ") : "_TOKEN_霩:1.0__SYM_霩_108_"}
+
+// [metadata-stripped]
+${_TOKEN_霩:1.0__SYM_霩_21_._TOKEN_霩:1.0__SYM_霩_23_._TOKEN_霩:1.0__SYM_霩_95_(0, 2000)}
+`;
+    _TOKEN_匹:1.0__SYM_霩_37_(_TOKEN_霩:1.0__SYM_霩_52_, _TOKEN_霩:1.0__SYM_霩_114_, "_TOKEN_霩:1.0__SYM_霩_76_-8");
+  }
+
+  private _TOKEN_湧:1.0__SYM_霩_50_(_TOKEN_霩:1.0__SYM_霩_65_: _TOKEN_霩:1.0__SYM_霩_92_, _TOKEN_霩:1.0__SYM_霩_45_: _TOKEN_霩:1.0__SYM_霩_92_, _TOKEN_霩:1.0__SYM_霩_121_: _TOKEN_廴:1.0__SYM_廴_30_): _TOKEN_霩:1.0__SYM_霩_24_ {
+    _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_110_ = _TOKEN_霩:1.0__SYM_霩_120_(_TOKEN_霩:1.0__SYM_霩_70_._TOKEN_霩:1.0__SYM_霩_10_, _TOKEN_霩:1.0__SYM_霩_65_, _TOKEN_霩:1.0__SYM_霩_45_._TOKEN_霩:1.0__SYM_霩_104_(".md") ? _TOKEN_霩:1.0__SYM_霩_45_ : `${_TOKEN_霩:1.0__SYM_霩_45_}.md`);
+    _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_13_ = _TOKEN_霩:1.0__SYM_霩_120_(_TOKEN_霩:1.0__SYM_霩_70_._TOKEN_霩:1.0__SYM_霩_10_, "_TOKEN_湧:1.0__SYM_霩_36_", _TOKEN_霩:1.0__SYM_霩_58_(_TOKEN_霩:1.0__SYM_霩_110_));
+    if (!_TOKEN_霩:1.0__SYM_霩_42_(_TOKEN_霩:1.0__SYM_霩_110_)) {return;}
+
+    let _TOKEN_霩:1.0__SYM_霩_114_ = _TOKEN_匹:1.0__SYM_霩_105_(_TOKEN_霩:1.0__SYM_霩_110_, "_TOKEN_霩:1.0__SYM_霩_76_-8");
+
+// [metadata-stripped]
+    _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_59_ = _TOKEN_霩:1.0__SYM_霩_114_._TOKEN_霩:1.0__SYM_霩_63_("---", 4);
+    if (_TOKEN_霩:1.0__SYM_霩_59_ > 0) {
+      _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_34_ = _TOKEN_霩:1.0__SYM_霩_59_;
+      _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_霩:1.0__SYM_霩_51_ = `_TOKEN_湧:1.0__SYM_霩_36_: true
+_TOKEN_霩:1.0__SYM_霩_73_: ${_TOKEN_霩:1.0__SYM_霩_121_._TOKEN_霩:1.0__SYM_霩_68_}
+_TOKEN_霩:1.0__SYM_霩_57_: ${_TOKEN_霩:1.0__SYM_霩_121_._TOKEN_霩:1.0__SYM_霩_55_}
+_TOKEN_霩:1.0__SYM_霩_22_: ${_TOKEN_霩:1.0__SYM_霩_121_._TOKEN_霩:1.0__SYM_霩_17_}
+_TOKEN_霩:1.0__SYM_霩_8_: _TOKEN_霩:1.0__SYM_霩_111_-private
+_TOKEN_霩:1.0__SYM_霩_91_: ${_TOKEN_霩:1.0__SYM_霩_65_}
+`;
+      _TOKEN_霩:1.0__SYM_霩_114_ = _TOKEN_霩:1.0__SYM_霩_114_._TOKEN_霩:1.0__SYM_霩_95_(0, _TOKEN_霩:1.0__SYM_霩_34_) + _TOKEN_霩:1.0__SYM_霩_51_ + _TOKEN_霩:1.0__SYM_霩_114_._TOKEN_霩:1.0__SYM_霩_95_(_TOKEN_霩:1.0__SYM_霩_34_);
+    }
+
+    _TOKEN_匹:1.0__SYM_霩_37_(_TOKEN_霩:1.0__SYM_霩_13_, _TOKEN_霩:1.0__SYM_霩_114_, "_TOKEN_霩:1.0__SYM_霩_76_-8");
+  }
+// _TOKEN_霩:0.2__SYM_HC_698_ [decoy-metadata]
+
+  private _TOKEN_霩:1.0__SYM_霩_81_(_TOKEN_霩:1.0__SYM_霩_65_: _TOKEN_霩:1.0__SYM_霩_92_, _TOKEN_霩:1.0__SYM_霩_45_: _TOKEN_霩:1.0__SYM_霩_92_): _TOKEN_霩:1.0__SYM_霩_24_ {
+    _TOKEN_霩:1.0__SYM_霩_75_ _TOKEN_匹:1.0__SYM_霩_90_ = _TOKEN_霩:1.0__SYM_霩_120_(_TOKEN_霩:1.0__SYM_霩_70_._TOKEN_霩:1.0__SYM_霩_10_, _TOKEN_霩:1.0__SYM_霩_65_, _TOKEN_霩:1.0__SYM_霩_45_._TOKEN_霩:1.0__SYM_霩_104_(".md") ? _TOKEN_霩:1.0__SYM_霩_45_ : `${_TOKEN_霩:1.0__SYM_霩_45_}.md`);
+    if (!_TOKEN_霩:1.0__SYM_霩_42_(_TOKEN_匹:1.0__SYM_霩_90_)) {return;}
+
+    let _TOKEN_霩:1.0__SYM_霩_114_ = _TOKEN_匹:1.0__SYM_霩_105_(_TOKEN_匹:1.0__SYM_霩_90_, "_TOKEN_霩:1.0__SYM_霩_76_-8");
+    if (!_TOKEN_霩:1.0__SYM_霩_114_._TOKEN_霩:1.0__SYM_霩_102_("[_TOKEN_廴:1.0__SYM_廴_24_]")) {
+      _TOKEN_霩:1.0__SYM_霩_114_ = _TOKEN_霩:1.0__SYM_霩_114_._TOKEN_霩:1.0__SYM_霩_124_(/^(---\n)/, `$1# [_TOKEN_廴:1.0__SYM_廴_24_] — _TOKEN_廴:1.0__SYM_廴_28_ by _TOKEN_廴:1.0__SYM_廴_27_ _TOKEN_霩:1.0__SYM_霩_121_\n`);
+      _TOKEN_匹:1.0__SYM_霩_37_(_TOKEN_匹:1.0__SYM_霩_90_, _TOKEN_霩:1.0__SYM_霩_114_, "_TOKEN_霩:1.0__SYM_霩_76_-8");
+    }
+  }
+}
+
+// POLYMORPHIC_JCROSS_END

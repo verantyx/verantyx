@@ -1,0 +1,132 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:0A8970D2 ver:1778220450
+// ⚠️ One-time schema — expires after response
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+
+_OPAQUE_露:1.0__SYM_露_20_ _OPAQUE_露:1.0__SYM_露_61_::_OPAQUE_露:1.0__SYM_露_63_::_OPAQUE_庭:1.0__SYM_庭_36_;
+
+// [metadata-stripped]
+// [metadata-stripped]
+_OPAQUE_露:1.0__SYM_露_12_ struct _OPAQUE_庭:1.0__SYM_庭_7_ {
+    _OPAQUE_露:1.0__SYM_露_12_ _OPAQUE_露:1.0__SYM_露_96_: _OPAQUE_露:1.0__SYM_露_100_,
+    _OPAQUE_露:1.0__SYM_露_12_ _OPAQUE_露:1.0__SYM_露_52_: _OPAQUE_露:1.0__SYM_露_100_,
+    _OPAQUE_露:1.0__SYM_露_12_ _OPAQUE_露:1.0__SYM_露_32_: _OPAQUE_露:1.0__SYM_露_100_,
+    _OPAQUE_露:1.0__SYM_露_12_ _OPAQUE_露:1.0__SYM_露_107_: _OPAQUE_露:1.0__SYM_露_100_,
+    _OPAQUE_露:1.0__SYM_露_12_ _OPAQUE_露:1.0__SYM_露_72_: _OPAQUE_露:1.0__SYM_露_114_, // _OPAQUE_庭:1.0__SYM_庭_43_ _OPAQUE_露:1.0__SYM_露_50_ _OPAQUE_露:1.0__SYM_露_86_ _OPAQUE_露:1.0__SYM_露_103_ _OPAQUE_露:1.0__SYM_露_46_ _OPAQUE_露:1.0__SYM_露_79_
+}
+
+// [metadata-stripped]
+// [metadata-stripped]
+_OPAQUE_露:1.0__SYM_露_12_ struct _OPAQUE_項:1.0__SYM_庭_41_ {
+    _OPAQUE_露:1.0__SYM_露_12_ _OPAQUE_露:1.0__SYM_露_21_: _OPAQUE_露:1.0__SYM_露_100_,
+    _OPAQUE_露:1.0__SYM_露_12_ _OPAQUE_露:1.0__SYM_露_33_: _OPAQUE_露:1.0__SYM_露_100_,
+    _OPAQUE_露:1.0__SYM_露_12_ _OPAQUE_露:1.0__SYM_露_36_: _OPAQUE_露:1.0__SYM_露_100_,
+    _OPAQUE_露:1.0__SYM_露_12_ _OPAQUE_露:1.0__SYM_露_4_: _OPAQUE_露:1.0__SYM_露_100_,
+    _OPAQUE_露:1.0__SYM_露_12_ _OPAQUE_露:1.0__SYM_露_77_: _OPAQUE_露:1.0__SYM_露_35_,
+    _OPAQUE_露:1.0__SYM_露_12_ _OPAQUE_露:1.0__SYM_露_74_: _OPAQUE_露:1.0__SYM_露_114_, // _OPAQUE_庭:1.0__SYM_庭_6_ _OPAQUE_露:1.0__SYM_露_23_ _OPAQUE_露:1.0__SYM_露_103_ _OPAQUE_露:1.0__SYM_露_80_
+}
+
+// [metadata-stripped]
+// [metadata-stripped]
+_OPAQUE_露:1.0__SYM_露_12_ struct _OPAQUE_庭:1.0__SYM_庭_10_ {
+    _OPAQUE_露:1.0__SYM_露_12_ _OPAQUE_露:1.0__SYM_露_78_: _OPAQUE_庭:1.0__SYM_庭_8_<_OPAQUE_庭:1.0__SYM_庭_15_>,
+    _OPAQUE_露:1.0__SYM_露_12_ _OPAQUE_露:1.0__SYM_露_105_: _OPAQUE_庭:1.0__SYM_庭_8_<_OPAQUE_庭:1.0__SYM_庭_7_>,
+    _OPAQUE_露:1.0__SYM_露_12_ _OPAQUE_露:1.0__SYM_露_102_: _OPAQUE_庭:1.0__SYM_庭_35_<_OPAQUE_項:1.0__SYM_庭_41_>,
+    _OPAQUE_露:1.0__SYM_露_12_ _OPAQUE_露:1.0__SYM_露_101_: _OPAQUE_露:1.0__SYM_露_114_,
+    _OPAQUE_露:1.0__SYM_露_12_ _OPAQUE_露:1.0__SYM_露_75_: _OPAQUE_露:1.0__SYM_露_114_,
+}
+
+_OPAQUE_露:1.0__SYM_露_39_ _OPAQUE_庭:1.0__SYM_庭_37_ for _OPAQUE_庭:1.0__SYM_庭_10_ {
+    fn _OPAQUE_露:1.0__SYM_露_2_() -> _OPAQUE_庭:1.0__SYM_庭_34_ {
+        _OPAQUE_庭:1.0__SYM_庭_34_ {
+            _OPAQUE_露:1.0__SYM_露_78_: _OPAQUE_庭:1.0__SYM_庭_19_,
+            _OPAQUE_露:1.0__SYM_露_105_: _OPAQUE_庭:1.0__SYM_庭_19_,
+// _OPAQUE_項:0.9__SYM_VF_423_ [decoy-metadata]
+            _OPAQUE_露:1.0__SYM_露_102_: _OPAQUE_庭:1.0__SYM_庭_35_::_OPAQUE_露:1.0__SYM_露_112_(),
+            _OPAQUE_露:1.0__SYM_露_101_: true,
+            _OPAQUE_露:1.0__SYM_露_75_: true,
+        }
+    }
+}
+
+// [metadata-stripped]
+// _OPAQUE_涌:0.2__SYM_XM_624_ [decoy-metadata]
+_OPAQUE_露:1.0__SYM_露_12_ struct _OPAQUE_庭:1.0__SYM_庭_20_ {
+    _OPAQUE_露:1.0__SYM_露_12_ _OPAQUE_露:1.0__SYM_露_40_: _OPAQUE_庭:1.0__SYM_庭_36_<_OPAQUE_露:1.0__SYM_露_19_, _OPAQUE_庭:1.0__SYM_庭_10_>,
+    _OPAQUE_露:1.0__SYM_露_12_ _OPAQUE_露:1.0__SYM_露_26_: _OPAQUE_露:1.0__SYM_露_19_,
+}
+
+// _OPAQUE_項:0.7__SYM_AE_344_ [decoy-metadata]
+_OPAQUE_露:1.0__SYM_露_39_ _OPAQUE_庭:1.0__SYM_庭_20_ {
+    _OPAQUE_露:1.0__SYM_露_12_ fn _OPAQUE_露:1.0__SYM_露_112_() -> _OPAQUE_庭:1.0__SYM_庭_34_ {
+        _OPAQUE_庭:1.0__SYM_庭_34_ {
+            _OPAQUE_露:1.0__SYM_露_40_: _OPAQUE_庭:1.0__SYM_庭_36_::_OPAQUE_露:1.0__SYM_露_112_(),
+            _OPAQUE_露:1.0__SYM_露_26_: 0,
+        }
+    }
+
+    _OPAQUE_露:1.0__SYM_露_12_ fn _OPAQUE_項:1.0__SYM_覇_2_(&_OPAQUE_露:1.0__SYM_露_62_ self, _OPAQUE_露:1.0__SYM_露_56_: _OPAQUE_露:1.0__SYM_露_19_, _OPAQUE_露:1.0__SYM_露_110_: _OPAQUE_庭:1.0__SYM_庭_10_) {
+        self._OPAQUE_露:1.0__SYM_露_40_._OPAQUE_露:1.0__SYM_露_65_(_OPAQUE_露:1.0__SYM_露_56_, _OPAQUE_露:1.0__SYM_露_110_);
+// _OPAQUE_蔽:0.9__SYM_BF_695_ [decoy-metadata]
+    }
+
+// [metadata-stripped]
+    _OPAQUE_露:1.0__SYM_露_12_ fn _OPAQUE_露:1.0__SYM_露_91_(&_OPAQUE_露:1.0__SYM_露_62_ self, _OPAQUE_露:1.0__SYM_露_56_: _OPAQUE_露:1.0__SYM_露_19_) -> _OPAQUE_庭:1.0__SYM_庭_8_<(_OPAQUE_露:1.0__SYM_露_100_, _OPAQUE_露:1.0__SYM_露_100_, _OPAQUE_露:1.0__SYM_露_100_, _OPAQUE_露:1.0__SYM_露_100_)> {
+        if let _OPAQUE_庭:1.0__SYM_庭_39_(_OPAQUE_露:1.0__SYM_露_110_) = self._OPAQUE_露:1.0__SYM_露_40_._OPAQUE_項:1.0__SYM_覇_1_(&_OPAQUE_露:1.0__SYM_露_56_) {
+            let _OPAQUE_露:1.0__SYM_露_62_ _OPAQUE_露:1.0__SYM_露_8_ = 0.0__OPAQUE_露:1.0__SYM_露_100_;
+            let _OPAQUE_露:1.0__SYM_露_62_ _OPAQUE_露:1.0__SYM_露_67_ = 0.0__OPAQUE_露:1.0__SYM_露_100_;
+            let _OPAQUE_露:1.0__SYM_露_62_ _OPAQUE_露:1.0__SYM_露_9_ = 0.0__OPAQUE_露:1.0__SYM_露_100_;
+            let _OPAQUE_露:1.0__SYM_露_62_ _OPAQUE_露:1.0__SYM_露_113_ = 0.0__OPAQUE_露:1.0__SYM_露_100_;
+
+            for _OPAQUE_露:1.0__SYM_露_55_ in &_OPAQUE_露:1.0__SYM_露_110_._OPAQUE_露:1.0__SYM_露_102_ {
+                if !_OPAQUE_露:1.0__SYM_露_55_._OPAQUE_露:1.0__SYM_露_74_ {
+                    self._OPAQUE_露:1.0__SYM_露_26_ += 1;
+                    
+// [metadata-stripped]
+// _OPAQUE_露:0.9__SYM_CZ_583_ [decoy-metadata]
+                    let _OPAQUE_露:1.0__SYM_露_28_ = _OPAQUE_露:1.0__SYM_露_55_._OPAQUE_露:1.0__SYM_露_4_ + _OPAQUE_露:1.0__SYM_露_55_._OPAQUE_露:1.0__SYM_露_36_;
+
+                    let _OPAQUE_露:1.0__SYM_露_85_ = (-_OPAQUE_露:1.0__SYM_露_55_._OPAQUE_露:1.0__SYM_露_33_ + _OPAQUE_露:1.0__SYM_露_28_)._OPAQUE_露:1.0__SYM_露_115_(0.0);
+                    let _OPAQUE_露:1.0__SYM_露_29_ = (_OPAQUE_露:1.0__SYM_露_55_._OPAQUE_露:1.0__SYM_露_33_ + _OPAQUE_露:1.0__SYM_露_28_)._OPAQUE_露:1.0__SYM_露_115_(0.0);
+                    let _OPAQUE_露:1.0__SYM_露_99_ = (-_OPAQUE_露:1.0__SYM_露_55_._OPAQUE_露:1.0__SYM_露_21_ + _OPAQUE_露:1.0__SYM_露_28_)._OPAQUE_露:1.0__SYM_露_115_(0.0);
+                    let _OPAQUE_露:1.0__SYM_露_104_ = (_OPAQUE_露:1.0__SYM_露_55_._OPAQUE_露:1.0__SYM_露_21_ + _OPAQUE_露:1.0__SYM_露_28_)._OPAQUE_露:1.0__SYM_露_115_(0.0);
+
+                    _OPAQUE_露:1.0__SYM_露_8_ = _OPAQUE_露:1.0__SYM_露_8_._OPAQUE_露:1.0__SYM_露_115_(_OPAQUE_露:1.0__SYM_露_85_);
+                    _OPAQUE_露:1.0__SYM_露_9_ = _OPAQUE_露:1.0__SYM_露_9_._OPAQUE_露:1.0__SYM_露_115_(_OPAQUE_露:1.0__SYM_露_29_);
+                    _OPAQUE_露:1.0__SYM_露_113_ = _OPAQUE_露:1.0__SYM_露_113_._OPAQUE_露:1.0__SYM_露_115_(_OPAQUE_露:1.0__SYM_露_99_);
+                    _OPAQUE_露:1.0__SYM_露_67_ = _OPAQUE_露:1.0__SYM_露_67_._OPAQUE_露:1.0__SYM_露_115_(_OPAQUE_露:1.0__SYM_露_104_);
+                }
+            }
+
+            if _OPAQUE_露:1.0__SYM_露_8_ > 0.0 || _OPAQUE_露:1.0__SYM_露_9_ > 0.0 || _OPAQUE_露:1.0__SYM_露_113_ > 0.0 || _OPAQUE_露:1.0__SYM_露_67_ > 0.0 {
+                return _OPAQUE_庭:1.0__SYM_庭_39_((_OPAQUE_露:1.0__SYM_露_8_, _OPAQUE_露:1.0__SYM_露_67_, _OPAQUE_露:1.0__SYM_露_9_, _OPAQUE_露:1.0__SYM_露_113_));
+            }
+        }
+        _OPAQUE_庭:1.0__SYM_庭_19_
+    }
+// _OPAQUE_涌:0.7__SYM_ME_363_ [decoy-metadata]
+
+// [metadata-stripped]
+    _OPAQUE_露:1.0__SYM_露_12_ fn _OPAQUE_露:1.0__SYM_露_106_(&self, _OPAQUE_露:1.0__SYM_露_56_: _OPAQUE_露:1.0__SYM_露_19_) -> _OPAQUE_庭:1.0__SYM_庭_15_ {
+        if let _OPAQUE_庭:1.0__SYM_庭_39_(_OPAQUE_露:1.0__SYM_露_110_) = self._OPAQUE_露:1.0__SYM_露_40_._OPAQUE_項:1.0__SYM_覇_1_(&_OPAQUE_露:1.0__SYM_露_56_) {
+            let _OPAQUE_露:1.0__SYM_露_18_ = _OPAQUE_露:1.0__SYM_露_92_ &_OPAQUE_露:1.0__SYM_露_110_._OPAQUE_露:1.0__SYM_露_78_ {
+                _OPAQUE_庭:1.0__SYM_庭_39_(_OPAQUE_露:1.0__SYM_露_59_) => _OPAQUE_涌:1.0__SYM_露_68_!("_OPAQUE_庭:1.0__SYM_庭_21_ _OPAQUE_庭:1.0__SYM_庭_3_: {}", _OPAQUE_露:1.0__SYM_露_59_),
+                _OPAQUE_庭:1.0__SYM_庭_19_ => "No _OPAQUE_項:1.0__SYM_庭_11_ _OPAQUE_庭:1.0__SYM_庭_21_"._OPAQUE_露:1.0__SYM_露_86_(),
+            };
+            _OPAQUE_涌:1.0__SYM_露_68_!("🖌️ _OPAQUE_庭:1.0__SYM_庭_29_ _OPAQUE_庭:1.0__SYM_庭_18_ 4 (_OPAQUE_庭:1.0__SYM_庭_17_ #{}): _OPAQUE_庭:1.0__SYM_庭_1_ _OPAQUE_庭:1.0__SYM_庭_16_: {} | {} | _OPAQUE_庭:1.0__SYM_庭_2_-X/Y: {}/{}", 
+                _OPAQUE_露:1.0__SYM_露_56_, _OPAQUE_露:1.0__SYM_露_110_._OPAQUE_露:1.0__SYM_露_102_._OPAQUE_露:1.0__SYM_露_13_(), _OPAQUE_露:1.0__SYM_露_18_, _OPAQUE_露:1.0__SYM_露_110_._OPAQUE_露:1.0__SYM_露_101_, _OPAQUE_露:1.0__SYM_露_110_._OPAQUE_露:1.0__SYM_露_75_)
+        } else {
+            _OPAQUE_涌:1.0__SYM_露_68_!("_OPAQUE_庭:1.0__SYM_庭_17_ #{} _OPAQUE_露:1.0__SYM_露_47_ _OPAQUE_露:1.0__SYM_露_94_ _OPAQUE_露:1.0__SYM_露_98_ _OPAQUE_露:1.0__SYM_露_38_ _OPAQUE_露:1.0__SYM_露_24_", _OPAQUE_露:1.0__SYM_露_56_)
+        }
+    }
+}
+
+// POLYMORPHIC_JCROSS_END

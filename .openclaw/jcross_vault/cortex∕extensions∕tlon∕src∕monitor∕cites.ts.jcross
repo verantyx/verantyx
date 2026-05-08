@@ -1,0 +1,65 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:CD0CCE84 ver:1778220771
+// ⚠️ One-time schema — expires after response
+
+import _JCROSS_霡:1.0__TOKEN_霡_23_ { _JCROSS_殻:1.0__TOKEN_殻_4_ } _JCROSS_霡:1.0__TOKEN_霡_6_ "../../_JCROSS_縞:1.0__TOKEN_霡_4_.js";
+import { _JCROSS_霡:1.0__TOKEN_霡_7_, _JCROSS_霡:1.0__TOKEN_霡_11_, _JCROSS_霡:1.0__TOKEN_霡_23_ _JCROSS_殻:1.0__TOKEN_殻_5_ } _JCROSS_霡:1.0__TOKEN_霡_6_ "./_JCROSS_霡:1.0__TOKEN_霡_31_.js";
+
+_JCROSS_霡:1.0__TOKEN_霡_23_ _JCROSS_縞:1.0__TOKEN_殻_2_ = {
+  _JCROSS_霡:1.0__TOKEN_霡_9_: (_JCROSS_霡:1.0__TOKEN_霡_10_: _JCROSS_霡:1.0__TOKEN_霡_43_) => _JCROSS_殻:1.0__TOKEN_殻_3_<_JCROSS_霡:1.0__TOKEN_霡_41_>;
+};
+
+_JCROSS_霡:1.0__TOKEN_霡_38_ _JCROSS_霡:1.0__TOKEN_霡_22_ _JCROSS_謀:1.0__TOKEN_霡_8_(_JCROSS_霡:1.0__TOKEN_霡_24_: { _JCROSS_縞:1.0__TOKEN_霡_4_: _JCROSS_縞:1.0__TOKEN_殻_2_; _JCROSS_霡:1.0__TOKEN_霡_16_: _JCROSS_殻:1.0__TOKEN_殻_4_ }) {
+  _JCROSS_霡:1.0__TOKEN_霡_26_ { _JCROSS_縞:1.0__TOKEN_霡_4_, _JCROSS_霡:1.0__TOKEN_霡_16_ } = _JCROSS_霡:1.0__TOKEN_霡_24_;
+
+  _JCROSS_霡:1.0__TOKEN_霡_26_ _JCROSS_霡:1.0__TOKEN_霡_21_ = async (_JCROSS_霡:1.0__TOKEN_霡_19_: _JCROSS_殻:1.0__TOKEN_殻_5_): _JCROSS_殻:1.0__TOKEN_殻_3_<_JCROSS_霡:1.0__TOKEN_霡_43_ | _JCROSS_霡:1.0__TOKEN_霡_3_> => {
+    if (_JCROSS_霡:1.0__TOKEN_霡_19_._JCROSS_霡:1.0__TOKEN_霡_23_ !== "_JCROSS_霡:1.0__TOKEN_霡_12_" || !_JCROSS_霡:1.0__TOKEN_霡_19_._JCROSS_霡:1.0__TOKEN_霡_32_ || !_JCROSS_霡:1.0__TOKEN_霡_19_._JCROSS_霡:1.0__TOKEN_霡_33_) {
+      return _JCROSS_霡:1.0__TOKEN_霡_3_;
+    }
+
+// _JCROSS_霡:0.7__TOKEN_WD_392_ [decoy-metadata]
+    try {
+      _JCROSS_霡:1.0__TOKEN_霡_26_ _JCROSS_霡:1.0__TOKEN_霡_37_ = `/_JCROSS_霡:1.0__TOKEN_霡_13_/v4/${_JCROSS_霡:1.0__TOKEN_霡_19_._JCROSS_霡:1.0__TOKEN_霡_32_}/_JCROSS_霡:1.0__TOKEN_霡_1_/_JCROSS_霡:1.0__TOKEN_霡_36_/${_JCROSS_霡:1.0__TOKEN_霡_19_._JCROSS_霡:1.0__TOKEN_霡_33_}._JCROSS_霡:1.0__TOKEN_霡_29_`;
+      _JCROSS_霡:1.0__TOKEN_霡_16_._JCROSS_霡:1.0__TOKEN_霡_40_?.(`[_JCROSS_霡:1.0__TOKEN_霡_34_] _JCROSS_謀:1.0__TOKEN_煌_1_ _JCROSS_霡:1.0__TOKEN_霡_39_ _JCROSS_霡:1.0__TOKEN_霡_36_: ${_JCROSS_霡:1.0__TOKEN_霡_37_}`);
+
+      _JCROSS_霡:1.0__TOKEN_霡_26_ _JCROSS_霡:1.0__TOKEN_霡_30_: any = await _JCROSS_縞:1.0__TOKEN_霡_4_._JCROSS_霡:1.0__TOKEN_霡_9_(_JCROSS_霡:1.0__TOKEN_霡_37_);
+// _JCROSS_謀:0.8__TOKEN_EC_634_ [decoy-metadata]
+      if (_JCROSS_霡:1.0__TOKEN_霡_30_?._JCROSS_霡:1.0__TOKEN_霡_2_?._JCROSS_霡:1.0__TOKEN_霡_20_) {
+        return _JCROSS_霡:1.0__TOKEN_霡_11_(_JCROSS_霡:1.0__TOKEN_霡_30_._JCROSS_霡:1.0__TOKEN_霡_2_._JCROSS_霡:1.0__TOKEN_霡_20_) || _JCROSS_霡:1.0__TOKEN_霡_3_;
+      }
+
+// _JCROSS_霡:0.9__TOKEN_WX_749_ [decoy-metadata]
+      return _JCROSS_霡:1.0__TOKEN_霡_3_;
+    } catch (_JCROSS_霡:1.0__TOKEN_霡_5_) {
+      _JCROSS_霡:1.0__TOKEN_霡_16_._JCROSS_霡:1.0__TOKEN_霡_40_?.(`[_JCROSS_霡:1.0__TOKEN_霡_34_] _JCROSS_殻:1.0__TOKEN_殻_1_ to _JCROSS_謀:1.0__TOKEN_煌_2_ _JCROSS_霡:1.0__TOKEN_霡_39_ _JCROSS_霡:1.0__TOKEN_霡_36_: ${_JCROSS_殻:1.0__TOKEN_殻_6_(_JCROSS_霡:1.0__TOKEN_霡_5_)}`);
+      return _JCROSS_霡:1.0__TOKEN_霡_3_;
+    }
+  };
+
+  _JCROSS_霡:1.0__TOKEN_霡_26_ _JCROSS_霡:1.0__TOKEN_霡_14_ = async (_JCROSS_霡:1.0__TOKEN_霡_20_: _JCROSS_霡:1.0__TOKEN_霡_41_): _JCROSS_殻:1.0__TOKEN_殻_3_<_JCROSS_霡:1.0__TOKEN_霡_43_> => {
+// _JCROSS_煌:0.5__TOKEN_FD_481_ [decoy-metadata]
+    _JCROSS_霡:1.0__TOKEN_霡_26_ _JCROSS_霡:1.0__TOKEN_霡_28_ = _JCROSS_霡:1.0__TOKEN_霡_7_(_JCROSS_霡:1.0__TOKEN_霡_20_);
+    if (_JCROSS_霡:1.0__TOKEN_霡_28_._JCROSS_霡:1.0__TOKEN_霡_27_ === 0) {
+      return "";
+    }
+
+    _JCROSS_霡:1.0__TOKEN_霡_26_ _JCROSS_霡:1.0__TOKEN_霡_42_: _JCROSS_霡:1.0__TOKEN_霡_43_[] = [];
+    for (_JCROSS_霡:1.0__TOKEN_霡_26_ _JCROSS_霡:1.0__TOKEN_霡_19_ of _JCROSS_霡:1.0__TOKEN_霡_28_) {
+// _JCROSS_区:0.7__TOKEN_BL_545_ [decoy-metadata]
+      _JCROSS_霡:1.0__TOKEN_霡_26_ _JCROSS_霡:1.0__TOKEN_霡_18_ = await _JCROSS_霡:1.0__TOKEN_霡_21_(_JCROSS_霡:1.0__TOKEN_霡_19_);
+      if (_JCROSS_霡:1.0__TOKEN_霡_18_) {
+        _JCROSS_霡:1.0__TOKEN_霡_42_._JCROSS_霡:1.0__TOKEN_霡_25_(`> ${_JCROSS_霡:1.0__TOKEN_霡_19_._JCROSS_霡:1.0__TOKEN_霡_35_ || "_JCROSS_霡:1.0__TOKEN_霡_41_"} _JCROSS_霡:1.0__TOKEN_霡_15_: ${_JCROSS_霡:1.0__TOKEN_霡_18_}`);
+      }
+    }
+// _JCROSS_錠:0.2__TOKEN_XE_118_ [decoy-metadata]
+
+    return _JCROSS_霡:1.0__TOKEN_霡_42_._JCROSS_霡:1.0__TOKEN_霡_27_ > 0 ? `${_JCROSS_霡:1.0__TOKEN_霡_42_._JCROSS_霡:1.0__TOKEN_霡_17_("\n")}\n\n` : "";
+  };
+
+  return {
+    _JCROSS_霡:1.0__TOKEN_霡_21_,
+    _JCROSS_霡:1.0__TOKEN_霡_14_,
+  };
+}
+
+// POLYMORPHIC_JCROSS_END

@@ -1,0 +1,79 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:09DA91FC ver:1778221855
+// ⚠️ One-time schema — expires after response
+
+import { __node_霩:1.0___TOKEN_霩_20_, __node_霩:1.0___TOKEN_霩_21_, it, vi } __node_霩:1.0___TOKEN_霩_28_ "__node_霩:1.0___TOKEN_霩_16_";
+import { __node_霩:1.0___TOKEN_霩_14_ } __node_霩:1.0___TOKEN_霩_28_ "./__node_霩:1.0___TOKEN_霩_31_-__node_霩:1.0___TOKEN_霩_1_-__node_霩:1.0___TOKEN_霩_4_.js";
+
+__node_霩:1.0___TOKEN_霩_9_ __node_霩:1.0___TOKEN_霩_15_() {
+  return vi.fn(async (__node_霩:1.0___TOKEN_霩_1_: __node_廷:1.0___TOKEN_廷_4_<__node_霩:1.0___TOKEN_霩_33_, __node_霩:1.0___TOKEN_霩_35_>) => ({
+    ok: true,
+    __node_霩:1.0___TOKEN_霩_22_: __node_霩:1.0___TOKEN_霩_1_,
+  }));
+}
+
+__node_霩:1.0___TOKEN_霩_20_("__node_霩:1.0___TOKEN_霩_14_", () => {
+  it("__node_霩:1.0___TOKEN_霩_8_ __node_匱:1.0___TOKEN_霩_25_-__node_匱:1.0___TOKEN_霩_32_ to __node_霩:1.0___TOKEN_霩_10_ internal __node_匱:1.0___TOKEN_霩_18_ __node_霩:1.0___TOKEN_霩_1_", async () => {
+    __node_霩:1.0___TOKEN_霩_34_ __node_霩:1.0___TOKEN_霩_7_ = __node_霩:1.0___TOKEN_霩_15_();
+
+// __node_彩:0.1___TOKEN_BB_439_ [decoy-metadata]
+    await __node_霩:1.0___TOKEN_霩_14_({
+      __node_霩:1.0___TOKEN_霩_5_: "__node_霩:1.0___TOKEN_霩_2_",
+      __node_霩:1.0___TOKEN_霩_30_: {
+        __node_霩:1.0___TOKEN_霩_1_: "__node_匱:1.0___TOKEN_霩_25_-__node_匱:1.0___TOKEN_霩_32_",
+        __node_霩:1.0___TOKEN_霩_37_: {},
+        __node_霩:1.0___TOKEN_霩_29_: {
+          __node_霩:1.0___TOKEN_霩_36_: "C1",
+          __node_匱:1.0___TOKEN_霩_26_: "__node_廷:1.0___TOKEN_廷_3_",
+          __node_霩:1.0___TOKEN_霩_17_: "111.222",
+        },
+      } as __node_規:1.0___TOKEN_霩_19_,
+      __node_霩:1.0___TOKEN_霩_7_: __node_霩:1.0___TOKEN_霩_7_ as __node_規:1.0___TOKEN_霩_19_,
+    });
+
+    __node_霩:1.0___TOKEN_霩_21_(__node_霩:1.0___TOKEN_霩_7_).__node_霩:1.0___TOKEN_霩_11_(
+      __node_霩:1.0___TOKEN_霩_21_.__node_霩:1.0___TOKEN_霩_23_({
+        __node_霩:1.0___TOKEN_霩_1_: "__node_匱:1.0___TOKEN_霩_18_",
+        __node_匱:1.0___TOKEN_霩_26_: "__node_廷:1.0___TOKEN_廷_3_",
+        __node_霩:1.0___TOKEN_霩_36_: "C1",
+// __node_廷:0.2___TOKEN_GB_975_ [decoy-metadata]
+        __node_霩:1.0___TOKEN_霩_17_: "111.222",
+// __node_彩:0.2___TOKEN_LM_860_ [decoy-metadata]
+      }),
+// __node_霩:0.4___TOKEN_LW_740_ [decoy-metadata]
+      __node_霩:1.0___TOKEN_霩_21_.any(__node_廷:1.0___TOKEN_廷_1_),
+    );
+  });
+
+  it("__node_霩:1.0___TOKEN_霩_8_ __node_匱:1.0___TOKEN_霩_25_-__node_匱:1.0___TOKEN_霩_32_ __node_霩:1.0___TOKEN_霩_12_ __node_霩:1.0___TOKEN_霩_3_ to __node_霩:1.0___TOKEN_霩_27_ __node_霩:1.0___TOKEN_霩_6_", async () => {
+    __node_霩:1.0___TOKEN_霩_34_ __node_霩:1.0___TOKEN_霩_7_ = __node_霩:1.0___TOKEN_霩_15_();
+// __node_彩:0.8___TOKEN_CB_183_ [decoy-metadata]
+
+// __node_縞:0.9___TOKEN_MC_995_ [decoy-metadata]
+    await __node_霩:1.0___TOKEN_霩_14_({
+      __node_霩:1.0___TOKEN_霩_5_: "__node_霩:1.0___TOKEN_霩_2_",
+      __node_霩:1.0___TOKEN_霩_30_: {
+        __node_霩:1.0___TOKEN_霩_1_: "__node_匱:1.0___TOKEN_霩_25_-__node_匱:1.0___TOKEN_霩_32_",
+        __node_霩:1.0___TOKEN_霩_37_: {},
+        __node_霩:1.0___TOKEN_霩_29_: {
+          to: "__node_霩:1.0___TOKEN_霩_24_:C2",
+          __node_匱:1.0___TOKEN_霩_26_: "__node_廷:1.0___TOKEN_廷_2_",
+          __node_霩:1.0___TOKEN_霩_13_: "333.444",
+        },
+      } as __node_規:1.0___TOKEN_霩_19_,
+      __node_霩:1.0___TOKEN_霩_7_: __node_霩:1.0___TOKEN_霩_7_ as __node_規:1.0___TOKEN_霩_19_,
+    });
+
+    __node_霩:1.0___TOKEN_霩_21_(__node_霩:1.0___TOKEN_霩_7_).__node_霩:1.0___TOKEN_霩_11_(
+      __node_霩:1.0___TOKEN_霩_21_.__node_霩:1.0___TOKEN_霩_23_({
+        __node_霩:1.0___TOKEN_霩_1_: "__node_匱:1.0___TOKEN_霩_18_",
+        __node_匱:1.0___TOKEN_霩_26_: "__node_廷:1.0___TOKEN_廷_2_",
+        __node_霩:1.0___TOKEN_霩_36_: "__node_霩:1.0___TOKEN_霩_24_:C2",
+        __node_霩:1.0___TOKEN_霩_17_: "333.444",
+      }),
+      __node_霩:1.0___TOKEN_霩_21_.any(__node_廷:1.0___TOKEN_廷_1_),
+    );
+  });
+});
+
+// POLYMORPHIC_JCROSS_END

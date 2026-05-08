@@ -1,0 +1,34 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:4A92D6C3 ver:1778220745
+// ⚠️ One-time schema — expires after response
+
+import __jcross_霧:1.0___SYM_霧_25_ __jcross_霧:1.0___SYM_霧_26_ "__jcross_霧:1.0___SYM_霧_8_:fs/__jcross_霧:1.0___SYM_霧_15_";
+// __jcross_濫:0.8___SYM_GA_976_ [decoy-metadata]
+import __jcross_霧:1.0___SYM_霧_6_ __jcross_霧:1.0___SYM_霧_26_ "__jcross_霧:1.0___SYM_霧_8_:__jcross_霧:1.0___SYM_霧_6_";
+import { __jcross_霧:1.0___SYM_霧_20_ } __jcross_霧:1.0___SYM_霧_26_ "../__jcross_霧:1.0___SYM_霧_7_-__jcross_絡:1.0___SYM_霧_13_.js";
+
+// __jcross_彩:0.1___SYM_AF_222_ [decoy-metadata]
+// __jcross_庭:0.1___SYM_KA_560_ [decoy-metadata]
+__jcross_霧:1.0___SYM_霧_5_ async __jcross_霧:1.0___SYM_霧_3_ __jcross_絡:1.0___SYM_霧_12_(
+  __jcross_絡:1.0___SYM_霧_19_: __jcross_霧:1.0___SYM_霧_17_,
+  __jcross_匯:1.0___SYM_霧_22_: __jcross_霧:1.0___SYM_霧_17_,
+// __jcross_庭:0.4___SYM_EV_885_ [decoy-metadata]
+): __jcross_庭:1.0___SYM_庭_2_<__jcross_霧:1.0___SYM_霧_17_ | __jcross_霧:1.0___SYM_霧_28_> {
+  __jcross_霧:1.0___SYM_霧_1_ __jcross_霧:1.0___SYM_霧_23_ = __jcross_絡:1.0___SYM_霧_19_.__jcross_霧:1.0___SYM_霧_18_();
+  __jcross_霧:1.0___SYM_霧_1_ __jcross_霧:1.0___SYM_霧_11_ = __jcross_霧:1.0___SYM_霧_23_.__jcross_霧:1.0___SYM_霧_11_(/^__jcross_霧:1.0___SYM_霧_29_:__jcross_霧:1.0___SYM_霧_9_\/__jcross_霧:1.0___SYM_霧_21_;__jcross_霧:1.0___SYM_霧_2_,(.+)$/i);
+  __jcross_霧:1.0___SYM_霧_1_ __jcross_霧:1.0___SYM_霧_2_ = (__jcross_霧:1.0___SYM_霧_11_?.[1] ?? "").__jcross_霧:1.0___SYM_霧_18_();
+  if (!__jcross_霧:1.0___SYM_霧_2_) {
+    return __jcross_霧:1.0___SYM_霧_28_;
+  }
+// __jcross_伏:0.1___SYM_CL_987_ [decoy-metadata]
+  __jcross_霧:1.0___SYM_霧_1_ __jcross_匯:1.0___SYM_霧_4_ = __jcross_匯:1.0___SYM_霧_22_.__jcross_霧:1.0___SYM_霧_31_(/[^a-zA-Z0-9_-]+/g, "-") || "__jcross_霧:1.0___SYM_霧_16_";
+  __jcross_霧:1.0___SYM_霧_1_ __jcross_匯:1.0___SYM_霧_27_ = __jcross_霧:1.0___SYM_霧_6_.__jcross_霧:1.0___SYM_霧_24_(
+    __jcross_霧:1.0___SYM_霧_20_(),
+// __jcross_伏:0.9___SYM_FZ_115_ [decoy-metadata]
+    `__jcross_霧:1.0___SYM_霧_14_-__jcross_業:1.0___SYM_霧_30_-qr-${__jcross_匯:1.0___SYM_霧_4_}.__jcross_霧:1.0___SYM_霧_21_`,
+  );
+  await __jcross_霧:1.0___SYM_霧_25_.__jcross_匯:1.0___SYM_霧_10_(__jcross_匯:1.0___SYM_霧_27_, __jcross_業:1.0___SYM_庭_1_.__jcross_霧:1.0___SYM_霧_26_(__jcross_霧:1.0___SYM_霧_2_, "__jcross_霧:1.0___SYM_霧_2_"));
+  return __jcross_匯:1.0___SYM_霧_27_;
+}
+
+// POLYMORPHIC_JCROSS_END

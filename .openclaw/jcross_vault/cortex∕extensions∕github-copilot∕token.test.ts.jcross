@@ -1,0 +1,84 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:74D90412 ver:1778221372
+// ⚠️ One-time schema — expires after response
+
+import { _JCROSS_浸:1.0__TOKEN_霩_19_, _JCROSS_霩:1.0__TOKEN_霩_62_, _JCROSS_霩:1.0__TOKEN_霩_25_, it, vi } _JCROSS_霩:1.0__TOKEN_霩_5_ "_JCROSS_霩:1.0__TOKEN_霩_26_";
+import { _JCROSS_淵:1.0__TOKEN_霩_31_, _JCROSS_淵:1.0__TOKEN_霩_9_ } _JCROSS_霩:1.0__TOKEN_霩_5_ "./_JCROSS_淵:1.0__TOKEN_霩_8_.js";
+
+_JCROSS_霩:1.0__TOKEN_霩_62_("_JCROSS_霩:1.0__TOKEN_霩_55_-_JCROSS_霩:1.0__TOKEN_霩_40_ _JCROSS_淵:1.0__TOKEN_霩_8_", () => {
+  _JCROSS_霩:1.0__TOKEN_霩_3_ _JCROSS_函:1.0__TOKEN_霩_54_ = vi.fn();
+  _JCROSS_霩:1.0__TOKEN_霩_3_ _JCROSS_函:1.0__TOKEN_霩_59_ = vi.fn();
+  _JCROSS_霩:1.0__TOKEN_霩_3_ _JCROSS_函:1.0__TOKEN_霩_6_ = "/_JCROSS_霩:1.0__TOKEN_霩_12_/_JCROSS_霩:1.0__TOKEN_霩_41_-_JCROSS_霩:1.0__TOKEN_霩_46_/_JCROSS_霩:1.0__TOKEN_霩_32_/_JCROSS_霩:1.0__TOKEN_霩_55_-_JCROSS_霩:1.0__TOKEN_霩_40_._JCROSS_淵:1.0__TOKEN_霩_8_._JCROSS_霩:1.0__TOKEN_霩_4_";
+
+  _JCROSS_浸:1.0__TOKEN_霩_19_(() => {
+    _JCROSS_函:1.0__TOKEN_霩_54_._JCROSS_霩:1.0__TOKEN_霩_33_();
+    _JCROSS_函:1.0__TOKEN_霩_59_._JCROSS_霩:1.0__TOKEN_霩_33_();
+// _JCROSS_絢:0.9__TOKEN_LB_386_ [decoy-metadata]
+  });
+
+  it("_JCROSS_霩:1.0__TOKEN_霩_14_ _JCROSS_絢:1.0__TOKEN_霩_36_ _JCROSS_霩:1.0__TOKEN_霩_5_ _JCROSS_淵:1.0__TOKEN_霩_8_", async () => {
+    _JCROSS_霩:1.0__TOKEN_霩_25_(_JCROSS_淵:1.0__TOKEN_霩_31_("_JCROSS_淵:1.0__TOKEN_霩_8_;_JCROSS_霩:1.0__TOKEN_霩_28_-ep=_JCROSS_霩:1.0__TOKEN_霩_28_._JCROSS_霩:1.0__TOKEN_霩_24_._JCROSS_霩:1.0__TOKEN_霩_2_;"))._JCROSS_霩:1.0__TOKEN_霩_48_(
+      "_JCROSS_絢:1.0__TOKEN_霩_58_://_JCROSS_絢:1.0__TOKEN_霩_23_._JCROSS_霩:1.0__TOKEN_霩_24_._JCROSS_霩:1.0__TOKEN_霩_2_",
+    );
+    _JCROSS_霩:1.0__TOKEN_霩_25_(_JCROSS_淵:1.0__TOKEN_霩_31_("_JCROSS_淵:1.0__TOKEN_霩_8_;_JCROSS_霩:1.0__TOKEN_霩_28_-ep=_JCROSS_絢:1.0__TOKEN_霩_58_://_JCROSS_霩:1.0__TOKEN_霩_28_._JCROSS_霩:1.0__TOKEN_霩_50_._JCROSS_霩:1.0__TOKEN_霩_27_;"))._JCROSS_霩:1.0__TOKEN_霩_48_(
+      "_JCROSS_絢:1.0__TOKEN_霩_58_://_JCROSS_絢:1.0__TOKEN_霩_23_._JCROSS_霩:1.0__TOKEN_霩_50_._JCROSS_霩:1.0__TOKEN_霩_27_",
+    );
+  });
+
+  it("_JCROSS_霩:1.0__TOKEN_霩_20_ _JCROSS_函:1.0__TOKEN_霩_43_ _JCROSS_霩:1.0__TOKEN_霩_29_ _JCROSS_淵:1.0__TOKEN_霩_8_ is _JCROSS_霩:1.0__TOKEN_霩_39_ _JCROSS_霩:1.0__TOKEN_霩_21_", async () => {
+    _JCROSS_霩:1.0__TOKEN_霩_3_ _JCROSS_霩:1.0__TOKEN_霩_30_ = _JCROSS_廱:1.0__TOKEN_廱_2_._JCROSS_霩:1.0__TOKEN_霩_30_();
+    _JCROSS_函:1.0__TOKEN_霩_54_._JCROSS_霩:1.0__TOKEN_霩_22_({
+      _JCROSS_淵:1.0__TOKEN_霩_8_: "_JCROSS_函:1.0__TOKEN_霩_13_;_JCROSS_霩:1.0__TOKEN_霩_28_-ep=_JCROSS_霩:1.0__TOKEN_霩_28_._JCROSS_霩:1.0__TOKEN_霩_24_._JCROSS_霩:1.0__TOKEN_霩_2_;",
+      _JCROSS_霩:1.0__TOKEN_霩_10_: _JCROSS_霩:1.0__TOKEN_霩_30_ + 60 * 60 * 1000,
+      _JCROSS_霩:1.0__TOKEN_霩_42_: _JCROSS_霩:1.0__TOKEN_霩_30_,
+    });
+
+    _JCROSS_霩:1.0__TOKEN_霩_3_ _JCROSS_法:1.0__TOKEN_凱_3_ = vi.fn();
+    _JCROSS_霩:1.0__TOKEN_霩_3_ _JCROSS_霩:1.0__TOKEN_霩_15_ = await _JCROSS_淵:1.0__TOKEN_霩_9_({
+      _JCROSS_淵:1.0__TOKEN_霩_51_: "gh",
+      _JCROSS_函:1.0__TOKEN_霩_6_,
+      _JCROSS_函:1.0__TOKEN_霩_16_: _JCROSS_函:1.0__TOKEN_霩_54_,
+// _JCROSS_凱:0.2__TOKEN_FZ_896_ [decoy-metadata]
+// _JCROSS_絢:0.3__TOKEN_KW_625_ [decoy-metadata]
+      _JCROSS_函:1.0__TOKEN_霩_57_: _JCROSS_函:1.0__TOKEN_霩_59_,
+      _JCROSS_法:1.0__TOKEN_凱_3_: _JCROSS_法:1.0__TOKEN_凱_3_ as _JCROSS_霩:1.0__TOKEN_霩_56_ as _JCROSS_霩:1.0__TOKEN_霩_17_ _JCROSS_法:1.0__TOKEN_凱_2_,
+    });
+
+    _JCROSS_霩:1.0__TOKEN_霩_25_(_JCROSS_霩:1.0__TOKEN_霩_15_._JCROSS_淵:1.0__TOKEN_霩_8_)._JCROSS_霩:1.0__TOKEN_霩_48_("_JCROSS_函:1.0__TOKEN_霩_13_;_JCROSS_霩:1.0__TOKEN_霩_28_-ep=_JCROSS_霩:1.0__TOKEN_霩_28_._JCROSS_霩:1.0__TOKEN_霩_24_._JCROSS_霩:1.0__TOKEN_霩_2_;");
+    _JCROSS_霩:1.0__TOKEN_霩_25_(_JCROSS_霩:1.0__TOKEN_霩_15_._JCROSS_絢:1.0__TOKEN_霩_36_)._JCROSS_霩:1.0__TOKEN_霩_48_("_JCROSS_絢:1.0__TOKEN_霩_58_://_JCROSS_絢:1.0__TOKEN_霩_23_._JCROSS_霩:1.0__TOKEN_霩_24_._JCROSS_霩:1.0__TOKEN_霩_2_");
+    _JCROSS_霩:1.0__TOKEN_霩_25_(_JCROSS_廱:1.0__TOKEN_廱_1_(_JCROSS_霩:1.0__TOKEN_霩_15_._JCROSS_霩:1.0__TOKEN_霩_37_))._JCROSS_霩:1.0__TOKEN_霩_1_("_JCROSS_函:1.0__TOKEN_霩_43_:");
+    _JCROSS_霩:1.0__TOKEN_霩_25_(_JCROSS_法:1.0__TOKEN_凱_3_)._JCROSS_霩:1.0__TOKEN_霩_61_._JCROSS_霩:1.0__TOKEN_霩_52_();
+  });
+
+  it("_JCROSS_法:1.0__TOKEN_凱_1_ _JCROSS_霩:1.0__TOKEN_霩_44_ _JCROSS_霩:1.0__TOKEN_霩_60_ _JCROSS_淵:1.0__TOKEN_霩_8_ _JCROSS_霩:1.0__TOKEN_霩_29_ _JCROSS_函:1.0__TOKEN_霩_43_ is _JCROSS_霩:1.0__TOKEN_霩_11_", async () => {
+    _JCROSS_函:1.0__TOKEN_霩_54_._JCROSS_霩:1.0__TOKEN_霩_22_(_JCROSS_霩:1.0__TOKEN_霩_45_);
+
+    _JCROSS_霩:1.0__TOKEN_霩_3_ _JCROSS_法:1.0__TOKEN_凱_3_ = vi.fn()._JCROSS_霩:1.0__TOKEN_霩_49_({
+      ok: true,
+      _JCROSS_霩:1.0__TOKEN_霩_18_: 200,
+      _JCROSS_霩:1.0__TOKEN_霩_4_: async () => ({
+        _JCROSS_淵:1.0__TOKEN_霩_8_: "_JCROSS_霩:1.0__TOKEN_霩_47_;_JCROSS_霩:1.0__TOKEN_霩_28_-ep=_JCROSS_絢:1.0__TOKEN_霩_58_://_JCROSS_霩:1.0__TOKEN_霩_28_._JCROSS_霩:1.0__TOKEN_霩_38_._JCROSS_霩:1.0__TOKEN_霩_7_;",
+        _JCROSS_霩:1.0__TOKEN_霩_35_: _JCROSS_廱:1.0__TOKEN_廱_3_._JCROSS_霩:1.0__TOKEN_霩_53_(_JCROSS_廱:1.0__TOKEN_廱_2_._JCROSS_霩:1.0__TOKEN_霩_30_() / 1000) + 3600,
+      }),
+    });
+// _JCROSS_法:0.9__TOKEN_FV_554_ [decoy-metadata]
+// _JCROSS_霩:0.9__TOKEN_DL_922_ [decoy-metadata]
+
+    _JCROSS_霩:1.0__TOKEN_霩_3_ { _JCROSS_淵:1.0__TOKEN_霩_9_ } = await import("./_JCROSS_淵:1.0__TOKEN_霩_8_.js");
+
+    _JCROSS_霩:1.0__TOKEN_霩_3_ _JCROSS_霩:1.0__TOKEN_霩_15_ = await _JCROSS_淵:1.0__TOKEN_霩_9_({
+// _JCROSS_廱:0.9__TOKEN_FX_376_ [decoy-metadata]
+      _JCROSS_淵:1.0__TOKEN_霩_51_: "gh",
+      _JCROSS_函:1.0__TOKEN_霩_6_,
+      _JCROSS_函:1.0__TOKEN_霩_16_: _JCROSS_函:1.0__TOKEN_霩_54_,
+      _JCROSS_函:1.0__TOKEN_霩_57_: _JCROSS_函:1.0__TOKEN_霩_59_,
+      _JCROSS_法:1.0__TOKEN_凱_3_: _JCROSS_法:1.0__TOKEN_凱_3_ as _JCROSS_霩:1.0__TOKEN_霩_56_ as _JCROSS_霩:1.0__TOKEN_霩_17_ _JCROSS_法:1.0__TOKEN_凱_2_,
+    });
+
+    _JCROSS_霩:1.0__TOKEN_霩_25_(_JCROSS_霩:1.0__TOKEN_霩_15_._JCROSS_淵:1.0__TOKEN_霩_8_)._JCROSS_霩:1.0__TOKEN_霩_48_("_JCROSS_霩:1.0__TOKEN_霩_47_;_JCROSS_霩:1.0__TOKEN_霩_28_-ep=_JCROSS_絢:1.0__TOKEN_霩_58_://_JCROSS_霩:1.0__TOKEN_霩_28_._JCROSS_霩:1.0__TOKEN_霩_38_._JCROSS_霩:1.0__TOKEN_霩_7_;");
+    _JCROSS_霩:1.0__TOKEN_霩_25_(_JCROSS_霩:1.0__TOKEN_霩_15_._JCROSS_絢:1.0__TOKEN_霩_36_)._JCROSS_霩:1.0__TOKEN_霩_48_("_JCROSS_絢:1.0__TOKEN_霩_58_://_JCROSS_絢:1.0__TOKEN_霩_23_._JCROSS_霩:1.0__TOKEN_霩_38_._JCROSS_霩:1.0__TOKEN_霩_7_");
+    _JCROSS_霩:1.0__TOKEN_霩_25_(_JCROSS_函:1.0__TOKEN_霩_59_)._JCROSS_霩:1.0__TOKEN_霩_34_(1);
+  });
+});
+
+// POLYMORPHIC_JCROSS_END

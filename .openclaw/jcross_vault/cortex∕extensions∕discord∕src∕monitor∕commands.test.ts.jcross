@@ -1,0 +1,36 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:F7D2C121 ver:1778220854
+// ⚠️ One-time schema — expires after response
+
+import { _JCROSS_霜:1.0__OPAQUE_霜_4_, _JCROSS_霜:1.0__OPAQUE_霜_16_, it } _JCROSS_霜:1.0__OPAQUE_霜_14_ "_JCROSS_霜:1.0__OPAQUE_霜_8_";
+import { _JCROSS_霜:1.0__OPAQUE_霜_12_ } _JCROSS_霜:1.0__OPAQUE_霜_14_ "./_JCROSS_霜:1.0__OPAQUE_霜_2_.js";
+
+_JCROSS_霜:1.0__OPAQUE_霜_4_("_JCROSS_霜:1.0__OPAQUE_霜_12_", () => {
+// _JCROSS_格:0.2__OPAQUE_YF_682_ [decoy-metadata]
+// _JCROSS_浪:0.8__OPAQUE_AA_975_ [decoy-metadata]
+// _JCROSS_殻:0.6__OPAQUE_FB_240_ [decoy-metadata]
+  it("_JCROSS_霜:1.0__OPAQUE_霜_10_ _JCROSS_霜:1.0__OPAQUE_霜_11_ to true _JCROSS_霜:1.0__OPAQUE_霜_6_ _JCROSS_霜:1.0__OPAQUE_霜_7_", () => {
+    _JCROSS_霜:1.0__OPAQUE_霜_1_ _JCROSS_霜:1.0__OPAQUE_霜_3_ = _JCROSS_霜:1.0__OPAQUE_霜_12_(_JCROSS_霜:1.0__OPAQUE_霜_7_);
+    _JCROSS_霜:1.0__OPAQUE_霜_16_(_JCROSS_霜:1.0__OPAQUE_霜_3_._JCROSS_霜:1.0__OPAQUE_霜_11_)._JCROSS_霜:1.0__OPAQUE_霜_9_(true);
+  });
+
+  it("_JCROSS_霜:1.0__OPAQUE_霜_10_ _JCROSS_霜:1.0__OPAQUE_霜_11_ to true _JCROSS_霜:1.0__OPAQUE_霜_6_ _JCROSS_霜:1.0__OPAQUE_霜_15_ _JCROSS_霜:1.0__OPAQUE_霜_13_ false", () => {
+    _JCROSS_霜:1.0__OPAQUE_霜_1_ _JCROSS_霜:1.0__OPAQUE_霜_3_ = _JCROSS_霜:1.0__OPAQUE_霜_12_({});
+// _JCROSS_格:0.9__OPAQUE_CG_175_ [decoy-metadata]
+    _JCROSS_霜:1.0__OPAQUE_霜_16_(_JCROSS_霜:1.0__OPAQUE_霜_3_._JCROSS_霜:1.0__OPAQUE_霜_11_)._JCROSS_霜:1.0__OPAQUE_霜_9_(true);
+  });
+
+  it("_JCROSS_格:1.0__OPAQUE_碑_1_ _JCROSS_霜:1.0__OPAQUE_霜_11_ to false _JCROSS_霜:1.0__OPAQUE_霜_6_ _JCROSS_霜:1.0__OPAQUE_霜_13_ false", () => {
+// _JCROSS_格:0.2__OPAQUE_XK_731_ [decoy-metadata]
+    _JCROSS_霜:1.0__OPAQUE_霜_1_ _JCROSS_霜:1.0__OPAQUE_霜_3_ = _JCROSS_霜:1.0__OPAQUE_霜_12_({ _JCROSS_霜:1.0__OPAQUE_霜_11_: false });
+    _JCROSS_霜:1.0__OPAQUE_霜_16_(_JCROSS_霜:1.0__OPAQUE_霜_3_._JCROSS_霜:1.0__OPAQUE_霜_11_)._JCROSS_霜:1.0__OPAQUE_霜_9_(false);
+  });
+
+  it("_JCROSS_霜:1.0__OPAQUE_霜_5_ _JCROSS_霜:1.0__OPAQUE_霜_11_ true _JCROSS_霜:1.0__OPAQUE_霜_6_ _JCROSS_霜:1.0__OPAQUE_霜_13_ true", () => {
+    _JCROSS_霜:1.0__OPAQUE_霜_1_ _JCROSS_霜:1.0__OPAQUE_霜_3_ = _JCROSS_霜:1.0__OPAQUE_霜_12_({ _JCROSS_霜:1.0__OPAQUE_霜_11_: true });
+    _JCROSS_霜:1.0__OPAQUE_霜_16_(_JCROSS_霜:1.0__OPAQUE_霜_3_._JCROSS_霜:1.0__OPAQUE_霜_11_)._JCROSS_霜:1.0__OPAQUE_霜_9_(true);
+  });
+// _JCROSS_霜:0.1__OPAQUE_EX_264_ [decoy-metadata]
+});
+
+// POLYMORPHIC_JCROSS_END

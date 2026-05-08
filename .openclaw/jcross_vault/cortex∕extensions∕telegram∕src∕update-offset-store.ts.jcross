@@ -1,0 +1,152 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:06B0DE35 ver:1778221454
+// ⚠️ One-time schema — expires after response
+
+import fs __node_露:1.0___ASTNODE_露_46_ "__node_露:1.0___ASTNODE_露_23_:fs/____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_32_";
+import os __node_露:1.0___ASTNODE_露_46_ "__node_露:1.0___ASTNODE_露_23_:os";
+import ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_16_ __node_露:1.0___ASTNODE_露_46_ "__node_露:1.0___ASTNODE_露_23_:____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_16_";
+import { ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_39_ } __node_露:1.0___ASTNODE_露_46_ "____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_42_/____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_24_-__node_露:1.0___ASTNODE_露_37_/____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_14_-____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_48_";
+import { ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_30_ } __node_露:1.0___ASTNODE_露_46_ "____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_42_/____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_24_-__node_露:1.0___ASTNODE_露_37_/____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_76_-____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_58_";
+
+____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_6_ ____node_露:1.0___ASTNODE_露_23__廨:1.0___ASTNODE_廨_5_ = 2;
+
+____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_2_ ____node_露:1.0___ASTNODE_露_23__廨:1.0___ASTNODE_廨_3_ = {
+  ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_66_: ____node_露:1.0___ASTNODE_露_23__格:1.0___ASTNODE_露_13_;
+  ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_34_: ____node_露:1.0___ASTNODE_露_23__格:1.0___ASTNODE_露_13_ | ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_7_;
+  ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_73_: ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_21_ | ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_7_;
+};
+
+____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_10_ ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_71_(____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_68_: ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_45_): ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_68_ is ____node_露:1.0___ASTNODE_露_23__格:1.0___ASTNODE_露_13_ {
+  return ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_78_ ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_68_ === "____node_露:1.0___ASTNODE_露_23__格:1.0___ASTNODE_露_13_" && ____node_露:1.0___ASTNODE_露_23__格:1.0___ASTNODE_廨_4_.____node_露:1.0___ASTNODE_露_23__格:1.0___ASTNODE_露_36_(____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_68_) && ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_68_ >= 0;
+}
+
+// __node_秘:0.1___ASTNODE_GH_214_ [decoy-metadata]
+____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_10_ ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_55_(____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_65_?: ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_21_) {
+  ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_6_ ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_15_ = ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_65_?.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_60_();
+  if (!____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_15_) {
+    return "____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_79_";
+  }
+  return ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_15_.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_8_(/[^a-z0-9._-]+/gi, "_");
+}
+
+____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_10_ ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_29_(
+  ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_65_?: ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_21_,
+  __node_露:1.0___ASTNODE_露_75_: ____node_露:1.0___ASTNODE_露_23__廨:1.0___ASTNODE_廨_6_.____node_露:1.0___ASTNODE_露_23__廨:1.0___ASTNODE_廨_8_ = ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_54_.__node_露:1.0___ASTNODE_露_75_,
+): ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_21_ {
+  ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_6_ ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_50_ = ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_30_(__node_露:1.0___ASTNODE_露_75_, os.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_4_);
+  ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_6_ ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_61_ = ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_55_(____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_65_);
+  return ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_16_.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_18_(____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_50_, "____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_63_", `____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_11_-____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_41_-${____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_61_}.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_70_`);
+}
+
+____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_10_ ____node_露:1.0___ASTNODE_露_23__秘:1.0___ASTNODE_露_52_(____node_露:1.0___ASTNODE_露_23__秘:1.0___ASTNODE_露_51_?: ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_21_): ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_21_ | ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_7_ {
+  ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_6_ ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_15_ = ____node_露:1.0___ASTNODE_露_23__秘:1.0___ASTNODE_露_51_?.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_60_();
+  if (!____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_15_) {
+    return ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_7_;
+  }
+  ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_6_ [____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_12_] = ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_15_.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_33_(":", 1);
+  if (!____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_12_ || !/^\d+$/.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_49_(____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_12_)) {
+    return ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_7_;
+  }
+  return ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_12_;
+}
+
+____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_10_ ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_19_(__node_露:1.0___ASTNODE_露_56_: ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_21_): ____node_露:1.0___ASTNODE_露_23__廨:1.0___ASTNODE_廨_3_ | ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_7_ {
+  try {
+    ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_6_ ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_53_ = ____node_露:1.0___ASTNODE_露_23__廨:1.0___ASTNODE_廨_1_.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_5_(__node_露:1.0___ASTNODE_露_56_) as {
+      ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_66_?: ____node_露:1.0___ASTNODE_露_23__格:1.0___ASTNODE_露_13_;
+      ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_34_?: ____node_露:1.0___ASTNODE_露_23__格:1.0___ASTNODE_露_13_ | ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_7_;
+      ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_73_?: ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_21_ | ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_7_;
+    };
+    if (____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_53_?.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_66_ !== ____node_露:1.0___ASTNODE_露_23__廨:1.0___ASTNODE_廨_5_ && ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_53_?.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_66_ !== 1) {
+      return ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_7_;
+    }
+    if (____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_53_.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_34_ !== ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_7_ && !____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_71_(____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_53_.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_34_)) {
+      return ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_7_;
+    }
+    if (
+      ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_53_.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_66_ === ____node_露:1.0___ASTNODE_露_23__廨:1.0___ASTNODE_廨_5_ &&
+      ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_53_.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_73_ !== ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_7_ &&
+      ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_78_ ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_53_.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_73_ !== "____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_21_"
+    ) {
+      return ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_7_;
+    }
+    return {
+      ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_66_: ____node_露:1.0___ASTNODE_露_23__廨:1.0___ASTNODE_廨_5_,
+      ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_34_: ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_53_.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_34_ ?? ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_7_,
+      ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_73_: ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_53_.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_66_ === ____node_露:1.0___ASTNODE_露_23__廨:1.0___ASTNODE_廨_5_ ? (____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_53_.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_73_ ?? ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_7_) : ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_7_,
+    };
+  } catch {
+// __node_濫:0.9___ASTNODE_VG_998_ [decoy-metadata]
+    return ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_7_;
+  }
+}
+
+____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_57_ async ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_10_ ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_9_(____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_1_: {
+  ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_65_?: ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_21_;
+  ____node_露:1.0___ASTNODE_露_23__秘:1.0___ASTNODE_露_43_?: ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_21_;
+  __node_露:1.0___ASTNODE_露_75_?: ____node_露:1.0___ASTNODE_露_23__廨:1.0___ASTNODE_廨_6_.____node_露:1.0___ASTNODE_露_23__廨:1.0___ASTNODE_廨_8_;
+}): ____node_露:1.0___ASTNODE_露_23__廨:1.0___ASTNODE_廨_9_<____node_露:1.0___ASTNODE_露_23__格:1.0___ASTNODE_露_13_ | ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_7_> {
+  ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_6_ ____node_露:1.0___ASTNODE_露_23__匾:1.0___ASTNODE_露_69_ = ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_29_(____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_1_.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_65_, ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_1_.__node_露:1.0___ASTNODE_露_75_);
+  try {
+    ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_6_ __node_露:1.0___ASTNODE_露_56_ = await fs.____node_露:1.0___ASTNODE_露_23__匾:1.0___ASTNODE_露_20_(____node_露:1.0___ASTNODE_露_23__匾:1.0___ASTNODE_露_69_, "__node_露:1.0___ASTNODE_露_67_-8");
+// __node_網:0.6___ASTNODE_WK_606_ [decoy-metadata]
+    ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_6_ ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_53_ = ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_19_(__node_露:1.0___ASTNODE_露_56_);
+    ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_6_ ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_17_ = ____node_露:1.0___ASTNODE_露_23__秘:1.0___ASTNODE_露_52_(____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_1_.____node_露:1.0___ASTNODE_露_23__秘:1.0___ASTNODE_露_43_);
+    if (____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_17_ && ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_53_?.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_73_ && ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_53_.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_73_ !== ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_17_) {
+      return ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_7_;
+    }
+    if (____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_17_ && ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_53_?.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_73_ === ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_7_) {
+      return ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_7_;
+    }
+    return ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_53_?.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_34_ ?? ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_7_;
+  } catch (__node_露:1.0___ASTNODE_露_47_) {
+    ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_6_ __node_露:1.0___ASTNODE_露_77_ = (__node_露:1.0___ASTNODE_露_47_ as { __node_露:1.0___ASTNODE_露_77_?: ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_21_ }).__node_露:1.0___ASTNODE_露_77_;
+    if (__node_露:1.0___ASTNODE_露_77_ === "____node_露:1.0___ASTNODE_露_23__廨:1.0___ASTNODE_廨_7_") {
+      return ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_7_;
+    }
+    return ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_7_;
+  }
+// __node_廨:0.1___ASTNODE_MB_378_ [decoy-metadata]
+}
+
+____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_57_ async ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_10_ ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_62_(____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_1_: {
+  ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_65_?: ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_21_;
+  ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_28_: ____node_露:1.0___ASTNODE_露_23__格:1.0___ASTNODE_露_13_;
+  ____node_露:1.0___ASTNODE_露_23__秘:1.0___ASTNODE_露_43_?: ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_21_;
+  __node_露:1.0___ASTNODE_露_75_?: ____node_露:1.0___ASTNODE_露_23__廨:1.0___ASTNODE_廨_6_.____node_露:1.0___ASTNODE_露_23__廨:1.0___ASTNODE_廨_8_;
+}): ____node_露:1.0___ASTNODE_露_23__廨:1.0___ASTNODE_廨_9_<____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_27_> {
+  if (!____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_71_(____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_1_.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_28_)) {
+    ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_38_ __node_露:1.0___ASTNODE_露_64_ ____node_露:1.0___ASTNODE_露_23__廨:1.0___ASTNODE_廨_10_("____node_露:1.0___ASTNODE_露_23__廨:1.0___ASTNODE_廨_2_ ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_11_ ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_41_ ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_3_ be a __node_露:1.0___ASTNODE_露_22_-____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_31_ ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_72_ ____node_露:1.0___ASTNODE_露_23__格:1.0___ASTNODE_露_25_.");
+  }
+  ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_6_ ____node_露:1.0___ASTNODE_露_23__匾:1.0___ASTNODE_露_69_ = ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_29_(____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_1_.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_65_, ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_1_.__node_露:1.0___ASTNODE_露_75_);
+  ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_6_ ____node_露:1.0___ASTNODE_露_23__匾:1.0___ASTNODE_露_40_: ____node_露:1.0___ASTNODE_露_23__廨:1.0___ASTNODE_廨_3_ = {
+    ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_66_: ____node_露:1.0___ASTNODE_露_23__廨:1.0___ASTNODE_廨_5_,
+    ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_34_: ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_1_.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_28_,
+    ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_73_: ____node_露:1.0___ASTNODE_露_23__秘:1.0___ASTNODE_露_52_(____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_1_.____node_露:1.0___ASTNODE_露_23__秘:1.0___ASTNODE_露_43_),
+  };
+  await ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_39_(____node_露:1.0___ASTNODE_露_23__匾:1.0___ASTNODE_露_69_, ____node_露:1.0___ASTNODE_露_23__匾:1.0___ASTNODE_露_40_, {
+    ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_74_: 0o600,
+    ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_59_: true,
+    ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_44_: 0o700,
+  });
+}
+
+____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_57_ async ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_10_ ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_35_(____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_1_: {
+  ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_65_?: ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_21_;
+  __node_露:1.0___ASTNODE_露_75_?: ____node_露:1.0___ASTNODE_露_23__廨:1.0___ASTNODE_廨_6_.____node_露:1.0___ASTNODE_露_23__廨:1.0___ASTNODE_廨_8_;
+}): ____node_露:1.0___ASTNODE_露_23__廨:1.0___ASTNODE_廨_9_<____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_27_> {
+  ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_6_ ____node_露:1.0___ASTNODE_露_23__匾:1.0___ASTNODE_露_69_ = ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_29_(____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_1_.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_65_, ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_1_.__node_露:1.0___ASTNODE_露_75_);
+  try {
+    await fs.____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_26_(____node_露:1.0___ASTNODE_露_23__匾:1.0___ASTNODE_露_69_);
+  } catch (__node_露:1.0___ASTNODE_露_47_) {
+    ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_6_ __node_露:1.0___ASTNODE_露_77_ = (__node_露:1.0___ASTNODE_露_47_ as { __node_露:1.0___ASTNODE_露_77_?: ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_21_ }).__node_露:1.0___ASTNODE_露_77_;
+    if (__node_露:1.0___ASTNODE_露_77_ === "____node_露:1.0___ASTNODE_露_23__廨:1.0___ASTNODE_廨_7_") {
+// __node_廨:0.8___ASTNODE_MB_696_ [decoy-metadata]
+      return;
+// __node_匾:0.5___ASTNODE_DX_929_ [decoy-metadata]
+    }
+    ____node_露:1.0___ASTNODE_露_23__露:1.0___ASTNODE_露_38_ __node_露:1.0___ASTNODE_露_47_;
+  }
+}
+
+// POLYMORPHIC_JCROSS_END

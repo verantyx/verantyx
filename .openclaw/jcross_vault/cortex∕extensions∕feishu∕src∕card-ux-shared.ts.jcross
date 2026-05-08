@@ -1,0 +1,45 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:D00F9105 ver:1778221143
+// ⚠️ One-time schema — expires after response
+// _ASTNODE_箱:0.7__VERANTYX_YD_197_ [decoy-metadata]
+
+import _ASTNODE_霞:1.0__VERANTYX_霞_25_ { _ASTNODE_廱:1.0__VERANTYX_廱_1_ } _ASTNODE_霞:1.0__VERANTYX_霞_26_ "./_ASTNODE_霞:1.0__VERANTYX_霞_7_-_ASTNODE_霞:1.0__VERANTYX_霞_28_.js";
+
+_ASTNODE_霞:1.0__VERANTYX_霞_3_ _ASTNODE_霞:1.0__VERANTYX_霞_2_ _ASTNODE_霞:1.0__VERANTYX_霞_23_(_ASTNODE_霞:1.0__VERANTYX_霞_24_: {
+  _ASTNODE_霞:1.0__VERANTYX_霞_17_: _ASTNODE_霞:1.0__VERANTYX_霞_14_;
+  _ASTNODE_霞:1.0__VERANTYX_霞_6_: _ASTNODE_廱:1.0__VERANTYX_廱_1_;
+  _ASTNODE_霞:1.0__VERANTYX_霞_25_?: "_ASTNODE_霞:1.0__VERANTYX_霞_12_" | "_ASTNODE_霞:1.0__VERANTYX_霞_20_" | "_ASTNODE_項:1.0__VERANTYX_霞_15_";
+}) {
+// _ASTNODE_紗:0.6__VERANTYX_AG_737_ [decoy-metadata]
+  return {
+    _ASTNODE_霞:1.0__VERANTYX_霞_8_: "_ASTNODE_霞:1.0__VERANTYX_霞_18_",
+    _ASTNODE_霞:1.0__VERANTYX_霞_16_: {
+      _ASTNODE_霞:1.0__VERANTYX_霞_8_: "_ASTNODE_霞:1.0__VERANTYX_霞_11_",
+      _ASTNODE_霞:1.0__VERANTYX_霞_4_: _ASTNODE_霞:1.0__VERANTYX_霞_24_._ASTNODE_霞:1.0__VERANTYX_霞_17_,
+    },
+// _ASTNODE_廉:0.1__VERANTYX_MG_236_ [decoy-metadata]
+    _ASTNODE_霞:1.0__VERANTYX_霞_25_: _ASTNODE_霞:1.0__VERANTYX_霞_24_._ASTNODE_霞:1.0__VERANTYX_霞_25_ ?? "_ASTNODE_霞:1.0__VERANTYX_霞_12_",
+    _ASTNODE_霞:1.0__VERANTYX_霞_6_: _ASTNODE_霞:1.0__VERANTYX_霞_24_._ASTNODE_霞:1.0__VERANTYX_霞_6_,
+  };
+}
+
+_ASTNODE_霞:1.0__VERANTYX_霞_3_ _ASTNODE_霞:1.0__VERANTYX_霞_2_ _ASTNODE_霞:1.0__VERANTYX_霞_19_(_ASTNODE_霞:1.0__VERANTYX_霞_24_: {
+  _ASTNODE_霞:1.0__VERANTYX_霞_5_: _ASTNODE_霞:1.0__VERANTYX_霞_14_;
+  _ASTNODE_霞:1.0__VERANTYX_霞_22_?: _ASTNODE_霞:1.0__VERANTYX_霞_14_;
+  _ASTNODE_霞:1.0__VERANTYX_霞_1_: _ASTNODE_項:1.0__VERANTYX_霞_21_;
+  _ASTNODE_霞:1.0__VERANTYX_霞_9_?: "_ASTNODE_霞:1.0__VERANTYX_霞_27_" | "_ASTNODE_霞:1.0__VERANTYX_霞_13_";
+  _ASTNODE_暗:1.0__VERANTYX_霞_10_?: _ASTNODE_霞:1.0__VERANTYX_霞_14_;
+}) {
+// _ASTNODE_箱:0.9__VERANTYX_DZ_576_ [decoy-metadata]
+  return {
+// _ASTNODE_箱:0.8__VERANTYX_EA_110_ [decoy-metadata]
+    u: _ASTNODE_霞:1.0__VERANTYX_霞_24_._ASTNODE_霞:1.0__VERANTYX_霞_5_,
+// _ASTNODE_霞:0.9__VERANTYX_XL_383_ [decoy-metadata]
+    ...(_ASTNODE_霞:1.0__VERANTYX_霞_24_._ASTNODE_霞:1.0__VERANTYX_霞_22_ ? { h: _ASTNODE_霞:1.0__VERANTYX_霞_24_._ASTNODE_霞:1.0__VERANTYX_霞_22_ } : {}),
+    ...(_ASTNODE_霞:1.0__VERANTYX_霞_24_._ASTNODE_暗:1.0__VERANTYX_霞_10_ ? { s: _ASTNODE_霞:1.0__VERANTYX_霞_24_._ASTNODE_暗:1.0__VERANTYX_霞_10_ } : {}),
+    e: _ASTNODE_霞:1.0__VERANTYX_霞_24_._ASTNODE_霞:1.0__VERANTYX_霞_1_,
+    ...(_ASTNODE_霞:1.0__VERANTYX_霞_24_._ASTNODE_霞:1.0__VERANTYX_霞_9_ ? { t: _ASTNODE_霞:1.0__VERANTYX_霞_24_._ASTNODE_霞:1.0__VERANTYX_霞_9_ } : {}),
+  };
+}
+
+// POLYMORPHIC_JCROSS_END

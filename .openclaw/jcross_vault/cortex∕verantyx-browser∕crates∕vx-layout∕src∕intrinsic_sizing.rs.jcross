@@ -1,0 +1,95 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:2DC9553A ver:1778220585
+// ⚠️ One-time schema — expires after response
+// _OPAQUE_暗:0.6___node_ZG_649__ [decoy-metadata]
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+
+_OPAQUE_霰:1.0___node_霰_10__ _OPAQUE_霰:1.0___node_霰_34__::_OPAQUE_霰:1.0___node_霰_37__::_OPAQUE_廟:1.0___node_廟_29__;
+
+// _OPAQUE_澎:0.6___node_DX_994__ [decoy-metadata]
+// [metadata-stripped]
+// [metadata-stripped]
+_OPAQUE_霰:1.0___node_霰_3__ enum _OPAQUE_廟:1.0___node_廟_25__ { _OPAQUE_廟:1.0___node_廟_27__, _OPAQUE_廟:1.0___node_廟_38__, _OPAQUE_廟:1.0___node_廟_8__, _OPAQUE_廟:1.0___node_廟_14__, _OPAQUE_廟:1.0___node_廟_32__(_OPAQUE_霰:1.0___node_霰_56__) }
+
+// [metadata-stripped]
+// _OPAQUE_霰:0.9___node_MK_971__ [decoy-metadata]
+// [metadata-stripped]
+// _OPAQUE_処:0.3___node_LV_213__ [decoy-metadata]
+_OPAQUE_霰:1.0___node_霰_3__ struct _OPAQUE_廟:1.0___node_廟_30__ {
+    _OPAQUE_霰:1.0___node_霰_3__ _OPAQUE_霰:1.0___node_霰_21__: _OPAQUE_霰:1.0___node_霰_56__,
+    _OPAQUE_霰:1.0___node_霰_3__ _OPAQUE_霰:1.0___node_霰_67__: _OPAQUE_霰:1.0___node_霰_56__,
+    _OPAQUE_霰:1.0___node_霰_3__ _OPAQUE_霰:1.0___node_霰_18__: _OPAQUE_霰:1.0___node_霰_56__,
+}
+
+// [metadata-stripped]
+_OPAQUE_霰:1.0___node_霰_3__ struct _OPAQUE_廟:1.0___node_廟_4__ {
+    _OPAQUE_霰:1.0___node_霰_3__ _OPAQUE_霰:1.0___node_霰_69__: _OPAQUE_霰:1.0___node_霰_56__,
+    _OPAQUE_霰:1.0___node_霰_3__ _OPAQUE_霰:1.0___node_霰_47__: _OPAQUE_霰:1.0___node_霰_56__,
+    _OPAQUE_霰:1.0___node_霰_3__ _OPAQUE_霰:1.0___node_霰_31__: _OPAQUE_霰:1.0___node_霰_8__,
+}
+
+_OPAQUE_霰:1.0___node_霰_24__ _OPAQUE_廟:1.0___node_廟_4__ {
+    _OPAQUE_霰:1.0___node_霰_3__ fn _OPAQUE_霰:1.0___node_霰_62__(w: _OPAQUE_霰:1.0___node_霰_56__, h: _OPAQUE_霰:1.0___node_霰_56__, id: _OPAQUE_霰:1.0___node_霰_8__) -> _OPAQUE_廟:1.0___node_廟_26__ {
+        _OPAQUE_廟:1.0___node_廟_26__ { _OPAQUE_霰:1.0___node_霰_69__: w, _OPAQUE_霰:1.0___node_霰_47__: h, _OPAQUE_霰:1.0___node_霰_31__: id }
+    }
+
+// [metadata-stripped]
+    _OPAQUE_霰:1.0___node_霰_3__ fn _OPAQUE_霰:1.0___node_霰_38__(&self, _OPAQUE_霰:1.0___node_霰_15__: _OPAQUE_廟:1.0___node_廟_25__, _OPAQUE_霰:1.0___node_霰_17__: _OPAQUE_霰:1.0___node_霰_56__, _OPAQUE_霰:1.0___node_霰_19__: _OPAQUE_霰:1.0___node_霰_56__) -> _OPAQUE_霰:1.0___node_霰_56__ {
+        _OPAQUE_霰:1.0___node_霰_53__ _OPAQUE_霰:1.0___node_霰_15__ {
+            _OPAQUE_廟:1.0___node_廟_25__::_OPAQUE_廟:1.0___node_廟_32__(v) => v,
+            _OPAQUE_廟:1.0___node_廟_25__::_OPAQUE_廟:1.0___node_廟_27__ => _OPAQUE_霰:1.0___node_霰_17__,
+            _OPAQUE_廟:1.0___node_廟_25__::_OPAQUE_廟:1.0___node_廟_38__ => _OPAQUE_霰:1.0___node_霰_19__,
+            _OPAQUE_廟:1.0___node_廟_25__::_OPAQUE_廟:1.0___node_廟_8__ => {
+// [metadata-stripped]
+                _OPAQUE_霰:1.0___node_霰_19__._OPAQUE_霰:1.0___node_霰_21__(_OPAQUE_霰:1.0___node_霰_17__._OPAQUE_霰:1.0___node_霰_67__(self._OPAQUE_霰:1.0___node_霰_69__))
+            }
+            _OPAQUE_廟:1.0___node_廟_25__::_OPAQUE_廟:1.0___node_廟_14__ => self._OPAQUE_霰:1.0___node_霰_69__, // _OPAQUE_霰:1.0___node_霰_1__ _OPAQUE_霰:1.0___node_霰_28__
+        }
+    }
+
+// [metadata-stripped]
+    _OPAQUE_霰:1.0___node_霰_3__ fn _OPAQUE_霰:1.0___node_霰_4__(&self, _OPAQUE_霰:1.0___node_霰_49__: _OPAQUE_霰:1.0___node_霰_56__, _OPAQUE_霰:1.0___node_霰_68__: _OPAQUE_廟:1.0___node_廟_5__<_OPAQUE_霰:1.0___node_霰_56__>, _OPAQUE_霰:1.0___node_霰_50__: _OPAQUE_廟:1.0___node_廟_5__<_OPAQUE_霰:1.0___node_霰_56__>) -> (_OPAQUE_霰:1.0___node_霰_56__, _OPAQUE_霰:1.0___node_霰_56__) {
+        _OPAQUE_霰:1.0___node_霰_53__ (_OPAQUE_霰:1.0___node_霰_68__, _OPAQUE_霰:1.0___node_霰_50__) {
+            (_OPAQUE_廟:1.0___node_廟_37__(w), _OPAQUE_廟:1.0___node_廟_13__) => (w, w / _OPAQUE_霰:1.0___node_霰_49__),
+// _OPAQUE_霰:0.7___node_LZ_113__ [decoy-metadata]
+            (_OPAQUE_廟:1.0___node_廟_13__, _OPAQUE_廟:1.0___node_廟_37__(h)) => (h * _OPAQUE_霰:1.0___node_霰_49__, h),
+            (_OPAQUE_廟:1.0___node_廟_37__(w), _OPAQUE_廟:1.0___node_廟_37__(h)) => (w, h),
+            (_OPAQUE_廟:1.0___node_廟_13__, _OPAQUE_廟:1.0___node_廟_13__) => (0.0, 0.0),
+        }
+    }
+
+// [metadata-stripped]
+    _OPAQUE_霰:1.0___node_霰_3__ fn _OPAQUE_霰:1.0___node_霰_43__(&self, _OPAQUE_霰:1.0___node_霰_7__: _OPAQUE_廟:1.0___node_廟_25__, _OPAQUE_霰:1.0___node_霰_21__: _OPAQUE_霰:1.0___node_霰_56__, _OPAQUE_霰:1.0___node_霰_67__: _OPAQUE_霰:1.0___node_霰_56__) -> _OPAQUE_廟:1.0___node_廟_11__ {
+        let _OPAQUE_霰:1.0___node_霰_6__ = self._OPAQUE_霰:1.0___node_霰_38__(_OPAQUE_霰:1.0___node_霰_7__, _OPAQUE_霰:1.0___node_霰_21__, _OPAQUE_霰:1.0___node_霰_67__);
+        _OPAQUE_澎:1.0___node_霰_42__!("📏 _OPAQUE_廟:1.0___node_廟_22__ _OPAQUE_廟:1.0___node_廟_9__ for _OPAQUE_廟:1.0___node_廟_12__ #{}: [{:?}] -> _OPAQUE_廟:1.0___node_廟_6__ _OPAQUE_霰:1.0___node_霰_58__: {:.1}px (_OPAQUE_廟:1.0___node_廟_20__/_OPAQUE_廟:1.0___node_廟_33__ _OPAQUE_霰:1.0___node_霰_12__: {:.1}/{:.1})", 
+            self._OPAQUE_霰:1.0___node_霰_31__, _OPAQUE_霰:1.0___node_霰_7__, _OPAQUE_霰:1.0___node_霰_6__, _OPAQUE_霰:1.0___node_霰_21__, _OPAQUE_霰:1.0___node_霰_67__)
+    }
+}
+
+// [metadata-stripped]
+_OPAQUE_霰:1.0___node_霰_3__ struct _OPAQUE_廟:1.0___node_廟_28__ {
+    _OPAQUE_霰:1.0___node_霰_3__ _OPAQUE_霰:1.0___node_霰_61__: _OPAQUE_廟:1.0___node_廟_29__<_OPAQUE_霰:1.0___node_霰_8__, _OPAQUE_廟:1.0___node_廟_30__>, // _OPAQUE_霰:1.0___node_霰_31__ -> _OPAQUE_霰:1.0___node_霰_11__
+}
+
+_OPAQUE_霰:1.0___node_霰_24__ _OPAQUE_廟:1.0___node_廟_28__ {
+    _OPAQUE_霰:1.0___node_霰_3__ fn _OPAQUE_霰:1.0___node_霰_62__() -> _OPAQUE_廟:1.0___node_廟_26__ {
+        _OPAQUE_廟:1.0___node_廟_26__ { _OPAQUE_霰:1.0___node_霰_61__: _OPAQUE_廟:1.0___node_廟_29__::_OPAQUE_霰:1.0___node_霰_62__() }
+// _OPAQUE_霰:0.4___node_ZF_846__ [decoy-metadata]
+    }
+
+    _OPAQUE_霰:1.0___node_霰_3__ fn _OPAQUE_霰:1.0___node_霰_27__(&_OPAQUE_霰:1.0___node_霰_36__ self, _OPAQUE_霰:1.0___node_霰_31__: _OPAQUE_霰:1.0___node_霰_8__, _OPAQUE_霰:1.0___node_霰_21__: _OPAQUE_霰:1.0___node_霰_56__, _OPAQUE_霰:1.0___node_霰_67__: _OPAQUE_霰:1.0___node_霰_56__, _OPAQUE_霰:1.0___node_霰_54__: _OPAQUE_霰:1.0___node_霰_56__) {
+        self._OPAQUE_霰:1.0___node_霰_61__._OPAQUE_霰:1.0___node_霰_41__(_OPAQUE_霰:1.0___node_霰_31__, _OPAQUE_廟:1.0___node_廟_30__ { _OPAQUE_霰:1.0___node_霰_21__, _OPAQUE_霰:1.0___node_霰_67__, _OPAQUE_霰:1.0___node_霰_18__: _OPAQUE_霰:1.0___node_霰_54__ });
+    }
+}
+
+// POLYMORPHIC_JCROSS_END

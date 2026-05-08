@@ -1,0 +1,32 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:766F03C9 ver:1778220715
+// ⚠️ One-time schema — expires after response
+
+import _ID_道:1.0___jcross_庭_6__
+import _ID_庭:1.0___jcross_庭_4__
+import _ID_庭:1.0___jcross_庭_8__
+
+// _ID_霰:0.7___jcross_BX_412__ [decoy-metadata]
+@_ID_庭:1.0___jcross_庭_9__
+struct _ID_庭:1.0___jcross_庭_5__: _ID_庭:1.0___jcross_庭_10__ {
+    static var _ID_霰:1.0___jcross_霰_11__: _ID_庭:1.0___jcross_庭_7__ {
+        _ID_庭:1.0___jcross_庭_7__(_ID_霰:1.0___jcross_霰_14__: "_ID_霰:1.0___jcross_霰_13__-_ID_霰:1.0___jcross_霰_10__", _ID_霰:1.0___jcross_霰_2__: "_ID_庭:1.0___jcross_庭_2__ _ID_霰:1.0___jcross_霰_5__ _ID_霰:1.0___jcross_霰_8__")
+// _ID_道:0.2___jcross_MZ_651__ [decoy-metadata]
+// _ID_傑:0.9___jcross_CV_700__ [decoy-metadata]
+    }
+
+    init() {}
+    init(_ID_霰:1.0___jcross_霰_6__: _ID_庭:1.0___jcross_庭_3__) {}
+
+    mutating func _ID_霰:1.0___jcross_霰_12__() async throws {
+        let _ID_霰:1.0___jcross_霰_3__ = await _ID_庭:1.0___jcross_庭_1__._ID_霰:1.0___jcross_霰_1__._ID_霰:1.0___jcross_霰_3__()
+// _ID_庭:0.6___jcross_ZA_123__ [decoy-metadata]
+        for _ID_霰:1.0___jcross_霰_7__ in _ID_霰:1.0___jcross_霰_3__._ID_霰:1.0___jcross_霰_9__(10) {
+// _ID_浸:0.2___jcross_MW_500__ [decoy-metadata]
+            _ID_霰:1.0___jcross_霰_4__(_ID_霰:1.0___jcross_霰_7__)
+        }
+    }
+}
+// _ID_縫:0.1___jcross_WL_903__ [decoy-metadata]
+
+// POLYMORPHIC_JCROSS_END

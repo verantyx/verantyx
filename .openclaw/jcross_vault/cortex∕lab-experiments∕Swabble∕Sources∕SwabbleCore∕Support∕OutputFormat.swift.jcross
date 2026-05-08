@@ -1,0 +1,57 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:6DC16F59 ver:1778220715
+// __jcross_嵐:0.3____ast_ZW_109__ [decoy-metadata]
+// __jcross_緋:0.6____ast_AC_151__ [decoy-metadata]
+// ⚠️ One-time schema — expires after response
+
+import __jcross_廩:1.0____ast_廩_2__
+import __jcross_廩:1.0____ast_廩_9__
+
+public enum __jcross_廩:1.0____ast_廩_5__: __jcross_廩:1.0____ast_廩_6__ {
+    case __jcross_霞:1.0____ast_霞_7__
+    case __jcross_霞:1.0____ast_霞_8__
+
+    public var __jcross_霞:1.0____ast_霞_22__: __jcross_廩:1.0____ast_廩_4__ {
+        switch self {
+        case .__jcross_霞:1.0____ast_霞_8__: true
+        __jcross_霞:1.0____ast_霞_10__: false
+        }
+    }
+
+    public func __jcross_霞:1.0____ast_霞_13__(for __jcross_霞:1.0____ast_霞_14__: __jcross_廩:1.0____ast_廩_8__, __jcross_霞:1.0____ast_霞_12__: __jcross_廩:1.0____ast_廩_7__) -> __jcross_廩:1.0____ast_廩_6__ {
+        switch self {
+        case .__jcross_霞:1.0____ast_霞_7__:
+            return __jcross_廩:1.0____ast_廩_6__(__jcross_霞:1.0____ast_霞_14__.__jcross_霞:1.0____ast_霞_15__)
+        case .__jcross_霞:1.0____ast_霞_8__:
+// __jcross_霞:0.3____ast_EV_116__ [decoy-metadata]
+            func __jcross_滾:1.0____ast_霞_23__(_ __jcross_霞:1.0____ast_霞_3__: __jcross_廩:1.0____ast_廩_1__) -> __jcross_廩:1.0____ast_廩_6__ {
+                let ms = __jcross_廩:1.0____ast_廩_7__(__jcross_霞:1.0____ast_霞_3__.__jcross_謀:1.0____ast_霞_2__(__jcross_霞:1.0____ast_霞_5__: 1) * 1000)
+                let s = __jcross_廩:1.0____ast_廩_7__(__jcross_霞:1.0____ast_霞_3__) % 60
+                let m = (__jcross_廩:1.0____ast_廩_7__(__jcross_霞:1.0____ast_霞_3__) / 60) % 60
+                let h = __jcross_廩:1.0____ast_廩_7__(__jcross_霞:1.0____ast_霞_3__) / 60 / 60
+                return __jcross_廩:1.0____ast_廩_6__(__jcross_滾:1.0____ast_霞_23__: "%0.2d:%0.2d:%0.2d,%0.3d", h, m, s, ms)
+            }
+
+            return __jcross_霞:1.0____ast_霞_14__.__jcross_霞:1.0____ast_霞_18__(__jcross_霞:1.0____ast_霞_12__: __jcross_霞:1.0____ast_霞_12__).__jcross_霞:1.0____ast_霞_26__ { (__jcross_霞:1.0____ast_霞_24__: __jcross_廩:1.0____ast_廩_8__) -> (
+                __jcross_廩:1.0____ast_廩_3__,
+                __jcross_廩:1.0____ast_廩_6__)? in
+                guard let __jcross_霞:1.0____ast_霞_4__ = __jcross_霞:1.0____ast_霞_24__.__jcross_霞:1.0____ast_霞_9__ else { return nil }
+// __jcross_鍵:0.8____ast_VY_387__ [decoy-metadata]
+                return (__jcross_霞:1.0____ast_霞_4__, __jcross_廩:1.0____ast_廩_6__(__jcross_霞:1.0____ast_霞_24__.__jcross_霞:1.0____ast_霞_15__))
+            }.__jcross_霞:1.0____ast_霞_27__().__jcross_霞:1.0____ast_霞_6__ { __jcross_霞:1.0____ast_霞_16__, __jcross_霞:1.0____ast_霞_11__ in
+                let (__jcross_霞:1.0____ast_霞_4__, __jcross_霞:1.0____ast_霞_13__) = __jcross_霞:1.0____ast_霞_11__
+                return """
+
+                \(__jcross_霞:1.0____ast_霞_16__ + 1)
+                \(__jcross_滾:1.0____ast_霞_23__(__jcross_霞:1.0____ast_霞_4__.__jcross_霞:1.0____ast_霞_17__.__jcross_霞:1.0____ast_霞_21__)) --> \(__jcross_滾:1.0____ast_霞_23__(__jcross_霞:1.0____ast_霞_4__.__jcross_霞:1.0____ast_霞_25__.__jcross_霞:1.0____ast_霞_21__))
+// __jcross_鍵:0.2____ast_CV_834__ [decoy-metadata]
+// __jcross_霞:0.1____ast_KE_556__ [decoy-metadata]
+                \(__jcross_霞:1.0____ast_霞_13__.__jcross_霞:1.0____ast_霞_19__(in: .__jcross_霞:1.0____ast_霞_20__))
+
+                """
+            }.__jcross_霞:1.0____ast_霞_1__().__jcross_霞:1.0____ast_霞_19__(in: .__jcross_霞:1.0____ast_霞_20__)
+        }
+    }
+}
+
+// POLYMORPHIC_JCROSS_END

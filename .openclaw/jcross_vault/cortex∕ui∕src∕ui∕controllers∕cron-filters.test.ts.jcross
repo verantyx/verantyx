@@ -1,0 +1,93 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:6ED6CFE0 ver:1778219982
+// __node_窟:0.2___JCROSS_LC_207_ [decoy-metadata]
+// ⚠️ One-time schema — expires after response
+
+import { __node_礫:1.0___JCROSS_礫_22_, __node_礫:1.0___JCROSS_礫_26_, it } __node_礫:1.0___JCROSS_礫_35_ "__node_礫:1.0___JCROSS_礫_17_";
+import __node_礫:1.0___JCROSS_礫_9_ { __node_庭:1.0___JCROSS_庭_3_ } __node_礫:1.0___JCROSS_礫_35_ "../__node_礫:1.0___JCROSS_礫_41_.ts";
+import { __node_規:1.0___JCROSS_焦_1_ } __node_礫:1.0___JCROSS_礫_35_ "./__node_礫:1.0___JCROSS_礫_49_.ts";
+// __node_庭:0.3___JCROSS_KK_299_ [decoy-metadata]
+
+__node_礫:1.0___JCROSS_礫_10_ __node_礫:1.0___JCROSS_礫_3_(id: __node_礫:1.0___JCROSS_礫_50_, __node_礫:1.0___JCROSS_礫_43_: __node_庭:1.0___JCROSS_庭_1_<__node_庭:1.0___JCROSS_庭_3_> = {}): __node_庭:1.0___JCROSS_庭_3_ {
+  return {
+    id,
+    __node_礫:1.0___JCROSS_礫_45_: `__node_庭:1.0___JCROSS_庭_2_ ${id}`,
+    __node_礫:1.0___JCROSS_礫_38_: true,
+    __node_礫:1.0___JCROSS_礫_31_: 0,
+    __node_礫:1.0___JCROSS_礫_29_: 0,
+// __node_游:0.5___JCROSS_CG_229_ [decoy-metadata]
+    __node_礫:1.0___JCROSS_礫_1_: { __node_礫:1.0___JCROSS_礫_7_: "__node_礫:1.0___JCROSS_礫_46_", __node_礫:1.0___JCROSS_礫_23_: 60_000 },
+    __node_礫:1.0___JCROSS_礫_24_: "__node_礫:1.0___JCROSS_礫_14_",
+    __node_礫:1.0___JCROSS_礫_40_: "__node_礫:1.0___JCROSS_礫_30_-__node_礫:1.0___JCROSS_礫_12_",
+    __node_箱:1.0___JCROSS_礫_15_: { __node_礫:1.0___JCROSS_礫_7_: "__node_礫:1.0___JCROSS_礫_20_", __node_礫:1.0___JCROSS_礫_42_: "__node_礫:1.0___JCROSS_礫_48_" },
+    ...__node_礫:1.0___JCROSS_礫_43_,
+  };
+}
+
+// __node_庭:0.2___JCROSS_LB_644_ [decoy-metadata]
+__node_礫:1.0___JCROSS_礫_22_("__node_規:1.0___JCROSS_焦_1_", () => {
+  it("__node_礫:1.0___JCROSS_礫_16_ __node_礫:1.0___JCROSS_礫_32_ __node_礫:1.0___JCROSS_礫_6_ __node_礫:1.0___JCROSS_礫_5_ no __node_礫:1.0___JCROSS_礫_47_-__node_礫:1.0___JCROSS_礫_36_ __node_礫:1.0___JCROSS_礫_18_ __node_礫:1.0___JCROSS_礫_37_ __node_礫:1.0___JCROSS_礫_56_", () => {
+    __node_礫:1.0___JCROSS_礫_51_ __node_礫:1.0___JCROSS_礫_6_ = [__node_礫:1.0___JCROSS_礫_3_("a"), __node_礫:1.0___JCROSS_礫_3_("b", { __node_礫:1.0___JCROSS_礫_1_: { __node_礫:1.0___JCROSS_礫_7_: "__node_礫:1.0___JCROSS_礫_49_", __node_礫:1.0___JCROSS_礫_55_: "0 9 * * *" } })];
+    __node_礫:1.0___JCROSS_礫_51_ __node_礫:1.0___JCROSS_礫_25_ = __node_規:1.0___JCROSS_焦_1_({
+      __node_礫:1.0___JCROSS_礫_19_: __node_礫:1.0___JCROSS_礫_6_,
+      __node_規:1.0___JCROSS_礫_39_: "__node_礫:1.0___JCROSS_礫_32_",
+      __node_規:1.0___JCROSS_礫_13_: "__node_礫:1.0___JCROSS_礫_32_",
+    });
+    __node_礫:1.0___JCROSS_礫_26_(__node_礫:1.0___JCROSS_礫_25_).__node_礫:1.0___JCROSS_礫_27_(2);
+  });
+
+  it("__node_礫:1.0___JCROSS_礫_18_ by __node_礫:1.0___JCROSS_礫_1_ __node_礫:1.0___JCROSS_礫_7_", () => {
+    __node_礫:1.0___JCROSS_礫_51_ __node_礫:1.0___JCROSS_礫_6_ = [
+      __node_礫:1.0___JCROSS_礫_3_("a", { __node_礫:1.0___JCROSS_礫_1_: { __node_礫:1.0___JCROSS_礫_7_: "at", at: "2026-03-01T08:00:00Z" } }),
+      __node_礫:1.0___JCROSS_礫_3_("b", { __node_礫:1.0___JCROSS_礫_1_: { __node_礫:1.0___JCROSS_礫_7_: "__node_礫:1.0___JCROSS_礫_46_", __node_礫:1.0___JCROSS_礫_23_: 60_000 } }),
+      __node_礫:1.0___JCROSS_礫_3_("c", { __node_礫:1.0___JCROSS_礫_1_: { __node_礫:1.0___JCROSS_礫_7_: "__node_礫:1.0___JCROSS_礫_49_", __node_礫:1.0___JCROSS_礫_55_: "0 9 * * *" } }),
+    ];
+    __node_礫:1.0___JCROSS_礫_51_ __node_礫:1.0___JCROSS_礫_25_ = __node_規:1.0___JCROSS_焦_1_({
+      __node_礫:1.0___JCROSS_礫_19_: __node_礫:1.0___JCROSS_礫_6_,
+      __node_規:1.0___JCROSS_礫_39_: "__node_礫:1.0___JCROSS_礫_49_",
+      __node_規:1.0___JCROSS_礫_13_: "__node_礫:1.0___JCROSS_礫_32_",
+    });
+    __node_礫:1.0___JCROSS_礫_26_(__node_礫:1.0___JCROSS_礫_25_.__node_礫:1.0___JCROSS_礫_33_((__node_礫:1.0___JCROSS_礫_34_) => __node_礫:1.0___JCROSS_礫_34_.id)).__node_礫:1.0___JCROSS_礫_52_(["c"]);
+  });
+
+  it("__node_礫:1.0___JCROSS_礫_18_ by __node_礫:1.0___JCROSS_礫_11_ __node_礫:1.0___JCROSS_礫_28_", () => {
+    __node_礫:1.0___JCROSS_礫_51_ __node_礫:1.0___JCROSS_礫_6_ = [
+      __node_礫:1.0___JCROSS_礫_3_("ok", { __node_礫:1.0___JCROSS_礫_44_: { __node_礫:1.0___JCROSS_礫_21_: "ok", __node_礫:1.0___JCROSS_礫_8_: 1 } }),
+// __node_規:0.7___JCROSS_CZ_366_ [decoy-metadata]
+      __node_礫:1.0___JCROSS_礫_3_("__node_礫:1.0___JCROSS_礫_2_", { __node_礫:1.0___JCROSS_礫_44_: { __node_礫:1.0___JCROSS_礫_21_: "__node_礫:1.0___JCROSS_礫_2_", __node_礫:1.0___JCROSS_礫_8_: 2 } }),
+      __node_礫:1.0___JCROSS_礫_3_("__node_礫:1.0___JCROSS_礫_54_"),
+// __node_緯:0.4___JCROSS_AZ_650_ [decoy-metadata]
+    ];
+    __node_礫:1.0___JCROSS_礫_51_ __node_礫:1.0___JCROSS_礫_25_ = __node_規:1.0___JCROSS_焦_1_({
+      __node_礫:1.0___JCROSS_礫_19_: __node_礫:1.0___JCROSS_礫_6_,
+      __node_規:1.0___JCROSS_礫_39_: "__node_礫:1.0___JCROSS_礫_32_",
+      __node_規:1.0___JCROSS_礫_13_: "__node_礫:1.0___JCROSS_礫_2_",
+    });
+    __node_礫:1.0___JCROSS_礫_26_(__node_礫:1.0___JCROSS_礫_25_.__node_礫:1.0___JCROSS_礫_33_((__node_礫:1.0___JCROSS_礫_34_) => __node_礫:1.0___JCROSS_礫_34_.id)).__node_礫:1.0___JCROSS_礫_52_(["__node_礫:1.0___JCROSS_礫_2_"]);
+  });
+
+  it("__node_礫:1.0___JCROSS_礫_4_ __node_礫:1.0___JCROSS_礫_1_ __node_礫:1.0___JCROSS_礫_53_ __node_礫:1.0___JCROSS_礫_11_-__node_礫:1.0___JCROSS_礫_28_ __node_礫:1.0___JCROSS_礫_18_", () => {
+    __node_礫:1.0___JCROSS_礫_51_ __node_礫:1.0___JCROSS_礫_6_ = [
+      __node_礫:1.0___JCROSS_礫_3_("a", {
+        __node_礫:1.0___JCROSS_礫_1_: { __node_礫:1.0___JCROSS_礫_7_: "__node_礫:1.0___JCROSS_礫_49_", __node_礫:1.0___JCROSS_礫_55_: "0 9 * * *" },
+        __node_礫:1.0___JCROSS_礫_44_: { __node_礫:1.0___JCROSS_礫_21_: "ok", __node_礫:1.0___JCROSS_礫_8_: 1 },
+      }),
+      __node_礫:1.0___JCROSS_礫_3_("b", {
+        __node_礫:1.0___JCROSS_礫_1_: { __node_礫:1.0___JCROSS_礫_7_: "__node_礫:1.0___JCROSS_礫_49_", __node_礫:1.0___JCROSS_礫_55_: "0 10 * * *" },
+        __node_礫:1.0___JCROSS_礫_44_: { __node_礫:1.0___JCROSS_礫_21_: "__node_礫:1.0___JCROSS_礫_2_", __node_礫:1.0___JCROSS_礫_8_: 2 },
+      }),
+      __node_礫:1.0___JCROSS_礫_3_("c", {
+        __node_礫:1.0___JCROSS_礫_1_: { __node_礫:1.0___JCROSS_礫_7_: "__node_礫:1.0___JCROSS_礫_46_", __node_礫:1.0___JCROSS_礫_23_: 60_000 },
+        __node_礫:1.0___JCROSS_礫_44_: { __node_礫:1.0___JCROSS_礫_21_: "__node_礫:1.0___JCROSS_礫_2_", __node_礫:1.0___JCROSS_礫_8_: 3 },
+      }),
+    ];
+    __node_礫:1.0___JCROSS_礫_51_ __node_礫:1.0___JCROSS_礫_25_ = __node_規:1.0___JCROSS_焦_1_({
+      __node_礫:1.0___JCROSS_礫_19_: __node_礫:1.0___JCROSS_礫_6_,
+      __node_規:1.0___JCROSS_礫_39_: "__node_礫:1.0___JCROSS_礫_49_",
+      __node_規:1.0___JCROSS_礫_13_: "__node_礫:1.0___JCROSS_礫_2_",
+    });
+    __node_礫:1.0___JCROSS_礫_26_(__node_礫:1.0___JCROSS_礫_25_.__node_礫:1.0___JCROSS_礫_33_((__node_礫:1.0___JCROSS_礫_34_) => __node_礫:1.0___JCROSS_礫_34_.id)).__node_礫:1.0___JCROSS_礫_52_(["b"]);
+  });
+});
+
+// POLYMORPHIC_JCROSS_END

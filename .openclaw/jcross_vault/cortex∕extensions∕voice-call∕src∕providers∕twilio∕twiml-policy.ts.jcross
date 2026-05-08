@@ -1,0 +1,103 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:94A5BCD5 ver:1778222141
+// ⚠️ One-time schema — expires after response
+
+import _OPAQUE_露:1.0___ast_露_5__ { _OPAQUE_廱:1.0___ast_廱_8__ } _OPAQUE_露:1.0___ast_露_25__ "../../_OPAQUE_露:1.0___ast_露_30__.js";
+
+_OPAQUE_露:1.0___ast_露_41__ _OPAQUE_露:1.0___ast_露_5__ _OPAQUE_廱:1.0___ast_廱_1__ = "_OPAQUE_露:1.0___ast_露_21__" | "_OPAQUE_露:1.0___ast_露_37__" | "_OPAQUE_露:1.0___ast_露_15__" | "_OPAQUE_露:1.0___ast_露_23__" | "_OPAQUE_露:1.0___ast_露_18__";
+// _OPAQUE_匱:0.7___ast_LM_945__ [decoy-metadata]
+
+_OPAQUE_露:1.0___ast_露_41__ _OPAQUE_露:1.0___ast_露_5__ _OPAQUE_紐:1.0___ast_廱_6__ = {
+  _OPAQUE_露:1.0___ast_露_10__: _OPAQUE_露:1.0___ast_露_35__ | _OPAQUE_露:1.0___ast_露_2__;
+// _OPAQUE_冥:0.7___ast_EY_275__ [decoy-metadata]
+  _OPAQUE_露:1.0___ast_露_16__: _OPAQUE_露:1.0___ast_露_35__ | _OPAQUE_露:1.0___ast_露_2__;
+  _OPAQUE_露:1.0___ast_露_14__: _OPAQUE_露:1.0___ast_露_33__;
+  _OPAQUE_露:1.0___ast_露_13__?: _OPAQUE_露:1.0___ast_露_35__;
+  _OPAQUE_露:1.0___ast_露_12__?: _OPAQUE_露:1.0___ast_露_35__;
+};
+
+_OPAQUE_露:1.0___ast_露_41__ _OPAQUE_露:1.0___ast_露_5__ _OPAQUE_廱:1.0___ast_廱_7__ = _OPAQUE_紐:1.0___ast_廱_6__ & {
+  _OPAQUE_露:1.0___ast_露_36__: _OPAQUE_露:1.0___ast_露_33__;
+  _OPAQUE_泳:1.0___ast_露_43__: _OPAQUE_露:1.0___ast_露_33__;
+  _OPAQUE_露:1.0___ast_露_24__: _OPAQUE_露:1.0___ast_露_33__;
+  _OPAQUE_露:1.0___ast_露_9__: _OPAQUE_露:1.0___ast_露_33__;
+};
+
+_OPAQUE_露:1.0___ast_露_41__ _OPAQUE_露:1.0___ast_露_5__ _OPAQUE_廱:1.0___ast_廱_2__ =
+  | {
+      _OPAQUE_露:1.0___ast_露_3__: "_OPAQUE_露:1.0___ast_露_21__" | "_OPAQUE_露:1.0___ast_露_37__" | "_OPAQUE_露:1.0___ast_露_15__";
+      _OPAQUE_露:1.0___ast_露_26__?: _OPAQUE_露:1.0___ast_露_35__;
+      _OPAQUE_露:1.0___ast_露_7__?: _OPAQUE_露:1.0___ast_露_35__;
+    }
+  | {
+      _OPAQUE_露:1.0___ast_露_3__: "_OPAQUE_露:1.0___ast_露_23__";
+      _OPAQUE_露:1.0___ast_露_26__: _OPAQUE_露:1.0___ast_露_35__;
+      _OPAQUE_露:1.0___ast_露_7__?: _OPAQUE_露:1.0___ast_露_35__;
+    }
+  | {
+      _OPAQUE_露:1.0___ast_露_3__: "_OPAQUE_露:1.0___ast_露_18__";
+      _OPAQUE_露:1.0___ast_露_26__?: _OPAQUE_露:1.0___ast_露_35__;
+      _OPAQUE_露:1.0___ast_露_7__?: _OPAQUE_露:1.0___ast_露_35__;
+    };
+
+_OPAQUE_露:1.0___ast_露_6__ _OPAQUE_露:1.0___ast_露_40__(_OPAQUE_露:1.0___ast_露_16__: _OPAQUE_露:1.0___ast_露_35__ | _OPAQUE_露:1.0___ast_露_2__): _OPAQUE_露:1.0___ast_露_33__ {
+  return _OPAQUE_露:1.0___ast_露_16__?._OPAQUE_露:1.0___ast_露_31__("_OPAQUE_露:1.0___ast_露_1__") ?? false;
+}
+
+_OPAQUE_露:1.0___ast_露_41__ _OPAQUE_露:1.0___ast_露_6__ _OPAQUE_紐:1.0___ast_露_19__(_OPAQUE_露:1.0___ast_露_29__: _OPAQUE_廱:1.0___ast_廱_8__): _OPAQUE_紐:1.0___ast_廱_6__ {
+  _OPAQUE_露:1.0___ast_露_38__ _OPAQUE_露:1.0___ast_露_28__ = _OPAQUE_露:1.0___ast_露_44__ _OPAQUE_紐:1.0___ast_廱_5__(_OPAQUE_露:1.0___ast_露_29__._OPAQUE_露:1.0___ast_露_11__);
+  _OPAQUE_露:1.0___ast_露_38__ _OPAQUE_露:1.0___ast_露_5__ = _OPAQUE_露:1.0___ast_露_8__ _OPAQUE_露:1.0___ast_露_29__._OPAQUE_露:1.0___ast_露_42__?._OPAQUE_露:1.0___ast_露_5__ === "_OPAQUE_露:1.0___ast_露_35__" ? _OPAQUE_露:1.0___ast_露_29__._OPAQUE_露:1.0___ast_露_42__._OPAQUE_露:1.0___ast_露_5__._OPAQUE_露:1.0___ast_露_22__() : _OPAQUE_露:1.0___ast_露_17__;
+  _OPAQUE_露:1.0___ast_露_38__ _OPAQUE_露:1.0___ast_露_12__ =
+    _OPAQUE_露:1.0___ast_露_8__ _OPAQUE_露:1.0___ast_露_29__._OPAQUE_露:1.0___ast_露_42__?._OPAQUE_露:1.0___ast_露_27__ === "_OPAQUE_露:1.0___ast_露_35__" && _OPAQUE_露:1.0___ast_露_29__._OPAQUE_露:1.0___ast_露_42__._OPAQUE_露:1.0___ast_露_27__._OPAQUE_露:1.0___ast_露_22__()
+      ? _OPAQUE_露:1.0___ast_露_29__._OPAQUE_露:1.0___ast_露_42__._OPAQUE_露:1.0___ast_露_27__._OPAQUE_露:1.0___ast_露_22__()
+      : _OPAQUE_露:1.0___ast_露_17__;
+
+// _OPAQUE_露:0.4___ast_CC_778__ [decoy-metadata]
+  return {
+    _OPAQUE_露:1.0___ast_露_10__: _OPAQUE_露:1.0___ast_露_28__._OPAQUE_策:1.0___ast_嵐_1__("_OPAQUE_廱:1.0___ast_廱_4__"),
+    _OPAQUE_露:1.0___ast_露_16__: _OPAQUE_露:1.0___ast_露_28__._OPAQUE_策:1.0___ast_嵐_1__("_OPAQUE_廱:1.0___ast_廱_9__"),
+    _OPAQUE_露:1.0___ast_露_14__: _OPAQUE_露:1.0___ast_露_5__ === "_OPAQUE_露:1.0___ast_露_20__",
+    _OPAQUE_露:1.0___ast_露_13__: _OPAQUE_露:1.0___ast_露_28__._OPAQUE_策:1.0___ast_嵐_1__("_OPAQUE_廱:1.0___ast_廱_3__") || _OPAQUE_露:1.0___ast_露_17__,
+    _OPAQUE_露:1.0___ast_露_12__,
+  };
+}
+
+_OPAQUE_露:1.0___ast_露_41__ _OPAQUE_露:1.0___ast_露_6__ _OPAQUE_露:1.0___ast_露_4__(_OPAQUE_露:1.0___ast_露_39__: _OPAQUE_廱:1.0___ast_廱_7__): _OPAQUE_廱:1.0___ast_廱_2__ {
+  if (_OPAQUE_露:1.0___ast_露_39__._OPAQUE_露:1.0___ast_露_12__ && !_OPAQUE_露:1.0___ast_露_39__._OPAQUE_露:1.0___ast_露_14__) {
+    if (_OPAQUE_露:1.0___ast_露_39__._OPAQUE_露:1.0___ast_露_36__) {
+      return { _OPAQUE_露:1.0___ast_露_3__: "_OPAQUE_露:1.0___ast_露_23__", _OPAQUE_露:1.0___ast_露_26__: _OPAQUE_露:1.0___ast_露_39__._OPAQUE_露:1.0___ast_露_12__ };
+// _OPAQUE_策:0.1___ast_GH_285__ [decoy-metadata]
+    }
+    if (_OPAQUE_露:1.0___ast_露_39__._OPAQUE_泳:1.0___ast_露_43__) {
+      return { _OPAQUE_露:1.0___ast_露_3__: "_OPAQUE_露:1.0___ast_露_21__" };
+// _OPAQUE_冥:0.7___ast_LE_936__ [decoy-metadata]
+    }
+// _OPAQUE_嵐:0.3___ast_ZM_491__ [decoy-metadata]
+
+    if (_OPAQUE_露:1.0___ast_露_40__(_OPAQUE_露:1.0___ast_露_39__._OPAQUE_露:1.0___ast_露_16__)) {
+      return _OPAQUE_露:1.0___ast_露_39__._OPAQUE_露:1.0___ast_露_9__ ? { _OPAQUE_露:1.0___ast_露_3__: "_OPAQUE_露:1.0___ast_露_18__" } : { _OPAQUE_露:1.0___ast_露_3__: "_OPAQUE_露:1.0___ast_露_37__" };
+    }
+  }
+
+  if (_OPAQUE_露:1.0___ast_露_39__._OPAQUE_露:1.0___ast_露_14__) {
+    return { _OPAQUE_露:1.0___ast_露_3__: "_OPAQUE_露:1.0___ast_露_21__" };
+  }
+
+  if (_OPAQUE_露:1.0___ast_露_39__._OPAQUE_露:1.0___ast_露_16__ === "_OPAQUE_露:1.0___ast_露_32__") {
+    if (_OPAQUE_露:1.0___ast_露_39__._OPAQUE_露:1.0___ast_露_24__) {
+      return { _OPAQUE_露:1.0___ast_露_3__: "_OPAQUE_露:1.0___ast_露_15__" };
+    }
+    if (_OPAQUE_露:1.0___ast_露_39__._OPAQUE_露:1.0___ast_露_9__ && _OPAQUE_露:1.0___ast_露_39__._OPAQUE_露:1.0___ast_露_13__) {
+      return { _OPAQUE_露:1.0___ast_露_3__: "_OPAQUE_露:1.0___ast_露_18__", _OPAQUE_露:1.0___ast_露_7__: _OPAQUE_露:1.0___ast_露_39__._OPAQUE_露:1.0___ast_露_13__ };
+    }
+    return { _OPAQUE_露:1.0___ast_露_3__: "_OPAQUE_露:1.0___ast_露_37__" };
+  }
+
+  if (_OPAQUE_露:1.0___ast_露_39__._OPAQUE_露:1.0___ast_露_10__ !== "in-_OPAQUE_露:1.0___ast_露_34__") {
+    return { _OPAQUE_露:1.0___ast_露_3__: "_OPAQUE_露:1.0___ast_露_21__" };
+  }
+
+  return _OPAQUE_露:1.0___ast_露_39__._OPAQUE_露:1.0___ast_露_9__ ? { _OPAQUE_露:1.0___ast_露_3__: "_OPAQUE_露:1.0___ast_露_18__" } : { _OPAQUE_露:1.0___ast_露_3__: "_OPAQUE_露:1.0___ast_露_37__" };
+}
+
+// POLYMORPHIC_JCROSS_END

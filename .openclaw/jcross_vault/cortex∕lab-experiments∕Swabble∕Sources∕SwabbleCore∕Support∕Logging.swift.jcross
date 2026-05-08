@@ -1,0 +1,53 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:10724003 ver:1778220715
+// ⚠️ One-time schema — expires after response
+
+import _TOKEN_庭:1.0__JCROSS_庭_7_
+
+public enum _TOKEN_庭:1.0__JCROSS_庭_9_: _TOKEN_庭:1.0__JCROSS_庭_3_, _TOKEN_庭:1.0__JCROSS_庭_1_, _TOKEN_庭:1.0__JCROSS_庭_4_, _TOKEN_庭:1.0__JCROSS_庭_2_ {
+// _TOKEN_匷:0.6__JCROSS_FH_703_ [decoy-metadata]
+    case _TOKEN_霩:1.0__JCROSS_霩_18_, _TOKEN_霩:1.0__JCROSS_霩_9_, _TOKEN_霩:1.0__JCROSS_霩_17_, _TOKEN_霩:1.0__JCROSS_霩_1_, _TOKEN_霩:1.0__JCROSS_霩_10_
+
+    var _TOKEN_霩:1.0__JCROSS_霩_11_: _TOKEN_庭:1.0__JCROSS_庭_11_ {
+        switch self {
+        case ._TOKEN_霩:1.0__JCROSS_霩_18_: 0
+        case ._TOKEN_霩:1.0__JCROSS_霩_9_: 1
+        case ._TOKEN_霩:1.0__JCROSS_霩_17_: 2
+        case ._TOKEN_霩:1.0__JCROSS_霩_1_: 3
+        case ._TOKEN_霩:1.0__JCROSS_霩_10_: 4
+        }
+    }
+
+    public static func < (_TOKEN_霩:1.0__JCROSS_霩_14_: _TOKEN_庭:1.0__JCROSS_庭_9_, _TOKEN_霩:1.0__JCROSS_霩_12_: _TOKEN_庭:1.0__JCROSS_庭_9_) -> _TOKEN_庭:1.0__JCROSS_庭_6_ { _TOKEN_霩:1.0__JCROSS_霩_14_._TOKEN_霩:1.0__JCROSS_霩_11_ < _TOKEN_霩:1.0__JCROSS_霩_12_._TOKEN_霩:1.0__JCROSS_霩_11_ }
+}
+
+public struct _TOKEN_格:1.0__JCROSS_庭_10_: _TOKEN_庭:1.0__JCROSS_庭_2_ {
+    public let _TOKEN_霩:1.0__JCROSS_霩_5_: _TOKEN_庭:1.0__JCROSS_庭_9_
+
+// _TOKEN_滾:0.7__JCROSS_KK_456_ [decoy-metadata]
+    public init(_TOKEN_霩:1.0__JCROSS_霩_5_: _TOKEN_庭:1.0__JCROSS_庭_9_) { self._TOKEN_霩:1.0__JCROSS_霩_5_ = _TOKEN_霩:1.0__JCROSS_霩_5_ }
+
+    public func _TOKEN_霩:1.0__JCROSS_霩_16_(_ _TOKEN_霩:1.0__JCROSS_霩_5_: _TOKEN_庭:1.0__JCROSS_庭_9_, _ _TOKEN_霩:1.0__JCROSS_霩_2_: _TOKEN_庭:1.0__JCROSS_庭_3_) {
+        guard _TOKEN_霩:1.0__JCROSS_霩_5_ >= self._TOKEN_霩:1.0__JCROSS_霩_5_ else { return }
+        let ts = _TOKEN_格:1.0__JCROSS_庭_8_()._TOKEN_霩:1.0__JCROSS_霩_6_(_TOKEN_霩:1.0__JCROSS_霩_15_: _TOKEN_庭:1.0__JCROSS_庭_5_())
+        _TOKEN_霩:1.0__JCROSS_霩_8_("[\(_TOKEN_霩:1.0__JCROSS_霩_5_._TOKEN_霩:1.0__JCROSS_霩_7_._TOKEN_霩:1.0__JCROSS_霩_3_())] \(ts) | \(_TOKEN_霩:1.0__JCROSS_霩_2_)")
+    }
+
+    public func _TOKEN_霩:1.0__JCROSS_霩_18_(_ _TOKEN_霩:1.0__JCROSS_霩_13_: _TOKEN_庭:1.0__JCROSS_庭_3_) { _TOKEN_霩:1.0__JCROSS_霩_16_(._TOKEN_霩:1.0__JCROSS_霩_18_, _TOKEN_霩:1.0__JCROSS_霩_13_) }
+    public func _TOKEN_霩:1.0__JCROSS_霩_9_(_ _TOKEN_霩:1.0__JCROSS_霩_13_: _TOKEN_庭:1.0__JCROSS_庭_3_) { _TOKEN_霩:1.0__JCROSS_霩_16_(._TOKEN_霩:1.0__JCROSS_霩_9_, _TOKEN_霩:1.0__JCROSS_霩_13_) }
+    public func _TOKEN_霩:1.0__JCROSS_霩_17_(_ _TOKEN_霩:1.0__JCROSS_霩_13_: _TOKEN_庭:1.0__JCROSS_庭_3_) { _TOKEN_霩:1.0__JCROSS_霩_16_(._TOKEN_霩:1.0__JCROSS_霩_17_, _TOKEN_霩:1.0__JCROSS_霩_13_) }
+    public func _TOKEN_霩:1.0__JCROSS_霩_1_(_ _TOKEN_霩:1.0__JCROSS_霩_13_: _TOKEN_庭:1.0__JCROSS_庭_3_) { _TOKEN_霩:1.0__JCROSS_霩_16_(._TOKEN_霩:1.0__JCROSS_霩_1_, _TOKEN_霩:1.0__JCROSS_霩_13_) }
+    public func _TOKEN_霩:1.0__JCROSS_霩_10_(_ _TOKEN_霩:1.0__JCROSS_霩_13_: _TOKEN_庭:1.0__JCROSS_庭_3_) { _TOKEN_霩:1.0__JCROSS_霩_16_(._TOKEN_霩:1.0__JCROSS_霩_10_, _TOKEN_霩:1.0__JCROSS_霩_13_) }
+}
+
+// _TOKEN_霩:0.7__JCROSS_YZ_915_ [decoy-metadata]
+extension _TOKEN_庭:1.0__JCROSS_庭_9_ {
+// _TOKEN_蔽:0.9__JCROSS_KM_493_ [decoy-metadata]
+    public init?(_TOKEN_霩:1.0__JCROSS_霩_4_: _TOKEN_庭:1.0__JCROSS_庭_3_) {
+// _TOKEN_庭:0.4__JCROSS_ZC_864_ [decoy-metadata]
+        self.init(_TOKEN_霩:1.0__JCROSS_霩_7_: _TOKEN_霩:1.0__JCROSS_霩_4_._TOKEN_霩:1.0__JCROSS_霩_19_())
+    }
+// _TOKEN_縫:0.3__JCROSS_BW_468_ [decoy-metadata]
+}
+
+// POLYMORPHIC_JCROSS_END

@@ -1,0 +1,352 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:52DBB78A ver:1778219076
+// ⚠️ One-time schema — expires after response
+
+// [metadata-stripped]
+"""
+_VERANTYX_廓:1.0__ID_廓_11_ _VERANTYX_廓:1.0__ID_廓_20_ × _VERANTYX_廓:1.0__ID_廓_27_ _VERANTYX_廓:1.0__ID_廓_39_ _VERANTYX_廓:1.0__ID_廓_70_ (_VERANTYX_廓:1.0__ID_廓_56_ _VERANTYX_廓:1.0__ID_廓_33_)
+- _VERANTYX_廓:1.0__ID_廓_55_ _VERANTYX_廓:1.0__ID_廓_4_ _VERANTYX_廓:1.0__ID_廓_52_-_VERANTYX_廓:1.0__ID_廓_28_ (_VERANTYX_霰:1.0__ID_霰_231_ _VERANTYX_廓:1.0__ID_廓_76_ _VERANTYX_霰:1.0__ID_霰_66_)
+- _VERANTYX_廓:1.0__ID_廓_71_ _VERANTYX_廓:1.0__ID_廓_60_ _VERANTYX_霰:1.0__ID_霰_12_ _VERANTYX_霰:1.0__ID_霰_142_ to ~/._VERANTYX_霰:1.0__ID_霰_222_/_VERANTYX_霰:1.0__ID_霰_94_/_VERANTYX_霰:1.0__ID_霰_260_/
+- _VERANTYX_廓:1.0__ID_廓_38_ _VERANTYX_型:1.0__ID_廓_79_ in _VERANTYX_霰:1.0__ID_霰_107_ _VERANTYX_廓:1.0__ID_廓_25_ (_VERANTYX_霰:1.0__ID_霰_177_ of _VERANTYX_霰:1.0__ID_霰_10_.ts)
+- _VERANTYX_廓:1.0__ID_廓_32_ _VERANTYX_霰:1.0__ID_霰_77_:_VERANTYX_霰:1.0__ID_霰_269_ _VERANTYX_霰:1.0__ID_霰_166_ _VERANTYX_廓:1.0__ID_廓_30_ _VERANTYX_組:1.0__ID_廓_17_
+"""
+
+im_VERANTYX_霰:1.0__ID_霰_177_ _VERANTYX_霰:1.0__ID_霰_23_
+im_VERANTYX_霰:1.0__ID_霰_177_ os
+im_VERANTYX_霰:1.0__ID_霰_177_ re
+im_VERANTYX_霰:1.0__ID_霰_177_ _VERANTYX_霰:1.0__ID_霰_41_
+im_VERANTYX_霰:1.0__ID_霰_177_ _VERANTYX_霰:1.0__ID_霰_151_
+im_VERANTYX_霰:1.0__ID_霰_177_ _VERANTYX_組:1.0__ID_霰_81_._VERANTYX_組:1.0__ID_霰_54_
+im_VERANTYX_霰:1.0__ID_霰_177_ _VERANTYX_組:1.0__ID_霰_81_._VERANTYX_霰:1.0__ID_霰_80_
+
+// [metadata-stripped]
+_VERANTYX_廓:1.0__ID_廓_69_    = "/_VERANTYX_廓:1.0__ID_廓_3_/_VERANTYX_霰:1.0__ID_霰_215_/_VERANTYX_霰:1.0__ID_霰_169_-_VERANTYX_霰:1.0__ID_霰_188_/_VERANTYX_霰:1.0__ID_霰_89_/_VERANTYX_廓:1.0__ID_廓_27_/_VERANTYX_霰:1.0__ID_霰_163_/_VERANTYX_霰:1.0__ID_霰_172_._VERANTYX_霰:1.0__ID_霰_23_"
+_VERANTYX_廓:1.0__ID_廓_78_     = os._VERANTYX_霰:1.0__ID_霰_206_._VERANTYX_型:1.0__ID_霰_18_("~/._VERANTYX_霰:1.0__ID_霰_222_/_VERANTYX_霰:1.0__ID_霰_94_")
+_VERANTYX_廓:1.0__ID_廓_41_    = "_VERANTYX_霰:1.0__ID_霰_77_:_VERANTYX_霰:1.0__ID_霰_269_"
+_VERANTYX_組:1.0__ID_廓_36_      = "_VERANTYX_組:1.0__ID_霰_229_://_VERANTYX_霰:1.0__ID_霰_34_:11434/_VERANTYX_組:1.0__ID_霰_154_/_VERANTYX_霰:1.0__ID_霰_50_"
+_VERANTYX_廓:1.0__ID_廓_34_   = 7
+_VERANTYX_廓:1.0__ID_廓_64_       = 100
+_VERANTYX_廓:1.0__ID_廓_9_   = 1500  # _VERANTYX_霰:1.0__ID_霰_77_:_VERANTYX_霰:1.0__ID_霰_269_ _VERANTYX_霰:1.0__ID_霰_217_ _VERANTYX_霰:1.0__ID_霰_33_ ~1500 _VERANTYX_霰:1.0__ID_霰_182_ in _VERANTYX_霰:1.0__ID_霰_114_
+
+
+// [metadata-stripped]
+_VERANTYX_霰:1.0__ID_霰_35_ _VERANTYX_霰:1.0__ID_霰_102_(_VERANTYX_霰:1.0__ID_霰_6_: _VERANTYX_霰:1.0__ID_霰_261_, _VERANTYX_霰:1.0__ID_霰_259_: _VERANTYX_霰:1.0__ID_霰_261_, _VERANTYX_霰:1.0__ID_霰_228_: _VERANTYX_霰:1.0__ID_霰_261_):
+    _VERANTYX_霰:1.0__ID_霰_109_ = os._VERANTYX_霰:1.0__ID_霰_206_._VERANTYX_霰:1.0__ID_霰_207_(_VERANTYX_廓:1.0__ID_廓_78_, _VERANTYX_霰:1.0__ID_霰_6_)
+    os._VERANTYX_霰:1.0__ID_霰_121_(_VERANTYX_霰:1.0__ID_霰_109_, _VERANTYX_霰:1.0__ID_霰_183_=_VERANTYX_廓:1.0__ID_廓_16_)
+    _VERANTYX_霰:1.0__ID_霰_206_ = os._VERANTYX_霰:1.0__ID_霰_206_._VERANTYX_霰:1.0__ID_霰_207_(_VERANTYX_霰:1.0__ID_霰_109_, _VERANTYX_霰:1.0__ID_霰_259_)
+    _VERANTYX_霰:1.0__ID_霰_137_ open(_VERANTYX_霰:1.0__ID_霰_206_, "w", _VERANTYX_霰:1.0__ID_霰_144_="_VERANTYX_霰:1.0__ID_霰_105_-8") as f:
+        f._VERANTYX_霰:1.0__ID_霰_59_(_VERANTYX_霰:1.0__ID_霰_228_)
+    return _VERANTYX_霰:1.0__ID_霰_206_
+
+
+_VERANTYX_霰:1.0__ID_霰_35_ _VERANTYX_霰:1.0__ID_霰_106_(_VERANTYX_霰:1.0__ID_霰_232_: _VERANTYX_霰:1.0__ID_霰_24_, _VERANTYX_霰:1.0__ID_霰_32_: _VERANTYX_霰:1.0__ID_霰_261_, _VERANTYX_霰:1.0__ID_霰_47_: _VERANTYX_霰:1.0__ID_霰_261_, _VERANTYX_霰:1.0__ID_霰_238_: _VERANTYX_霰:1.0__ID_霰_276_, _VERANTYX_霰:1.0__ID_霰_5_: _VERANTYX_霰:1.0__ID_霰_261_) -> _VERANTYX_霰:1.0__ID_霰_261_:
+    return f"""■ _VERANTYX_廓:1.0__ID_廓_22_{_VERANTYX_霰:1.0__ID_霰_232_}
+【空間座相】
+{_VERANTYX_霰:1.0__ID_霰_32_}
+
+【位相対応表】
+[標] := "{_VERANTYX_霰:1.0__ID_霰_47_[:120]}"
+
+【操作対応表】
+{_VERANTYX_霰:1.0__ID_霰_221_(10)._VERANTYX_霰:1.0__ID_霰_207_(_VERANTYX_霰:1.0__ID_霰_238_[:10])}
+
+【原文】
+{_VERANTYX_霰:1.0__ID_霰_5_[:2000]}
+"""._VERANTYX_霰:1.0__ID_霰_8_()
+
+
+// [metadata-stripped]
+_VERANTYX_霰:1.0__ID_霰_35_ _VERANTYX_霰:1.0__ID_霰_64_(_VERANTYX_霰:1.0__ID_霰_228_: _VERANTYX_霰:1.0__ID_霰_261_) -> _VERANTYX_霰:1.0__ID_霰_44_:
+    _VERANTYX_霰:1.0__ID_霰_223_ = {}
+    _VERANTYX_霰:1.0__ID_霰_224_ = re._VERANTYX_霰:1.0__ID_霰_237_(r'【空間座相】([\s\S]*?)【', _VERANTYX_霰:1.0__ID_霰_228_)
+    if _VERANTYX_霰:1.0__ID_霰_224_:
+        _VERANTYX_霰:1.0__ID_霰_73_ = _VERANTYX_霰:1.0__ID_霰_224_._VERANTYX_霰:1.0__ID_霰_200_(1)._VERANTYX_霰:1.0__ID_霰_8_()
+        for m in re._VERANTYX_型:1.0__ID_霰_245_(r'\[([^:\]]+):\s*([0-9.]+)\]', _VERANTYX_霰:1.0__ID_霰_73_):
+            _VERANTYX_霰:1.0__ID_霰_223_[m._VERANTYX_霰:1.0__ID_霰_200_(1)._VERANTYX_霰:1.0__ID_霰_8_()] = _VERANTYX_霰:1.0__ID_霰_26_(m._VERANTYX_霰:1.0__ID_霰_200_(2))
+    return _VERANTYX_霰:1.0__ID_霰_223_
+
+
+_VERANTYX_霰:1.0__ID_霰_35_ _VERANTYX_匶:1.0__ID_霰_202_() -> _VERANTYX_霰:1.0__ID_霰_276_:
+    _VERANTYX_霰:1.0__ID_霰_134_ = os._VERANTYX_霰:1.0__ID_霰_206_._VERANTYX_霰:1.0__ID_霰_207_(_VERANTYX_廓:1.0__ID_廓_78_, "_VERANTYX_霰:1.0__ID_霰_260_")
+    if _VERANTYX_霰:1.0__ID_霰_266_ os._VERANTYX_霰:1.0__ID_霰_206_._VERANTYX_霰:1.0__ID_霰_164_(_VERANTYX_霰:1.0__ID_霰_134_):
+        return []
+    _VERANTYX_霰:1.0__ID_霰_12_ = []
+    for _VERANTYX_霰:1.0__ID_霰_84_ in os._VERANTYX_霰:1.0__ID_霰_63_(_VERANTYX_霰:1.0__ID_霰_134_):
+        if _VERANTYX_霰:1.0__ID_霰_266_ (_VERANTYX_霰:1.0__ID_霰_84_._VERANTYX_霰:1.0__ID_霰_274_("._VERANTYX_霰:1.0__ID_霰_48_") or _VERANTYX_霰:1.0__ID_霰_84_._VERANTYX_霰:1.0__ID_霰_274_(".md")):
+            continue
+        _VERANTYX_霰:1.0__ID_霰_263_ = os._VERANTYX_霰:1.0__ID_霰_206_._VERANTYX_霰:1.0__ID_霰_207_(_VERANTYX_霰:1.0__ID_霰_134_, _VERANTYX_霰:1.0__ID_霰_84_)
+        try:
+            _VERANTYX_霰:1.0__ID_霰_137_ open(_VERANTYX_霰:1.0__ID_霰_263_, _VERANTYX_霰:1.0__ID_霰_144_="_VERANTYX_霰:1.0__ID_霰_105_-8") as f:
+                _VERANTYX_霰:1.0__ID_霰_228_ = f._VERANTYX_霰:1.0__ID_霰_234_()
+            _VERANTYX_霰:1.0__ID_霰_223_ = _VERANTYX_霰:1.0__ID_霰_64_(_VERANTYX_霰:1.0__ID_霰_228_)
+            _VERANTYX_霰:1.0__ID_霰_247_ = os._VERANTYX_霰:1.0__ID_霰_206_._VERANTYX_型:1.0__ID_碑_1_(_VERANTYX_霰:1.0__ID_霰_263_)
+            _VERANTYX_霰:1.0__ID_霰_12_._VERANTYX_霰:1.0__ID_霰_244_({"id": _VERANTYX_霰:1.0__ID_霰_84_, "_VERANTYX_霰:1.0__ID_霰_223_": _VERANTYX_霰:1.0__ID_霰_223_, "_VERANTYX_霰:1.0__ID_霰_228_": _VERANTYX_霰:1.0__ID_霰_228_, "_VERANTYX_霰:1.0__ID_霰_247_": _VERANTYX_霰:1.0__ID_霰_247_})
+        _VERANTYX_霰:1.0__ID_霰_199_ _VERANTYX_廓:1.0__ID_廓_47_:
+            continue
+    return _VERANTYX_霰:1.0__ID_霰_12_
+
+
+_VERANTYX_霰:1.0__ID_霰_35_ _VERANTYX_霰:1.0__ID_霰_210_(a: _VERANTYX_霰:1.0__ID_霰_44_, b: _VERANTYX_霰:1.0__ID_霰_44_) -> _VERANTYX_霰:1.0__ID_霰_26_:
+    _VERANTYX_霰:1.0__ID_霰_9_ = _VERANTYX_霰:1.0__ID_霰_136_(a._VERANTYX_型:1.0__ID_碑_2_(k, 0) * v for k, v in b._VERANTYX_霰:1.0__ID_霰_194_())
+    _VERANTYX_霰:1.0__ID_霰_69_ = _VERANTYX_霰:1.0__ID_霰_151_._VERANTYX_霰:1.0__ID_霰_20_(_VERANTYX_霰:1.0__ID_霰_136_(v*v for v in a._VERANTYX_霰:1.0__ID_霰_225_())) if a else 0
+    _VERANTYX_霰:1.0__ID_霰_132_ = _VERANTYX_霰:1.0__ID_霰_151_._VERANTYX_霰:1.0__ID_霰_20_(_VERANTYX_霰:1.0__ID_霰_136_(v*v for v in b._VERANTYX_霰:1.0__ID_霰_225_())) if b else 0
+    if _VERANTYX_霰:1.0__ID_霰_69_ == 0 or _VERANTYX_霰:1.0__ID_霰_132_ == 0:
+        return 0.0
+    return _VERANTYX_霰:1.0__ID_霰_9_ / (_VERANTYX_霰:1.0__ID_霰_69_ * _VERANTYX_霰:1.0__ID_霰_132_)
+
+
+_VERANTYX_霰:1.0__ID_霰_35_ _VERANTYX_霰:1.0__ID_霰_29_(_VERANTYX_霰:1.0__ID_霰_72_: _VERANTYX_霰:1.0__ID_霰_44_, _VERANTYX_霰:1.0__ID_霰_124_: _VERANTYX_霰:1.0__ID_霰_24_ = 5) -> _VERANTYX_霰:1.0__ID_霰_261_:
+    _VERANTYX_霰:1.0__ID_霰_12_ = _VERANTYX_匶:1.0__ID_霰_202_()
+    _VERANTYX_霰:1.0__ID_霰_145_ = []
+    for _VERANTYX_霰:1.0__ID_霰_153_ in _VERANTYX_霰:1.0__ID_霰_12_:
+        _VERANTYX_霰:1.0__ID_霰_31_ = _VERANTYX_霰:1.0__ID_霰_210_(_VERANTYX_霰:1.0__ID_霰_72_, _VERANTYX_霰:1.0__ID_霰_153_["_VERANTYX_霰:1.0__ID_霰_223_"])
+        if _VERANTYX_霰:1.0__ID_霰_31_ > 0.3:
+            _VERANTYX_霰:1.0__ID_霰_145_._VERANTYX_霰:1.0__ID_霰_244_((_VERANTYX_霰:1.0__ID_霰_31_, _VERANTYX_霰:1.0__ID_霰_153_))
+
+    _VERANTYX_霰:1.0__ID_霰_145_._VERANTYX_霰:1.0__ID_霰_197_(_VERANTYX_秘:1.0__ID_霰_196_=_VERANTYX_霰:1.0__ID_霰_126_ x: x[0], _VERANTYX_霰:1.0__ID_霰_198_=_VERANTYX_廓:1.0__ID_廓_16_)
+    _VERANTYX_霰:1.0__ID_霰_141_ = _VERANTYX_霰:1.0__ID_霰_145_[:_VERANTYX_霰:1.0__ID_霰_124_]
+
+    if _VERANTYX_霰:1.0__ID_霰_266_ _VERANTYX_霰:1.0__ID_霰_141_:
+        return ""
+
+    _VERANTYX_霰:1.0__ID_霰_175_ = []
+    for _VERANTYX_霰:1.0__ID_霰_31_, _VERANTYX_霰:1.0__ID_霰_153_ in _VERANTYX_霰:1.0__ID_霰_141_:
+// [metadata-stripped]
+        _VERANTYX_霰:1.0__ID_霰_189_ = re._VERANTYX_霰:1.0__ID_霰_237_(r'【位相対応表】([\s\S]*?)【操作対応表】', _VERANTYX_霰:1.0__ID_霰_153_["_VERANTYX_霰:1.0__ID_霰_228_"])
+        _VERANTYX_霰:1.0__ID_霰_135_ = re._VERANTYX_霰:1.0__ID_霰_237_(r'【原文】([\s\S]*)', _VERANTYX_霰:1.0__ID_霰_153_["_VERANTYX_霰:1.0__ID_霰_228_"])
+        _VERANTYX_霰:1.0__ID_霰_47_ = _VERANTYX_霰:1.0__ID_霰_189_._VERANTYX_霰:1.0__ID_霰_200_(1)._VERANTYX_霰:1.0__ID_霰_8_() if _VERANTYX_霰:1.0__ID_霰_189_ else ""
+        _VERANTYX_霰:1.0__ID_霰_5_ = _VERANTYX_霰:1.0__ID_霰_135_._VERANTYX_霰:1.0__ID_霰_200_(1)._VERANTYX_霰:1.0__ID_霰_8_()[:500] if _VERANTYX_霰:1.0__ID_霰_135_ else ""
+
+        _VERANTYX_霰:1.0__ID_霰_175_._VERANTYX_霰:1.0__ID_霰_244_(
+            f"[_VERANTYX_廓:1.0__ID_廓_61_: {_VERANTYX_霰:1.0__ID_霰_153_['id']} | _VERANTYX_廓:1.0__ID_廓_65_: {_VERANTYX_霰:1.0__ID_霰_31_:.2f}]\n{_VERANTYX_霰:1.0__ID_霰_47_}\n---\n{_VERANTYX_霰:1.0__ID_霰_5_}"
+        )
+
+    return "\n\n"._VERANTYX_霰:1.0__ID_霰_207_(_VERANTYX_霰:1.0__ID_霰_175_)
+
+
+// [metadata-stripped]
+_VERANTYX_霰:1.0__ID_霰_35_ _VERANTYX_霰:1.0__ID_霰_156_(_VERANTYX_霰:1.0__ID_霰_76_: _VERANTYX_霰:1.0__ID_霰_261_) -> _VERANTYX_霰:1.0__ID_霰_44_:
+    q = _VERANTYX_霰:1.0__ID_霰_76_._VERANTYX_型:1.0__ID_霰_176_()
+    if any(w in q for w in ["_VERANTYX_霰:1.0__ID_霰_165_", "_VERANTYX_霰:1.0__ID_霰_78_", "_VERANTYX_霰:1.0__ID_霰_41_", "_VERANTYX_霰:1.0__ID_霰_79_", "_VERANTYX_霰:1.0__ID_霰_7_", "_VERANTYX_霰:1.0__ID_霰_170_", "_VERANTYX_霰:1.0__ID_霰_242_", "_VERANTYX_霰:1.0__ID_霰_71_", "_VERANTYX_霰:1.0__ID_霰_125_ _VERANTYX_霰:1.0__ID_霰_147_"]):
+        return {"時": 1.0, "標": 0.8, "記": 0.7}
+    if any(w in q for w in ["where", "_VERANTYX_霰:1.0__ID_霰_61_", "_VERANTYX_霰:1.0__ID_霰_117_", "_VERANTYX_霰:1.0__ID_霰_128_", "_VERANTYX_霰:1.0__ID_霰_115_", "_VERANTYX_霰:1.0__ID_霰_208_", "_VERANTYX_霰:1.0__ID_霰_93_"]):
+        return {"場": 1.0, "標": 0.8, "視": 0.5}
+    if any(w in q for w in ["_VERANTYX_霰:1.0__ID_霰_262_", "_VERANTYX_霰:1.0__ID_霰_133_", "_VERANTYX_霰:1.0__ID_霰_30_", "_VERANTYX_霰:1.0__ID_霰_55_", "_VERANTYX_霰:1.0__ID_霰_49_", "_VERANTYX_霰:1.0__ID_霰_139_", "_VERANTYX_霰:1.0__ID_霰_226_", "_VERANTYX_霰:1.0__ID_霰_230_", "_VERANTYX_霰:1.0__ID_霰_209_"]):
+        return {"標": 1.0, "記": 0.9, "認": 0.6}
+    return {"標": 1.0, "認": 0.8, "記": 0.6}
+
+_VERANTYX_霰:1.0__ID_霰_35_ _VERANTYX_霰:1.0__ID_霰_53_(_VERANTYX_霰:1.0__ID_霰_5_: _VERANTYX_霰:1.0__ID_霰_261_, _VERANTYX_霰:1.0__ID_霰_76_: _VERANTYX_霰:1.0__ID_霰_261_, _VERANTYX_霰:1.0__ID_霰_187_: _VERANTYX_霰:1.0__ID_霰_24_ = 8) -> _VERANTYX_霰:1.0__ID_霰_261_:
+    """_VERANTYX_廓:1.0__ID_廓_74_ a _VERANTYX_霰:1.0__ID_霰_60_ _VERANTYX_霰:1.0__ID_霰_187_ of _VERANTYX_霰:1.0__ID_霰_112_ _VERANTYX_霰:1.0__ID_霰_218_ _VERANTYX_霰:1.0__ID_霰_28_ to _VERANTYX_霰:1.0__ID_霰_204_ _VERANTYX_霰:1.0__ID_霰_76_."""
+    _VERANTYX_霰:1.0__ID_霰_112_ = [l for l in _VERANTYX_霰:1.0__ID_霰_5_._VERANTYX_霰:1.0__ID_霰_235_() if l._VERANTYX_霰:1.0__ID_霰_8_()]
+    _VERANTYX_秘:1.0__ID_霰_86_ = [w._VERANTYX_型:1.0__ID_霰_176_() for w in _VERANTYX_霰:1.0__ID_霰_76_._VERANTYX_霰:1.0__ID_霰_138_() if _VERANTYX_霰:1.0__ID_霰_252_(w) > 3]
+
+// [metadata-stripped]
+    _VERANTYX_霰:1.0__ID_霰_145_ = []
+    for i, _VERANTYX_霰:1.0__ID_霰_131_ in _VERANTYX_霰:1.0__ID_霰_2_(_VERANTYX_霰:1.0__ID_霰_112_):
+        ll = _VERANTYX_霰:1.0__ID_霰_131_._VERANTYX_型:1.0__ID_霰_176_()
+        _VERANTYX_霰:1.0__ID_霰_264_ = _VERANTYX_霰:1.0__ID_霰_136_(1 for k in _VERANTYX_秘:1.0__ID_霰_86_ if k in ll)
+        _VERANTYX_霰:1.0__ID_霰_145_._VERANTYX_霰:1.0__ID_霰_244_((_VERANTYX_霰:1.0__ID_霰_264_, i))
+
+    if _VERANTYX_霰:1.0__ID_霰_266_ _VERANTYX_霰:1.0__ID_霰_145_:
+        return _VERANTYX_霰:1.0__ID_霰_5_[:_VERANTYX_廓:1.0__ID_廓_9_]
+
+// [metadata-stripped]
+    _VERANTYX_霰:1.0__ID_霰_74_, _VERANTYX_霰:1.0__ID_霰_56_ = _VERANTYX_霰:1.0__ID_霰_174_(_VERANTYX_霰:1.0__ID_霰_145_, _VERANTYX_秘:1.0__ID_霰_196_=_VERANTYX_霰:1.0__ID_霰_126_ x: x[0])
+    _VERANTYX_霰:1.0__ID_霰_88_ = _VERANTYX_霰:1.0__ID_霰_174_(0, _VERANTYX_霰:1.0__ID_霰_56_ - _VERANTYX_霰:1.0__ID_霰_187_ // 2)
+    _VERANTYX_霰:1.0__ID_霰_16_ = _VERANTYX_霰:1.0__ID_霰_19_(_VERANTYX_霰:1.0__ID_霰_252_(_VERANTYX_霰:1.0__ID_霰_112_), _VERANTYX_霰:1.0__ID_霰_56_ + _VERANTYX_霰:1.0__ID_霰_187_ // 2 + 1)
+    _VERANTYX_霰:1.0__ID_霰_75_ = "\n"._VERANTYX_霰:1.0__ID_霰_207_(_VERANTYX_霰:1.0__ID_霰_112_[_VERANTYX_霰:1.0__ID_霰_88_:_VERANTYX_霰:1.0__ID_霰_16_])
+    return _VERANTYX_霰:1.0__ID_霰_75_[:_VERANTYX_廓:1.0__ID_廓_9_]
+
+
+// [metadata-stripped]
+_VERANTYX_霰:1.0__ID_霰_35_ _VERANTYX_霰:1.0__ID_霰_108_(_VERANTYX_霰:1.0__ID_霰_76_: _VERANTYX_霰:1.0__ID_霰_261_, _VERANTYX_霰:1.0__ID_霰_123_: _VERANTYX_霰:1.0__ID_霰_261_) -> _VERANTYX_霰:1.0__ID_霰_261_:
+// _VERANTYX_型:0.1__ID_DV_572_ [decoy-metadata]
+    _VERANTYX_霰:1.0__ID_霰_114_ = f"""_VERANTYX_廓:1.0__ID_廓_67_ is a _VERANTYX_霰:1.0__ID_霰_271_. _VERANTYX_型:1.0__ID_廓_75_ _VERANTYX_霰:1.0__ID_霰_204_ _VERANTYX_霰:1.0__ID_霰_76_ _VERANTYX_霰:1.0__ID_霰_137_ _VERANTYX_廓:1.0__ID_廓_40_ _VERANTYX_霰:1.0__ID_霰_204_ _VERANTYX_霰:1.0__ID_霰_239_ _VERANTYX_霰:1.0__ID_霰_40_(s) _VERANTYX_霰:1.0__ID_霰_87_ _VERANTYX_霰:1.0__ID_霰_204_ _VERANTYX_霰:1.0__ID_霰_271_. No _VERANTYX_霰:1.0__ID_霰_83_.
+
+_VERANTYX_廓:1.0__ID_廓_49_:
+{_VERANTYX_霰:1.0__ID_霰_123_}
+
+_VERANTYX_廓:1.0__ID_廓_8_: {_VERANTYX_霰:1.0__ID_霰_76_}
+_VERANTYX_型:1.0__ID_廓_75_ (_VERANTYX_霰:1.0__ID_霰_239_ _VERANTYX_霰:1.0__ID_霰_42_ _VERANTYX_霰:1.0__ID_霰_273_):"""
+
+    _VERANTYX_匶:1.0__ID_霰_119_ = _VERANTYX_霰:1.0__ID_霰_23_._VERANTYX_霰:1.0__ID_霰_45_({
+        "_VERANTYX_霰:1.0__ID_霰_249_": _VERANTYX_廓:1.0__ID_廓_41_,
+        "_VERANTYX_霰:1.0__ID_霰_114_": _VERANTYX_霰:1.0__ID_霰_114_,
+        "_VERANTYX_霰:1.0__ID_霰_255_": _VERANTYX_廓:1.0__ID_廓_23_,
+        "_VERANTYX_霰:1.0__ID_霰_214_": {"_VERANTYX_霰:1.0__ID_霰_193_": 0.0, "_VERANTYX_霰:1.0__ID_霰_233_": 30}
+    })._VERANTYX_霰:1.0__ID_霰_253_()
+
+    try:
+        _VERANTYX_霰:1.0__ID_霰_250_ = _VERANTYX_組:1.0__ID_霰_81_._VERANTYX_組:1.0__ID_霰_54_._VERANTYX_組:1.0__ID_廓_58_(
+            _VERANTYX_組:1.0__ID_廓_36_, _VERANTYX_霰:1.0__ID_霰_163_=_VERANTYX_匶:1.0__ID_霰_119_,
+            _VERANTYX_霰:1.0__ID_霰_158_={"_VERANTYX_廓:1.0__ID_廓_68_-_VERANTYX_廓:1.0__ID_廓_54_": "_VERANTYX_霰:1.0__ID_霰_155_/_VERANTYX_霰:1.0__ID_霰_23_"}
+        )
+        _VERANTYX_霰:1.0__ID_霰_137_ _VERANTYX_組:1.0__ID_霰_81_._VERANTYX_組:1.0__ID_霰_54_._VERANTYX_組:1.0__ID_霰_246_(_VERANTYX_霰:1.0__ID_霰_250_, _VERANTYX_霰:1.0__ID_霰_171_=90) as _VERANTYX_霰:1.0__ID_霰_248_:
+            _VERANTYX_霰:1.0__ID_霰_163_ = _VERANTYX_霰:1.0__ID_霰_23_._VERANTYX_匶:1.0__ID_霰_120_(_VERANTYX_霰:1.0__ID_霰_248_._VERANTYX_霰:1.0__ID_霰_234_())
+            return _VERANTYX_霰:1.0__ID_霰_163_._VERANTYX_型:1.0__ID_碑_2_("_VERANTYX_霰:1.0__ID_霰_36_", "")._VERANTYX_霰:1.0__ID_霰_8_()
+    _VERANTYX_霰:1.0__ID_霰_199_ _VERANTYX_組:1.0__ID_霰_81_._VERANTYX_霰:1.0__ID_霰_80_._VERANTYX_組:1.0__ID_廓_35_ as e:
+        return f"[_VERANTYX_廓:1.0__ID_廓_30_ _VERANTYX_霰:1.0__ID_霰_80_: {e}]"
+
+
+// [metadata-stripped]
+_VERANTYX_霰:1.0__ID_霰_35_ _VERANTYX_秘:1.0__ID_霰_118_(_VERANTYX_霰:1.0__ID_霰_43_: _VERANTYX_霰:1.0__ID_霰_261_, _VERANTYX_霰:1.0__ID_霰_157_: _VERANTYX_霰:1.0__ID_霰_261_) -> _VERANTYX_霰:1.0__ID_霰_26_:
+    if _VERANTYX_霰:1.0__ID_霰_266_ _VERANTYX_霰:1.0__ID_霰_157_ or _VERANTYX_霰:1.0__ID_霰_157_._VERANTYX_型:1.0__ID_霰_176_() in ("_VERANTYX_霰:1.0__ID_霰_100_", "i _VERANTYX_霰:1.0__ID_霰_37_'t _VERANTYX_霰:1.0__ID_霰_161_", ""):
+        return 0.0
+    e = re._VERANTYX_霰:1.0__ID_霰_241_(r'[^\w\s]', ' ', _VERANTYX_霰:1.0__ID_霰_43_._VERANTYX_型:1.0__ID_霰_176_())._VERANTYX_霰:1.0__ID_霰_138_()
+    g = re._VERANTYX_霰:1.0__ID_霰_241_(r'[^\w\s]', ' ', _VERANTYX_霰:1.0__ID_霰_157_._VERANTYX_型:1.0__ID_霰_176_())
+// _VERANTYX_霰:0.6__ID_FM_931_ [decoy-metadata]
+    _VERANTYX_秘:1.0__ID_霰_92_ = [w for w in e if _VERANTYX_霰:1.0__ID_霰_252_(w) > 2]
+    if _VERANTYX_霰:1.0__ID_霰_266_ _VERANTYX_秘:1.0__ID_霰_92_:
+        return 1.0 if _VERANTYX_霰:1.0__ID_霰_43_._VERANTYX_型:1.0__ID_霰_176_()._VERANTYX_霰:1.0__ID_霰_8_() in g else 0.0
+    return _VERANTYX_霰:1.0__ID_霰_136_(1 for w in _VERANTYX_秘:1.0__ID_霰_92_ if w in g) / _VERANTYX_霰:1.0__ID_霰_252_(_VERANTYX_秘:1.0__ID_霰_92_)
+
+
+// [metadata-stripped]
+_VERANTYX_霰:1.0__ID_霰_35_ _VERANTYX_霰:1.0__ID_霰_275_():
+// _VERANTYX_涌:0.8__ID_AF_184_ [decoy-metadata]
+    _VERANTYX_霰:1.0__ID_霰_51_("=" * 65)
+    _VERANTYX_霰:1.0__ID_霰_51_("  _VERANTYX_廓:1.0__ID_廓_11_ _VERANTYX_廓:1.0__ID_廓_20_ × _VERANTYX_廓:1.0__ID_廓_27_ _VERANTYX_廓:1.0__ID_廓_39_ _VERANTYX_廓:1.0__ID_廓_70_ (_VERANTYX_廓:1.0__ID_廓_56_ _VERANTYX_廓:1.0__ID_廓_33_)")
+// _VERANTYX_涌:0.8__ID_EW_842_ [decoy-metadata]
+    _VERANTYX_霰:1.0__ID_霰_51_(f"  _VERANTYX_廓:1.0__ID_廓_5_ _VERANTYX_霰:1.0__ID_霰_27_: {_VERANTYX_廓:1.0__ID_廓_78_}")
+    _VERANTYX_霰:1.0__ID_霰_51_(f"  _VERANTYX_廓:1.0__ID_廓_44_: {_VERANTYX_廓:1.0__ID_廓_41_} | _VERANTYX_廓:1.0__ID_廓_50_: {_VERANTYX_廓:1.0__ID_廓_34_}")
+    _VERANTYX_霰:1.0__ID_霰_51_("=" * 65)
+
+// [metadata-stripped]
+    _VERANTYX_霰:1.0__ID_霰_134_ = os._VERANTYX_霰:1.0__ID_霰_206_._VERANTYX_霰:1.0__ID_霰_207_(_VERANTYX_廓:1.0__ID_廓_78_, "_VERANTYX_霰:1.0__ID_霰_260_")
+    _VERANTYX_霰:1.0__ID_霰_258_ = _VERANTYX_霰:1.0__ID_霰_252_([f for f in os._VERANTYX_霰:1.0__ID_霰_63_(_VERANTYX_霰:1.0__ID_霰_134_) if os._VERANTYX_霰:1.0__ID_霰_206_._VERANTYX_匶:1.0__ID_霰_62_(os._VERANTYX_霰:1.0__ID_霰_206_._VERANTYX_霰:1.0__ID_霰_207_(_VERANTYX_霰:1.0__ID_霰_134_, f))]) if os._VERANTYX_霰:1.0__ID_霰_206_._VERANTYX_霰:1.0__ID_霰_164_(_VERANTYX_霰:1.0__ID_霰_134_) else 0
+    _VERANTYX_霰:1.0__ID_霰_51_(f"  _VERANTYX_廓:1.0__ID_廓_29_ _VERANTYX_霰:1.0__ID_霰_260_/ _VERANTYX_霰:1.0__ID_霰_12_: {_VERANTYX_霰:1.0__ID_霰_258_}\n")
+
+    _VERANTYX_霰:1.0__ID_霰_137_ open(_VERANTYX_廓:1.0__ID_廓_69_) as f:
+        _VERANTYX_霰:1.0__ID_霰_85_ = _VERANTYX_霰:1.0__ID_霰_23_._VERANTYX_匶:1.0__ID_霰_152_(f)
+
+    _VERANTYX_霰:1.0__ID_霰_251_ = _VERANTYX_霰:1.0__ID_霰_85_[:_VERANTYX_廓:1.0__ID_廓_34_]
+    _VERANTYX_霰:1.0__ID_霰_104_ = []
+
+    for i, _VERANTYX_霰:1.0__ID_霰_101_ in _VERANTYX_霰:1.0__ID_霰_2_(_VERANTYX_霰:1.0__ID_霰_251_):
+        _VERANTYX_霰:1.0__ID_霰_14_ = _VERANTYX_霰:1.0__ID_霰_101_["_VERANTYX_霰:1.0__ID_霰_185_"]
+        _VERANTYX_霰:1.0__ID_霰_76_ = _VERANTYX_霰:1.0__ID_霰_101_["_VERANTYX_霰:1.0__ID_霰_76_"]
+        _VERANTYX_霰:1.0__ID_霰_43_ = _VERANTYX_霰:1.0__ID_霰_101_["_VERANTYX_型:1.0__ID_霰_168_"]
+        _VERANTYX_霰:1.0__ID_霰_68_ = _VERANTYX_霰:1.0__ID_霰_101_._VERANTYX_型:1.0__ID_碑_2_("_VERANTYX_霰:1.0__ID_霰_254_", [])
+        _VERANTYX_霰:1.0__ID_霰_127_ = _VERANTYX_霰:1.0__ID_霰_101_._VERANTYX_型:1.0__ID_碑_2_("_VERANTYX_霰:1.0__ID_霰_205_", [])
+        _VERANTYX_霰:1.0__ID_霰_219_ = _VERANTYX_霰:1.0__ID_霰_101_._VERANTYX_型:1.0__ID_碑_2_("_VERANTYX_霰:1.0__ID_霰_160_", [])
+
+        _VERANTYX_霰:1.0__ID_霰_51_(f"[{i+1}/{_VERANTYX_廓:1.0__ID_廓_34_}] {_VERANTYX_霰:1.0__ID_霰_14_}")
+        _VERANTYX_霰:1.0__ID_霰_51_(f"  Q: {_VERANTYX_霰:1.0__ID_霰_76_}")
+        _VERANTYX_霰:1.0__ID_霰_51_(f"  _VERANTYX_廓:1.0__ID_廓_66_: {_VERANTYX_霰:1.0__ID_霰_43_}")
+
+// [metadata-stripped]
+        _VERANTYX_霰:1.0__ID_霰_113_ = (_VERANTYX_霰:1.0__ID_霰_101_._VERANTYX_型:1.0__ID_碑_2_("_VERANTYX_霰:1.0__ID_霰_160_") or [_VERANTYX_廓:1.0__ID_廓_26_])[0]
+        _VERANTYX_霰:1.0__ID_霰_195_ = 0
+        _VERANTYX_霰:1.0__ID_霰_227_ = ""
+
+        for j, _VERANTYX_霰:1.0__ID_霰_4_ in _VERANTYX_霰:1.0__ID_霰_2_(_VERANTYX_霰:1.0__ID_霰_68_):  # _VERANTYX_霰:1.0__ID_霰_257_ _VERANTYX_霰:1.0__ID_霰_68_
+            if _VERANTYX_霰:1.0__ID_霰_266_ _VERANTYX_霰:1.0__ID_霰_95_(_VERANTYX_霰:1.0__ID_霰_4_, _VERANTYX_霰:1.0__ID_霰_276_):
+                continue
+            _VERANTYX_霰:1.0__ID_霰_25_ = [m for m in _VERANTYX_霰:1.0__ID_霰_4_ if _VERANTYX_霰:1.0__ID_霰_95_(m, _VERANTYX_霰:1.0__ID_霰_44_)]
+            if _VERANTYX_霰:1.0__ID_霰_266_ _VERANTYX_霰:1.0__ID_霰_25_:
+                continue
+
+            _VERANTYX_霰:1.0__ID_霰_98_ = _VERANTYX_霰:1.0__ID_霰_127_[j] if j < _VERANTYX_霰:1.0__ID_霰_252_(_VERANTYX_霰:1.0__ID_霰_127_) else f"s{j}"
+            _VERANTYX_型:1.0__ID_霰_181_ = (_VERANTYX_霰:1.0__ID_霰_98_ == _VERANTYX_霰:1.0__ID_霰_113_)
+
+// [metadata-stripped]
+            if _VERANTYX_霰:1.0__ID_霰_266_ _VERANTYX_型:1.0__ID_霰_181_ _VERANTYX_霰:1.0__ID_霰_67_ _VERANTYX_霰:1.0__ID_霰_195_ >= 20:
+                continue
+
+            _VERANTYX_霰:1.0__ID_霰_5_ = "\n"._VERANTYX_霰:1.0__ID_霰_207_([
+                f"{m._VERANTYX_型:1.0__ID_碑_2_('_VERANTYX_霰:1.0__ID_霰_116_','?')._VERANTYX_型:1.0__ID_霰_57_()}: {m._VERANTYX_型:1.0__ID_碑_2_('_VERANTYX_霰:1.0__ID_霰_228_','')[:400]}"
+                for m in _VERANTYX_霰:1.0__ID_霰_25_
+            ])
+            if _VERANTYX_型:1.0__ID_霰_181_:
+                _VERANTYX_霰:1.0__ID_霰_227_ = _VERANTYX_霰:1.0__ID_霰_5_  # _VERANTYX_霰:1.0__ID_霰_180_ for _VERANTYX_霰:1.0__ID_霰_267_ _VERANTYX_霰:1.0__ID_霰_237_
+
+            _VERANTYX_霰:1.0__ID_霰_47_ = f"_VERANTYX_廓:1.0__ID_廓_2_ {_VERANTYX_霰:1.0__ID_霰_98_}: {_VERANTYX_霰:1.0__ID_霰_25_[0]._VERANTYX_型:1.0__ID_碑_2_('_VERANTYX_霰:1.0__ID_霰_228_','')[:100]}"
+            _VERANTYX_霰:1.0__ID_霰_238_ = []
+            for k, m in _VERANTYX_霰:1.0__ID_霰_2_(_VERANTYX_霰:1.0__ID_霰_25_[:5]):
+                c = m._VERANTYX_型:1.0__ID_碑_2_("_VERANTYX_霰:1.0__ID_霰_228_", "")[:50]._VERANTYX_霰:1.0__ID_霰_236_('"', "'")
+                _VERANTYX_霰:1.0__ID_霰_238_._VERANTYX_霰:1.0__ID_霰_244_(f'OP._VERANTYX_廓:1.0__ID_廓_6_("_VERANTYX_霰:1.0__ID_霰_190_{k}", "{c}")')
+
+// _VERANTYX_廓:0.1__ID_CH_191_ [decoy-metadata]
+            _VERANTYX_霰:1.0__ID_霰_232_ = _VERANTYX_霰:1.0__ID_霰_24_(_VERANTYX_霰:1.0__ID_霰_41_._VERANTYX_霰:1.0__ID_霰_41_() * 1000) + j
+            _VERANTYX_霰:1.0__ID_霰_259_ = f"_VERANTYX_廓:1.0__ID_廓_21_{_VERANTYX_霰:1.0__ID_霰_14_}_{j}_{_VERANTYX_霰:1.0__ID_霰_232_}._VERANTYX_霰:1.0__ID_霰_48_"
+            _VERANTYX_霰:1.0__ID_霰_228_ = _VERANTYX_霰:1.0__ID_霰_106_(
+                _VERANTYX_霰:1.0__ID_霰_232_=_VERANTYX_霰:1.0__ID_霰_232_,
+                _VERANTYX_霰:1.0__ID_霰_32_="[標: 1.0] [記: 0.9] [認: 0.7]",
+                _VERANTYX_霰:1.0__ID_霰_47_=_VERANTYX_霰:1.0__ID_霰_47_,
+                _VERANTYX_霰:1.0__ID_霰_238_=_VERANTYX_霰:1.0__ID_霰_238_,
+                _VERANTYX_霰:1.0__ID_霰_5_=_VERANTYX_霰:1.0__ID_霰_5_
+            )
+            _VERANTYX_霰:1.0__ID_霰_102_("_VERANTYX_霰:1.0__ID_霰_260_", _VERANTYX_霰:1.0__ID_霰_259_, _VERANTYX_霰:1.0__ID_霰_228_)
+            _VERANTYX_霰:1.0__ID_霰_195_ += 1
+
+        _VERANTYX_霰:1.0__ID_霰_51_(f"  → _VERANTYX_廓:1.0__ID_廓_42_ {_VERANTYX_霰:1.0__ID_霰_195_} _VERANTYX_霰:1.0__ID_霰_68_ (_VERANTYX_型:1.0__ID_霰_168_ _VERANTYX_霰:1.0__ID_霰_4_ _VERANTYX_霰:1.0__ID_霰_148_: {_VERANTYX_霰:1.0__ID_霰_201_(_VERANTYX_霰:1.0__ID_霰_227_)})")
+
+// [metadata-stripped]
+// [metadata-stripped]
+        if _VERANTYX_霰:1.0__ID_霰_227_:
+            _VERANTYX_霰:1.0__ID_霰_75_ = _VERANTYX_霰:1.0__ID_霰_53_(_VERANTYX_霰:1.0__ID_霰_227_, _VERANTYX_霰:1.0__ID_霰_76_)
+            _VERANTYX_霰:1.0__ID_霰_123_ = _VERANTYX_霰:1.0__ID_霰_75_
+            _VERANTYX_霰:1.0__ID_霰_51_(f"  → _VERANTYX_型:1.0__ID_廓_75_ _VERANTYX_霰:1.0__ID_霰_4_ _VERANTYX_霰:1.0__ID_霰_75_: {_VERANTYX_霰:1.0__ID_霰_252_(_VERANTYX_霰:1.0__ID_霰_123_)} _VERANTYX_霰:1.0__ID_霰_182_")
+        else:
+            _VERANTYX_霰:1.0__ID_霰_220_ = _VERANTYX_霰:1.0__ID_霰_156_(_VERANTYX_霰:1.0__ID_霰_76_)
+            _VERANTYX_霰:1.0__ID_霰_123_ = _VERANTYX_霰:1.0__ID_霰_29_(_VERANTYX_霰:1.0__ID_霰_220_, _VERANTYX_霰:1.0__ID_霰_124_=5)
+            _VERANTYX_霰:1.0__ID_霰_51_(f"  → _VERANTYX_廓:1.0__ID_廓_14_ _VERANTYX_霰:1.0__ID_霰_237_ _VERANTYX_霰:1.0__ID_霰_140_: {_VERANTYX_霰:1.0__ID_霰_252_(_VERANTYX_霰:1.0__ID_霰_123_)} _VERANTYX_霰:1.0__ID_霰_182_")
+
+// [metadata-stripped]
+        _VERANTYX_霰:1.0__ID_霰_213_ = _VERANTYX_霰:1.0__ID_霰_22_(
+            [(os._VERANTYX_霰:1.0__ID_霰_206_._VERANTYX_型:1.0__ID_碑_1_(os._VERANTYX_霰:1.0__ID_霰_206_._VERANTYX_霰:1.0__ID_霰_207_(_VERANTYX_霰:1.0__ID_霰_134_, f)), f)
+             for f in os._VERANTYX_霰:1.0__ID_霰_63_(_VERANTYX_霰:1.0__ID_霰_134_) if os._VERANTYX_霰:1.0__ID_霰_206_._VERANTYX_匶:1.0__ID_霰_62_(os._VERANTYX_霰:1.0__ID_霰_206_._VERANTYX_霰:1.0__ID_霰_207_(_VERANTYX_霰:1.0__ID_霰_134_, f))]
+        )
+        _VERANTYX_霰:1.0__ID_霰_46_ = _VERANTYX_霰:1.0__ID_霰_252_(_VERANTYX_霰:1.0__ID_霰_213_) - _VERANTYX_廓:1.0__ID_廓_64_
+        if _VERANTYX_霰:1.0__ID_霰_46_ > 0:
+            for _, _VERANTYX_霰:1.0__ID_霰_84_ in _VERANTYX_霰:1.0__ID_霰_213_[:_VERANTYX_霰:1.0__ID_霰_46_]:
+                os._VERANTYX_霰:1.0__ID_霰_149_(os._VERANTYX_霰:1.0__ID_霰_206_._VERANTYX_霰:1.0__ID_霰_207_(_VERANTYX_霰:1.0__ID_霰_134_, _VERANTYX_霰:1.0__ID_霰_84_))
+
+// [metadata-stripped]
+        _VERANTYX_型:1.0__ID_霰_168_ = _VERANTYX_霰:1.0__ID_霰_108_(_VERANTYX_霰:1.0__ID_霰_76_, _VERANTYX_霰:1.0__ID_霰_123_)
+        _VERANTYX_霰:1.0__ID_霰_51_(f"  _VERANTYX_廓:1.0__ID_廓_19_: {_VERANTYX_型:1.0__ID_霰_168_}")
+
+// _VERANTYX_碑:0.7__ID_ZX_584_ [decoy-metadata]
+// [metadata-stripped]
+        _VERANTYX_霰:1.0__ID_霰_264_ = _VERANTYX_秘:1.0__ID_霰_118_(_VERANTYX_霰:1.0__ID_霰_43_, _VERANTYX_型:1.0__ID_霰_168_)
+        _VERANTYX_霰:1.0__ID_霰_39_ = "✅" if _VERANTYX_霰:1.0__ID_霰_264_ >= 0.5 else ("⚠️" if _VERANTYX_霰:1.0__ID_霰_264_ > 0 else "❌")
+        _VERANTYX_霰:1.0__ID_霰_51_(f"  _VERANTYX_廓:1.0__ID_廓_1_: {_VERANTYX_霰:1.0__ID_霰_264_:.0%} {_VERANTYX_霰:1.0__ID_霰_39_}\n")
+
+        _VERANTYX_霰:1.0__ID_霰_104_._VERANTYX_霰:1.0__ID_霰_244_({
+            "id": _VERANTYX_霰:1.0__ID_霰_14_,
+            "_VERANTYX_霰:1.0__ID_霰_76_": _VERANTYX_霰:1.0__ID_霰_76_,
+            "_VERANTYX_霰:1.0__ID_霰_43_": _VERANTYX_霰:1.0__ID_霰_43_,
+            "_VERANTYX_霰:1.0__ID_霰_157_": _VERANTYX_型:1.0__ID_霰_168_,
+            "_VERANTYX_霰:1.0__ID_霰_162_": _VERANTYX_霰:1.0__ID_霰_252_(_VERANTYX_霰:1.0__ID_霰_123_),
+            "_VERANTYX_霰:1.0__ID_霰_264_": _VERANTYX_霰:1.0__ID_霰_99_(_VERANTYX_霰:1.0__ID_霰_264_, 3)
+        })
+
+// [metadata-stripped]
+    _VERANTYX_霰:1.0__ID_霰_51_("=" * 65)
+    _VERANTYX_霰:1.0__ID_霰_51_("_VERANTYX_廓:1.0__ID_廓_46_ _VERANTYX_廓:1.0__ID_廓_73_ _VERANTYX_廓:1.0__ID_廓_48_")
+    _VERANTYX_霰:1.0__ID_霰_51_("=" * 65)
+    _VERANTYX_霰:1.0__ID_霰_38_   = _VERANTYX_霰:1.0__ID_霰_136_(1 for r in _VERANTYX_霰:1.0__ID_霰_104_ if r["_VERANTYX_霰:1.0__ID_霰_264_"] >= 0.5)
+    _VERANTYX_霰:1.0__ID_霰_240_ = _VERANTYX_霰:1.0__ID_霰_136_(1 for r in _VERANTYX_霰:1.0__ID_霰_104_ if 0 < r["_VERANTYX_霰:1.0__ID_霰_264_"] < 0.5)
+    _VERANTYX_霰:1.0__ID_霰_186_    = _VERANTYX_霰:1.0__ID_霰_136_(1 for r in _VERANTYX_霰:1.0__ID_霰_104_ if r["_VERANTYX_霰:1.0__ID_霰_264_"] == 0)
+    _VERANTYX_霰:1.0__ID_霰_192_      = _VERANTYX_霰:1.0__ID_霰_136_(r["_VERANTYX_霰:1.0__ID_霰_264_"] for r in _VERANTYX_霰:1.0__ID_霰_104_) / _VERANTYX_霰:1.0__ID_霰_252_(_VERANTYX_霰:1.0__ID_霰_104_) if _VERANTYX_霰:1.0__ID_霰_104_ else 0
+
+    _VERANTYX_霰:1.0__ID_霰_51_(f"✅ _VERANTYX_廓:1.0__ID_廓_51_ (≥50%):  {_VERANTYX_霰:1.0__ID_霰_38_}/{_VERANTYX_廓:1.0__ID_廓_34_}")
+    _VERANTYX_霰:1.0__ID_霰_51_(f"⚠️  _VERANTYX_廓:1.0__ID_廓_13_:      {_VERANTYX_霰:1.0__ID_霰_240_}/{_VERANTYX_廓:1.0__ID_廓_34_}")
+    _VERANTYX_霰:1.0__ID_霰_51_(f"❌ _VERANTYX_廓:1.0__ID_廓_63_ (0%):    {_VERANTYX_霰:1.0__ID_霰_186_}/{_VERANTYX_廓:1.0__ID_廓_34_}")
+    _VERANTYX_霰:1.0__ID_霰_51_(f"📊 _VERANTYX_廓:1.0__ID_廓_7_ _VERANTYX_霰:1.0__ID_霰_264_:    {_VERANTYX_霰:1.0__ID_霰_192_:.1%}")
+    _VERANTYX_霰:1.0__ID_霰_51_()
+    for r in _VERANTYX_霰:1.0__ID_霰_104_:
+        g = "✅" if r["_VERANTYX_霰:1.0__ID_霰_264_"] >= 0.5 else ("⚠️" if r["_VERANTYX_霰:1.0__ID_霰_264_"] > 0 else "❌")
+        _VERANTYX_霰:1.0__ID_霰_51_(f"  {g} {r['id']}: {r['_VERANTYX_霰:1.0__ID_霰_264_']:.0%} | _VERANTYX_霰:1.0__ID_霰_184_={r['_VERANTYX_霰:1.0__ID_霰_162_']}ch | _VERANTYX_霰:1.0__ID_霰_103_: {r['_VERANTYX_霰:1.0__ID_霰_157_'][:50]}")
+
+    _VERANTYX_霰:1.0__ID_霰_146_ = "/_VERANTYX_廓:1.0__ID_廓_3_/_VERANTYX_霰:1.0__ID_霰_215_/_VERANTYX_霰:1.0__ID_霰_169_-_VERANTYX_霰:1.0__ID_霰_188_/_VERANTYX_霰:1.0__ID_霰_130_-_VERANTYX_霰:1.0__ID_霰_11_/_VERANTYX_霰:1.0__ID_霰_268_/_VERANTYX_霰:1.0__ID_霰_1_._VERANTYX_霰:1.0__ID_霰_23_"
+    _VERANTYX_霰:1.0__ID_霰_137_ open(_VERANTYX_霰:1.0__ID_霰_146_, "w") as f:
+        _VERANTYX_霰:1.0__ID_霰_23_._VERANTYX_霰:1.0__ID_霰_65_({"_VERANTYX_霰:1.0__ID_霰_47_": {"_VERANTYX_霰:1.0__ID_霰_110_": _VERANTYX_霰:1.0__ID_霰_38_, "_VERANTYX_霰:1.0__ID_霰_178_": _VERANTYX_霰:1.0__ID_霰_240_, "_VERANTYX_霰:1.0__ID_霰_167_": _VERANTYX_霰:1.0__ID_霰_186_, "_VERANTYX_霰:1.0__ID_霰_192_": _VERANTYX_霰:1.0__ID_霰_192_},
+                   "_VERANTYX_霰:1.0__ID_霰_104_": _VERANTYX_霰:1.0__ID_霰_104_}, f, _VERANTYX_霰:1.0__ID_霰_90_=2, _VERANTYX_霰:1.0__ID_霰_216_=_VERANTYX_廓:1.0__ID_廓_23_)
+    _VERANTYX_霰:1.0__ID_霰_51_(f"\_VERANTYX_匶:1.0__ID_霰_96_ → {_VERANTYX_霰:1.0__ID_霰_146_}")
+
+
+if _VERANTYX_霰:1.0__ID_霰_150_ == "_VERANTYX_霰:1.0__ID_霰_243_":
+    _VERANTYX_霰:1.0__ID_霰_275_()
+
+// POLYMORPHIC_JCROSS_END

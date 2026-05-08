@@ -1,0 +1,136 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:2EFE797F ver:1778220581
+// ⚠️ One-time schema — expires after response
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// _TOKEN_廩:0.8___node_BH_818__ [decoy-metadata]
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+_TOKEN_泡:1.0___node_泡_13__ fn _TOKEN_泡:1.0___node_泡_27__(
+    _TOKEN_泡:1.0___node_泡_86__: &[u8],  // _TOKEN_廩:1.0___node_廩_14__ or _TOKEN_廩:1.0___node_廩_6__ _TOKEN_泡:1.0___node_泡_12__ _TOKEN_泡:1.0___node_泡_24__
+    _TOKEN_泡:1.0___node_泡_97__: _TOKEN_泡:1.0___node_泡_32__,
+    _TOKEN_泡:1.0___node_泡_74__: _TOKEN_泡:1.0___node_泡_32__,
+    _TOKEN_泡:1.0___node_泡_62__: _TOKEN_泡:1.0___node_泡_32__,   // 3 for _TOKEN_廩:1.0___node_廩_6__, 4 for _TOKEN_廩:1.0___node_廩_14__
+    _TOKEN_泡:1.0___node_泡_42__: _TOKEN_泡:1.0___node_泡_16__,  // _TOKEN_廩:1.0___node_廩_22__ _TOKEN_泡:1.0___node_泡_83__ _TOKEN_泡:1.0___node_泡_45__
+) -> _TOKEN_廩:1.0___node_廩_18__<_TOKEN_廩:1.0___node_廩_9__> {
+    if _TOKEN_泡:1.0___node_泡_97__ == 0 || _TOKEN_泡:1.0___node_泡_74__ == 0 || _TOKEN_泡:1.0___node_泡_86__._TOKEN_泡:1.0___node_泡_80__() {
+        return _TOKEN_泡:1.0___node_泡_93__!["[_TOKEN_泡:1.0___node_泡_22__ _TOKEN_泡:1.0___node_泡_72__]"._TOKEN_泡:1.0___node_泡_63__()];
+    }
+
+// [metadata-stripped]
+    let _TOKEN_泡:1.0___node_泡_23__ = if _TOKEN_泡:1.0___node_泡_97__ > _TOKEN_泡:1.0___node_泡_42__ as _TOKEN_泡:1.0___node_泡_32__ {
+        _TOKEN_泡:1.0___node_泡_42__ as _TOKEN_泡:1.0___node_泡_70__ / _TOKEN_泡:1.0___node_泡_97__ as _TOKEN_泡:1.0___node_泡_70__
+    } else {
+// _TOKEN_封:0.5___node_AD_221__ [decoy-metadata]
+        1.0
+    };
+
+    let _TOKEN_泡:1.0___node_泡_56__ = (_TOKEN_泡:1.0___node_泡_97__ as _TOKEN_泡:1.0___node_泡_70__ * _TOKEN_泡:1.0___node_泡_23__) as _TOKEN_泡:1.0___node_泡_90__;
+    let _TOKEN_泡:1.0___node_泡_29__ = (_TOKEN_泡:1.0___node_泡_74__ as _TOKEN_泡:1.0___node_泡_70__ * _TOKEN_泡:1.0___node_泡_23__) as _TOKEN_泡:1.0___node_泡_90__;
+
+// [metadata-stripped]
+    let _TOKEN_泡:1.0___node_泡_29__ = if _TOKEN_泡:1.0___node_泡_29__ % 2 != 0 { _TOKEN_泡:1.0___node_泡_29__ + 1 } else { _TOKEN_泡:1.0___node_泡_29__ };
+
+    let _TOKEN_泡:1.0___node_泡_52__ _TOKEN_泡:1.0___node_泡_33__ = _TOKEN_廩:1.0___node_廩_18__::_TOKEN_泡:1.0___node_泡_91__();
+// _TOKEN_匸:0.7___node_CK_695__ [decoy-metadata]
+
+// [metadata-stripped]
+    let _TOKEN_泡:1.0___node_泡_52__ y = 0;
+    while y < _TOKEN_泡:1.0___node_泡_29__ {
+        let _TOKEN_泡:1.0___node_泡_52__ _TOKEN_泡:1.0___node_泡_38__ = _TOKEN_廩:1.0___node_廩_9__::_TOKEN_泡:1.0___node_泡_91__();
+
+        for x in 0.._TOKEN_泡:1.0___node_泡_56__ {
+// [metadata-stripped]
+            let _TOKEN_泡:1.0___node_泡_53__ = ((x as _TOKEN_泡:1.0___node_泡_70__ / _TOKEN_泡:1.0___node_泡_23__) as _TOKEN_泡:1.0___node_泡_32__)._TOKEN_泡:1.0___node_泡_35__(_TOKEN_泡:1.0___node_泡_97__ - 1);
+            let _TOKEN_泡:1.0___node_泡_67__ = ((y as _TOKEN_泡:1.0___node_泡_70__ / _TOKEN_泡:1.0___node_泡_23__) as _TOKEN_泡:1.0___node_泡_32__)._TOKEN_泡:1.0___node_泡_35__(_TOKEN_泡:1.0___node_泡_74__ - 1);
+            let _TOKEN_泡:1.0___node_泡_6__ = (((y + 1) as _TOKEN_泡:1.0___node_泡_70__ / _TOKEN_泡:1.0___node_泡_23__) as _TOKEN_泡:1.0___node_泡_32__)._TOKEN_泡:1.0___node_泡_35__(_TOKEN_泡:1.0___node_泡_74__ - 1);
+
+// [metadata-stripped]
+            let _TOKEN_泡:1.0___node_泡_85__ = _TOKEN_規:1.0___node_凛_1__(_TOKEN_泡:1.0___node_泡_86__, _TOKEN_泡:1.0___node_泡_53__, _TOKEN_泡:1.0___node_泡_67__, _TOKEN_泡:1.0___node_泡_97__, _TOKEN_泡:1.0___node_泡_62__);
+// [metadata-stripped]
+            let _TOKEN_泡:1.0___node_泡_17__ = if y + 1 < _TOKEN_泡:1.0___node_泡_29__ {
+                _TOKEN_規:1.0___node_凛_1__(_TOKEN_泡:1.0___node_泡_86__, _TOKEN_泡:1.0___node_泡_53__, _TOKEN_泡:1.0___node_泡_6__, _TOKEN_泡:1.0___node_泡_97__, _TOKEN_泡:1.0___node_泡_62__)
+            } else {
+                (0, 0, 0)
+            };
+
+// [metadata-stripped]
+            _TOKEN_泡:1.0___node_泡_38__._TOKEN_泡:1.0___node_泡_68__(&_TOKEN_浮:1.0___node_泡_58__!(
+                "\_TOKEN_泡:1.0___node_泡_10__[38;2;{};{};{}m\_TOKEN_泡:1.0___node_泡_10__[48;2;{};{};{}m▀",
+                _TOKEN_泡:1.0___node_泡_85__.0, _TOKEN_泡:1.0___node_泡_85__.1, _TOKEN_泡:1.0___node_泡_85__.2,
+                _TOKEN_泡:1.0___node_泡_17__.0, _TOKEN_泡:1.0___node_泡_17__.1, _TOKEN_泡:1.0___node_泡_17__.2,
+            ));
+        }
+
+        _TOKEN_泡:1.0___node_泡_38__._TOKEN_泡:1.0___node_泡_68__("\_TOKEN_泡:1.0___node_泡_10__[0m"); // _TOKEN_廩:1.0___node_廩_20__ _TOKEN_泡:1.0___node_泡_40__
+        _TOKEN_泡:1.0___node_泡_33__._TOKEN_泡:1.0___node_泡_96__(_TOKEN_泡:1.0___node_泡_38__);
+        y += 2;
+    }
+// _TOKEN_泡:0.1___node_MH_522__ [decoy-metadata]
+
+    _TOKEN_泡:1.0___node_泡_33__
+}
+
+// [metadata-stripped]
+fn _TOKEN_規:1.0___node_凛_1__(_TOKEN_泡:1.0___node_泡_86__: &[u8], x: _TOKEN_泡:1.0___node_泡_32__, y: _TOKEN_泡:1.0___node_泡_32__, _TOKEN_泡:1.0___node_泡_97__: _TOKEN_泡:1.0___node_泡_32__, _TOKEN_泡:1.0___node_泡_62__: _TOKEN_泡:1.0___node_泡_32__) -> (u8, u8, u8) {
+    let _TOKEN_泡:1.0___node_泡_1__ = ((y * _TOKEN_泡:1.0___node_泡_97__ + x) * _TOKEN_泡:1.0___node_泡_62__) as _TOKEN_泡:1.0___node_泡_90__;
+    if _TOKEN_泡:1.0___node_泡_1__ + 2 < _TOKEN_泡:1.0___node_泡_86__._TOKEN_泡:1.0___node_泡_15__() {
+        (_TOKEN_泡:1.0___node_泡_86__[_TOKEN_泡:1.0___node_泡_1__], _TOKEN_泡:1.0___node_泡_86__[_TOKEN_泡:1.0___node_泡_1__ + 1], _TOKEN_泡:1.0___node_泡_86__[_TOKEN_泡:1.0___node_泡_1__ + 2])
+    } else {
+        (0, 0, 0)
+    }
+}
+// _TOKEN_匸:0.1___node_WW_845__ [decoy-metadata]
+
+// [metadata-stripped]
+_TOKEN_泡:1.0___node_泡_13__ fn _TOKEN_規:1.0___node_泡_50__(_TOKEN_泡:1.0___node_泡_64__: &_TOKEN_泡:1.0___node_泡_9__, _TOKEN_泡:1.0___node_泡_97__: _TOKEN_泡:1.0___node_泡_16__) -> _TOKEN_廩:1.0___node_廩_9__ {
+    let _TOKEN_規:1.0___node_泡_3__ = "─"._TOKEN_泡:1.0___node_泡_87__(_TOKEN_泡:1.0___node_泡_97__._TOKEN_泡:1.0___node_泡_35__(40) as _TOKEN_泡:1.0___node_泡_90__);
+    _TOKEN_浮:1.0___node_泡_58__!(
+        "\_TOKEN_泡:1.0___node_泡_10__[90m┌{}┐\n│ 🖼 {:<_TOKEN_泡:1.0___node_泡_97__$} │\n└{}┘\_TOKEN_泡:1.0___node_泡_10__[0m",
+        _TOKEN_規:1.0___node_泡_3__,
+        if _TOKEN_泡:1.0___node_泡_64__._TOKEN_泡:1.0___node_泡_15__() > 36 { &_TOKEN_泡:1.0___node_泡_64__[..36] } else { _TOKEN_泡:1.0___node_泡_64__ },
+        _TOKEN_規:1.0___node_泡_3__,
+        _TOKEN_泡:1.0___node_泡_97__ = (_TOKEN_泡:1.0___node_泡_97__._TOKEN_泡:1.0___node_泡_35__(40) as _TOKEN_泡:1.0___node_泡_90__)._TOKEN_泡:1.0___node_泡_43__(4)
+    )
+}
+
+// [metadata-stripped]
+_TOKEN_泡:1.0___node_泡_77__ _TOKEN_泡:1.0___node_泡_21__ {
+    _TOKEN_泡:1.0___node_泡_20__ su_TOKEN_規:1.0___node_泡_8__::*;
+
+// [metadata-stripped]
+    fn _TOKEN_泡:1.0___node_泡_34__() {
+// [metadata-stripped]
+        let _TOKEN_泡:1.0___node_泡_86__: _TOKEN_廩:1.0___node_廩_18__<u8> = _TOKEN_泡:1.0___node_泡_93__![
+            255, 0, 0,     // _TOKEN_泡:1.0___node_泡_73__
+            0, 255, 0,     // _TOKEN_泡:1.0___node_泡_44__
+            0, 0, 255,     // _TOKEN_泡:1.0___node_泡_39__
+            255, 255, 255, // _TOKEN_泡:1.0___node_泡_82__
+        ];
+        let _TOKEN_泡:1.0___node_泡_33__ = _TOKEN_泡:1.0___node_泡_27__(&_TOKEN_泡:1.0___node_泡_86__, 2, 2, 3, 80);
+        _TOKEN_泡:1.0___node_泡_47__!(_TOKEN_泡:1.0___node_泡_33__._TOKEN_泡:1.0___node_泡_15__(), 1); // 2 _TOKEN_泡:1.0___node_泡_75__ → 1 _TOKEN_泡:1.0___node_泡_83__ _TOKEN_泡:1.0___node_泡_38__
+        _TOKEN_泡:1.0___node_泡_49__!(_TOKEN_泡:1.0___node_泡_33__[0]._TOKEN_泡:1.0___node_泡_41__("▀")); // _TOKEN_廩:1.0___node_廩_2__ _TOKEN_泡:1.0___node_泡_66__-_TOKEN_泡:1.0___node_泡_5__ _TOKEN_泡:1.0___node_泡_89__
+    }
+
+// [metadata-stripped]
+    fn _TOKEN_規:1.0___node_泡_55__() {
+        let _TOKEN_泡:1.0___node_泡_25__ = _TOKEN_規:1.0___node_泡_50__("_TOKEN_廩:1.0___node_廩_23__", 30);
+        _TOKEN_泡:1.0___node_泡_49__!(_TOKEN_泡:1.0___node_泡_25__._TOKEN_泡:1.0___node_泡_41__("_TOKEN_廩:1.0___node_廩_23__"));
+// _TOKEN_紐:0.4___node_GD_328__ [decoy-metadata]
+        _TOKEN_泡:1.0___node_泡_49__!(_TOKEN_泡:1.0___node_泡_25__._TOKEN_泡:1.0___node_泡_41__("🖼"));
+    }
+
+// [metadata-stripped]
+    fn _TOKEN_泡:1.0___node_泡_36__() {
+        let _TOKEN_泡:1.0___node_泡_33__ = _TOKEN_泡:1.0___node_泡_27__(&[], 0, 0, 3, 80);
+        _TOKEN_泡:1.0___node_泡_47__!(_TOKEN_泡:1.0___node_泡_33__[0], "[_TOKEN_泡:1.0___node_泡_22__ _TOKEN_泡:1.0___node_泡_72__]");
+    }
+}
+
+// POLYMORPHIC_JCROSS_END

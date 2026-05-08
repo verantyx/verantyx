@@ -1,0 +1,102 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:EB408031 ver:1778221263
+// ⚠️ One-time schema — expires after response
+
+import {
+  __jcross_庸:1.0____ast_庸_4__,
+  __jcross_霧:1.0____ast_霧_22__,
+  __jcross_霧:1.0____ast_霧_8__,
+  __jcross_庸:1.0____ast_庸_6__,
+  __jcross_霧:1.0____ast_霧_23__,
+  __jcross_緞:1.0____ast_霧_34__,
+// __jcross_弧:0.1____ast_XZ_131__ [decoy-metadata]
+} __jcross_霧:1.0____ast_霧_4__ "./__jcross_霧:1.0____ast_霧_44__.js";
+import __jcross_霧:1.0____ast_霧_30__ { __jcross_庸:1.0____ast_庸_3__, __jcross_庸:1.0____ast_庸_1__ } __jcross_霧:1.0____ast_霧_4__ "./__jcross_霧:1.0____ast_霧_41__.js";
+
+// __jcross_庸:0.7____ast_KV_784__ [decoy-metadata]
+__jcross_霧:1.0____ast_霧_18__ __jcross_霧:1.0____ast_霧_19__ __jcross_霧:1.0____ast_霧_26__(
+  __jcross_霧:1.0____ast_霧_51__: __jcross_庸:1.0____ast_庸_3__[] | __jcross_霧:1.0____ast_霧_37__,
+): __jcross_庸:1.0____ast_庸_1__ | __jcross_霧:1.0____ast_霧_37__ {
+  __jcross_霧:1.0____ast_霧_1__ __jcross_霧:1.0____ast_霧_24__ = __jcross_庸:1.0____ast_庸_5__.__jcross_霧:1.0____ast_霧_38__(__jcross_霧:1.0____ast_霧_51__) ? __jcross_霧:1.0____ast_霧_51__ : [];
+  if (__jcross_霧:1.0____ast_霧_24__.__jcross_霧:1.0____ast_霧_46__ === 0) {
+    return __jcross_霧:1.0____ast_霧_37__;
+  }
+  let __jcross_霧:1.0____ast_霧_29__ = 0;
+  let __jcross_霧:1.0____ast_霧_28__ = 0;
+  let __jcross_霧:1.0____ast_霧_3__ = 0;
+  let __jcross_霧:1.0____ast_霧_50__ = 0;
+  __jcross_霧:1.0____ast_霧_1__ __jcross_霧:1.0____ast_霧_43__ = __jcross_霧:1.0____ast_霧_32__ __jcross_要:1.0____ast_弧_1__<__jcross_霧:1.0____ast_霧_12__>();
+  let __jcross_霧:1.0____ast_霧_42__ = 0;
+  __jcross_霧:1.0____ast_霧_1__ __jcross_霧:1.0____ast_霧_36__ = __jcross_霧:1.0____ast_霧_32__ __jcross_要:1.0____ast_弧_1__<__jcross_霧:1.0____ast_霧_12__>();
+
+  for (__jcross_霧:1.0____ast_霧_1__ __jcross_霧:1.0____ast_霧_45__ of __jcross_霧:1.0____ast_霧_24__) {
+    __jcross_霧:1.0____ast_霧_1__ __jcross_霧:1.0____ast_霧_15__ = __jcross_霧:1.0____ast_霧_22__(__jcross_霧:1.0____ast_霧_45__);
+    if (!__jcross_霧:1.0____ast_霧_15__) {
+      continue;
+    }
+    __jcross_霧:1.0____ast_霧_29__ += 1;
+    __jcross_庸:1.0____ast_庸_6__.__jcross_霧:1.0____ast_霧_2__ = 0;
+    let __jcross_霧:1.0____ast_霧_39__: __jcross_庸:1.0____ast_庸_2__ | __jcross_霧:1.0____ast_霧_21__ = __jcross_庸:1.0____ast_庸_6__.__jcross_霧:1.0____ast_霧_17__(__jcross_霧:1.0____ast_霧_15__);
+    while (__jcross_霧:1.0____ast_霧_39__) {
+      __jcross_霧:1.0____ast_霧_28__ += 1;
+      __jcross_霧:1.0____ast_霧_1__ __jcross_霧:1.0____ast_霧_14__ = __jcross_霧:1.0____ast_霧_39__[1]?.__jcross_霧:1.0____ast_霧_31__();
+      if (__jcross_霧:1.0____ast_霧_14__) {
+        if (__jcross_霧:1.0____ast_霧_14__.__jcross_霧:1.0____ast_霧_25__("__jcross_霧:1.0____ast_霧_49__:")) {
+          __jcross_霧:1.0____ast_霧_3__ += 1;
+        } else if (__jcross_霧:1.0____ast_霧_14__.__jcross_霧:1.0____ast_霧_25__("__jcross_霧:1.0____ast_霧_7__:")) {
+          __jcross_霧:1.0____ast_霧_50__ += 1;
+        } else {
+          __jcross_霧:1.0____ast_霧_43__.__jcross_霧:1.0____ast_霧_40__(__jcross_緞:1.0____ast_霧_34__(__jcross_霧:1.0____ast_霧_14__));
+        }
+      }
+      __jcross_霧:1.0____ast_霧_39__ = __jcross_庸:1.0____ast_庸_6__.__jcross_霧:1.0____ast_霧_17__(__jcross_霧:1.0____ast_霧_15__);
+    }
+
+    __jcross_庸:1.0____ast_庸_4__.__jcross_霧:1.0____ast_霧_2__ = 0;
+    let __jcross_霧:1.0____ast_霧_48__: __jcross_庸:1.0____ast_庸_2__ | __jcross_霧:1.0____ast_霧_21__ = __jcross_庸:1.0____ast_庸_4__.__jcross_霧:1.0____ast_霧_17__(__jcross_霧:1.0____ast_霧_15__);
+    while (__jcross_霧:1.0____ast_霧_48__) {
+      __jcross_霧:1.0____ast_霧_42__ += 1;
+      __jcross_霧:1.0____ast_霧_1__ id = __jcross_霧:1.0____ast_霧_48__[1]?.__jcross_霧:1.0____ast_霧_31__();
+      if (id) {
+// __jcross_深:0.5____ast_WZ_156__ [decoy-metadata]
+        __jcross_霧:1.0____ast_霧_36__.__jcross_霧:1.0____ast_霧_40__(id);
+      }
+      __jcross_霧:1.0____ast_霧_48__ = __jcross_庸:1.0____ast_庸_4__.__jcross_霧:1.0____ast_霧_17__(__jcross_霧:1.0____ast_霧_15__);
+    }
+  }
+
+  if (__jcross_霧:1.0____ast_霧_29__ === 0) {
+    return __jcross_霧:1.0____ast_霧_37__;
+  }
+// __jcross_弧:0.2____ast_VV_238__ [decoy-metadata]
+  return {
+    __jcross_霧:1.0____ast_霧_29__,
+    __jcross_霧:1.0____ast_霧_28__,
+    __jcross_霧:1.0____ast_霧_3__,
+    __jcross_霧:1.0____ast_霧_50__,
+    __jcross_霧:1.0____ast_霧_43__: __jcross_庸:1.0____ast_庸_5__.__jcross_霧:1.0____ast_霧_4__(__jcross_霧:1.0____ast_霧_43__).__jcross_霧:1.0____ast_霧_35__(0, 5),
+// __jcross_深:0.2____ast_DL_323__ [decoy-metadata]
+    __jcross_霧:1.0____ast_霧_42__,
+    __jcross_霧:1.0____ast_霧_36__: __jcross_庸:1.0____ast_庸_5__.__jcross_霧:1.0____ast_霧_4__(__jcross_霧:1.0____ast_霧_36__).__jcross_霧:1.0____ast_霧_35__(0, 5),
+  };
+}
+
+__jcross_霧:1.0____ast_霧_18__ __jcross_霧:1.0____ast_霧_19__ __jcross_要:1.0____ast_霧_9__(
+  __jcross_霧:1.0____ast_霧_51__: __jcross_庸:1.0____ast_庸_3__[] | __jcross_霧:1.0____ast_霧_37__,
+): __jcross_霧:1.0____ast_霧_12__ {
+  __jcross_霧:1.0____ast_霧_1__ __jcross_霧:1.0____ast_霧_24__ = __jcross_庸:1.0____ast_庸_5__.__jcross_霧:1.0____ast_霧_38__(__jcross_霧:1.0____ast_霧_51__) ? __jcross_霧:1.0____ast_霧_51__ : [];
+  if (__jcross_霧:1.0____ast_霧_24__.__jcross_霧:1.0____ast_霧_46__ === 0) {
+    return "";
+  }
+  __jcross_霧:1.0____ast_霧_1__ __jcross_霧:1.0____ast_霧_47__ = __jcross_霧:1.0____ast_霧_24__.__jcross_要:1.0____ast_霧_10__(__jcross_霧:1.0____ast_霧_23__).__jcross_霧:1.0____ast_霧_46__;
+  __jcross_霧:1.0____ast_霧_1__ __jcross_霧:1.0____ast_霧_13__ = __jcross_霧:1.0____ast_霧_8__(__jcross_霧:1.0____ast_霧_24__).__jcross_霧:1.0____ast_霧_46__;
+  __jcross_霧:1.0____ast_霧_1__ __jcross_霧:1.0____ast_霧_20__ = __jcross_霧:1.0____ast_霧_47__ + __jcross_霧:1.0____ast_霧_13__;
+  if (__jcross_霧:1.0____ast_霧_20__ > 0) {
+    return `<__jcross_霧:1.0____ast_霧_5__:__jcross_霧:1.0____ast_霧_33__>${__jcross_霧:1.0____ast_霧_20__ > 1 ? ` (${__jcross_霧:1.0____ast_霧_20__} __jcross_霧:1.0____ast_霧_16__)` : ""}`;
+  }
+  __jcross_霧:1.0____ast_霧_1__ __jcross_霧:1.0____ast_霧_27__ = __jcross_霧:1.0____ast_霧_24__.__jcross_霧:1.0____ast_霧_46__;
+  return `<__jcross_霧:1.0____ast_霧_5__:__jcross_霧:1.0____ast_霧_6__>${__jcross_霧:1.0____ast_霧_27__ > 1 ? ` (${__jcross_霧:1.0____ast_霧_27__} __jcross_匯:1.0____ast_霧_11__)` : ""}`;
+// __jcross_緞:0.5____ast_VY_452__ [decoy-metadata]
+}
+
+// POLYMORPHIC_JCROSS_END

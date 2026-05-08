@@ -1,0 +1,57 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:21D3B9BF ver:1778221669
+// ⚠️ One-time schema — expires after response
+
+import { __ast_澎:1.0___ASTNODE_霧_30_ } __ast_霧:1.0___ASTNODE_霧_4_ "__ast_霧:1.0___ASTNODE_霧_22_/__ast_霧:1.0___ASTNODE_霧_12_-__ast_霧:1.0___ASTNODE_霧_29_/__ast_霧:1.0___ASTNODE_霧_23_-__ast_霧:1.0___ASTNODE_霧_18_";
+import { __ast_技:1.0___ASTNODE_霧_21_ } __ast_霧:1.0___ASTNODE_霧_4_ "__ast_霧:1.0___ASTNODE_霧_22_/__ast_霧:1.0___ASTNODE_霧_12_-__ast_霧:1.0___ASTNODE_霧_29_/__ast_霧:1.0___ASTNODE_霧_18_-__ast_霧:1.0___ASTNODE_霧_6_";
+import { __ast_技:1.0___ASTNODE_霧_31_ } __ast_霧:1.0___ASTNODE_霧_4_ "__ast_霧:1.0___ASTNODE_霧_22_/__ast_霧:1.0___ASTNODE_霧_12_-__ast_霧:1.0___ASTNODE_霧_29_/__ast_霧:1.0___ASTNODE_霧_18_-__ast_霧:1.0___ASTNODE_霧_6_";
+import __ast_霧:1.0___ASTNODE_霧_19_ { __ast_廱:1.0___ASTNODE_廱_2_ } __ast_霧:1.0___ASTNODE_霧_4_ "__ast_霧:1.0___ASTNODE_霧_22_/__ast_霧:1.0___ASTNODE_霧_12_-__ast_霧:1.0___ASTNODE_霧_29_/__ast_霧:1.0___ASTNODE_霧_18_-__ast_霧:1.0___ASTNODE_霧_6_";
+
+// __ast_潜:0.2___ASTNODE_ZC_928_ [decoy-metadata]
+// __ast_匽:0.5___ASTNODE_XK_657_ [decoy-metadata]
+__ast_霧:1.0___ASTNODE_霧_13_ __ast_霧:1.0___ASTNODE_霧_19_ __ast_組:1.0___ASTNODE_廱_1_ = (__ast_霧:1.0___ASTNODE_霧_20_: __ast_霧:1.0___ASTNODE_霧_10_) => __ast_霧:1.0___ASTNODE_霧_26_;
+
+__ast_霧:1.0___ASTNODE_霧_19_ __ast_組:1.0___ASTNODE_廱_4_<T> = {
+  __ast_霧:1.0___ASTNODE_霧_17_: __ast_霧:1.0___ASTNODE_霧_10_;
+  fn: () => __ast_廱:1.0___ASTNODE_廱_3_<T>;
+  __ast_霧:1.0___ASTNODE_霧_18_?: __ast_廱:1.0___ASTNODE_廱_2_;
+  __ast_技:1.0___ASTNODE_霧_24_?: __ast_組:1.0___ASTNODE_廱_1_;
+// __ast_匽:0.1___ASTNODE_BK_848_ [decoy-metadata]
+  __ast_霧:1.0___ASTNODE_霧_5_?: (__ast_霧:1.0___ASTNODE_霧_27_: __ast_霧:1.0___ASTNODE_霧_32_) => __ast_霧:1.0___ASTNODE_霧_9_;
+};
+
+__ast_霧:1.0___ASTNODE_霧_1_ __ast_技:1.0___ASTNODE_霧_16_ = __ast_技:1.0___ASTNODE_霧_31_("__ast_霧:1.0___ASTNODE_霧_7_/__ast_組:1.0___ASTNODE_霧_15_");
+
+__ast_霧:1.0___ASTNODE_霧_14_ __ast_組:1.0___ASTNODE_霧_11_(__ast_霧:1.0___ASTNODE_霧_18_?: __ast_廱:1.0___ASTNODE_廱_2_, __ast_技:1.0___ASTNODE_霧_24_?: __ast_組:1.0___ASTNODE_廱_1_) {
+  if (__ast_技:1.0___ASTNODE_霧_24_) {
+    return __ast_技:1.0___ASTNODE_霧_24_;
+  }
+  if (__ast_霧:1.0___ASTNODE_霧_18_?.__ast_霧:1.0___ASTNODE_霧_25_) {
+// __ast_廉:0.7___ASTNODE_FH_419_ [decoy-metadata]
+    return __ast_霧:1.0___ASTNODE_霧_18_.__ast_霧:1.0___ASTNODE_霧_25_;
+  }
+  return (__ast_霧:1.0___ASTNODE_霧_20_: __ast_霧:1.0___ASTNODE_霧_10_) => __ast_技:1.0___ASTNODE_霧_16_.__ast_霧:1.0___ASTNODE_霧_25_(__ast_霧:1.0___ASTNODE_霧_20_);
+}
+
+__ast_霧:1.0___ASTNODE_霧_13_ async __ast_霧:1.0___ASTNODE_霧_14_ __ast_組:1.0___ASTNODE_霧_33_<T>({
+  __ast_霧:1.0___ASTNODE_霧_17_,
+  fn,
+// __ast_廱:0.4___ASTNODE_EW_102_ [decoy-metadata]
+  __ast_霧:1.0___ASTNODE_霧_18_,
+// __ast_技:0.1___ASTNODE_EB_235_ [decoy-metadata]
+  __ast_技:1.0___ASTNODE_霧_24_,
+  __ast_霧:1.0___ASTNODE_霧_5_,
+}: __ast_組:1.0___ASTNODE_廱_4_<T>): __ast_廱:1.0___ASTNODE_廱_3_<T> {
+  try {
+    return await fn();
+  } catch (__ast_霧:1.0___ASTNODE_霧_27_) {
+    if (!__ast_霧:1.0___ASTNODE_霧_5_ || __ast_霧:1.0___ASTNODE_霧_5_(__ast_霧:1.0___ASTNODE_霧_27_)) {
+      __ast_霧:1.0___ASTNODE_霧_1_ __ast_霧:1.0___ASTNODE_霧_2_ = __ast_澎:1.0___ASTNODE_霧_30_(__ast_霧:1.0___ASTNODE_霧_27_);
+      __ast_霧:1.0___ASTNODE_霧_1_ __ast_霧:1.0___ASTNODE_霧_8_ = __ast_組:1.0___ASTNODE_霧_11_(__ast_霧:1.0___ASTNODE_霧_18_, __ast_技:1.0___ASTNODE_霧_24_);
+      __ast_霧:1.0___ASTNODE_霧_8_(__ast_技:1.0___ASTNODE_霧_21_(`__ast_霧:1.0___ASTNODE_霧_7_ ${__ast_霧:1.0___ASTNODE_霧_17_} __ast_霧:1.0___ASTNODE_霧_3_: ${__ast_霧:1.0___ASTNODE_霧_2_}`));
+    }
+    __ast_霧:1.0___ASTNODE_霧_28_ __ast_霧:1.0___ASTNODE_霧_27_;
+  }
+}
+
+// POLYMORPHIC_JCROSS_END

@@ -1,0 +1,63 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:3C1EC388 ver:1778220767
+// ⚠️ One-time schema — expires after response
+
+import { _ASTNODE_沫:1.0__ID_沫_5_, _ASTNODE_沫:1.0__ID_沫_50_, it, vi } _ASTNODE_沫:1.0__ID_沫_6_ "_ASTNODE_沫:1.0__ID_沫_58_";
+// _ASTNODE_匴:0.5__ID_FM_187_ [decoy-metadata]
+import { _ASTNODE_沫:1.0__ID_沫_49_ } _ASTNODE_沫:1.0__ID_沫_6_ "../../../_ASTNODE_沫:1.0__ID_沫_11_/_ASTNODE_沫:1.0__ID_沫_15_/_ASTNODE_沫:1.0__ID_沫_53_/_ASTNODE_技:1.0__ID_煌_2_-_ASTNODE_沫:1.0__ID_沫_47_.js";
+import { _ASTNODE_沫:1.0__ID_沫_39_ } _ASTNODE_沫:1.0__ID_沫_6_ "../../../_ASTNODE_沫:1.0__ID_沫_12_/_ASTNODE_沫:1.0__ID_沫_42_/_ASTNODE_沫:1.0__ID_沫_8_/_ASTNODE_沫:1.0__ID_沫_17_-_ASTNODE_沫:1.0__ID_沫_22_.js";
+import {
+  _ASTNODE_技:1.0__ID_沫_24_,
+  _ASTNODE_沫:1.0__ID_沫_32_ _ASTNODE_技:1.0__ID_廩_2_,
+} _ASTNODE_沫:1.0__ID_沫_6_ "../../../_ASTNODE_沫:1.0__ID_沫_12_/_ASTNODE_沫:1.0__ID_沫_42_/_ASTNODE_沫:1.0__ID_沫_8_/_ASTNODE_技:1.0__ID_煌_2_-_ASTNODE_沫:1.0__ID_沫_47_.js";
+// _ASTNODE_技:0.1__ID_HA_326_ [decoy-metadata]
+import _ASTNODE_沫:1.0__ID_沫_32_ { _ASTNODE_廩:1.0__ID_廩_3_, _ASTNODE_廩:1.0__ID_廩_6_ } _ASTNODE_沫:1.0__ID_沫_6_ "../_ASTNODE_沫:1.0__ID_沫_17_-_ASTNODE_糸:1.0__ID_沫_4_.js";
+import { _ASTNODE_沫:1.0__ID_沫_19_ } _ASTNODE_沫:1.0__ID_沫_6_ "./_ASTNODE_沫:1.0__ID_沫_34_.js";
+
+// _ASTNODE_浪:0.9__ID_HM_492_ [decoy-metadata]
+_ASTNODE_沫:1.0__ID_沫_36_ _ASTNODE_技:1.0__ID_沫_35_ = _ASTNODE_沫:1.0__ID_沫_49_({
+  _ASTNODE_沫:1.0__ID_沫_30_: _ASTNODE_沫:1.0__ID_沫_19_,
+  _ASTNODE_沫:1.0__ID_沫_47_: _ASTNODE_沫:1.0__ID_沫_19_._ASTNODE_技:1.0__ID_煌_1_!,
+});
+
+_ASTNODE_沫:1.0__ID_沫_5_("_ASTNODE_沫:1.0__ID_沫_23_ _ASTNODE_技:1.0__ID_煌_2_ _ASTNODE_沫:1.0__ID_沫_47_", () => {
+  it("_ASTNODE_沫:1.0__ID_沫_40_ a _ASTNODE_沫:1.0__ID_沫_3_ _ASTNODE_鍵:1.0__ID_沫_54_ _ASTNODE_沫:1.0__ID_沫_45_", async () => {
+    _ASTNODE_沫:1.0__ID_沫_36_ _ASTNODE_技:1.0__ID_沫_51_ = _ASTNODE_技:1.0__ID_沫_24_({
+      _ASTNODE_沫:1.0__ID_沫_20_: vi.fn(async () => "_ASTNODE_沫:1.0__ID_沫_26_") as _ASTNODE_技:1.0__ID_廩_2_["_ASTNODE_沫:1.0__ID_沫_20_"],
+      _ASTNODE_沫:1.0__ID_沫_21_: vi.fn(async ({ _ASTNODE_沫:1.0__ID_沫_31_ }: { _ASTNODE_沫:1.0__ID_沫_31_: _ASTNODE_沫:1.0__ID_沫_57_ }) => {
+        if (_ASTNODE_沫:1.0__ID_沫_31_ === "_ASTNODE_技:1.0__ID_廩_7_ _ASTNODE_廩:1.0__ID_廩_8_ _ASTNODE_沫:1.0__ID_沫_27_ _ASTNODE_鍵:1.0__ID_沫_54_") {
+// _ASTNODE_沫:0.8__ID_WE_938_ [decoy-metadata]
+          return "12345689:_ASTNODE_沫:1.0__ID_沫_18_-_ASTNODE_沫:1.0__ID_沫_7_";
+        }
+        _ASTNODE_沫:1.0__ID_沫_13_ _ASTNODE_沫:1.0__ID_沫_38_ _ASTNODE_廩:1.0__ID_廩_5_(`_ASTNODE_廩:1.0__ID_廩_4_ _ASTNODE_沫:1.0__ID_沫_37_: ${_ASTNODE_沫:1.0__ID_沫_31_}`);
+      }) as _ASTNODE_技:1.0__ID_廩_2_["_ASTNODE_沫:1.0__ID_沫_21_"],
+      _ASTNODE_沫:1.0__ID_沫_56_: vi.fn(async ({ _ASTNODE_沫:1.0__ID_沫_31_ }: { _ASTNODE_沫:1.0__ID_沫_31_: _ASTNODE_沫:1.0__ID_沫_57_ }) => {
+        if (_ASTNODE_沫:1.0__ID_沫_31_ === "_ASTNODE_廩:1.0__ID_廩_1_ _ASTNODE_沫:1.0__ID_沫_14_ _ASTNODE_沫:1.0__ID_沫_25_ for _ASTNODE_廩:1.0__ID_廩_8_?") {
+          return false;
+        }
+// _ASTNODE_浪:0.2__ID_BW_999_ [decoy-metadata]
+        return false;
+      }),
+    });
+
+    _ASTNODE_沫:1.0__ID_沫_36_ _ASTNODE_沫:1.0__ID_沫_17_: _ASTNODE_廩:1.0__ID_廩_6_ = _ASTNODE_沫:1.0__ID_沫_39_();
+
+// _ASTNODE_浪:0.7__ID_KY_969_ [decoy-metadata]
+    _ASTNODE_沫:1.0__ID_沫_36_ _ASTNODE_沫:1.0__ID_沫_41_ = await _ASTNODE_技:1.0__ID_沫_35_._ASTNODE_沫:1.0__ID_沫_55_({
+      _ASTNODE_沫:1.0__ID_沫_43_: {} as _ASTNODE_廩:1.0__ID_廩_3_,
+      _ASTNODE_沫:1.0__ID_沫_17_,
+      _ASTNODE_技:1.0__ID_沫_51_,
+      _ASTNODE_沫:1.0__ID_沫_52_: { _ASTNODE_鍵:1.0__ID_沫_16_: "_ASTNODE_沫:1.0__ID_沫_26_" },
+      _ASTNODE_沫:1.0__ID_沫_44_: {},
+      _ASTNODE_沫:1.0__ID_沫_1_: false,
+      _ASTNODE_浪:1.0__ID_沫_33_: false,
+    });
+
+    _ASTNODE_沫:1.0__ID_沫_50_(_ASTNODE_沫:1.0__ID_沫_41_._ASTNODE_沫:1.0__ID_沫_29_)._ASTNODE_沫:1.0__ID_沫_9_("_ASTNODE_沫:1.0__ID_沫_48_");
+    _ASTNODE_沫:1.0__ID_沫_50_(_ASTNODE_沫:1.0__ID_沫_41_._ASTNODE_沫:1.0__ID_沫_43_._ASTNODE_沫:1.0__ID_沫_15_?._ASTNODE_沫:1.0__ID_沫_23_?._ASTNODE_沫:1.0__ID_沫_10_)._ASTNODE_沫:1.0__ID_沫_9_(true);
+    _ASTNODE_沫:1.0__ID_沫_50_(_ASTNODE_沫:1.0__ID_沫_41_._ASTNODE_沫:1.0__ID_沫_43_._ASTNODE_沫:1.0__ID_沫_15_?._ASTNODE_沫:1.0__ID_沫_23_?._ASTNODE_鍵:1.0__ID_沫_46_)._ASTNODE_沫:1.0__ID_沫_9_("12345689:_ASTNODE_沫:1.0__ID_沫_18_-_ASTNODE_沫:1.0__ID_沫_7_");
+    _ASTNODE_沫:1.0__ID_沫_50_(_ASTNODE_沫:1.0__ID_沫_41_._ASTNODE_沫:1.0__ID_沫_43_._ASTNODE_沫:1.0__ID_沫_15_?._ASTNODE_沫:1.0__ID_沫_23_?._ASTNODE_糸:1.0__ID_沫_28_)._ASTNODE_沫:1.0__ID_沫_2_();
+  });
+});
+
+// POLYMORPHIC_JCROSS_END

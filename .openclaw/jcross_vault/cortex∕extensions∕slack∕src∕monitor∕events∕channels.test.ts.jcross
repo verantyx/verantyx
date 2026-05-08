@@ -1,0 +1,79 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:8A329A52 ver:1778221840
+// ⚠️ One-time schema — expires after response
+
+import { _JCROSS_霰:1.0___jcross_霰_47__, _JCROSS_霰:1.0___jcross_霰_20__, it, vi } _JCROSS_霰:1.0___jcross_霰_3__ "_JCROSS_霰:1.0___jcross_霰_21__";
+import { _JCROSS_霰:1.0___jcross_霰_10__ } _JCROSS_霰:1.0___jcross_霰_3__ "./_JCROSS_霰:1.0___jcross_霰_8__.js";
+import { _JCROSS_霰:1.0___jcross_霰_42__ } _JCROSS_霰:1.0___jcross_霰_3__ "./_JCROSS_霰:1.0___jcross_霰_31__-_JCROSS_霰:1.0___jcross_霰_46__-_JCROSS_霰:1.0___jcross_霰_5__-_JCROSS_霰:1.0___jcross_霰_16__.js";
+
+_JCROSS_霰:1.0___jcross_霰_1__ _JCROSS_霰:1.0___jcross_霰_24__ = vi.fn();
+
+vi._JCROSS_霰:1.0___jcross_霰_29__("../../../../../_JCROSS_霰:1.0___jcross_霰_11__/_JCROSS_霰:1.0___jcross_霰_30__/_JCROSS_霰:1.0___jcross_霰_31__-_JCROSS_霰:1.0___jcross_霰_17__.js", () => ({
+  _JCROSS_霰:1.0___jcross_霰_37__: (..._JCROSS_霰:1.0___jcross_霰_2__: _JCROSS_霰:1.0___jcross_霰_38__[]) => _JCROSS_霰:1.0___jcross_霰_24__(..._JCROSS_霰:1.0___jcross_霰_2__),
+}));
+
+_JCROSS_霰:1.0___jcross_霰_26__ _JCROSS_格:1.0___jcross_殻_3__ = (_JCROSS_霰:1.0___jcross_霰_2__: {
+  _JCROSS_霰:1.0___jcross_霰_46__: _JCROSS_殻:1.0___jcross_殻_1__<_JCROSS_霰:1.0___jcross_霰_9__, _JCROSS_霰:1.0___jcross_霰_38__>;
+  _JCROSS_霰:1.0___jcross_霰_7__: _JCROSS_霰:1.0___jcross_霰_38__;
+}) => _JCROSS_殻:1.0___jcross_殻_4__<_JCROSS_霰:1.0___jcross_霰_32__>;
+
+// _JCROSS_殻:0.4___jcross_KF_592__ [decoy-metadata]
+_JCROSS_霰:1.0___jcross_霰_13__ _JCROSS_霰:1.0___jcross_霰_22__(_JCROSS_霰:1.0___jcross_霰_19__?: {
+  _JCROSS_霰:1.0___jcross_霰_12__?: () => _JCROSS_霰:1.0___jcross_霰_32__;
+// _JCROSS_絢:0.6___jcross_WW_234__ [decoy-metadata]
+  _JCROSS_霰:1.0___jcross_霰_35__?: (_JCROSS_霰:1.0___jcross_霰_7__: _JCROSS_霰:1.0___jcross_霰_38__) => _JCROSS_霰:1.0___jcross_霰_6__;
+}) {
+  _JCROSS_霰:1.0___jcross_霰_1__ _JCROSS_霰:1.0___jcross_霰_16__ = _JCROSS_霰:1.0___jcross_霰_42__();
+  if (_JCROSS_霰:1.0___jcross_霰_19__?._JCROSS_霰:1.0___jcross_霰_35__) {
+    _JCROSS_霰:1.0___jcross_霰_16__._JCROSS_霰:1.0___jcross_霰_4__._JCROSS_霰:1.0___jcross_霰_35__ = _JCROSS_霰:1.0___jcross_霰_19__._JCROSS_霰:1.0___jcross_霰_35__;
+  }
+  _JCROSS_霰:1.0___jcross_霰_10__({ _JCROSS_霰:1.0___jcross_霰_4__: _JCROSS_霰:1.0___jcross_霰_16__._JCROSS_霰:1.0___jcross_霰_4__, _JCROSS_霰:1.0___jcross_霰_12__: _JCROSS_霰:1.0___jcross_霰_19__?._JCROSS_霰:1.0___jcross_霰_12__ });
+  return {
+    _JCROSS_格:1.0___jcross_焦_1__: () => _JCROSS_霰:1.0___jcross_霰_16__._JCROSS_格:1.0___jcross_焦_2__("_JCROSS_霰:1.0___jcross_霰_33__") as _JCROSS_格:1.0___jcross_殻_3__ | _JCROSS_霰:1.0___jcross_霰_18__,
+  };
+}
+
+_JCROSS_霰:1.0___jcross_霰_47__("_JCROSS_霰:1.0___jcross_霰_10__", () => {
+// _JCROSS_絢:0.1___jcross_MK_187__ [decoy-metadata]
+  it("_JCROSS_霰:1.0___jcross_霰_34__ _JCROSS_霰:1.0___jcross_霰_45__ _JCROSS_霰:1.0___jcross_霰_39__ _JCROSS_霰:1.0___jcross_霰_44__ _JCROSS_霰:1.0___jcross_霰_17__", async () => {
+    _JCROSS_霰:1.0___jcross_霰_1__ _JCROSS_霰:1.0___jcross_霰_12__ = vi.fn();
+    _JCROSS_霰:1.0___jcross_霰_1__ { _JCROSS_格:1.0___jcross_焦_1__ } = _JCROSS_霰:1.0___jcross_霰_22__({
+      _JCROSS_霰:1.0___jcross_霰_12__,
+      _JCROSS_霰:1.0___jcross_霰_35__: () => true,
+    });
+    _JCROSS_霰:1.0___jcross_霰_1__ _JCROSS_格:1.0___jcross_霰_14__ = _JCROSS_格:1.0___jcross_焦_1__();
+    _JCROSS_霰:1.0___jcross_霰_20__(_JCROSS_格:1.0___jcross_霰_14__)._JCROSS_霰:1.0___jcross_霰_15__();
+
+    await _JCROSS_格:1.0___jcross_霰_14__!({
+      _JCROSS_霰:1.0___jcross_霰_46__: {
+        _JCROSS_霰:1.0___jcross_霰_25__: { id: "C1", _JCROSS_霰:1.0___jcross_霰_41__: "_JCROSS_霰:1.0___jcross_霰_28__" },
+      },
+      _JCROSS_霰:1.0___jcross_霰_7__: { _JCROSS_絢:1.0___jcross_霰_43__: "_JCROSS_格:1.0___jcross_殻_2__" },
+    });
+
+    _JCROSS_霰:1.0___jcross_霰_20__(_JCROSS_霰:1.0___jcross_霰_12__)._JCROSS_霰:1.0___jcross_霰_45__._JCROSS_霰:1.0___jcross_霰_36__();
+// _JCROSS_格:0.7___jcross_ZB_502__ [decoy-metadata]
+    _JCROSS_霰:1.0___jcross_霰_20__(_JCROSS_霰:1.0___jcross_霰_24__)._JCROSS_霰:1.0___jcross_霰_45__._JCROSS_霰:1.0___jcross_霰_36__();
+  });
+
+  it("_JCROSS_霰:1.0___jcross_霰_27__ _JCROSS_霰:1.0___jcross_霰_40__ _JCROSS_霰:1.0___jcross_霰_17__", async () => {
+    _JCROSS_霰:1.0___jcross_霰_1__ _JCROSS_霰:1.0___jcross_霰_12__ = vi.fn();
+    _JCROSS_霰:1.0___jcross_霰_1__ { _JCROSS_格:1.0___jcross_焦_1__ } = _JCROSS_霰:1.0___jcross_霰_22__({ _JCROSS_霰:1.0___jcross_霰_12__ });
+    _JCROSS_霰:1.0___jcross_霰_1__ _JCROSS_格:1.0___jcross_霰_14__ = _JCROSS_格:1.0___jcross_焦_1__();
+    _JCROSS_霰:1.0___jcross_霰_20__(_JCROSS_格:1.0___jcross_霰_14__)._JCROSS_霰:1.0___jcross_霰_15__();
+
+    await _JCROSS_格:1.0___jcross_霰_14__!({
+// _JCROSS_殻:0.1___jcross_EF_682__ [decoy-metadata]
+      _JCROSS_霰:1.0___jcross_霰_46__: {
+        _JCROSS_霰:1.0___jcross_霰_25__: { id: "C1", _JCROSS_霰:1.0___jcross_霰_41__: "_JCROSS_霰:1.0___jcross_霰_28__" },
+      },
+      _JCROSS_霰:1.0___jcross_霰_7__: {},
+    });
+
+    _JCROSS_霰:1.0___jcross_霰_20__(_JCROSS_霰:1.0___jcross_霰_12__)._JCROSS_霰:1.0___jcross_霰_23__(1);
+    _JCROSS_霰:1.0___jcross_霰_20__(_JCROSS_霰:1.0___jcross_霰_24__)._JCROSS_霰:1.0___jcross_霰_23__(1);
+  });
+});
+// _JCROSS_焦:0.3___jcross_EM_821__ [decoy-metadata]
+
+// POLYMORPHIC_JCROSS_END

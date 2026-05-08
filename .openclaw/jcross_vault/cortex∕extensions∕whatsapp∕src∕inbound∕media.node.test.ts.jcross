@@ -1,0 +1,79 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:16775A8C ver:1778221989
+// ⚠️ One-time schema — expires after response
+
+import { _OPAQUE_泡:1.0__JCROSS_泡_20_, _OPAQUE_泡:1.0__JCROSS_泡_56_, it, vi } _OPAQUE_泡:1.0__JCROSS_泡_40_ "_OPAQUE_泡:1.0__JCROSS_泡_49_";
+// _OPAQUE_網:0.4__JCROSS_XE_174_ [decoy-metadata]
+
+_OPAQUE_泡:1.0__JCROSS_泡_21_ { _OPAQUE_泡:1.0__JCROSS_泡_45_, _OPAQUE_匱:1.0__JCROSS_泡_48_ } = vi._OPAQUE_泡:1.0__JCROSS_泡_36_(() => ({
+  _OPAQUE_泡:1.0__JCROSS_泡_45_: vi.fn((_OPAQUE_泡:1.0__JCROSS_泡_69_: _OPAQUE_泡:1.0__JCROSS_泡_23_) => _OPAQUE_泡:1.0__JCROSS_泡_69_),
+  _OPAQUE_匱:1.0__JCROSS_泡_48_: vi.fn()._OPAQUE_泡:1.0__JCROSS_泡_8_(_OPAQUE_要:1.0__JCROSS_殻_2_._OPAQUE_泡:1.0__JCROSS_泡_40_("_OPAQUE_泡:1.0__JCROSS_泡_62_-_OPAQUE_泡:1.0__JCROSS_泡_19_-_OPAQUE_泡:1.0__JCROSS_泡_12_")),
+}));
+
+vi._OPAQUE_泡:1.0__JCROSS_泡_41_("@_OPAQUE_伏:1.0__JCROSS_泡_61_/_OPAQUE_泡:1.0__JCROSS_泡_31_", () => ({
+  _OPAQUE_泡:1.0__JCROSS_泡_45_,
+  _OPAQUE_匱:1.0__JCROSS_泡_48_,
+}));
+// _OPAQUE_泡:0.4__JCROSS_LY_342_ [decoy-metadata]
+
+import { _OPAQUE_匱:1.0__JCROSS_泡_28_ } _OPAQUE_泡:1.0__JCROSS_泡_40_ "./_OPAQUE_泡:1.0__JCROSS_泡_19_.js";
+
+_OPAQUE_泡:1.0__JCROSS_泡_21_ _OPAQUE_泡:1.0__JCROSS_泡_25_ = {
+  _OPAQUE_泡:1.0__JCROSS_泡_3_: vi.fn(),
+  _OPAQUE_要:1.0__JCROSS_泡_16_: { _OPAQUE_泡:1.0__JCROSS_泡_30_: () => ({}) },
+} as _OPAQUE_要:1.0__JCROSS_泡_14_;
+
+async _OPAQUE_泡:1.0__JCROSS_泡_59_ _OPAQUE_泡:1.0__JCROSS_泡_43_(_OPAQUE_泡:1.0__JCROSS_泡_22_: _OPAQUE_殻:1.0__JCROSS_殻_1_<_OPAQUE_泡:1.0__JCROSS_泡_11_, _OPAQUE_泡:1.0__JCROSS_泡_23_>, _OPAQUE_泡:1.0__JCROSS_泡_64_: _OPAQUE_泡:1.0__JCROSS_泡_11_) {
+  _OPAQUE_泡:1.0__JCROSS_泡_21_ _OPAQUE_泡:1.0__JCROSS_泡_15_ = await _OPAQUE_匱:1.0__JCROSS_泡_28_({ _OPAQUE_泡:1.0__JCROSS_泡_22_ } as _OPAQUE_要:1.0__JCROSS_泡_14_, _OPAQUE_泡:1.0__JCROSS_泡_25_);
+  _OPAQUE_泡:1.0__JCROSS_泡_56_(_OPAQUE_泡:1.0__JCROSS_泡_15_)._OPAQUE_泡:1.0__JCROSS_泡_42_();
+  _OPAQUE_泡:1.0__JCROSS_泡_56_(_OPAQUE_泡:1.0__JCROSS_泡_15_?._OPAQUE_泡:1.0__JCROSS_泡_24_)._OPAQUE_泡:1.0__JCROSS_泡_34_(_OPAQUE_泡:1.0__JCROSS_泡_64_);
+}
+
+_OPAQUE_泡:1.0__JCROSS_泡_20_("_OPAQUE_匱:1.0__JCROSS_泡_28_", () => {
+  it("_OPAQUE_泡:1.0__JCROSS_泡_63_ _OPAQUE_泡:1.0__JCROSS_泡_9_ for _OPAQUE_泡:1.0__JCROSS_泡_55_ _OPAQUE_泡:1.0__JCROSS_泡_37_ _OPAQUE_泡:1.0__JCROSS_泡_19_", async () => {
+    _OPAQUE_泡:1.0__JCROSS_泡_21_ _OPAQUE_泡:1.0__JCROSS_泡_69_ = { _OPAQUE_泡:1.0__JCROSS_泡_22_: { _OPAQUE_泡:1.0__JCROSS_泡_1_: "_OPAQUE_泡:1.0__JCROSS_泡_53_" } } as _OPAQUE_要:1.0__JCROSS_泡_14_;
+    _OPAQUE_泡:1.0__JCROSS_泡_21_ _OPAQUE_泡:1.0__JCROSS_泡_15_ = await _OPAQUE_匱:1.0__JCROSS_泡_28_(_OPAQUE_泡:1.0__JCROSS_泡_69_, _OPAQUE_泡:1.0__JCROSS_泡_25_);
+    _OPAQUE_泡:1.0__JCROSS_泡_56_(_OPAQUE_泡:1.0__JCROSS_泡_15_)._OPAQUE_泡:1.0__JCROSS_泡_17_();
+  });
+
+  it("_OPAQUE_泡:1.0__JCROSS_泡_66_ _OPAQUE_泡:1.0__JCROSS_泡_52_ _OPAQUE_泡:1.0__JCROSS_泡_24_ _OPAQUE_泡:1.0__JCROSS_泡_40_ _OPAQUE_泡:1.0__JCROSS_泡_65_ _OPAQUE_泡:1.0__JCROSS_泡_70_ _OPAQUE_泡:1.0__JCROSS_泡_68_", async () => {
+// _OPAQUE_焦:0.6__JCROSS_GE_448_ [decoy-metadata]
+    await _OPAQUE_泡:1.0__JCROSS_泡_43_({ _OPAQUE_泡:1.0__JCROSS_泡_65_: { _OPAQUE_泡:1.0__JCROSS_泡_24_: "_OPAQUE_泡:1.0__JCROSS_泡_29_/_OPAQUE_泡:1.0__JCROSS_泡_60_", _OPAQUE_泡:1.0__JCROSS_泡_50_: true } }, "_OPAQUE_泡:1.0__JCROSS_泡_29_/_OPAQUE_泡:1.0__JCROSS_泡_60_");
+  });
+
+  it._OPAQUE_泡:1.0__JCROSS_泡_51_([
+    { _OPAQUE_泡:1.0__JCROSS_泡_46_: "_OPAQUE_泡:1.0__JCROSS_泡_35_ _OPAQUE_泡:1.0__JCROSS_泡_55_ _OPAQUE_泡:1.0__JCROSS_泡_37_ _OPAQUE_泡:1.0__JCROSS_泡_52_ _OPAQUE_殻:1.0__JCROSS_殻_3_", _OPAQUE_泡:1.0__JCROSS_泡_65_: { _OPAQUE_泡:1.0__JCROSS_泡_50_: true } },
+    { _OPAQUE_泡:1.0__JCROSS_泡_46_: "_OPAQUE_泡:1.0__JCROSS_泡_29_ _OPAQUE_泡:1.0__JCROSS_泡_55_ _OPAQUE_泡:1.0__JCROSS_泡_37_ _OPAQUE_殻:1.0__JCROSS_殻_3_ or _OPAQUE_泡:1.0__JCROSS_泡_50_ _OPAQUE_泡:1.0__JCROSS_泡_4_", _OPAQUE_泡:1.0__JCROSS_泡_65_: {} },
+  ])("_OPAQUE_泡:1.0__JCROSS_泡_10_ to _OPAQUE_泡:1.0__JCROSS_泡_29_/_OPAQUE_泡:1.0__JCROSS_泡_6_ for $_OPAQUE_泡:1.0__JCROSS_泡_46_", async ({ _OPAQUE_泡:1.0__JCROSS_泡_65_ }) => {
+    await _OPAQUE_泡:1.0__JCROSS_泡_43_({ _OPAQUE_泡:1.0__JCROSS_泡_65_ }, "_OPAQUE_泡:1.0__JCROSS_泡_29_/_OPAQUE_泡:1.0__JCROSS_泡_6_; _OPAQUE_泡:1.0__JCROSS_泡_18_=_OPAQUE_泡:1.0__JCROSS_泡_33_");
+// _OPAQUE_泡:0.6__JCROSS_VD_623_ [decoy-metadata]
+  });
+
+  it("_OPAQUE_泡:1.0__JCROSS_泡_66_ _OPAQUE_泡:1.0__JCROSS_泡_52_ _OPAQUE_泡:1.0__JCROSS_泡_24_ _OPAQUE_泡:1.0__JCROSS_泡_40_ _OPAQUE_泡:1.0__JCROSS_泡_58_ _OPAQUE_泡:1.0__JCROSS_泡_70_ _OPAQUE_泡:1.0__JCROSS_泡_68_", async () => {
+    await _OPAQUE_泡:1.0__JCROSS_泡_43_({ _OPAQUE_泡:1.0__JCROSS_泡_58_: { _OPAQUE_泡:1.0__JCROSS_泡_24_: "_OPAQUE_泡:1.0__JCROSS_泡_44_/_OPAQUE_泡:1.0__JCROSS_泡_13_" } }, "_OPAQUE_泡:1.0__JCROSS_泡_44_/_OPAQUE_泡:1.0__JCROSS_泡_13_");
+  });
+
+  it._OPAQUE_泡:1.0__JCROSS_泡_51_([
+    { _OPAQUE_泡:1.0__JCROSS_泡_46_: "_OPAQUE_泡:1.0__JCROSS_泡_44_", _OPAQUE_泡:1.0__JCROSS_泡_22_: { _OPAQUE_泡:1.0__JCROSS_泡_58_: {} }, _OPAQUE_泡:1.0__JCROSS_泡_24_: "_OPAQUE_泡:1.0__JCROSS_泡_44_/_OPAQUE_泡:1.0__JCROSS_泡_26_" },
+    { _OPAQUE_泡:1.0__JCROSS_泡_46_: "_OPAQUE_泡:1.0__JCROSS_泡_67_", _OPAQUE_泡:1.0__JCROSS_泡_22_: { _OPAQUE_泡:1.0__JCROSS_泡_2_: {} }, _OPAQUE_泡:1.0__JCROSS_泡_24_: "_OPAQUE_泡:1.0__JCROSS_泡_67_/_OPAQUE_泡:1.0__JCROSS_泡_60_" },
+    { _OPAQUE_泡:1.0__JCROSS_泡_46_: "_OPAQUE_要:1.0__JCROSS_泡_71_", _OPAQUE_泡:1.0__JCROSS_泡_22_: { _OPAQUE_泡:1.0__JCROSS_泡_38_: {} }, _OPAQUE_泡:1.0__JCROSS_泡_24_: "_OPAQUE_泡:1.0__JCROSS_泡_44_/_OPAQUE_泡:1.0__JCROSS_泡_27_" },
+  ])("_OPAQUE_泡:1.0__JCROSS_泡_10_ _OPAQUE_殻:1.0__JCROSS_殻_3_ for $_OPAQUE_泡:1.0__JCROSS_泡_46_ _OPAQUE_泡:1.0__JCROSS_泡_55_ _OPAQUE_泡:1.0__JCROSS_泡_37_ _OPAQUE_泡:1.0__JCROSS_泡_52_ _OPAQUE_殻:1.0__JCROSS_殻_3_", async ({ _OPAQUE_泡:1.0__JCROSS_泡_22_, _OPAQUE_泡:1.0__JCROSS_泡_24_ }) => {
+    await _OPAQUE_泡:1.0__JCROSS_泡_43_(_OPAQUE_泡:1.0__JCROSS_泡_22_, _OPAQUE_泡:1.0__JCROSS_泡_24_);
+  });
+// _OPAQUE_殻:0.9__JCROSS_DD_490_ [decoy-metadata]
+
+  it("_OPAQUE_泡:1.0__JCROSS_泡_32_ _OPAQUE_匱:1.0__JCROSS_泡_7_ _OPAQUE_泡:1.0__JCROSS_泡_40_ _OPAQUE_泡:1.0__JCROSS_泡_54_ _OPAQUE_泡:1.0__JCROSS_泡_55_", async () => {
+// _OPAQUE_脈:0.3__JCROSS_FW_175_ [decoy-metadata]
+    _OPAQUE_泡:1.0__JCROSS_泡_21_ _OPAQUE_泡:1.0__JCROSS_泡_69_ = {
+      _OPAQUE_泡:1.0__JCROSS_泡_22_: {
+        _OPAQUE_泡:1.0__JCROSS_泡_57_: { _OPAQUE_泡:1.0__JCROSS_泡_24_: "_OPAQUE_泡:1.0__JCROSS_泡_39_/_OPAQUE_泡:1.0__JCROSS_泡_5_", _OPAQUE_匱:1.0__JCROSS_泡_7_: "_OPAQUE_泡:1.0__JCROSS_泡_47_._OPAQUE_泡:1.0__JCROSS_泡_5_" },
+      },
+    } as _OPAQUE_要:1.0__JCROSS_泡_14_;
+    _OPAQUE_泡:1.0__JCROSS_泡_21_ _OPAQUE_泡:1.0__JCROSS_泡_15_ = await _OPAQUE_匱:1.0__JCROSS_泡_28_(_OPAQUE_泡:1.0__JCROSS_泡_69_, _OPAQUE_泡:1.0__JCROSS_泡_25_);
+    _OPAQUE_泡:1.0__JCROSS_泡_56_(_OPAQUE_泡:1.0__JCROSS_泡_15_)._OPAQUE_泡:1.0__JCROSS_泡_42_();
+    _OPAQUE_泡:1.0__JCROSS_泡_56_(_OPAQUE_泡:1.0__JCROSS_泡_15_?._OPAQUE_泡:1.0__JCROSS_泡_24_)._OPAQUE_泡:1.0__JCROSS_泡_34_("_OPAQUE_泡:1.0__JCROSS_泡_39_/_OPAQUE_泡:1.0__JCROSS_泡_5_");
+    _OPAQUE_泡:1.0__JCROSS_泡_56_(_OPAQUE_泡:1.0__JCROSS_泡_15_?._OPAQUE_匱:1.0__JCROSS_泡_7_)._OPAQUE_泡:1.0__JCROSS_泡_34_("_OPAQUE_泡:1.0__JCROSS_泡_47_._OPAQUE_泡:1.0__JCROSS_泡_5_");
+  });
+});
+
+// POLYMORPHIC_JCROSS_END

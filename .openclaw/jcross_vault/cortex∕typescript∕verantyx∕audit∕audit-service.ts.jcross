@@ -1,0 +1,89 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:74CB2CFD ver:1778220251
+// ⚠️ One-time schema — expires after response
+
+/**
+ * _ID_廡:1.0__ASTNODE_廡_7_ — _ID_廡:1.0__ASTNODE_廡_5_-_ID_霧:1.0__ASTNODE_霧_15_ _ID_霧:1.0__ASTNODE_霧_32_ _ID_霧:1.0__ASTNODE_霧_30_ _ID_霧:1.0__ASTNODE_霧_22_ _ID_霧:1.0__ASTNODE_霧_18_ _ID_霧:1.0__ASTNODE_霧_46_
+ */
+
+import { _ID_廡:1.0__ASTNODE_廡_9_ } _ID_霧:1.0__ASTNODE_霧_29_ "./_ID_霧:1.0__ASTNODE_霧_23_-_ID_霧:1.0__ASTNODE_霧_2_.js";
+import { _ID_廡:1.0__ASTNODE_廡_12_, _ID_廡:1.0__ASTNODE_廡_4_, _ID_廡:1.0__ASTNODE_廡_10_ } _ID_霧:1.0__ASTNODE_霧_29_ "./_ID_霧:1.0__ASTNODE_霧_34_-_ID_霧:1.0__ASTNODE_霧_41_.js";
+import { _ID_廡:1.0__ASTNODE_廡_13_, _ID_網:1.0__ASTNODE_廡_11_, _ID_廡:1.0__ASTNODE_廡_6_ } _ID_霧:1.0__ASTNODE_霧_29_ "./_ID_霧:1.0__ASTNODE_霧_14_-_ID_霧:1.0__ASTNODE_霧_41_.js";
+import { _ID_処:1.0__ASTNODE_廡_8_, _ID_廡:1.0__ASTNODE_廡_1_ } _ID_霧:1.0__ASTNODE_霧_29_ "./_ID_霧:1.0__ASTNODE_霧_8_-_ID_処:1.0__ASTNODE_霧_21_.js";
+
+_ID_霧:1.0__ASTNODE_霧_10_ _ID_霧:1.0__ASTNODE_霧_24_ _ID_廡:1.0__ASTNODE_廡_2_ {
+  _ID_霧:1.0__ASTNODE_霧_34_: _ID_廡:1.0__ASTNODE_廡_10_;
+  _ID_霧:1.0__ASTNODE_霧_8_: _ID_廡:1.0__ASTNODE_廡_1_;
+  _ID_霧:1.0__ASTNODE_霧_12_: _ID_霧:1.0__ASTNODE_霧_7_;
+}
+
+_ID_霧:1.0__ASTNODE_霧_10_ class _ID_廡:1.0__ASTNODE_廡_7_ {
+  private _ID_霧:1.0__ASTNODE_霧_2_: _ID_廡:1.0__ASTNODE_廡_9_;
+  private _ID_霧:1.0__ASTNODE_霧_19_: _ID_廡:1.0__ASTNODE_廡_12_;
+  private _ID_霧:1.0__ASTNODE_霧_37_: _ID_廡:1.0__ASTNODE_廡_13_;
+  private _ID_処:1.0__ASTNODE_霧_27_: _ID_処:1.0__ASTNODE_廡_8_;
+  private _ID_霧:1.0__ASTNODE_霧_1_ = false;
+
+  _ID_霧:1.0__ASTNODE_霧_17_(_ID_霧:1.0__ASTNODE_霧_48_: _ID_霧:1.0__ASTNODE_霧_7_) {
+// _ID_凛:0.5__ASTNODE_FW_357_ [decoy-metadata]
+// _ID_凛:0.7__ASTNODE_KX_587_ [decoy-metadata]
+    _ID_霧:1.0__ASTNODE_霧_47_._ID_霧:1.0__ASTNODE_霧_2_ = _ID_霧:1.0__ASTNODE_霧_45_ _ID_廡:1.0__ASTNODE_廡_9_();
+    _ID_霧:1.0__ASTNODE_霧_47_._ID_霧:1.0__ASTNODE_霧_19_ = _ID_霧:1.0__ASTNODE_霧_45_ _ID_廡:1.0__ASTNODE_廡_12_(_ID_霧:1.0__ASTNODE_霧_47_._ID_霧:1.0__ASTNODE_霧_2_, _ID_霧:1.0__ASTNODE_霧_48_);
+    _ID_霧:1.0__ASTNODE_霧_47_._ID_霧:1.0__ASTNODE_霧_37_ = _ID_霧:1.0__ASTNODE_霧_45_ _ID_廡:1.0__ASTNODE_廡_13_(_ID_霧:1.0__ASTNODE_霧_47_._ID_霧:1.0__ASTNODE_霧_2_);
+    _ID_霧:1.0__ASTNODE_霧_47_._ID_処:1.0__ASTNODE_霧_27_ = _ID_霧:1.0__ASTNODE_霧_45_ _ID_処:1.0__ASTNODE_廡_8_(_ID_霧:1.0__ASTNODE_霧_47_._ID_霧:1.0__ASTNODE_霧_2_, _ID_霧:1.0__ASTNODE_霧_48_);
+  }
+
+  async _ID_霧:1.0__ASTNODE_霧_5_(): _ID_廡:1.0__ASTNODE_廡_14_<_ID_霧:1.0__ASTNODE_霧_4_> {
+    if (_ID_霧:1.0__ASTNODE_霧_47_._ID_霧:1.0__ASTNODE_霧_1_) {return;}
+    await _ID_霧:1.0__ASTNODE_霧_47_._ID_霧:1.0__ASTNODE_霧_2_._ID_霧:1.0__ASTNODE_霧_5_();
+    _ID_霧:1.0__ASTNODE_霧_47_._ID_霧:1.0__ASTNODE_霧_1_ = true;
+  }
+
+  async _ID_霧:1.0__ASTNODE_霧_3_(_ID_霧:1.0__ASTNODE_霧_16_: _ID_霧:1.0__ASTNODE_霧_7_, _ID_霧:1.0__ASTNODE_霧_38_: _ID_霧:1.0__ASTNODE_霧_7_): _ID_廡:1.0__ASTNODE_廡_14_<_ID_廡:1.0__ASTNODE_廡_4_> {
+    await _ID_霧:1.0__ASTNODE_霧_47_._ID_霧:1.0__ASTNODE_霧_31_();
+    return _ID_霧:1.0__ASTNODE_霧_47_._ID_霧:1.0__ASTNODE_霧_19_._ID_霧:1.0__ASTNODE_霧_3_(_ID_霧:1.0__ASTNODE_霧_16_, _ID_霧:1.0__ASTNODE_霧_38_);
+  }
+
+  async _ID_霧:1.0__ASTNODE_霧_9_(_ID_網:1.0__ASTNODE_霧_33_: _ID_網:1.0__ASTNODE_廡_11_): _ID_廡:1.0__ASTNODE_廡_14_<_ID_廡:1.0__ASTNODE_廡_6_> {
+// _ID_凛:0.8__ASTNODE_CX_439_ [decoy-metadata]
+    await _ID_霧:1.0__ASTNODE_霧_47_._ID_霧:1.0__ASTNODE_霧_31_();
+    return _ID_霧:1.0__ASTNODE_霧_47_._ID_霧:1.0__ASTNODE_霧_37_._ID_霧:1.0__ASTNODE_霧_9_(_ID_網:1.0__ASTNODE_霧_33_);
+  }
+
+  async _ID_霧:1.0__ASTNODE_霧_39_(): _ID_廡:1.0__ASTNODE_廡_14_<_ID_廡:1.0__ASTNODE_廡_1_> {
+    await _ID_霧:1.0__ASTNODE_霧_47_._ID_霧:1.0__ASTNODE_霧_31_();
+    return _ID_霧:1.0__ASTNODE_霧_47_._ID_処:1.0__ASTNODE_霧_27_._ID_霧:1.0__ASTNODE_霧_39_();
+  }
+
+  async _ID_霧:1.0__ASTNODE_霧_44_(): _ID_廡:1.0__ASTNODE_廡_14_<_ID_廡:1.0__ASTNODE_廡_2_> {
+    await _ID_霧:1.0__ASTNODE_霧_47_._ID_霧:1.0__ASTNODE_霧_31_();
+// _ID_奥:0.5__ASTNODE_XF_120_ [decoy-metadata]
+    _ID_霧:1.0__ASTNODE_霧_13_ _ID_霧:1.0__ASTNODE_霧_34_ = await _ID_霧:1.0__ASTNODE_霧_47_._ID_霧:1.0__ASTNODE_霧_19_._ID_霧:1.0__ASTNODE_霧_28_();
+    _ID_霧:1.0__ASTNODE_霧_13_ _ID_霧:1.0__ASTNODE_霧_8_ = await _ID_霧:1.0__ASTNODE_霧_47_._ID_処:1.0__ASTNODE_霧_27_._ID_霧:1.0__ASTNODE_霧_39_();
+    return { _ID_霧:1.0__ASTNODE_霧_34_, _ID_霧:1.0__ASTNODE_霧_8_, _ID_霧:1.0__ASTNODE_霧_12_: _ID_霧:1.0__ASTNODE_霧_45_ _ID_廡:1.0__ASTNODE_廡_15_()._ID_霧:1.0__ASTNODE_霧_11_() };
+  }
+
+  _ID_霧:1.0__ASTNODE_霧_25_(): _ID_霧:1.0__ASTNODE_霧_4_ {
+    _ID_霧:1.0__ASTNODE_霧_47_._ID_霧:1.0__ASTNODE_霧_2_._ID_霧:1.0__ASTNODE_霧_43_();
+    _ID_霧:1.0__ASTNODE_霧_47_._ID_霧:1.0__ASTNODE_霧_1_ = false;
+  }
+
+// [metadata-stripped]
+  _ID_処:1.0__ASTNODE_凛_1_(): _ID_処:1.0__ASTNODE_廡_8_ { return _ID_霧:1.0__ASTNODE_霧_47_._ID_処:1.0__ASTNODE_霧_27_; }
+  _ID_処:1.0__ASTNODE_凛_3_(): _ID_廡:1.0__ASTNODE_廡_12_ { return _ID_霧:1.0__ASTNODE_霧_47_._ID_霧:1.0__ASTNODE_霧_19_; }
+  _ID_処:1.0__ASTNODE_凛_2_(): _ID_廡:1.0__ASTNODE_廡_9_ { return _ID_霧:1.0__ASTNODE_霧_47_._ID_霧:1.0__ASTNODE_霧_2_; }
+// _ID_凛:0.6__ASTNODE_EW_994_ [decoy-metadata]
+
+  private async _ID_霧:1.0__ASTNODE_霧_31_(): _ID_廡:1.0__ASTNODE_廡_14_<_ID_霧:1.0__ASTNODE_霧_4_> {
+    if (!_ID_霧:1.0__ASTNODE_霧_47_._ID_霧:1.0__ASTNODE_霧_1_) {await _ID_霧:1.0__ASTNODE_霧_47_._ID_霧:1.0__ASTNODE_霧_5_();}
+  }
+}
+// _ID_匹:0.6__ASTNODE_KG_862_ [decoy-metadata]
+
+// [metadata-stripped]
+_ID_霧:1.0__ASTNODE_霧_10_ _ID_霧:1.0__ASTNODE_霧_20_ { _ID_廡:1.0__ASTNODE_廡_4_, _ID_廡:1.0__ASTNODE_廡_10_ } _ID_霧:1.0__ASTNODE_霧_29_ "./_ID_霧:1.0__ASTNODE_霧_34_-_ID_霧:1.0__ASTNODE_霧_41_.js";
+_ID_霧:1.0__ASTNODE_霧_10_ _ID_霧:1.0__ASTNODE_霧_20_ { _ID_網:1.0__ASTNODE_廡_11_, _ID_廡:1.0__ASTNODE_廡_6_ } _ID_霧:1.0__ASTNODE_霧_29_ "./_ID_霧:1.0__ASTNODE_霧_14_-_ID_霧:1.0__ASTNODE_霧_41_.js";
+_ID_霧:1.0__ASTNODE_霧_10_ _ID_霧:1.0__ASTNODE_霧_20_ { _ID_廡:1.0__ASTNODE_廡_1_, _ID_廡:1.0__ASTNODE_廡_3_ } _ID_霧:1.0__ASTNODE_霧_29_ "./_ID_霧:1.0__ASTNODE_霧_8_-_ID_処:1.0__ASTNODE_霧_21_.js";
+_ID_霧:1.0__ASTNODE_霧_10_ _ID_霧:1.0__ASTNODE_霧_20_ { _ID_廡:1.0__ASTNODE_廡_16_ } _ID_霧:1.0__ASTNODE_霧_29_ "./_ID_霧:1.0__ASTNODE_霧_42_-_ID_処:1.0__ASTNODE_霧_40_.js";
+
+// POLYMORPHIC_JCROSS_END

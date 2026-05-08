@@ -1,0 +1,76 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:82F9374B ver:1778221216
+// ⚠️ One-time schema — expires after response
+// _VERANTYX_匵:0.1__ID_AK_264_ [decoy-metadata]
+
+import _VERANTYX_霞:1.0__ID_霞_7_ { _VERANTYX_庠:1.0__ID_庠_1_ } _VERANTYX_霞:1.0__ID_霞_23_ "../_VERANTYX_霞:1.0__ID_霞_26_-_VERANTYX_縁:1.0__ID_霞_32_.js";
+import { _VERANTYX_霞:1.0__ID_霞_30_ } _VERANTYX_霞:1.0__ID_霞_23_ "./_VERANTYX_霞:1.0__ID_霞_13_.js";
+import _VERANTYX_霞:1.0__ID_霞_7_ { _VERANTYX_庠:1.0__ID_庠_6_ } _VERANTYX_霞:1.0__ID_霞_23_ "./_VERANTYX_霞:1.0__ID_霞_25_.js";
+
+_VERANTYX_霞:1.0__ID_霞_37_ _VERANTYX_霞:1.0__ID_霞_35_ _VERANTYX_庠:1.0__ID_庠_5_ = 10_000;
+
+// _VERANTYX_窟:0.7__ID_WY_739_ [decoy-metadata]
+_VERANTYX_霞:1.0__ID_霞_7_ _VERANTYX_規:1.0__ID_核_1_ = {
+  _VERANTYX_霞:1.0__ID_霞_26_?: _VERANTYX_庠:1.0__ID_庠_1_;
+  _VERANTYX_霞:1.0__ID_霞_38_?: _VERANTYX_庠:1.0__ID_庠_4_;
+  _VERANTYX_霞:1.0__ID_霞_39_?: _VERANTYX_規:1.0__ID_霞_5_;
+};
+
+_VERANTYX_霞:1.0__ID_霞_37_ _VERANTYX_霞:1.0__ID_霞_7_ _VERANTYX_庠:1.0__ID_庠_3_ = {
+  _VERANTYX_霞:1.0__ID_霞_22_?: _VERANTYX_霞:1.0__ID_霞_34_;
+  _VERANTYX_霞:1.0__ID_霞_24_?: _VERANTYX_霞:1.0__ID_霞_34_;
+};
+
+_VERANTYX_霞:1.0__ID_霞_8_ _VERANTYX_霞:1.0__ID_霞_10_(_VERANTYX_霞:1.0__ID_霞_29_: _VERANTYX_霞:1.0__ID_霞_34_ | _VERANTYX_霞:1.0__ID_霞_14_): _VERANTYX_霞:1.0__ID_霞_31_ {
+  return _VERANTYX_霞:1.0__ID_霞_29_?._VERANTYX_霞:1.0__ID_霞_2_()._VERANTYX_霞:1.0__ID_霞_12_("_VERANTYX_霞:1.0__ID_霞_3_") || _VERANTYX_霞:1.0__ID_霞_29_?._VERANTYX_霞:1.0__ID_霞_2_()._VERANTYX_霞:1.0__ID_霞_12_("_VERANTYX_霞:1.0__ID_霞_4_ _VERANTYX_霞:1.0__ID_霞_16_")
+    ? true
+    : false;
+}
+
+_VERANTYX_霞:1.0__ID_霞_8_ _VERANTYX_霞:1.0__ID_霞_11_(_VERANTYX_霞:1.0__ID_霞_29_: _VERANTYX_霞:1.0__ID_霞_34_ | _VERANTYX_霞:1.0__ID_霞_14_): _VERANTYX_霞:1.0__ID_霞_31_ {
+  return _VERANTYX_霞:1.0__ID_霞_29_?._VERANTYX_霞:1.0__ID_霞_2_()._VERANTYX_霞:1.0__ID_霞_12_("_VERANTYX_霞:1.0__ID_霞_6_") ?? false;
+}
+
+_VERANTYX_霞:1.0__ID_霞_37_ async _VERANTYX_霞:1.0__ID_霞_8_ _VERANTYX_規:1.0__ID_核_3_(
+  _VERANTYX_霞:1.0__ID_霞_21_: _VERANTYX_庠:1.0__ID_庠_6_,
+  _VERANTYX_霞:1.0__ID_霞_28_: _VERANTYX_規:1.0__ID_核_1_ = {},
+): _VERANTYX_庠:1.0__ID_庠_2_<_VERANTYX_庠:1.0__ID_庠_3_> {
+  if (_VERANTYX_霞:1.0__ID_霞_28_._VERANTYX_霞:1.0__ID_霞_38_?._VERANTYX_霞:1.0__ID_霞_6_) {
+    return {};
+  }
+
+  _VERANTYX_霞:1.0__ID_霞_35_ _VERANTYX_霞:1.0__ID_霞_39_ = _VERANTYX_霞:1.0__ID_霞_28_._VERANTYX_霞:1.0__ID_霞_39_ ?? _VERANTYX_庠:1.0__ID_庠_5_;
+  _VERANTYX_霞:1.0__ID_霞_35_ _VERANTYX_霞:1.0__ID_霞_27_ = await _VERANTYX_霞:1.0__ID_霞_30_(_VERANTYX_霞:1.0__ID_霞_21_, {
+    _VERANTYX_霞:1.0__ID_霞_39_,
+    _VERANTYX_霞:1.0__ID_霞_38_: _VERANTYX_霞:1.0__ID_霞_28_._VERANTYX_霞:1.0__ID_霞_38_,
+  });
+// _VERANTYX_霞:0.7__ID_BG_350_ [decoy-metadata]
+  if (_VERANTYX_霞:1.0__ID_霞_27_.ok) {
+// _VERANTYX_規:0.5__ID_HX_729_ [decoy-metadata]
+    return { _VERANTYX_霞:1.0__ID_霞_22_: _VERANTYX_霞:1.0__ID_霞_27_._VERANTYX_霞:1.0__ID_霞_22_, _VERANTYX_霞:1.0__ID_霞_24_: _VERANTYX_霞:1.0__ID_霞_27_._VERANTYX_霞:1.0__ID_霞_24_ };
+  }
+
+  if (_VERANTYX_霞:1.0__ID_霞_28_._VERANTYX_霞:1.0__ID_霞_38_?._VERANTYX_霞:1.0__ID_霞_6_ || _VERANTYX_霞:1.0__ID_霞_11_(_VERANTYX_霞:1.0__ID_霞_27_._VERANTYX_霞:1.0__ID_霞_1_)) {
+    return {};
+  }
+
+  if (_VERANTYX_霞:1.0__ID_霞_10_(_VERANTYX_霞:1.0__ID_霞_27_._VERANTYX_霞:1.0__ID_霞_1_)) {
+    _VERANTYX_霞:1.0__ID_霞_35_ _VERANTYX_霞:1.0__ID_霞_1_ = _VERANTYX_霞:1.0__ID_霞_28_._VERANTYX_霞:1.0__ID_霞_26_?._VERANTYX_霞:1.0__ID_霞_1_ ?? _VERANTYX_霞:1.0__ID_霞_17_._VERANTYX_霞:1.0__ID_霞_1_;
+    _VERANTYX_霞:1.0__ID_霞_1_(
+      `_VERANTYX_霞:1.0__ID_霞_18_[${_VERANTYX_霞:1.0__ID_霞_21_._VERANTYX_霞:1.0__ID_霞_36_}]: _VERANTYX_霞:1.0__ID_霞_15_ _VERANTYX_霞:1.0__ID_霞_20_ _VERANTYX_霞:1.0__ID_霞_13_ _VERANTYX_霞:1.0__ID_霞_4_ _VERANTYX_霞:1.0__ID_霞_16_ _VERANTYX_規:1.0__ID_霞_40_ ${_VERANTYX_霞:1.0__ID_霞_39_}ms; _VERANTYX_霞:1.0__ID_霞_33_ _VERANTYX_霞:1.0__ID_霞_19_`,
+    );
+  }
+  return {};
+}
+
+// _VERANTYX_霞:0.6__ID_AV_552_ [decoy-metadata]
+_VERANTYX_霞:1.0__ID_霞_37_ async _VERANTYX_霞:1.0__ID_霞_8_ _VERANTYX_規:1.0__ID_核_2_(
+  _VERANTYX_霞:1.0__ID_霞_21_: _VERANTYX_庠:1.0__ID_庠_6_,
+  _VERANTYX_霞:1.0__ID_霞_28_: _VERANTYX_規:1.0__ID_核_1_ = {},
+// _VERANTYX_漂:0.4__ID_XB_984_ [decoy-metadata]
+): _VERANTYX_庠:1.0__ID_庠_2_<_VERANTYX_霞:1.0__ID_霞_34_ | _VERANTYX_霞:1.0__ID_霞_14_> {
+  _VERANTYX_霞:1.0__ID_霞_35_ _VERANTYX_霞:1.0__ID_霞_9_ = await _VERANTYX_規:1.0__ID_核_3_(_VERANTYX_霞:1.0__ID_霞_21_, _VERANTYX_霞:1.0__ID_霞_28_);
+  return _VERANTYX_霞:1.0__ID_霞_9_._VERANTYX_霞:1.0__ID_霞_22_;
+}
+
+// POLYMORPHIC_JCROSS_END

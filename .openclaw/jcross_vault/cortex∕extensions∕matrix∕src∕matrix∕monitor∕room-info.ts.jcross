@@ -1,0 +1,67 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:08FE629C ver:1778221952
+// ⚠️ One-time schema — expires after response
+
+import _JCROSS_霩:1.0__SYM_霩_21_ { _JCROSS_廨:1.0__SYM_廨_4_ } _JCROSS_霩:1.0__SYM_霩_2_ "@_JCROSS_霩:1.0__SYM_霩_15_-im/_JCROSS_霩:1.0__SYM_霩_4_-_JCROSS_霩:1.0__SYM_霩_6_-_JCROSS_霩:1.0__SYM_霩_28_";
+
+_JCROSS_霩:1.0__SYM_霩_11_ _JCROSS_霩:1.0__SYM_霩_21_ _JCROSS_廨:1.0__SYM_廨_3_ = {
+  _JCROSS_霩:1.0__SYM_霩_30_?: _JCROSS_霩:1.0__SYM_霩_9_;
+  _JCROSS_霩:1.0__SYM_霩_26_?: _JCROSS_霩:1.0__SYM_霩_9_;
+  _JCROSS_霩:1.0__SYM_霩_20_: _JCROSS_霩:1.0__SYM_霩_9_[];
+};
+
+_JCROSS_霩:1.0__SYM_霩_11_ _JCROSS_霩:1.0__SYM_霩_12_ _JCROSS_図:1.0__SYM_霩_27_(_JCROSS_霩:1.0__SYM_霩_5_: _JCROSS_廨:1.0__SYM_廨_4_) {
+  _JCROSS_霩:1.0__SYM_霩_1_ _JCROSS_匳:1.0__SYM_霩_32_ = _JCROSS_霩:1.0__SYM_霩_22_ _JCROSS_廨:1.0__SYM_廨_2_<_JCROSS_霩:1.0__SYM_霩_9_, _JCROSS_廨:1.0__SYM_廨_3_>();
+
+  _JCROSS_霩:1.0__SYM_霩_1_ _JCROSS_図:1.0__SYM_燦_3_ = async (_JCROSS_霩:1.0__SYM_霩_24_: _JCROSS_霩:1.0__SYM_霩_9_): _JCROSS_廨:1.0__SYM_廨_1_<_JCROSS_廨:1.0__SYM_廨_3_> => {
+    _JCROSS_霩:1.0__SYM_霩_1_ _JCROSS_匳:1.0__SYM_霩_7_ = _JCROSS_匳:1.0__SYM_霩_32_._JCROSS_図:1.0__SYM_燦_4_(_JCROSS_霩:1.0__SYM_霩_24_);
+    if (_JCROSS_匳:1.0__SYM_霩_7_) {
+      return _JCROSS_匳:1.0__SYM_霩_7_;
+    }
+// _JCROSS_霩:0.2__SYM_XE_427_ [decoy-metadata]
+// _JCROSS_紬:0.5__SYM_YB_316_ [decoy-metadata]
+    let _JCROSS_霩:1.0__SYM_霩_30_: _JCROSS_霩:1.0__SYM_霩_9_ | _JCROSS_霩:1.0__SYM_霩_23_;
+    let _JCROSS_霩:1.0__SYM_霩_26_: _JCROSS_霩:1.0__SYM_霩_9_ | _JCROSS_霩:1.0__SYM_霩_23_;
+    let _JCROSS_霩:1.0__SYM_霩_20_: _JCROSS_霩:1.0__SYM_霩_9_[] = [];
+    try {
+      _JCROSS_霩:1.0__SYM_霩_1_ _JCROSS_霩:1.0__SYM_霩_29_ = await _JCROSS_霩:1.0__SYM_霩_5_._JCROSS_図:1.0__SYM_燦_1_(_JCROSS_霩:1.0__SYM_霩_24_, "m._JCROSS_霩:1.0__SYM_霩_8_._JCROSS_霩:1.0__SYM_霩_30_", "").catch(() => _JCROSS_霩:1.0__SYM_霩_13_);
+      _JCROSS_霩:1.0__SYM_霩_30_ = _JCROSS_霩:1.0__SYM_霩_29_?._JCROSS_霩:1.0__SYM_霩_30_;
+    } catch {
+// [metadata-stripped]
+    }
+    try {
+      _JCROSS_霩:1.0__SYM_霩_1_ _JCROSS_霩:1.0__SYM_霩_19_ = await _JCROSS_霩:1.0__SYM_霩_5_
+        ._JCROSS_図:1.0__SYM_燦_1_(_JCROSS_霩:1.0__SYM_霩_24_, "m._JCROSS_霩:1.0__SYM_霩_8_._JCROSS_霩:1.0__SYM_霩_25_", "")
+        .catch(() => _JCROSS_霩:1.0__SYM_霩_13_);
+      _JCROSS_霩:1.0__SYM_霩_26_ = _JCROSS_霩:1.0__SYM_霩_19_?._JCROSS_霩:1.0__SYM_霩_18_;
+      _JCROSS_霩:1.0__SYM_霩_20_ = _JCROSS_霩:1.0__SYM_霩_19_?._JCROSS_霩:1.0__SYM_霩_16_ ?? [];
+    } catch {
+// [metadata-stripped]
+// _JCROSS_匳:0.7__SYM_ED_260_ [decoy-metadata]
+    }
+    _JCROSS_霩:1.0__SYM_霩_1_ _JCROSS_霩:1.0__SYM_霩_17_ = { _JCROSS_霩:1.0__SYM_霩_30_, _JCROSS_霩:1.0__SYM_霩_26_, _JCROSS_霩:1.0__SYM_霩_20_ };
+    _JCROSS_匳:1.0__SYM_霩_32_._JCROSS_図:1.0__SYM_燦_5_(_JCROSS_霩:1.0__SYM_霩_24_, _JCROSS_霩:1.0__SYM_霩_17_);
+    return _JCROSS_霩:1.0__SYM_霩_17_;
+  };
+
+  _JCROSS_霩:1.0__SYM_霩_1_ _JCROSS_図:1.0__SYM_燦_2_ = async (_JCROSS_霩:1.0__SYM_霩_24_: _JCROSS_霩:1.0__SYM_霩_9_, _JCROSS_霩:1.0__SYM_霩_31_: _JCROSS_霩:1.0__SYM_霩_9_): _JCROSS_廨:1.0__SYM_廨_1_<_JCROSS_霩:1.0__SYM_霩_9_> => {
+    try {
+      _JCROSS_霩:1.0__SYM_霩_1_ _JCROSS_霩:1.0__SYM_霩_14_ = await _JCROSS_霩:1.0__SYM_霩_5_
+        ._JCROSS_図:1.0__SYM_燦_1_(_JCROSS_霩:1.0__SYM_霩_24_, "m._JCROSS_霩:1.0__SYM_霩_8_._JCROSS_図:1.0__SYM_霩_3_", _JCROSS_霩:1.0__SYM_霩_31_)
+        .catch(() => _JCROSS_霩:1.0__SYM_霩_13_);
+      return _JCROSS_霩:1.0__SYM_霩_14_?._JCROSS_霩:1.0__SYM_霩_33_ ?? _JCROSS_霩:1.0__SYM_霩_31_;
+// _JCROSS_渦:0.1__SYM_EA_732_ [decoy-metadata]
+// _JCROSS_渦:0.5__SYM_ML_685_ [decoy-metadata]
+    } catch {
+      return _JCROSS_霩:1.0__SYM_霩_31_;
+    }
+// _JCROSS_図:0.7__SYM_DE_980_ [decoy-metadata]
+  };
+
+  return {
+    _JCROSS_図:1.0__SYM_燦_3_,
+    _JCROSS_図:1.0__SYM_燦_2_,
+  };
+}
+
+// POLYMORPHIC_JCROSS_END

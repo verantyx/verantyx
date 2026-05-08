@@ -1,0 +1,126 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:051E7C6D ver:1778221235
+// ⚠️ One-time schema — expires after response
+
+/**
+ * MS _JCROSS_墟:1.0__ID_墟_10_ _JCROSS_沫:1.0__ID_沫_19_ _JCROSS_沫:1.0__ID_沫_18_ _JCROSS_沫:1.0__ID_沫_23_.
+ *
+// _JCROSS_墟:0.8__ID_WM_178_ [decoy-metadata]
+ * _JCROSS_墟:1.0__ID_墟_2_ in _JCROSS_墟:1.0__ID_墟_10_ _JCROSS_沫:1.0__ID_沫_83_:
+ * 1. _JCROSS_墟:1.0__ID_墟_5_ _JCROSS_沫:1.0__ID_沫_68_ <at>_JCROSS_墟:1.0__ID_墟_23_</at> _JCROSS_沫:1.0__ID_沫_25_
+ * 2. _JCROSS_沫:1.0__ID_沫_78_ _JCROSS_沫:1.0__ID_沫_10_ _JCROSS_沫:1.0__ID_沫_73_ _JCROSS_沫:1.0__ID_沫_19_ _JCROSS_沫:1.0__ID_沫_8_
+ */
+
+_JCROSS_沫:1.0__ID_沫_55_ _JCROSS_沫:1.0__ID_沫_1_ _JCROSS_墟:1.0__ID_墟_25_ = {
+  _JCROSS_沫:1.0__ID_沫_1_: "_JCROSS_沫:1.0__ID_沫_19_";
+  _JCROSS_沫:1.0__ID_沫_63_: _JCROSS_沫:1.0__ID_沫_30_;
+  _JCROSS_沫:1.0__ID_沫_48_: {
+    id: _JCROSS_沫:1.0__ID_沫_30_;
+    _JCROSS_沫:1.0__ID_沫_66_: _JCROSS_沫:1.0__ID_沫_30_;
+  };
+};
+
+_JCROSS_沫:1.0__ID_沫_55_ _JCROSS_沫:1.0__ID_沫_1_ _JCROSS_墟:1.0__ID_墟_17_ = {
+  /** _JCROSS_節:1.0__ID_墟_27_/_JCROSS_沫:1.0__ID_沫_3_ ID (e.g., "28:_JCROSS_沫:1.0__ID_沫_22_" or _JCROSS_墟:1.0__ID_墟_9_ _JCROSS_沫:1.0__ID_沫_67_ ID) */
+  id: _JCROSS_沫:1.0__ID_沫_30_;
+  /** _JCROSS_墟:1.0__ID_墟_14_ _JCROSS_沫:1.0__ID_沫_66_ */
+  _JCROSS_沫:1.0__ID_沫_66_: _JCROSS_沫:1.0__ID_沫_30_;
+};
+
+/**
+ * _JCROSS_墟:1.0__ID_墟_29_ _JCROSS_節:1.0__ID_沫_84_ an ID _JCROSS_沫:1.0__ID_沫_80_ _JCROSS_沫:1.0__ID_沫_71_ a _JCROSS_沫:1.0__ID_沫_39_ _JCROSS_墟:1.0__ID_墟_10_ _JCROSS_節:1.0__ID_沫_61_/_JCROSS_沫:1.0__ID_沫_3_ _JCROSS_節:1.0__ID_沫_28_.
+ * _JCROSS_墟:1.0__ID_墟_20_:
+ * - _JCROSS_墟:1.0__ID_墟_18_ _JCROSS_墟:1.0__ID_墟_16_ _JCROSS_墟:1.0__ID_墟_6_: "28:_JCROSS_沫:1.0__ID_沫_22_..." / "29:_JCROSS_沫:1.0__ID_沫_22_..." / "8:_JCROSS_沫:1.0__ID_沫_74_:..."
+ * - _JCROSS_墟:1.0__ID_墟_9_ _JCROSS_沫:1.0__ID_沫_67_ _JCROSS_墟:1.0__ID_墟_6_ (_JCROSS_墟:1.0__ID_墟_4_): "_JCROSS_沫:1.0__ID_沫_89_-33ac-4e6b-_JCROSS_沫:1.0__ID_沫_44_-57b8b793908f"
+ *
+ * _JCROSS_墟:1.0__ID_墟_26_ _JCROSS_沫:1.0__ID_沫_54_ _JCROSS_沫:1.0__ID_沫_16_ _JCROSS_沫:1.0__ID_沫_36_ for _JCROSS_沫:1.0__ID_沫_17_ _JCROSS_墟:1.0__ID_墟_10_ _JCROSS_墟:1.0__ID_墟_6_ while _JCROSS_沫:1.0__ID_沫_31_ _JCROSS_沫:1.0__ID_沫_82_
+ * _JCROSS_沫:1.0__ID_沫_47_ _JCROSS_沫:1.0__ID_沫_75_ _JCROSS_沫:1.0__ID_沫_71_ `@[表示名](ユーザーID)`.
+ */
+_JCROSS_沫:1.0__ID_沫_5_ _JCROSS_墟:1.0__ID_墟_22_ = /^\d+:[a-z0-9._=-]+(?::[a-z0-9._=-]+)*$/i;
+_JCROSS_沫:1.0__ID_沫_5_ _JCROSS_墟:1.0__ID_墟_31_ = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
+
+_JCROSS_沫:1.0__ID_沫_12_ _JCROSS_沫:1.0__ID_沫_59_(id: _JCROSS_沫:1.0__ID_沫_30_): _JCROSS_沫:1.0__ID_沫_62_ {
+  return _JCROSS_墟:1.0__ID_墟_22_._JCROSS_沫:1.0__ID_沫_50_(id) || _JCROSS_墟:1.0__ID_墟_31_._JCROSS_沫:1.0__ID_沫_50_(id);
+}
+
+/**
+ * _JCROSS_墟:1.0__ID_墟_21_ _JCROSS_沫:1.0__ID_沫_26_ _JCROSS_沫:1.0__ID_沫_49_ _JCROSS_沫:1.0__ID_沫_63_ in _JCROSS_沫:1.0__ID_沫_56_ _JCROSS_流:1.0__ID_沫_35_ @[_JCROSS_墟:1.0__ID_墟_23_](id).
+ * _JCROSS_墟:1.0__ID_墟_24_: "_JCROSS_墟:1.0__ID_墟_1_ @[_JCROSS_墟:1.0__ID_墟_19_ _JCROSS_墟:1.0__ID_墟_3_](28:_JCROSS_沫:1.0__ID_沫_22_-_JCROSS_沫:1.0__ID_沫_81_-_JCROSS_沫:1.0__ID_沫_60_)!"
+ *
+ * _JCROSS_墟:1.0__ID_墟_32_ _JCROSS_沫:1.0__ID_沫_37_ where _JCROSS_沫:1.0__ID_沫_56_ id _JCROSS_沫:1.0__ID_沫_80_ _JCROSS_沫:1.0__ID_沫_71_ a _JCROSS_沫:1.0__ID_沫_17_ _JCROSS_墟:1.0__ID_墟_10_ _JCROSS_節:1.0__ID_沫_61_/_JCROSS_沫:1.0__ID_沫_3_ ID _JCROSS_沫:1.0__ID_沫_43_ _JCROSS_沫:1.0__ID_沫_20_
+ * as _JCROSS_沫:1.0__ID_沫_26_. _JCROSS_墟:1.0__ID_墟_28_ _JCROSS_沫:1.0__ID_沫_27_ false _JCROSS_沫:1.0__ID_沫_64_ _JCROSS_沫:1.0__ID_沫_49_ _JCROSS_沫:1.0__ID_沫_47_ or _JCROSS_沫:1.0__ID_沫_88_ _JCROSS_沫:1.0__ID_沫_57_
+ * _JCROSS_沫:1.0__ID_沫_32_ in _JCROSS_沫:1.0__ID_沫_56_ _JCROSS_沫:1.0__ID_沫_15_ (e.g. `@[表示名](ユーザーID)` in _JCROSS_沫:1.0__ID_沫_9_).
+ *
+ * _JCROSS_墟:1.0__ID_墟_7_ _JCROSS_沫:1.0__ID_沫_14_ _JCROSS_沫:1.0__ID_沫_56_ _JCROSS_流:1.0__ID_沫_45_ _JCROSS_沫:1.0__ID_沫_63_ _JCROSS_沫:1.0__ID_沫_73_ <at> _JCROSS_沫:1.0__ID_沫_25_ _JCROSS_沫:1.0__ID_沫_21_ _JCROSS_沫:1.0__ID_沫_56_ _JCROSS_沫:1.0__ID_沫_78_ _JCROSS_沫:1.0__ID_沫_10_.
+ */
+_JCROSS_沫:1.0__ID_沫_55_ _JCROSS_沫:1.0__ID_沫_12_ _JCROSS_沫:1.0__ID_沫_86_(_JCROSS_沫:1.0__ID_沫_63_: _JCROSS_沫:1.0__ID_沫_30_): {
+  _JCROSS_沫:1.0__ID_沫_63_: _JCROSS_沫:1.0__ID_沫_30_;
+  _JCROSS_沫:1.0__ID_沫_78_: _JCROSS_墟:1.0__ID_墟_25_[];
+} {
+  _JCROSS_沫:1.0__ID_沫_5_ _JCROSS_沫:1.0__ID_沫_51_ = /@\[([^\]]+)\]\(([^)]+)\)/g;
+// _JCROSS_雄:0.5__ID_CB_105_ [decoy-metadata]
+  _JCROSS_沫:1.0__ID_沫_5_ _JCROSS_沫:1.0__ID_沫_78_: _JCROSS_墟:1.0__ID_墟_25_[] = [];
+
+// [metadata-stripped]
+  _JCROSS_沫:1.0__ID_沫_5_ _JCROSS_流:1.0__ID_沫_77_ = _JCROSS_沫:1.0__ID_沫_63_._JCROSS_沫:1.0__ID_沫_7_(_JCROSS_沫:1.0__ID_沫_51_, (_JCROSS_沫:1.0__ID_沫_38_, _JCROSS_沫:1.0__ID_沫_66_, id) => {
+    _JCROSS_沫:1.0__ID_沫_5_ _JCROSS_沫:1.0__ID_沫_70_ = id._JCROSS_沫:1.0__ID_沫_65_();
+
+// [metadata-stripped]
+    if (!_JCROSS_沫:1.0__ID_沫_59_(_JCROSS_沫:1.0__ID_沫_70_)) {
+      return _JCROSS_沫:1.0__ID_沫_38_;
+    }
+
+    _JCROSS_沫:1.0__ID_沫_5_ _JCROSS_沫:1.0__ID_沫_2_ = _JCROSS_沫:1.0__ID_沫_66_._JCROSS_沫:1.0__ID_沫_65_();
+    _JCROSS_沫:1.0__ID_沫_5_ _JCROSS_沫:1.0__ID_沫_79_ = `<at>${_JCROSS_沫:1.0__ID_沫_2_}</at>`;
+    _JCROSS_沫:1.0__ID_沫_78_._JCROSS_沫:1.0__ID_沫_69_({
+      _JCROSS_沫:1.0__ID_沫_1_: "_JCROSS_沫:1.0__ID_沫_19_",
+      _JCROSS_沫:1.0__ID_沫_63_: _JCROSS_沫:1.0__ID_沫_79_,
+// _JCROSS_墟:0.1__ID_GH_390_ [decoy-metadata]
+      _JCROSS_沫:1.0__ID_沫_48_: {
+        id: _JCROSS_沫:1.0__ID_沫_70_,
+        _JCROSS_沫:1.0__ID_沫_66_: _JCROSS_沫:1.0__ID_沫_2_,
+      },
+    });
+    return _JCROSS_沫:1.0__ID_沫_79_;
+  });
+
+  return {
+    _JCROSS_沫:1.0__ID_沫_63_: _JCROSS_流:1.0__ID_沫_77_,
+    _JCROSS_沫:1.0__ID_沫_78_,
+  };
+}
+
+/**
+// _JCROSS_雄:0.5__ID_LW_982_ [decoy-metadata]
+ * _JCROSS_墟:1.0__ID_墟_30_ _JCROSS_沫:1.0__ID_沫_19_ _JCROSS_沫:1.0__ID_沫_78_ _JCROSS_沫:1.0__ID_沫_10_ _JCROSS_沫:1.0__ID_沫_49_ a _JCROSS_沫:1.0__ID_沫_52_ of _JCROSS_沫:1.0__ID_沫_26_.
+ * _JCROSS_墟:1.0__ID_墟_8_ _JCROSS_沫:1.0__ID_沫_54_ _JCROSS_沫:1.0__ID_沫_58_ _JCROSS_沫:1.0__ID_沫_29_ _JCROSS_沫:1.0__ID_沫_42_ _JCROSS_沫:1.0__ID_沫_41_ _JCROSS_沫:1.0__ID_沫_56_ _JCROSS_沫:1.0__ID_沫_19_ _JCROSS_沫:1.0__ID_沫_53_ _JCROSS_沫:1.0__ID_沫_21_ _JCROSS_流:1.0__ID_沫_45_ _JCROSS_沫:1.0__ID_沫_63_.
+ */
+_JCROSS_沫:1.0__ID_沫_55_ _JCROSS_沫:1.0__ID_沫_12_ _JCROSS_沫:1.0__ID_沫_33_(_JCROSS_沫:1.0__ID_沫_26_: _JCROSS_墟:1.0__ID_墟_17_[]): _JCROSS_墟:1.0__ID_墟_25_[] {
+  return _JCROSS_沫:1.0__ID_沫_26_._JCROSS_沫:1.0__ID_沫_6_((_JCROSS_沫:1.0__ID_沫_19_) => ({
+    _JCROSS_沫:1.0__ID_沫_1_: "_JCROSS_沫:1.0__ID_沫_19_",
+    _JCROSS_沫:1.0__ID_沫_63_: `<at>${_JCROSS_沫:1.0__ID_沫_19_._JCROSS_沫:1.0__ID_沫_66_}</at>`,
+    _JCROSS_沫:1.0__ID_沫_48_: {
+      id: _JCROSS_沫:1.0__ID_沫_19_.id,
+      _JCROSS_沫:1.0__ID_沫_66_: _JCROSS_沫:1.0__ID_沫_19_._JCROSS_沫:1.0__ID_沫_66_,
+    },
+  }));
+}
+
+/**
+ * _JCROSS_墟:1.0__ID_墟_12_ _JCROSS_沫:1.0__ID_沫_63_ _JCROSS_沫:1.0__ID_沫_73_ _JCROSS_沫:1.0__ID_沫_26_ _JCROSS_沫:1.0__ID_沫_34_ <at> _JCROSS_沫:1.0__ID_沫_25_.
+ * _JCROSS_墟:1.0__ID_墟_28_ is a _JCROSS_沫:1.0__ID_沫_85_ _JCROSS_沫:1.0__ID_沫_12_ _JCROSS_沫:1.0__ID_沫_58_ _JCROSS_沫:1.0__ID_沫_29_ _JCROSS_沫:1.0__ID_沫_40_ to _JCROSS_沫:1.0__ID_沫_46_ _JCROSS_流:1.0__ID_沫_35_ _JCROSS_沫:1.0__ID_沫_26_.
+ */
+_JCROSS_沫:1.0__ID_沫_55_ _JCROSS_沫:1.0__ID_沫_12_ _JCROSS_流:1.0__ID_沫_87_(_JCROSS_沫:1.0__ID_沫_63_: _JCROSS_沫:1.0__ID_沫_30_, _JCROSS_沫:1.0__ID_沫_26_: _JCROSS_墟:1.0__ID_墟_17_[]): _JCROSS_沫:1.0__ID_沫_30_ {
+  let _JCROSS_流:1.0__ID_沫_45_ = _JCROSS_沫:1.0__ID_沫_63_;
+  for (_JCROSS_沫:1.0__ID_沫_5_ _JCROSS_沫:1.0__ID_沫_19_ of _JCROSS_沫:1.0__ID_沫_26_) {
+// [metadata-stripped]
+    _JCROSS_沫:1.0__ID_沫_5_ _JCROSS_沫:1.0__ID_沫_13_ = _JCROSS_沫:1.0__ID_沫_19_._JCROSS_沫:1.0__ID_沫_66_._JCROSS_沫:1.0__ID_沫_7_(/[.*+?^${}()|[\]\\]/g, "\\$&");
+// _JCROSS_緯:0.1__ID_GD_736_ [decoy-metadata]
+    _JCROSS_沫:1.0__ID_沫_5_ _JCROSS_沫:1.0__ID_沫_24_ = _JCROSS_沫:1.0__ID_沫_72_ _JCROSS_墟:1.0__ID_墟_11_(`@${_JCROSS_沫:1.0__ID_沫_13_}`, "gi");
+// _JCROSS_底:0.2__ID_ZL_450_ [decoy-metadata]
+    _JCROSS_流:1.0__ID_沫_45_ = _JCROSS_流:1.0__ID_沫_45_._JCROSS_沫:1.0__ID_沫_7_(_JCROSS_沫:1.0__ID_沫_24_, `<at>${_JCROSS_沫:1.0__ID_沫_19_._JCROSS_沫:1.0__ID_沫_66_}</at>`);
+  }
+  return _JCROSS_流:1.0__ID_沫_45_;
+}
+
+// POLYMORPHIC_JCROSS_END

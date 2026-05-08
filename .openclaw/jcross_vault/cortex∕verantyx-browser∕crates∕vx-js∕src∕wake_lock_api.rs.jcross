@@ -1,0 +1,85 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:CE313CDC ver:1778220634
+// ⚠️ One-time schema — expires after response
+// _SYM_雄:0.1___jcross_CC_867__ [decoy-metadata]
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// _SYM_要:0.5___jcross_BG_185__ [decoy-metadata]
+// _SYM_要:0.6___jcross_ZG_641__ [decoy-metadata]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+
+_SYM_沫:1.0___jcross_沫_12__ _SYM_沫:1.0___jcross_沫_36__::_SYM_沫:1.0___jcross_沫_40__::_SYM_廳:1.0___jcross_廳_29__;
+
+// [metadata-stripped]
+// [metadata-stripped]
+_SYM_沫:1.0___jcross_沫_6__ enum _SYM_廳:1.0___jcross_廳_36__ { _SYM_廳:1.0___jcross_廳_25__ }
+
+// [metadata-stripped]
+_SYM_沫:1.0___jcross_沫_6__ struct _SYM_廳:1.0___jcross_廳_11__ {
+    _SYM_沫:1.0___jcross_沫_6__ id: _SYM_沫:1.0___jcross_沫_10__,
+// _SYM_沫:0.1___jcross_XX_191__ [decoy-metadata]
+    _SYM_沫:1.0___jcross_沫_6__ _SYM_沫:1.0___jcross_沫_1__: _SYM_廳:1.0___jcross_廳_36__,
+    _SYM_沫:1.0___jcross_沫_6__ _SYM_沫:1.0___jcross_沫_60__: _SYM_沫:1.0___jcross_沫_68__,
+}
+
+// [metadata-stripped]
+_SYM_沫:1.0___jcross_沫_6__ struct _SYM_要:1.0___jcross_廳_19__ {
+    _SYM_沫:1.0___jcross_沫_6__ _SYM_沫:1.0___jcross_沫_61__: _SYM_廳:1.0___jcross_廳_29__<_SYM_沫:1.0___jcross_沫_10__, _SYM_廳:1.0___jcross_廳_11__>,
+    _SYM_沫:1.0___jcross_沫_6__ _SYM_沫:1.0___jcross_沫_32__: _SYM_沫:1.0___jcross_沫_10__,
+    _SYM_沫:1.0___jcross_沫_6__ _SYM_沫:1.0___jcross_沫_18__: _SYM_沫:1.0___jcross_沫_68__,
+    _SYM_沫:1.0___jcross_沫_6__ _SYM_沫:1.0___jcross_沫_53__: _SYM_沫:1.0___jcross_沫_68__,
+}
+
+_SYM_沫:1.0___jcross_沫_23__ _SYM_要:1.0___jcross_廳_19__ {
+    _SYM_沫:1.0___jcross_沫_6__ fn _SYM_沫:1.0___jcross_沫_66__() -> _SYM_廳:1.0___jcross_廳_24__ {
+        _SYM_廳:1.0___jcross_廳_24__ {
+            _SYM_沫:1.0___jcross_沫_61__: _SYM_廳:1.0___jcross_廳_29__::_SYM_沫:1.0___jcross_沫_66__(),
+            _SYM_沫:1.0___jcross_沫_32__: 1,
+            _SYM_沫:1.0___jcross_沫_18__: false,
+            _SYM_沫:1.0___jcross_沫_53__: false,
+        }
+    }
+
+// [metadata-stripped]
+    _SYM_沫:1.0___jcross_沫_6__ fn _SYM_縫:1.0___jcross_沫_30__(&_SYM_沫:1.0___jcross_沫_39__ self, _SYM_沫:1.0___jcross_沫_1__: _SYM_廳:1.0___jcross_廳_36__) -> _SYM_廳:1.0___jcross_廳_1__<_SYM_沫:1.0___jcross_沫_10__, _SYM_廳:1.0___jcross_廳_9__> {
+        if !self._SYM_沫:1.0___jcross_沫_53__ { return _SYM_廳:1.0___jcross_廳_27__("_SYM_廳:1.0___jcross_廳_26__"._SYM_沫:1.0___jcross_沫_52__()); }
+        
+        let id = self._SYM_沫:1.0___jcross_沫_32__;
+        self._SYM_沫:1.0___jcross_沫_32__ += 1;
+        self._SYM_沫:1.0___jcross_沫_61__._SYM_沫:1.0___jcross_沫_42__(id, _SYM_廳:1.0___jcross_廳_11__ {
+            id,
+            _SYM_沫:1.0___jcross_沫_1__,
+            _SYM_沫:1.0___jcross_沫_60__: false,
+        });
+        self._SYM_沫:1.0___jcross_沫_18__ = true;
+        Ok(id)
+    }
+
+    _SYM_沫:1.0___jcross_沫_6__ fn _SYM_沫:1.0___jcross_沫_16__(&_SYM_沫:1.0___jcross_沫_39__ self, id: _SYM_沫:1.0___jcross_沫_10__) {
+        if let _SYM_廳:1.0___jcross_廳_37__(_SYM_沫:1.0___jcross_沫_7__) = self._SYM_沫:1.0___jcross_沫_61__._SYM_要:1.0___jcross_雄_1__(&id) {
+            _SYM_沫:1.0___jcross_沫_7__._SYM_沫:1.0___jcross_沫_60__ = true;
+// [metadata-stripped]
+        }
+        
+// [metadata-stripped]
+        self._SYM_沫:1.0___jcross_沫_18__ = self._SYM_沫:1.0___jcross_沫_61__._SYM_沫:1.0___jcross_沫_14__().any(|l| !l._SYM_沫:1.0___jcross_沫_60__);
+    }
+// _SYM_廳:0.7___jcross_XC_938__ [decoy-metadata]
+
+// [metadata-stripped]
+    _SYM_沫:1.0___jcross_沫_6__ fn _SYM_沫:1.0___jcross_沫_44__(&self) -> _SYM_廳:1.0___jcross_廳_9__ {
+        let _SYM_沫:1.0___jcross_沫_37__ = self._SYM_沫:1.0___jcross_沫_61__._SYM_沫:1.0___jcross_沫_14__()._SYM_要:1.0___jcross_沫_38__(|l| !l._SYM_沫:1.0___jcross_沫_60__)._SYM_沫:1.0___jcross_沫_26__();
+        _SYM_潤:1.0___jcross_沫_43__!("🔋 _SYM_廳:1.0___jcross_廳_8__ _SYM_廳:1.0___jcross_廳_10__ _SYM_廳:1.0___jcross_廳_43__: {} (_SYM_廳:1.0___jcross_廳_6__ _SYM_廳:1.0___jcross_廳_30__: {})", if self._SYM_沫:1.0___jcross_沫_18__ { "🟢 _SYM_廳:1.0___jcross_廳_12__" } else { "⚪️ _SYM_廳:1.0___jcross_廳_28__" }, _SYM_沫:1.0___jcross_沫_37__)
+// _SYM_縫:0.3___jcross_ZY_411__ [decoy-metadata]
+    }
+}
+
+// POLYMORPHIC_JCROSS_END

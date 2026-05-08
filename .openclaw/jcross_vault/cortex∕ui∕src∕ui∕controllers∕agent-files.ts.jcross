@@ -1,0 +1,138 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:6006E02A ver:1778219986
+// ⚠️ One-time schema — expires after response
+
+import _JCROSS_霩:1.0__VERANTYX_霩_2_ { _JCROSS_庭:1.0__VERANTYX_庭_4_ } _JCROSS_霩:1.0__VERANTYX_霩_26_ "../_JCROSS_霩:1.0__VERANTYX_霩_18_.ts";
+import _JCROSS_霩:1.0__VERANTYX_霩_2_ {
+  _JCROSS_匾:1.0__VERANTYX_庭_7_,
+  _JCROSS_匾:1.0__VERANTYX_庭_8_,
+  _JCROSS_匾:1.0__VERANTYX_庭_1_,
+  _JCROSS_匾:1.0__VERANTYX_庭_9_,
+} _JCROSS_霩:1.0__VERANTYX_霩_26_ "../_JCROSS_霩:1.0__VERANTYX_霩_27_.ts";
+
+_JCROSS_霩:1.0__VERANTYX_霩_31_ _JCROSS_霩:1.0__VERANTYX_霩_2_ _JCROSS_匾:1.0__VERANTYX_庭_6_ = {
+  _JCROSS_霩:1.0__VERANTYX_霩_19_: _JCROSS_庭:1.0__VERANTYX_庭_4_ | _JCROSS_霩:1.0__VERANTYX_霩_6_;
+  _JCROSS_霩:1.0__VERANTYX_霩_41_: _JCROSS_霩:1.0__VERANTYX_霩_34_;
+  _JCROSS_匾:1.0__VERANTYX_霩_21_: _JCROSS_霩:1.0__VERANTYX_霩_34_;
+  _JCROSS_匾:1.0__VERANTYX_霩_38_: _JCROSS_霩:1.0__VERANTYX_霩_16_ | _JCROSS_霩:1.0__VERANTYX_霩_6_;
+  _JCROSS_匾:1.0__VERANTYX_霩_35_: _JCROSS_匾:1.0__VERANTYX_庭_1_ | _JCROSS_霩:1.0__VERANTYX_霩_6_;
+  _JCROSS_匾:1.0__VERANTYX_霩_10_: _JCROSS_庭:1.0__VERANTYX_庭_3_<_JCROSS_霩:1.0__VERANTYX_霩_16_, _JCROSS_霩:1.0__VERANTYX_霩_16_>;
+  _JCROSS_匾:1.0__VERANTYX_霩_45_: _JCROSS_庭:1.0__VERANTYX_庭_3_<_JCROSS_霩:1.0__VERANTYX_霩_16_, _JCROSS_霩:1.0__VERANTYX_霩_16_>;
+  _JCROSS_匾:1.0__VERANTYX_霩_36_: _JCROSS_霩:1.0__VERANTYX_霩_16_ | _JCROSS_霩:1.0__VERANTYX_霩_6_;
+  _JCROSS_匾:1.0__VERANTYX_霩_39_: _JCROSS_霩:1.0__VERANTYX_霩_34_;
+};
+
+_JCROSS_霩:1.0__VERANTYX_霩_9_ _JCROSS_匾:1.0__VERANTYX_霩_22_(
+  _JCROSS_霩:1.0__VERANTYX_霩_28_: _JCROSS_匾:1.0__VERANTYX_庭_1_ | _JCROSS_霩:1.0__VERANTYX_霩_6_,
+  _JCROSS_霩:1.0__VERANTYX_霩_29_: _JCROSS_匾:1.0__VERANTYX_庭_7_,
+): _JCROSS_匾:1.0__VERANTYX_庭_1_ | _JCROSS_霩:1.0__VERANTYX_霩_6_ {
+  if (!_JCROSS_霩:1.0__VERANTYX_霩_28_) {
+    return _JCROSS_霩:1.0__VERANTYX_霩_28_;
+  }
+// _JCROSS_沈:0.9__VERANTYX_HG_550_ [decoy-metadata]
+  _JCROSS_霩:1.0__VERANTYX_霩_5_ _JCROSS_霩:1.0__VERANTYX_霩_8_ = _JCROSS_霩:1.0__VERANTYX_霩_28_._JCROSS_匾:1.0__VERANTYX_霩_20_.some((_JCROSS_匾:1.0__VERANTYX_霩_32_) => _JCROSS_匾:1.0__VERANTYX_霩_32_._JCROSS_霩:1.0__VERANTYX_霩_37_ === _JCROSS_霩:1.0__VERANTYX_霩_29_._JCROSS_霩:1.0__VERANTYX_霩_37_);
+  _JCROSS_霩:1.0__VERANTYX_霩_5_ _JCROSS_匾:1.0__VERANTYX_霩_33_ = _JCROSS_霩:1.0__VERANTYX_霩_8_
+    ? _JCROSS_霩:1.0__VERANTYX_霩_28_._JCROSS_匾:1.0__VERANTYX_霩_20_._JCROSS_霩:1.0__VERANTYX_霩_7_((_JCROSS_匾:1.0__VERANTYX_霩_32_) => (_JCROSS_匾:1.0__VERANTYX_霩_32_._JCROSS_霩:1.0__VERANTYX_霩_37_ === _JCROSS_霩:1.0__VERANTYX_霩_29_._JCROSS_霩:1.0__VERANTYX_霩_37_ ? _JCROSS_霩:1.0__VERANTYX_霩_29_ : _JCROSS_匾:1.0__VERANTYX_霩_32_))
+// _JCROSS_沈:0.4__VERANTYX_KM_368_ [decoy-metadata]
+    : [..._JCROSS_霩:1.0__VERANTYX_霩_28_._JCROSS_匾:1.0__VERANTYX_霩_20_, _JCROSS_霩:1.0__VERANTYX_霩_29_];
+  return { ..._JCROSS_霩:1.0__VERANTYX_霩_28_, _JCROSS_匾:1.0__VERANTYX_霩_20_: _JCROSS_匾:1.0__VERANTYX_霩_33_ };
+}
+
+// _JCROSS_匾:0.5__VERANTYX_LW_672_ [decoy-metadata]
+_JCROSS_霩:1.0__VERANTYX_霩_31_ async _JCROSS_霩:1.0__VERANTYX_霩_9_ _JCROSS_匾:1.0__VERANTYX_霩_14_(_JCROSS_霩:1.0__VERANTYX_霩_43_: _JCROSS_匾:1.0__VERANTYX_庭_6_, _JCROSS_霩:1.0__VERANTYX_霩_30_: _JCROSS_霩:1.0__VERANTYX_霩_16_) {
+  if (!_JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_霩:1.0__VERANTYX_霩_19_ || !_JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_霩:1.0__VERANTYX_霩_41_ || _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_21_) {
+    return;
+  }
+  _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_21_ = true;
+  _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_38_ = _JCROSS_霩:1.0__VERANTYX_霩_6_;
+  try {
+    _JCROSS_霩:1.0__VERANTYX_霩_5_ _JCROSS_霩:1.0__VERANTYX_霩_40_ = await _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_霩:1.0__VERANTYX_霩_19_._JCROSS_紐:1.0__VERANTYX_霩_15_<_JCROSS_匾:1.0__VERANTYX_庭_1_ | _JCROSS_霩:1.0__VERANTYX_霩_6_>("_JCROSS_霩:1.0__VERANTYX_霩_11_._JCROSS_匾:1.0__VERANTYX_霩_20_._JCROSS_霩:1.0__VERANTYX_霩_28_", {
+      _JCROSS_霩:1.0__VERANTYX_霩_30_,
+    });
+    if (_JCROSS_霩:1.0__VERANTYX_霩_40_) {
+      _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_35_ = _JCROSS_霩:1.0__VERANTYX_霩_40_;
+      if (_JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_36_ && !_JCROSS_霩:1.0__VERANTYX_霩_40_._JCROSS_匾:1.0__VERANTYX_霩_20_.some((_JCROSS_匾:1.0__VERANTYX_霩_32_) => _JCROSS_匾:1.0__VERANTYX_霩_32_._JCROSS_霩:1.0__VERANTYX_霩_37_ === _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_36_)) {
+        _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_36_ = _JCROSS_霩:1.0__VERANTYX_霩_6_;
+      }
+    }
+  } catch (_JCROSS_霩:1.0__VERANTYX_霩_25_) {
+    _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_38_ = _JCROSS_庭:1.0__VERANTYX_庭_2_(_JCROSS_霩:1.0__VERANTYX_霩_25_);
+  } _JCROSS_霩:1.0__VERANTYX_霩_17_ {
+    _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_21_ = false;
+  }
+}
+
+_JCROSS_霩:1.0__VERANTYX_霩_31_ async _JCROSS_霩:1.0__VERANTYX_霩_9_ _JCROSS_匾:1.0__VERANTYX_霩_12_(
+  _JCROSS_霩:1.0__VERANTYX_霩_43_: _JCROSS_匾:1.0__VERANTYX_庭_6_,
+  _JCROSS_霩:1.0__VERANTYX_霩_30_: _JCROSS_霩:1.0__VERANTYX_霩_16_,
+  _JCROSS_霩:1.0__VERANTYX_霩_37_: _JCROSS_霩:1.0__VERANTYX_霩_16_,
+  _JCROSS_霩:1.0__VERANTYX_霩_24_?: { _JCROSS_浪:1.0__VERANTYX_霩_3_?: _JCROSS_霩:1.0__VERANTYX_霩_34_; _JCROSS_霩:1.0__VERANTYX_霩_23_?: _JCROSS_霩:1.0__VERANTYX_霩_34_ },
+) {
+  if (!_JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_霩:1.0__VERANTYX_霩_19_ || !_JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_霩:1.0__VERANTYX_霩_41_ || _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_21_) {
+    return;
+  }
+  if (!_JCROSS_霩:1.0__VERANTYX_霩_24_?._JCROSS_浪:1.0__VERANTYX_霩_3_ && _JCROSS_庭:1.0__VERANTYX_庭_5_._JCROSS_霩:1.0__VERANTYX_霩_1_(_JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_10_, _JCROSS_霩:1.0__VERANTYX_霩_37_)) {
+    return;
+  }
+  _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_21_ = true;
+  _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_38_ = _JCROSS_霩:1.0__VERANTYX_霩_6_;
+  try {
+    _JCROSS_霩:1.0__VERANTYX_霩_5_ _JCROSS_霩:1.0__VERANTYX_霩_40_ = await _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_霩:1.0__VERANTYX_霩_19_._JCROSS_紐:1.0__VERANTYX_霩_15_<_JCROSS_匾:1.0__VERANTYX_庭_8_ | _JCROSS_霩:1.0__VERANTYX_霩_6_>("_JCROSS_霩:1.0__VERANTYX_霩_11_._JCROSS_匾:1.0__VERANTYX_霩_20_._JCROSS_規:1.0__VERANTYX_錬_1_", {
+      _JCROSS_霩:1.0__VERANTYX_霩_30_,
+      _JCROSS_霩:1.0__VERANTYX_霩_37_,
+    });
+    if (_JCROSS_霩:1.0__VERANTYX_霩_40_?._JCROSS_匾:1.0__VERANTYX_霩_32_) {
+      _JCROSS_霩:1.0__VERANTYX_霩_5_ _JCROSS_霩:1.0__VERANTYX_霩_44_ = _JCROSS_霩:1.0__VERANTYX_霩_40_._JCROSS_匾:1.0__VERANTYX_霩_32_._JCROSS_霩:1.0__VERANTYX_霩_44_ ?? "";
+      _JCROSS_霩:1.0__VERANTYX_霩_5_ _JCROSS_霩:1.0__VERANTYX_霩_4_ = _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_10_[_JCROSS_霩:1.0__VERANTYX_霩_37_] ?? "";
+// _JCROSS_錬:0.5__VERANTYX_VA_493_ [decoy-metadata]
+      _JCROSS_霩:1.0__VERANTYX_霩_5_ _JCROSS_霩:1.0__VERANTYX_霩_42_ = _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_45_[_JCROSS_霩:1.0__VERANTYX_霩_37_];
+      _JCROSS_霩:1.0__VERANTYX_霩_5_ _JCROSS_霩:1.0__VERANTYX_霩_23_ = _JCROSS_霩:1.0__VERANTYX_霩_24_?._JCROSS_霩:1.0__VERANTYX_霩_23_ ?? true;
+      _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_35_ = _JCROSS_匾:1.0__VERANTYX_霩_22_(_JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_35_, _JCROSS_霩:1.0__VERANTYX_霩_40_._JCROSS_匾:1.0__VERANTYX_霩_32_);
+      _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_10_ = { ..._JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_10_, [_JCROSS_霩:1.0__VERANTYX_霩_37_]: _JCROSS_霩:1.0__VERANTYX_霩_44_ };
+      if (
+        !_JCROSS_霩:1.0__VERANTYX_霩_23_ ||
+        !_JCROSS_庭:1.0__VERANTYX_庭_5_._JCROSS_霩:1.0__VERANTYX_霩_1_(_JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_45_, _JCROSS_霩:1.0__VERANTYX_霩_37_) ||
+        _JCROSS_霩:1.0__VERANTYX_霩_42_ === _JCROSS_霩:1.0__VERANTYX_霩_4_
+      ) {
+        _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_45_ = { ..._JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_45_, [_JCROSS_霩:1.0__VERANTYX_霩_37_]: _JCROSS_霩:1.0__VERANTYX_霩_44_ };
+      }
+    }
+  } catch (_JCROSS_霩:1.0__VERANTYX_霩_25_) {
+    _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_38_ = _JCROSS_庭:1.0__VERANTYX_庭_2_(_JCROSS_霩:1.0__VERANTYX_霩_25_);
+  } _JCROSS_霩:1.0__VERANTYX_霩_17_ {
+    _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_21_ = false;
+  }
+}
+// _JCROSS_規:0.7__VERANTYX_KY_322_ [decoy-metadata]
+
+_JCROSS_霩:1.0__VERANTYX_霩_31_ async _JCROSS_霩:1.0__VERANTYX_霩_9_ _JCROSS_匾:1.0__VERANTYX_霩_13_(
+  _JCROSS_霩:1.0__VERANTYX_霩_43_: _JCROSS_匾:1.0__VERANTYX_庭_6_,
+// _JCROSS_沈:0.5__VERANTYX_GH_567_ [decoy-metadata]
+  _JCROSS_霩:1.0__VERANTYX_霩_30_: _JCROSS_霩:1.0__VERANTYX_霩_16_,
+  _JCROSS_霩:1.0__VERANTYX_霩_37_: _JCROSS_霩:1.0__VERANTYX_霩_16_,
+  _JCROSS_霩:1.0__VERANTYX_霩_44_: _JCROSS_霩:1.0__VERANTYX_霩_16_,
+) {
+  if (!_JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_霩:1.0__VERANTYX_霩_19_ || !_JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_霩:1.0__VERANTYX_霩_41_ || _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_39_) {
+    return;
+  }
+  _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_39_ = true;
+  _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_38_ = _JCROSS_霩:1.0__VERANTYX_霩_6_;
+  try {
+    _JCROSS_霩:1.0__VERANTYX_霩_5_ _JCROSS_霩:1.0__VERANTYX_霩_40_ = await _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_霩:1.0__VERANTYX_霩_19_._JCROSS_紐:1.0__VERANTYX_霩_15_<_JCROSS_匾:1.0__VERANTYX_庭_9_ | _JCROSS_霩:1.0__VERANTYX_霩_6_>("_JCROSS_霩:1.0__VERANTYX_霩_11_._JCROSS_匾:1.0__VERANTYX_霩_20_._JCROSS_規:1.0__VERANTYX_錬_2_", {
+      _JCROSS_霩:1.0__VERANTYX_霩_30_,
+      _JCROSS_霩:1.0__VERANTYX_霩_37_,
+      _JCROSS_霩:1.0__VERANTYX_霩_44_,
+    });
+    if (_JCROSS_霩:1.0__VERANTYX_霩_40_?._JCROSS_匾:1.0__VERANTYX_霩_32_) {
+      _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_35_ = _JCROSS_匾:1.0__VERANTYX_霩_22_(_JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_35_, _JCROSS_霩:1.0__VERANTYX_霩_40_._JCROSS_匾:1.0__VERANTYX_霩_32_);
+      _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_10_ = { ..._JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_10_, [_JCROSS_霩:1.0__VERANTYX_霩_37_]: _JCROSS_霩:1.0__VERANTYX_霩_44_ };
+      _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_45_ = { ..._JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_45_, [_JCROSS_霩:1.0__VERANTYX_霩_37_]: _JCROSS_霩:1.0__VERANTYX_霩_44_ };
+    }
+  } catch (_JCROSS_霩:1.0__VERANTYX_霩_25_) {
+    _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_38_ = _JCROSS_庭:1.0__VERANTYX_庭_2_(_JCROSS_霩:1.0__VERANTYX_霩_25_);
+  } _JCROSS_霩:1.0__VERANTYX_霩_17_ {
+    _JCROSS_霩:1.0__VERANTYX_霩_43_._JCROSS_匾:1.0__VERANTYX_霩_39_ = false;
+  }
+}
+
+// POLYMORPHIC_JCROSS_END

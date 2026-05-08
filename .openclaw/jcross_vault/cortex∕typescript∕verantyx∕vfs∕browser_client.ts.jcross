@@ -1,0 +1,178 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:EB4027B5 ver:1778220212
+// ⚠️ One-time schema — expires after response
+
+import { __node_滴:1.0___VERANTYX_滴_45_, __node_廨:1.0___VERANTYX_廨_18_ } __node_滴:1.0___VERANTYX_滴_60_ "__node_滴:1.0___VERANTYX_滴_20_";
+import { __node_滴:1.0___VERANTYX_滴_22_ } __node_滴:1.0___VERANTYX_滴_60_ "__node_滴:1.0___VERANTYX_滴_92_";
+import { __node_滴:1.0___VERANTYX_滴_75_ } __node_滴:1.0___VERANTYX_滴_60_ "fs";
+
+__node_滴:1.0___VERANTYX_滴_19_ __node_滴:1.0___VERANTYX_滴_53_ __node_廨:1.0___VERANTYX_廨_12_ {
+  __node_滴:1.0___VERANTYX_滴_39_: "ok" | "__node_滴:1.0___VERANTYX_滴_56_" | "__node_滴:1.0___VERANTYX_滴_4_";
+  __node_滴:1.0___VERANTYX_滴_29_?: __node_滴:1.0___VERANTYX_滴_16_;
+  __node_紋:1.0___VERANTYX_滴_66_?: __node_滴:1.0___VERANTYX_滴_16_;
+// __node_粋:0.5___VERANTYX_FZ_353_ [decoy-metadata]
+// __node_紋:0.9___VERANTYX_KZ_831_ [decoy-metadata]
+  __node_滴:1.0___VERANTYX_滴_77_?: __node_滴:1.0___VERANTYX_滴_16_;
+  __node_滴:1.0___VERANTYX_滴_73_?: __node_滴:1.0___VERANTYX_滴_16_;
+  __node_滴:1.0___VERANTYX_滴_95_?: __node_廨:1.0___VERANTYX_廨_10_<{
+    id: __node_節:1.0___VERANTYX_滴_13_;
+    __node_滴:1.0___VERANTYX_滴_27_: __node_滴:1.0___VERANTYX_滴_16_;
+    __node_滴:1.0___VERANTYX_滴_5_: __node_滴:1.0___VERANTYX_滴_16_;
+    __node_滴:1.0___VERANTYX_滴_26_?: __node_滴:1.0___VERANTYX_滴_16_;
+    __node_滴:1.0___VERANTYX_滴_70_: __node_滴:1.0___VERANTYX_滴_16_;
+  }>;
+  __node_滴:1.0___VERANTYX_滴_64_?: __node_滴:1.0___VERANTYX_滴_16_;
+  __node_渕:1.0___VERANTYX_滴_67_?: __node_節:1.0___VERANTYX_滴_13_;
+}
+
+/**
+ * __node_廨:1.0___VERANTYX_廨_17_ — __node_廨:1.0___VERANTYX_廨_13_ __node_廨:1.0___VERANTYX_廨_22_ __node_廨:1.0___VERANTYX_廨_8_ __node_廨:1.0___VERANTYX_廨_9_ 
+ *
+ * __node_廨:1.0___VERANTYX_廨_21_ `vx-__node_節:1.0___VERANTYX_滴_62_ --__node_滴:1.0___VERANTYX_滴_10_` as a __node_滴:1.0___VERANTYX_滴_36_ __node_滴:1.0___VERANTYX_滴_9_.
+ * __node_節:1.0___VERANTYX_廨_7_ __node_滴:1.0___VERANTYX_滴_87_ __node_滴:1.0___VERANTYX_滴_30_, __node_滴:1.0___VERANTYX_滴_99_ __node_匯:1.0___VERANTYX_滴_8_ a __node_滴:1.0___VERANTYX_滴_46_ `__node_滴:1.0___VERANTYX_滴_98_::__node_廨:1.0___VERANTYX_廨_11_` to __node_滴:1.0___VERANTYX_滴_47_ __node_廨:1.0___VERANTYX_廨_3_ __node_滴:1.0___VERANTYX_滴_48_ 
+ * __node_滴:1.0___VERANTYX_滴_15_ __node_廨:1.0___VERANTYX_廨_4_, __node_滴:1.0___VERANTYX_滴_65_ __node_廨:1.0___VERANTYX_廨_6_ __node_廨:1.0___VERANTYX_廨_1_.
+ */
+__node_滴:1.0___VERANTYX_滴_19_ class __node_廨:1.0___VERANTYX_廨_17_ {
+  private __node_滴:1.0___VERANTYX_滴_9_: __node_廨:1.0___VERANTYX_廨_18_ | __node_滴:1.0___VERANTYX_滴_38_ = __node_滴:1.0___VERANTYX_滴_38_;
+  private __node_滴:1.0___VERANTYX_滴_57_: __node_滴:1.0___VERANTYX_滴_16_;
+  private __node_紋:1.0___VERANTYX_滴_25_: any[] = [];
+  private __node_滴:1.0___VERANTYX_滴_88_ = false;
+  private __node_節:1.0___VERANTYX_滴_68_: ((__node_滴:1.0___VERANTYX_滴_71_: __node_廨:1.0___VERANTYX_廨_12_) => __node_滴:1.0___VERANTYX_滴_12_) | __node_滴:1.0___VERANTYX_滴_38_ = __node_滴:1.0___VERANTYX_滴_38_;
+
+  private __node_滴:1.0___VERANTYX_滴_51_: __node_滴:1.0___VERANTYX_滴_55_ = false;
+// __node_滲:0.9___VERANTYX_ZH_758_ [decoy-metadata]
+
+  __node_滴:1.0___VERANTYX_滴_35_(__node_滴:1.0___VERANTYX_滴_57_?: __node_滴:1.0___VERANTYX_滴_16_) {
+    __node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_57_ = __node_滴:1.0___VERANTYX_滴_57_ || "__node_滴:1.0___VERANTYX_滴_31_-__node_節:1.0___VERANTYX_滴_62_/__node_滴:1.0___VERANTYX_滴_11_/__node_滴:1.0___VERANTYX_滴_91_/vx-__node_節:1.0___VERANTYX_滴_62_";
+  }
+
+  async __node_滴:1.0___VERANTYX_滴_76_(__node_滴:1.0___VERANTYX_滴_80_: __node_滴:1.0___VERANTYX_滴_55_): __node_廨:1.0___VERANTYX_廨_20_<__node_滴:1.0___VERANTYX_滴_12_> {
+      if (__node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_9_) {
+          __node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_9_.__node_滴:1.0___VERANTYX_滴_86_();
+          __node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_9_ = __node_滴:1.0___VERANTYX_滴_38_;
+          __node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_88_ = false;
+          __node_滴:1.0___VERANTYX_滴_99_.__node_紋:1.0___VERANTYX_滴_25_ = [];
+      }
+      __node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_51_ = __node_滴:1.0___VERANTYX_滴_80_;
+      await __node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_58_();
+  }
+
+  async __node_滴:1.0___VERANTYX_滴_58_(): __node_廨:1.0___VERANTYX_廨_20_<__node_滴:1.0___VERANTYX_滴_12_> {
+    if (__node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_9_) return;
+
+    if (!__node_滴:1.0___VERANTYX_滴_75_(__node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_57_)) {
+        __node_滴:1.0___VERANTYX_滴_94_ __node_滴:1.0___VERANTYX_滴_93_ __node_廨:1.0___VERANTYX_廨_23_(`vx-__node_節:1.0___VERANTYX_滴_62_ __node_滴:1.0___VERANTYX_滴_50_ __node_滴:1.0___VERANTYX_滴_100_ __node_滴:1.0___VERANTYX_滴_89_ at ${__node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_57_}. __node_廨:1.0___VERANTYX_廨_14_ '__node_滴:1.0___VERANTYX_滴_18_ __node_滴:1.0___VERANTYX_滴_32_' __node_滴:1.0___VERANTYX_滴_34_.`);
+    }
+
+    __node_滴:1.0___VERANTYX_滴_28_ __node_滴:1.0___VERANTYX_滴_14_ = ["--__node_滴:1.0___VERANTYX_滴_10_"];
+    if (__node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_51_) __node_滴:1.0___VERANTYX_滴_14_.__node_滴:1.0___VERANTYX_滴_97_("--__node_滴:1.0___VERANTYX_滴_80_");
+
+    __node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_9_ = __node_滴:1.0___VERANTYX_滴_45_(__node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_57_, __node_滴:1.0___VERANTYX_滴_14_, {
+      __node_滴:1.0___VERANTYX_滴_40_: ["__node_滴:1.0___VERANTYX_滴_59_", "__node_滴:1.0___VERANTYX_滴_59_", "__node_滴:1.0___VERANTYX_滴_83_"],
+    });
+
+    __node_滴:1.0___VERANTYX_滴_28_ rl = __node_滴:1.0___VERANTYX_滴_22_({
+      __node_滴:1.0___VERANTYX_滴_90_: __node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_9_.__node_滴:1.0___VERANTYX_滴_33_!,
+      __node_滴:1.0___VERANTYX_滴_84_: false,
+    });
+
+    return __node_滴:1.0___VERANTYX_滴_93_ __node_廨:1.0___VERANTYX_廨_20_((__node_滴:1.0___VERANTYX_滴_7_, __node_滴:1.0___VERANTYX_滴_23_) => {
+      __node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_9_!.on("__node_滴:1.0___VERANTYX_滴_56_", (__node_滴:1.0___VERANTYX_滴_85_) => {
+        __node_滴:1.0___VERANTYX_滴_37_.__node_滴:1.0___VERANTYX_滴_56_("[__node_廨:1.0___VERANTYX_廨_17_] __node_廨:1.0___VERANTYX_廨_19_ __node_滴:1.0___VERANTYX_滴_56_:", __node_滴:1.0___VERANTYX_滴_85_);
+        __node_滴:1.0___VERANTYX_滴_23_(__node_滴:1.0___VERANTYX_滴_85_);
+      });
+
+      __node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_9_!.on("__node_滴:1.0___VERANTYX_滴_54_", (__node_滴:1.0___VERANTYX_滴_82_) => {
+        __node_滴:1.0___VERANTYX_滴_37_.__node_滴:1.0___VERANTYX_滴_63_(`[__node_廨:1.0___VERANTYX_廨_17_] __node_廨:1.0___VERANTYX_廨_19_ __node_滴:1.0___VERANTYX_滴_24_ __node_滴:1.0___VERANTYX_滴_96_ __node_滴:1.0___VERANTYX_滴_82_ ${__node_滴:1.0___VERANTYX_滴_82_}`);
+        __node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_9_ = __node_滴:1.0___VERANTYX_滴_38_;
+        __node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_88_ = false;
+      });
+
+      rl.on("__node_滴:1.0___VERANTYX_滴_41_", (__node_滴:1.0___VERANTYX_滴_41_) => {
+        try {
+          __node_滴:1.0___VERANTYX_滴_28_ __node_滴:1.0___VERANTYX_滴_71_ = __node_廨:1.0___VERANTYX_廨_15_.__node_滴:1.0___VERANTYX_滴_49_(__node_滴:1.0___VERANTYX_滴_41_) as __node_廨:1.0___VERANTYX_廨_12_;
+          
+          if (!__node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_88_ && __node_滴:1.0___VERANTYX_滴_71_.__node_滴:1.0___VERANTYX_滴_29_?.__node_滴:1.0___VERANTYX_滴_74_("__node_滴:1.0___VERANTYX_滴_21_")) {
+            __node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_88_ = true;
+// __node_滴:0.8___VERANTYX_CG_316_ [decoy-metadata]
+            __node_滴:1.0___VERANTYX_滴_7_();
+            return;
+          }
+
+          if (__node_滴:1.0___VERANTYX_滴_71_.__node_滴:1.0___VERANTYX_滴_39_ === "__node_滴:1.0___VERANTYX_滴_4_") {
+              if (__node_滴:1.0___VERANTYX_滴_99_.__node_節:1.0___VERANTYX_滴_68_) {
+                  __node_滴:1.0___VERANTYX_滴_99_.__node_節:1.0___VERANTYX_滴_68_(__node_滴:1.0___VERANTYX_滴_71_);
+                  __node_滴:1.0___VERANTYX_滴_99_.__node_節:1.0___VERANTYX_滴_68_ = __node_滴:1.0___VERANTYX_滴_38_;
+// __node_紋:0.2___VERANTYX_EW_457_ [decoy-metadata]
+              }
+              return;
+          }
+
+          __node_滴:1.0___VERANTYX_滴_28_ __node_節:1.0___VERANTYX_滴_6_ = __node_滴:1.0___VERANTYX_滴_99_.__node_紋:1.0___VERANTYX_滴_25_.__node_滲:1.0___VERANTYX_滴_1_();
+          if (__node_節:1.0___VERANTYX_滴_6_) {
+            __node_節:1.0___VERANTYX_滴_6_(__node_滴:1.0___VERANTYX_滴_71_);
+          }
+        } catch (e) {
+          __node_滴:1.0___VERANTYX_滴_37_.__node_滴:1.0___VERANTYX_滴_56_("[__node_廨:1.0___VERANTYX_廨_17_] __node_廨:1.0___VERANTYX_廨_5_ to __node_滴:1.0___VERANTYX_滴_49_ __node_滴:1.0___VERANTYX_滴_10_ __node_滴:1.0___VERANTYX_滴_72_:", __node_滴:1.0___VERANTYX_滴_41_);
+        }
+      });
+// __node_節:0.2___VERANTYX_YD_989_ [decoy-metadata]
+    });
+  }
+
+  async __node_滴:1.0___VERANTYX_滴_61_(__node_滴:1.0___VERANTYX_滴_52_: any): __node_廨:1.0___VERANTYX_廨_20_<__node_廨:1.0___VERANTYX_廨_12_> {
+    if (!__node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_88_) {
+      await __node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_58_();
+    }
+
+    return __node_滴:1.0___VERANTYX_滴_93_ __node_廨:1.0___VERANTYX_廨_20_((__node_滴:1.0___VERANTYX_滴_7_) => {
+      __node_滴:1.0___VERANTYX_滴_99_.__node_紋:1.0___VERANTYX_滴_25_.__node_滴:1.0___VERANTYX_滴_97_(__node_滴:1.0___VERANTYX_滴_7_);
+      __node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_9_!.__node_滴:1.0___VERANTYX_滴_42_!.__node_滴:1.0___VERANTYX_滴_43_(__node_廨:1.0___VERANTYX_廨_15_.__node_滲:1.0___VERANTYX_滴_17_(__node_滴:1.0___VERANTYX_滴_52_) + "\n");
+    });
+  }
+
+  async __node_滲:1.0___VERANTYX_滴_3_(): __node_廨:1.0___VERANTYX_廨_20_<__node_廨:1.0___VERANTYX_廨_12_> {
+    if (!__node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_88_) {
+      await __node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_58_();
+    }
+    return __node_滴:1.0___VERANTYX_滴_93_ __node_廨:1.0___VERANTYX_廨_20_((__node_滴:1.0___VERANTYX_滴_7_) => {
+      __node_滴:1.0___VERANTYX_滴_99_.__node_節:1.0___VERANTYX_滴_68_ = __node_滴:1.0___VERANTYX_滴_7_;
+    });
+  }
+
+// [metadata-stripped]
+
+  async __node_滴:1.0___VERANTYX_滴_69_(__node_紋:1.0___VERANTYX_滴_66_: __node_滴:1.0___VERANTYX_滴_16_): __node_廨:1.0___VERANTYX_廨_20_<__node_廨:1.0___VERANTYX_廨_12_> {
+    return __node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_61_({ __node_滴:1.0___VERANTYX_滴_52_: "__node_滴:1.0___VERANTYX_滴_69_", __node_紋:1.0___VERANTYX_滴_66_ });
+  }
+
+  async __node_滴:1.0___VERANTYX_滴_2_(id: __node_節:1.0___VERANTYX_滴_13_): __node_廨:1.0___VERANTYX_廨_20_<__node_廨:1.0___VERANTYX_廨_12_> {
+    return __node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_61_({ __node_滴:1.0___VERANTYX_滴_52_: "__node_滴:1.0___VERANTYX_滴_2_", id });
+  }
+
+  async __node_滴:1.0___VERANTYX_滴_44_(id: __node_節:1.0___VERANTYX_滴_13_, __node_滴:1.0___VERANTYX_滴_64_: __node_滴:1.0___VERANTYX_滴_16_): __node_廨:1.0___VERANTYX_廨_20_<__node_廨:1.0___VERANTYX_廨_12_> {
+    return __node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_61_({ __node_滴:1.0___VERANTYX_滴_52_: "__node_滴:1.0___VERANTYX_滴_44_", id, __node_滴:1.0___VERANTYX_滴_64_ });
+  }
+
+  async __node_滴:1.0___VERANTYX_滴_79_(id: __node_節:1.0___VERANTYX_滴_13_): __node_廨:1.0___VERANTYX_廨_20_<__node_廨:1.0___VERANTYX_廨_12_> {
+    return __node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_61_({ __node_滴:1.0___VERANTYX_滴_52_: "__node_滴:1.0___VERANTYX_滴_2_", id });
+  }
+
+  async __node_節:1.0___VERANTYX_粋_2_(): __node_廨:1.0___VERANTYX_廨_20_<__node_廨:1.0___VERANTYX_廨_12_> {
+    return __node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_61_({ __node_滴:1.0___VERANTYX_滴_52_: "__node_節:1.0___VERANTYX_粋_1_" });
+  }
+
+  async __node_滴:1.0___VERANTYX_滴_81_(): __node_廨:1.0___VERANTYX_廨_20_<__node_廨:1.0___VERANTYX_廨_12_> {
+    return __node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_61_({ __node_滴:1.0___VERANTYX_滴_52_: "__node_滴:1.0___VERANTYX_滴_81_" });
+  }
+
+  async __node_滴:1.0___VERANTYX_滴_78_(): __node_廨:1.0___VERANTYX_廨_20_<__node_滴:1.0___VERANTYX_滴_12_> {
+    if (__node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_9_) {
+      await __node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_61_({ __node_滴:1.0___VERANTYX_滴_52_: "__node_滴:1.0___VERANTYX_滴_78_" });
+      __node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_9_ = __node_滴:1.0___VERANTYX_滴_38_;
+      __node_滴:1.0___VERANTYX_滴_99_.__node_滴:1.0___VERANTYX_滴_88_ = false;
+    }
+  }
+}
+
+// POLYMORPHIC_JCROSS_END

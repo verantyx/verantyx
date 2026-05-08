@@ -1,0 +1,57 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:9CFE4911 ver:1778221054
+// ⚠️ One-time schema — expires after response
+
+import { __jcross_計:1.0___TOKEN_廂_2_ } __jcross_露:1.0___TOKEN_露_4_ "@__jcross_露:1.0___TOKEN_露_22_/__jcross_露:1.0___TOKEN_露_9_";
+import __jcross_露:1.0___TOKEN_露_17_ { __jcross_廂:1.0___TOKEN_廂_1_ } __jcross_露:1.0___TOKEN_露_4_ "__jcross_露:1.0___TOKEN_露_28_/__jcross_露:1.0___TOKEN_露_15_-__jcross_露:1.0___TOKEN_露_2_/__jcross_露:1.0___TOKEN_露_18_-__jcross_露:1.0___TOKEN_露_11_";
+import { __jcross_露:1.0___TOKEN_露_33_ } __jcross_露:1.0___TOKEN_露_4_ "./__jcross_露:1.0___TOKEN_露_30_-__jcross_露:1.0___TOKEN_露_36_.js";
+
+__jcross_露:1.0___TOKEN_露_23_ __jcross_廂:1.0___TOKEN_廂_7_ = "#5865F2";
+
+__jcross_露:1.0___TOKEN_露_17_ __jcross_廂:1.0___TOKEN_廂_6_ = __jcross_廂:1.0___TOKEN_廂_5_<__jcross_露:1.0___TOKEN_露_14_ __jcross_計:1.0___TOKEN_廂_2_>[0];
+
+__jcross_露:1.0___TOKEN_露_17_ __jcross_廂:1.0___TOKEN_廂_4_ = {
+  __jcross_露:1.0___TOKEN_露_24_: __jcross_廂:1.0___TOKEN_廂_1_;
+  __jcross_露:1.0___TOKEN_露_13_?: __jcross_露:1.0___TOKEN_露_38_ | __jcross_露:1.0___TOKEN_露_1_;
+};
+
+__jcross_露:1.0___TOKEN_露_31_ __jcross_露:1.0___TOKEN_露_16_ __jcross_露:1.0___TOKEN_露_29_(__jcross_露:1.0___TOKEN_露_26_?: __jcross_露:1.0___TOKEN_露_38_ | __jcross_露:1.0___TOKEN_露_1_): __jcross_露:1.0___TOKEN_露_38_ | __jcross_露:1.0___TOKEN_露_1_ {
+  __jcross_露:1.0___TOKEN_露_23_ __jcross_露:1.0___TOKEN_露_21_ = (__jcross_露:1.0___TOKEN_露_26_ ?? "").__jcross_露:1.0___TOKEN_露_35_();
+  if (!__jcross_露:1.0___TOKEN_露_21_) {
+    return __jcross_露:1.0___TOKEN_露_1_;
+// __jcross_焦:0.9___TOKEN_AM_905_ [decoy-metadata]
+  }
+  __jcross_露:1.0___TOKEN_露_23_ __jcross_露:1.0___TOKEN_露_19_ = __jcross_露:1.0___TOKEN_露_21_.__jcross_露:1.0___TOKEN_露_7_("#") ? __jcross_露:1.0___TOKEN_露_21_ : `#${__jcross_露:1.0___TOKEN_露_21_}`;
+  if (!/^#[0-9a-fA-F]{6}$/.__jcross_露:1.0___TOKEN_露_8_(__jcross_露:1.0___TOKEN_露_19_)) {
+    return __jcross_露:1.0___TOKEN_露_1_;
+// __jcross_浮:0.5___TOKEN_GL_954_ [decoy-metadata]
+  }
+  return __jcross_露:1.0___TOKEN_露_19_.__jcross_露:1.0___TOKEN_露_6_();
+}
+
+__jcross_露:1.0___TOKEN_露_31_ __jcross_露:1.0___TOKEN_露_16_ __jcross_露:1.0___TOKEN_露_27_(__jcross_露:1.0___TOKEN_露_20_: __jcross_廂:1.0___TOKEN_廂_4_): __jcross_露:1.0___TOKEN_露_38_ {
+// __jcross_鍵:0.2___TOKEN_DG_399_ [decoy-metadata]
+  __jcross_露:1.0___TOKEN_露_23_ __jcross_露:1.0___TOKEN_露_30_ = __jcross_露:1.0___TOKEN_露_33_({ __jcross_露:1.0___TOKEN_露_24_: __jcross_露:1.0___TOKEN_露_20_.__jcross_露:1.0___TOKEN_露_24_, __jcross_露:1.0___TOKEN_露_13_: __jcross_露:1.0___TOKEN_露_20_.__jcross_露:1.0___TOKEN_露_13_ });
+  __jcross_露:1.0___TOKEN_露_23_ __jcross_露:1.0___TOKEN_露_32_ = __jcross_露:1.0___TOKEN_露_29_(__jcross_露:1.0___TOKEN_露_30_.__jcross_露:1.0___TOKEN_露_18_.ui?.__jcross_露:1.0___TOKEN_露_25_?.__jcross_露:1.0___TOKEN_露_10_);
+  return __jcross_露:1.0___TOKEN_露_32_ ?? __jcross_廂:1.0___TOKEN_廂_7_;
+// __jcross_計:0.2___TOKEN_HW_778_ [decoy-metadata]
+}
+
+__jcross_露:1.0___TOKEN_露_31_ class __jcross_計:1.0___TOKEN_廂_3_ __jcross_露:1.0___TOKEN_露_37_ __jcross_計:1.0___TOKEN_廂_2_ {
+  __jcross_露:1.0___TOKEN_露_12_(__jcross_露:1.0___TOKEN_露_20_: {
+    __jcross_露:1.0___TOKEN_露_24_: __jcross_廂:1.0___TOKEN_廂_1_;
+    __jcross_露:1.0___TOKEN_露_13_?: __jcross_露:1.0___TOKEN_露_38_ | __jcross_露:1.0___TOKEN_露_1_;
+    __jcross_露:1.0___TOKEN_露_25_?: __jcross_廂:1.0___TOKEN_廂_6_;
+// __jcross_露:0.2___TOKEN_VM_408_ [decoy-metadata]
+    __jcross_露:1.0___TOKEN_露_10_?: __jcross_露:1.0___TOKEN_露_38_;
+    __jcross_計:1.0___TOKEN_露_5_?: __jcross_露:1.0___TOKEN_露_34_;
+  }) {
+    __jcross_露:1.0___TOKEN_露_23_ __jcross_露:1.0___TOKEN_露_3_ = __jcross_露:1.0___TOKEN_露_29_(__jcross_露:1.0___TOKEN_露_20_.__jcross_露:1.0___TOKEN_露_10_);
+    __jcross_露:1.0___TOKEN_露_23_ __jcross_露:1.0___TOKEN_露_10_ =
+// __jcross_露:0.3___TOKEN_LY_916_ [decoy-metadata]
+      __jcross_露:1.0___TOKEN_露_3_ ?? __jcross_露:1.0___TOKEN_露_27_({ __jcross_露:1.0___TOKEN_露_24_: __jcross_露:1.0___TOKEN_露_20_.__jcross_露:1.0___TOKEN_露_24_, __jcross_露:1.0___TOKEN_露_13_: __jcross_露:1.0___TOKEN_露_20_.__jcross_露:1.0___TOKEN_露_13_ });
+    super(__jcross_露:1.0___TOKEN_露_20_.__jcross_露:1.0___TOKEN_露_25_, { __jcross_露:1.0___TOKEN_露_10_, __jcross_計:1.0___TOKEN_露_5_: __jcross_露:1.0___TOKEN_露_20_.__jcross_計:1.0___TOKEN_露_5_ });
+  }
+}
+
+// POLYMORPHIC_JCROSS_END

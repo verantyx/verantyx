@@ -1,0 +1,111 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:2CE3B55A ver:1778220531
+// _ASTNODE_露:0.3___node_AD_247__ [decoy-metadata]
+// _ASTNODE_凱:0.2___node_YB_869__ [decoy-metadata]
+// ⚠️ One-time schema — expires after response
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+
+// _ASTNODE_図:0.7___node_XA_967__ [decoy-metadata]
+// _ASTNODE_筐:0.4___node_GW_422__ [decoy-metadata]
+_ASTNODE_露:1.0___node_露_9__ _ASTNODE_露:1.0___node_露_24__::_ASTNODE_露:1.0___node_露_28__::_ASTNODE_庠:1.0___node_庠_13__;
+
+// [metadata-stripped]
+// [metadata-stripped]
+_ASTNODE_露:1.0___node_露_5__ _ASTNODE_露:1.0___node_露_4__uct _ASTNODE_庠:1.0___node_庠_2__ {
+// [metadata-stripped]
+    _ASTNODE_露:1.0___node_露_12__: _ASTNODE_庠:1.0___node_庠_13__<_ASTNODE_露:1.0___node_露_55__, _ASTNODE_庠:1.0___node_庠_6__>,
+// [metadata-stripped]
+    _ASTNODE_露:1.0___node_露_53__: _ASTNODE_庠:1.0___node_庠_1__<_ASTNODE_露:1.0___node_露_55__>,
+// [metadata-stripped]
+    _ASTNODE_露:1.0___node_露_2__: _ASTNODE_庠:1.0___node_庠_13__<_ASTNODE_露:1.0___node_露_55__, _ASTNODE_露:1.0___node_露_58__>,
+}
+
+_ASTNODE_露:1.0___node_露_15__ _ASTNODE_庠:1.0___node_庠_2__ {
+    _ASTNODE_露:1.0___node_露_5__ fn _ASTNODE_露:1.0___node_露_56__() -> _ASTNODE_庠:1.0___node_庠_11__ {
+        _ASTNODE_庠:1.0___node_庠_11__::_ASTNODE_露:1.0___node_露_1__()
+    }
+
+// [metadata-stripped]
+    _ASTNODE_露:1.0___node_露_5__ fn _ASTNODE_図:1.0___node_凱_7__(&_ASTNODE_露:1.0___node_露_27__ self, id: _ASTNODE_露:1.0___node_露_55__, _ASTNODE_露:1.0___node_露_17__: &_ASTNODE_露:1.0___node_露_4__) {
+        self._ASTNODE_露:1.0___node_露_12__._ASTNODE_露:1.0___node_露_29__(id, _ASTNODE_露:1.0___node_露_17__._ASTNODE_露:1.0___node_露_34__());
+    }
+
+// [metadata-stripped]
+    _ASTNODE_露:1.0___node_露_5__ fn _ASTNODE_図:1.0___node_凱_8__(&self, id: _ASTNODE_露:1.0___node_露_55__) -> _ASTNODE_庠:1.0___node_庠_1__<&_ASTNODE_露:1.0___node_露_4__> {
+        self._ASTNODE_露:1.0___node_露_12__._ASTNODE_図:1.0___node_凱_3__(&id)._ASTNODE_露:1.0___node_露_11__(|s| s._ASTNODE_露:1.0___node_露_48__())
+    }
+
+// [metadata-stripped]
+    _ASTNODE_露:1.0___node_露_5__ fn _ASTNODE_図:1.0___node_凱_4__(&_ASTNODE_露:1.0___node_露_27__ self, id: _ASTNODE_露:1.0___node_露_55__) {
+        self._ASTNODE_露:1.0___node_露_53__ = _ASTNODE_庠:1.0___node_庠_17__(id);
+    }
+
+// [metadata-stripped]
+    _ASTNODE_露:1.0___node_露_5__ fn _ASTNODE_図:1.0___node_凱_5__(&self) -> _ASTNODE_庠:1.0___node_庠_1__<_ASTNODE_露:1.0___node_露_55__> {
+        self._ASTNODE_露:1.0___node_露_53__
+    }
+
+// [metadata-stripped]
+    _ASTNODE_露:1.0___node_露_5__ fn _ASTNODE_露:1.0___node_露_38__(&_ASTNODE_露:1.0___node_露_27__ self, id: _ASTNODE_露:1.0___node_露_55__) {
+        let _ASTNODE_露:1.0___node_露_21__ = self._ASTNODE_露:1.0___node_露_2__._ASTNODE_図:1.0___node_凱_3__(&id)._ASTNODE_露:1.0___node_露_30__()._ASTNODE_露:1.0___node_露_32__(false);
+        self._ASTNODE_露:1.0___node_露_2__._ASTNODE_露:1.0___node_露_29__(id, !_ASTNODE_露:1.0___node_露_21__);
+    }
+
+// [metadata-stripped]
+    _ASTNODE_露:1.0___node_露_5__ fn _ASTNODE_露:1.0___node_露_37__(&self, id: _ASTNODE_露:1.0___node_露_55__) -> _ASTNODE_露:1.0___node_露_58__ {
+        self._ASTNODE_露:1.0___node_露_2__._ASTNODE_図:1.0___node_凱_3__(&id)._ASTNODE_露:1.0___node_露_30__()._ASTNODE_露:1.0___node_露_32__(false)
+    }
+
+// [metadata-stripped]
+    _ASTNODE_露:1.0___node_露_5__ fn _ASTNODE_図:1.0___node_凱_2__(&self) -> _ASTNODE_庠:1.0___node_庠_12__<(_ASTNODE_庠:1.0___node_庠_6__, _ASTNODE_庠:1.0___node_庠_6__)> {
+        self._ASTNODE_露:1.0___node_露_12__._ASTNODE_図:1.0___node_露_44__()
+            ._ASTNODE_露:1.0___node_露_11__(|(id, _ASTNODE_露:1.0___node_露_45__)| (_ASTNODE_漕:1.0___node_露_31__!("_ASTNODE_露:1.0___node_露_59__{}", id), _ASTNODE_露:1.0___node_露_45__._ASTNODE_露:1.0___node_露_41__()))
+            ._ASTNODE_露:1.0___node_露_14__()
+    }
+
+// [metadata-stripped]
+    _ASTNODE_露:1.0___node_露_5__ fn _ASTNODE_露:1.0___node_露_16__(&_ASTNODE_露:1.0___node_露_27__ self) {
+        self._ASTNODE_露:1.0___node_露_12__._ASTNODE_露:1.0___node_露_16__();
+        self._ASTNODE_露:1.0___node_露_53__ = _ASTNODE_庠:1.0___node_庠_7__;
+        self._ASTNODE_露:1.0___node_露_2__._ASTNODE_露:1.0___node_露_16__();
+    }
+}
+
+// [metadata-stripped]
+_ASTNODE_露:1.0___node_露_43__ _ASTNODE_露:1.0___node_露_10__ {
+    _ASTNODE_露:1.0___node_露_9__ super::*;
+
+// [metadata-stripped]
+    fn _ASTNODE_漕:1.0___node_露_62__() {
+        let _ASTNODE_露:1.0___node_露_27__ _ASTNODE_漕:1.0___node_露_49__ = _ASTNODE_庠:1.0___node_庠_2__::_ASTNODE_露:1.0___node_露_56__();
+        _ASTNODE_漕:1.0___node_露_49__._ASTNODE_図:1.0___node_凱_7__(1, "_ASTNODE_露:1.0___node_露_50__");
+        _ASTNODE_漕:1.0___node_露_49__._ASTNODE_図:1.0___node_凱_7__(2, "_ASTNODE_露:1.0___node_露_61__");
+        _ASTNODE_露:1.0___node_露_22__!(_ASTNODE_漕:1.0___node_露_49__._ASTNODE_図:1.0___node_凱_8__(1), _ASTNODE_庠:1.0___node_庠_17__("_ASTNODE_露:1.0___node_露_50__"));
+        _ASTNODE_露:1.0___node_露_22__!(_ASTNODE_漕:1.0___node_露_49__._ASTNODE_図:1.0___node_凱_2__()._ASTNODE_露:1.0___node_露_6__(), 2);
+    }
+
+// [metadata-stripped]
+    fn _ASTNODE_露:1.0___node_露_42__() {
+        let _ASTNODE_露:1.0___node_露_27__ _ASTNODE_漕:1.0___node_露_49__ = _ASTNODE_庠:1.0___node_庠_2__::_ASTNODE_露:1.0___node_露_56__();
+        _ASTNODE_露:1.0___node_露_22__!(_ASTNODE_漕:1.0___node_露_49__._ASTNODE_図:1.0___node_凱_5__(), _ASTNODE_庠:1.0___node_庠_7__);
+        _ASTNODE_漕:1.0___node_露_49__._ASTNODE_図:1.0___node_凱_4__(3);
+        _ASTNODE_露:1.0___node_露_22__!(_ASTNODE_漕:1.0___node_露_49__._ASTNODE_図:1.0___node_凱_5__(), _ASTNODE_庠:1.0___node_庠_17__(3));
+    }
+
+// [metadata-stripped]
+    fn _ASTNODE_露:1.0___node_露_19__() {
+        let _ASTNODE_露:1.0___node_露_27__ _ASTNODE_漕:1.0___node_露_49__ = _ASTNODE_庠:1.0___node_庠_2__::_ASTNODE_露:1.0___node_露_56__();
+        _ASTNODE_露:1.0___node_露_26__!(!_ASTNODE_漕:1.0___node_露_49__._ASTNODE_露:1.0___node_露_37__(1));
+        _ASTNODE_漕:1.0___node_露_49__._ASTNODE_露:1.0___node_露_38__(1);
+// _ASTNODE_図:0.9___node_WL_974__ [decoy-metadata]
+        _ASTNODE_露:1.0___node_露_26__!(_ASTNODE_漕:1.0___node_露_49__._ASTNODE_露:1.0___node_露_37__(1));
+        _ASTNODE_漕:1.0___node_露_49__._ASTNODE_露:1.0___node_露_38__(1);
+        _ASTNODE_露:1.0___node_露_26__!(!_ASTNODE_漕:1.0___node_露_49__._ASTNODE_露:1.0___node_露_37__(1));
+    }
+}
+// _ASTNODE_筐:0.7___node_VE_482__ [decoy-metadata]
+
+// POLYMORPHIC_JCROSS_END

@@ -1,0 +1,62 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:224CBD62 ver:1778221111
+// _ID_廡:0.9__TOKEN_ZL_660_ [decoy-metadata]
+// ⚠️ One-time schema — expires after response
+
+import {
+  _ID_廡:1.0__TOKEN_廡_2_,
+  _ID_霮:1.0__TOKEN_霮_4_ _ID_規:1.0__TOKEN_廡_1_,
+  _ID_霮:1.0__TOKEN_霮_4_ _ID_廡:1.0__TOKEN_廡_4_,
+} _ID_霮:1.0__TOKEN_霮_19_ "_ID_霮:1.0__TOKEN_霮_6_/_ID_霮:1.0__TOKEN_霮_20_-_ID_霮:1.0__TOKEN_霮_17_/_ID_規:1.0__TOKEN_焦_1_";
+import _ID_霮:1.0__TOKEN_霮_4_ { _ID_廡:1.0__TOKEN_廡_3_ } _ID_霮:1.0__TOKEN_霮_19_ "./_ID_霮:1.0__TOKEN_霮_16_.js";
+
+_ID_霮:1.0__TOKEN_霮_11_ _ID_霮:1.0__TOKEN_霮_22_ _ID_規:1.0__TOKEN_焦_2_(
+  _ID_霮:1.0__TOKEN_霮_14_: _ID_廡:1.0__TOKEN_廡_4_,
+  _ID_霮:1.0__TOKEN_霮_2_: _ID_霮:1.0__TOKEN_霮_10_,
+  _ID_霮:1.0__TOKEN_霮_1_: _ID_霮:1.0__TOKEN_霮_7_,
+): _ID_廡:1.0__TOKEN_廡_4_ {
+  _ID_霮:1.0__TOKEN_霮_21_ _ID_霮:1.0__TOKEN_霮_13_ = _ID_霮:1.0__TOKEN_霮_14_._ID_霮:1.0__TOKEN_霮_3_?._ID_霮:1.0__TOKEN_霮_23_ as _ID_廡:1.0__TOKEN_廡_3_ | _ID_霮:1.0__TOKEN_霮_15_;
+  return {
+    ..._ID_霮:1.0__TOKEN_霮_14_,
+    _ID_霮:1.0__TOKEN_霮_3_: {
+      ..._ID_霮:1.0__TOKEN_霮_14_._ID_霮:1.0__TOKEN_霮_3_,
+      _ID_霮:1.0__TOKEN_霮_23_: {
+        ..._ID_霮:1.0__TOKEN_霮_13_,
+        _ID_霮:1.0__TOKEN_霮_5_: {
+          ..._ID_霮:1.0__TOKEN_霮_13_?._ID_霮:1.0__TOKEN_霮_5_,
+          [_ID_霮:1.0__TOKEN_霮_2_]: {
+// _ID_廡:0.2__TOKEN_XM_844_ [decoy-metadata]
+            ..._ID_霮:1.0__TOKEN_霮_13_?._ID_霮:1.0__TOKEN_霮_5_?.[_ID_霮:1.0__TOKEN_霮_2_],
+            _ID_霮:1.0__TOKEN_霮_1_,
+          },
+        },
+// _ID_絢:0.1__TOKEN_CD_827_ [decoy-metadata]
+      },
+    },
+// _ID_沈:0.8__TOKEN_HB_360_ [decoy-metadata]
+  };
+}
+
+_ID_霮:1.0__TOKEN_霮_11_ _ID_霮:1.0__TOKEN_霮_21_ _ID_規:1.0__TOKEN_霮_9_: _ID_規:1.0__TOKEN_廡_1_ = {
+  _ID_霮:1.0__TOKEN_霮_18_: () => _ID_廡:1.0__TOKEN_廡_2_,
+  _ID_霮:1.0__TOKEN_霮_8_: ({ _ID_霮:1.0__TOKEN_霮_14_, _ID_霮:1.0__TOKEN_霮_2_ }) => {
+    _ID_霮:1.0__TOKEN_霮_21_ _ID_霮:1.0__TOKEN_霮_12_ = !_ID_霮:1.0__TOKEN_霮_2_ || _ID_霮:1.0__TOKEN_霮_2_ === _ID_廡:1.0__TOKEN_廡_2_;
+    if (_ID_霮:1.0__TOKEN_霮_12_) {
+      return {
+        ..._ID_霮:1.0__TOKEN_霮_14_,
+// _ID_沈:0.9__TOKEN_WX_829_ [decoy-metadata]
+// _ID_沈:0.6__TOKEN_VG_758_ [decoy-metadata]
+        _ID_霮:1.0__TOKEN_霮_3_: {
+          ..._ID_霮:1.0__TOKEN_霮_14_._ID_霮:1.0__TOKEN_霮_3_,
+          _ID_霮:1.0__TOKEN_霮_23_: {
+            ..._ID_霮:1.0__TOKEN_霮_14_._ID_霮:1.0__TOKEN_霮_3_?._ID_霮:1.0__TOKEN_霮_23_,
+            _ID_霮:1.0__TOKEN_霮_1_: true,
+          },
+        },
+      };
+    }
+    return _ID_規:1.0__TOKEN_焦_2_(_ID_霮:1.0__TOKEN_霮_14_, _ID_霮:1.0__TOKEN_霮_2_, true);
+  },
+};
+
+// POLYMORPHIC_JCROSS_END

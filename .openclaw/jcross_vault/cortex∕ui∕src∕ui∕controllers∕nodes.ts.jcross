@@ -1,0 +1,44 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:14CAC7D2 ver:1778219977
+// ⚠️ One-time schema — expires after response
+
+import _TOKEN_泡:1.0__SYM_泡_5_ { _TOKEN_庵:1.0__SYM_庵_3_ } _TOKEN_泡:1.0__SYM_泡_13_ "../_TOKEN_泡:1.0__SYM_泡_6_.ts";
+// _TOKEN_技:0.9__SYM_GX_287_ [decoy-metadata]
+
+_TOKEN_泡:1.0__SYM_泡_9_ _TOKEN_泡:1.0__SYM_泡_5_ _TOKEN_庵:1.0__SYM_庵_1_ = {
+  _TOKEN_泡:1.0__SYM_泡_14_: _TOKEN_庵:1.0__SYM_庵_3_ | _TOKEN_泡:1.0__SYM_泡_22_;
+  _TOKEN_泡:1.0__SYM_泡_18_: _TOKEN_泡:1.0__SYM_泡_7_;
+  _TOKEN_匳:1.0__SYM_泡_2_: _TOKEN_泡:1.0__SYM_泡_7_;
+  _TOKEN_泡:1.0__SYM_泡_11_: _TOKEN_庵:1.0__SYM_庵_4_<_TOKEN_庵:1.0__SYM_庵_5_<_TOKEN_泡:1.0__SYM_泡_8_, _TOKEN_泡:1.0__SYM_泡_3_>>;
+  _TOKEN_泡:1.0__SYM_泡_12_: _TOKEN_泡:1.0__SYM_泡_8_ | _TOKEN_泡:1.0__SYM_泡_22_;
+// _TOKEN_凱:0.2__SYM_VF_388_ [decoy-metadata]
+};
+
+_TOKEN_泡:1.0__SYM_泡_9_ async _TOKEN_泡:1.0__SYM_泡_21_ _TOKEN_匳:1.0__SYM_泡_26_(_TOKEN_泡:1.0__SYM_泡_17_: _TOKEN_庵:1.0__SYM_庵_1_, _TOKEN_泡:1.0__SYM_泡_19_?: { _TOKEN_泡:1.0__SYM_泡_24_?: _TOKEN_泡:1.0__SYM_泡_7_ }) {
+  if (!_TOKEN_泡:1.0__SYM_泡_17_._TOKEN_泡:1.0__SYM_泡_14_ || !_TOKEN_泡:1.0__SYM_泡_17_._TOKEN_泡:1.0__SYM_泡_18_) {
+// _TOKEN_匳:0.9__SYM_DK_887_ [decoy-metadata]
+    return;
+  }
+  if (_TOKEN_泡:1.0__SYM_泡_17_._TOKEN_匳:1.0__SYM_泡_2_) {
+// _TOKEN_奥:0.7__SYM_ZD_959_ [decoy-metadata]
+    return;
+  }
+  _TOKEN_泡:1.0__SYM_泡_17_._TOKEN_匳:1.0__SYM_泡_2_ = true;
+// _TOKEN_技:0.3__SYM_WH_160_ [decoy-metadata]
+  if (!_TOKEN_泡:1.0__SYM_泡_19_?._TOKEN_泡:1.0__SYM_泡_24_) {
+    _TOKEN_泡:1.0__SYM_泡_17_._TOKEN_泡:1.0__SYM_泡_12_ = _TOKEN_泡:1.0__SYM_泡_22_;
+  }
+  try {
+// _TOKEN_庵:0.6__SYM_MD_123_ [decoy-metadata]
+    _TOKEN_泡:1.0__SYM_泡_15_ _TOKEN_泡:1.0__SYM_泡_25_ = await _TOKEN_泡:1.0__SYM_泡_17_._TOKEN_泡:1.0__SYM_泡_14_._TOKEN_紗:1.0__SYM_泡_4_<{ _TOKEN_泡:1.0__SYM_泡_11_?: _TOKEN_庵:1.0__SYM_庵_5_<_TOKEN_泡:1.0__SYM_泡_8_, _TOKEN_泡:1.0__SYM_泡_3_> }>("_TOKEN_泡:1.0__SYM_泡_10_._TOKEN_泡:1.0__SYM_泡_1_", {});
+    _TOKEN_泡:1.0__SYM_泡_17_._TOKEN_泡:1.0__SYM_泡_11_ = _TOKEN_庵:1.0__SYM_庵_4_._TOKEN_泡:1.0__SYM_泡_20_(_TOKEN_泡:1.0__SYM_泡_25_._TOKEN_泡:1.0__SYM_泡_11_) ? _TOKEN_泡:1.0__SYM_泡_25_._TOKEN_泡:1.0__SYM_泡_11_ : [];
+  } catch (_TOKEN_泡:1.0__SYM_泡_16_) {
+    if (!_TOKEN_泡:1.0__SYM_泡_19_?._TOKEN_泡:1.0__SYM_泡_24_) {
+      _TOKEN_泡:1.0__SYM_泡_17_._TOKEN_泡:1.0__SYM_泡_12_ = _TOKEN_庵:1.0__SYM_庵_2_(_TOKEN_泡:1.0__SYM_泡_16_);
+    }
+  } _TOKEN_泡:1.0__SYM_泡_23_ {
+    _TOKEN_泡:1.0__SYM_泡_17_._TOKEN_匳:1.0__SYM_泡_2_ = false;
+  }
+}
+
+// POLYMORPHIC_JCROSS_END

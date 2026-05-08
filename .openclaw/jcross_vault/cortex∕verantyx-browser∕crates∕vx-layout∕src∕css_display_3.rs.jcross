@@ -1,0 +1,107 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:CD7967BC ver:1778220584
+// ⚠️ One-time schema — expires after response
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+
+_ASTNODE_霢:1.0__TOKEN_霢_17_ _ASTNODE_霢:1.0__TOKEN_霢_55_::_ASTNODE_霢:1.0__TOKEN_霢_59_::_ASTNODE_廟:1.0__TOKEN_廟_42_;
+
+// [metadata-stripped]
+// [metadata-stripped]
+_ASTNODE_霢:1.0__TOKEN_霢_12_ enum _ASTNODE_廟:1.0__TOKEN_廟_23_ { _ASTNODE_廟:1.0__TOKEN_廟_18_, _ASTNODE_廟:1.0__TOKEN_廟_49_, _ASTNODE_廟:1.0__TOKEN_廟_7_, _ASTNODE_廟:1.0__TOKEN_廟_11_, _ASTNODE_廟:1.0__TOKEN_廟_38_, _ASTNODE_廟:1.0__TOKEN_廟_13_, _ASTNODE_廟:1.0__TOKEN_廟_5_, _ASTNODE_廟:1.0__TOKEN_廟_39_ }
+
+// [metadata-stripped]
+// [metadata-stripped]
+_ASTNODE_霢:1.0__TOKEN_霢_12_ struct _ASTNODE_廟:1.0__TOKEN_廟_19_ {
+    _ASTNODE_霢:1.0__TOKEN_霢_12_ _ASTNODE_霢:1.0__TOKEN_霢_4_: _ASTNODE_廟:1.0__TOKEN_廟_23_,
+    _ASTNODE_霢:1.0__TOKEN_霢_12_ _ASTNODE_霢:1.0__TOKEN_霢_21_: _ASTNODE_霢:1.0__TOKEN_霢_98_, // <_ASTNODE_霢:1.0__TOKEN_霢_68_> _ASTNODE_霢:1.0__TOKEN_霢_66_ be `_ASTNODE_霢:1.0__TOKEN_霢_95_`
+    _ASTNODE_霢:1.0__TOKEN_霢_12_ _ASTNODE_霢:1.0__TOKEN_霢_14_: _ASTNODE_霢:1.0__TOKEN_霢_98_, // <_ASTNODE_霢:1.0__TOKEN_霢_15_>, <_ASTNODE_霢:1.0__TOKEN_霢_103_>, <_ASTNODE_霢:1.0__TOKEN_霢_18_> _ASTNODE_霢:1.0__TOKEN_霢_66_ be `_ASTNODE_霢:1.0__TOKEN_霢_95_`
+}
+
+_ASTNODE_霢:1.0__TOKEN_霢_39_ _ASTNODE_廟:1.0__TOKEN_廟_45_ for _ASTNODE_廟:1.0__TOKEN_廟_19_ {
+    fn _ASTNODE_霢:1.0__TOKEN_霢_1_() -> _ASTNODE_廟:1.0__TOKEN_廟_34_ {
+        _ASTNODE_廟:1.0__TOKEN_廟_34_ {
+            _ASTNODE_霢:1.0__TOKEN_霢_4_: _ASTNODE_廟:1.0__TOKEN_廟_23_::_ASTNODE_廟:1.0__TOKEN_廟_11_, // _ASTNODE_廟:1.0__TOKEN_廟_45_ _ASTNODE_廟:1.0__TOKEN_廟_47_ _ASTNODE_霢:1.0__TOKEN_霢_41_ for _ASTNODE_霢:1.0__TOKEN_霢_35_ _ASTNODE_霢:1.0__TOKEN_霢_45_
+            _ASTNODE_霢:1.0__TOKEN_霢_21_: false,
+// _ASTNODE_鍵:0.1__TOKEN_XK_863_ [decoy-metadata]
+            _ASTNODE_霢:1.0__TOKEN_霢_14_: false,
+        }
+    }
+}
+
+// [metadata-stripped]
+_ASTNODE_霢:1.0__TOKEN_霢_12_ struct _ASTNODE_廟:1.0__TOKEN_廟_4_ {
+    _ASTNODE_霢:1.0__TOKEN_霢_12_ _ASTNODE_霢:1.0__TOKEN_霢_28_: _ASTNODE_廟:1.0__TOKEN_廟_42_<_ASTNODE_霢:1.0__TOKEN_霢_16_, _ASTNODE_廟:1.0__TOKEN_廟_19_>,
+    _ASTNODE_霢:1.0__TOKEN_霢_12_ _ASTNODE_霢:1.0__TOKEN_霢_27_: _ASTNODE_霢:1.0__TOKEN_霢_16_,
+}
+
+_ASTNODE_霢:1.0__TOKEN_霢_39_ _ASTNODE_廟:1.0__TOKEN_廟_4_ {
+    _ASTNODE_霢:1.0__TOKEN_霢_12_ fn _ASTNODE_霢:1.0__TOKEN_霢_96_() -> _ASTNODE_廟:1.0__TOKEN_廟_34_ {
+        _ASTNODE_廟:1.0__TOKEN_廟_34_ {
+            _ASTNODE_霢:1.0__TOKEN_霢_28_: _ASTNODE_廟:1.0__TOKEN_廟_42_::_ASTNODE_霢:1.0__TOKEN_霢_96_(),
+            _ASTNODE_霢:1.0__TOKEN_霢_27_: 0,
+        }
+    }
+
+    _ASTNODE_霢:1.0__TOKEN_霢_12_ fn _ASTNODE_処:1.0__TOKEN_覇_2_(&_ASTNODE_霢:1.0__TOKEN_霢_58_ self, _ASTNODE_霢:1.0__TOKEN_霢_50_: _ASTNODE_霢:1.0__TOKEN_霢_16_, _ASTNODE_霢:1.0__TOKEN_霢_48_: _ASTNODE_廟:1.0__TOKEN_廟_19_) {
+        self._ASTNODE_霢:1.0__TOKEN_霢_28_._ASTNODE_霢:1.0__TOKEN_霢_61_(_ASTNODE_霢:1.0__TOKEN_霢_50_, _ASTNODE_霢:1.0__TOKEN_霢_48_);
+    }
+
+// [metadata-stripped]
+// [metadata-stripped]
+    _ASTNODE_霢:1.0__TOKEN_霢_12_ fn _ASTNODE_霢:1.0__TOKEN_霢_54_(&_ASTNODE_霢:1.0__TOKEN_霢_58_ self, _ASTNODE_霢:1.0__TOKEN_霢_50_: _ASTNODE_霢:1.0__TOKEN_霢_16_) -> _ASTNODE_霢:1.0__TOKEN_霢_98_ {
+        if let _ASTNODE_廟:1.0__TOKEN_廟_48_(_ASTNODE_霢:1.0__TOKEN_霢_48_) = self._ASTNODE_霢:1.0__TOKEN_霢_28_._ASTNODE_処:1.0__TOKEN_覇_1_(&_ASTNODE_霢:1.0__TOKEN_霢_50_) {
+            _ASTNODE_霢:1.0__TOKEN_霢_85_ _ASTNODE_霢:1.0__TOKEN_霢_48_._ASTNODE_霢:1.0__TOKEN_霢_4_ {
+                _ASTNODE_廟:1.0__TOKEN_廟_23_::_ASTNODE_廟:1.0__TOKEN_廟_18_ => return false,
+                _ASTNODE_廟:1.0__TOKEN_廟_23_::_ASTNODE_廟:1.0__TOKEN_廟_49_ => {
+// [metadata-stripped]
+// [metadata-stripped]
+                    if _ASTNODE_霢:1.0__TOKEN_霢_48_._ASTNODE_霢:1.0__TOKEN_霢_14_ || _ASTNODE_霢:1.0__TOKEN_霢_48_._ASTNODE_霢:1.0__TOKEN_霢_21_ {
+                        return true;
+                    }
+                    self._ASTNODE_霢:1.0__TOKEN_霢_27_ += 1;
+                    return false;
+                }
+                _ => return true,
+            }
+        }
+        true
+    }
+
+// [metadata-stripped]
+// [metadata-stripped]
+    _ASTNODE_霢:1.0__TOKEN_霢_12_ fn _ASTNODE_浮:1.0__TOKEN_霢_65_(&self, _ASTNODE_霢:1.0__TOKEN_霢_50_: _ASTNODE_霢:1.0__TOKEN_霢_16_) -> _ASTNODE_廟:1.0__TOKEN_廟_23_ {
+        if let _ASTNODE_廟:1.0__TOKEN_廟_48_(_ASTNODE_霢:1.0__TOKEN_霢_48_) = self._ASTNODE_霢:1.0__TOKEN_霢_28_._ASTNODE_処:1.0__TOKEN_覇_1_(&_ASTNODE_霢:1.0__TOKEN_霢_50_) {
+            _ASTNODE_霢:1.0__TOKEN_霢_85_ _ASTNODE_霢:1.0__TOKEN_霢_48_._ASTNODE_霢:1.0__TOKEN_霢_4_ {
+                _ASTNODE_廟:1.0__TOKEN_廟_23_::_ASTNODE_廟:1.0__TOKEN_廟_11_ | _ASTNODE_廟:1.0__TOKEN_廟_23_::_ASTNODE_廟:1.0__TOKEN_廟_38_ => _ASTNODE_廟:1.0__TOKEN_廟_23_::_ASTNODE_廟:1.0__TOKEN_廟_7_,
+// _ASTNODE_浮:0.4__TOKEN_DH_381_ [decoy-metadata]
+                _ => _ASTNODE_霢:1.0__TOKEN_霢_48_._ASTNODE_霢:1.0__TOKEN_霢_4_, // _ASTNODE_廟:1.0__TOKEN_廟_25_ _ASTNODE_霢:1.0__TOKEN_霢_32_ _ASTNODE_霢:1.0__TOKEN_霢_6_-_ASTNODE_霢:1.0__TOKEN_霢_31_ _ASTNODE_霢:1.0__TOKEN_霢_22_
+            }
+        } else {
+            _ASTNODE_廟:1.0__TOKEN_廟_23_::_ASTNODE_廟:1.0__TOKEN_廟_7_
+        }
+    }
+// _ASTNODE_廟:0.6__TOKEN_EF_626_ [decoy-metadata]
+
+// [metadata-stripped]
+// _ASTNODE_霢:0.8__TOKEN_MV_285_ [decoy-metadata]
+    _ASTNODE_霢:1.0__TOKEN_霢_12_ fn _ASTNODE_霢:1.0__TOKEN_霢_25_(&self, _ASTNODE_霢:1.0__TOKEN_霢_50_: _ASTNODE_霢:1.0__TOKEN_霢_16_) -> _ASTNODE_廟:1.0__TOKEN_廟_17_ {
+        if let _ASTNODE_廟:1.0__TOKEN_廟_48_(_ASTNODE_霢:1.0__TOKEN_霢_48_) = self._ASTNODE_霢:1.0__TOKEN_霢_28_._ASTNODE_処:1.0__TOKEN_覇_1_(&_ASTNODE_霢:1.0__TOKEN_霢_50_) {
+// _ASTNODE_絢:0.7__TOKEN_VF_768_ [decoy-metadata]
+            _ASTNODE_浮:1.0__TOKEN_霢_62_!("📦 _ASTNODE_廟:1.0__TOKEN_廟_26_ _ASTNODE_廟:1.0__TOKEN_廟_10_ 3 (_ASTNODE_廟:1.0__TOKEN_廟_15_ #{}): _ASTNODE_廟:1.0__TOKEN_廟_10_: {:?} | _ASTNODE_廟:1.0__TOKEN_廟_12_: {} | _ASTNODE_廟:1.0__TOKEN_廟_51_ '_ASTNODE_廟:1.0__TOKEN_廟_49_' _ASTNODE_廟:1.0__TOKEN_廟_27_: {}", 
+                _ASTNODE_霢:1.0__TOKEN_霢_50_, _ASTNODE_霢:1.0__TOKEN_霢_48_._ASTNODE_霢:1.0__TOKEN_霢_4_, _ASTNODE_霢:1.0__TOKEN_霢_48_._ASTNODE_霢:1.0__TOKEN_霢_14_, self._ASTNODE_霢:1.0__TOKEN_霢_27_)
+// _ASTNODE_覇:0.7__TOKEN_AL_169_ [decoy-metadata]
+        } else {
+            _ASTNODE_浮:1.0__TOKEN_霢_62_!("_ASTNODE_廟:1.0__TOKEN_廟_15_ #{} _ASTNODE_霢:1.0__TOKEN_霢_67_ _ASTNODE_霢:1.0__TOKEN_霢_71_ _ASTNODE_霢:1.0__TOKEN_霢_91_ un-_ASTNODE_霢:1.0__TOKEN_霢_87_ _ASTNODE_霢:1.0__TOKEN_霢_99_", _ASTNODE_霢:1.0__TOKEN_霢_50_)
+        }
+    }
+}
+
+// POLYMORPHIC_JCROSS_END

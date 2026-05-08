@@ -1,0 +1,153 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:07A87054 ver:1778221377
+// ⚠️ One-time schema — expires after response
+
+import _OPAQUE_沫:1.0__JCROSS_沫_39_ { _OPAQUE_廷:1.0__JCROSS_廷_6_ } _OPAQUE_沫:1.0__JCROSS_沫_48_ "@_OPAQUE_式:1.0__JCROSS_沫_33_/pi-_OPAQUE_沫:1.0__JCROSS_沫_57_-_OPAQUE_沫:1.0__JCROSS_沫_64_";
+import { _OPAQUE_沫:1.0__JCROSS_沫_9_ } _OPAQUE_沫:1.0__JCROSS_沫_48_ "@_OPAQUE_式:1.0__JCROSS_沫_33_/pi-ai";
+
+_OPAQUE_沫:1.0__JCROSS_沫_66_ _OPAQUE_沫:1.0__JCROSS_沫_40_(_OPAQUE_沫:1.0__JCROSS_沫_8_: _OPAQUE_沫:1.0__JCROSS_沫_30_): _OPAQUE_沫:1.0__JCROSS_沫_30_ {
+  if (!_OPAQUE_沫:1.0__JCROSS_沫_8_ || _OPAQUE_沫:1.0__JCROSS_沫_37_ _OPAQUE_沫:1.0__JCROSS_沫_8_ !== "_OPAQUE_沫:1.0__JCROSS_沫_47_") {
+    return _OPAQUE_沫:1.0__JCROSS_沫_8_;
+  }
+  _OPAQUE_沫:1.0__JCROSS_沫_25_ _OPAQUE_沫:1.0__JCROSS_沫_35_ = _OPAQUE_沫:1.0__JCROSS_沫_8_ as _OPAQUE_廷:1.0__JCROSS_廷_1_<_OPAQUE_沫:1.0__JCROSS_沫_15_, _OPAQUE_沫:1.0__JCROSS_沫_30_>;
+  _OPAQUE_沫:1.0__JCROSS_沫_25_ fn = _OPAQUE_沫:1.0__JCROSS_沫_35_._OPAQUE_沫:1.0__JCROSS_沫_66_;
+  if (!fn || _OPAQUE_沫:1.0__JCROSS_沫_37_ fn !== "_OPAQUE_沫:1.0__JCROSS_沫_47_") {
+    return _OPAQUE_沫:1.0__JCROSS_沫_8_;
+  }
+  _OPAQUE_沫:1.0__JCROSS_沫_25_ _OPAQUE_沫:1.0__JCROSS_沫_24_ = fn as _OPAQUE_廷:1.0__JCROSS_廷_1_<_OPAQUE_沫:1.0__JCROSS_沫_15_, _OPAQUE_沫:1.0__JCROSS_沫_30_>;
+  if (_OPAQUE_沫:1.0__JCROSS_沫_37_ _OPAQUE_沫:1.0__JCROSS_沫_24_._OPAQUE_沫:1.0__JCROSS_沫_27_ !== "_OPAQUE_沫:1.0__JCROSS_沫_43_") {
+    return _OPAQUE_沫:1.0__JCROSS_沫_8_;
+  }
+  _OPAQUE_沫:1.0__JCROSS_沫_25_ _OPAQUE_沫:1.0__JCROSS_沫_59_ = { ..._OPAQUE_沫:1.0__JCROSS_沫_24_ };
+  _OPAQUE_沫:1.0__JCROSS_沫_68_ _OPAQUE_沫:1.0__JCROSS_沫_59_._OPAQUE_沫:1.0__JCROSS_沫_27_;
+  return { ..._OPAQUE_沫:1.0__JCROSS_沫_35_, _OPAQUE_沫:1.0__JCROSS_沫_66_: _OPAQUE_沫:1.0__JCROSS_沫_59_ };
+}
+// _OPAQUE_蔽:0.4__JCROSS_VY_791_ [decoy-metadata]
+
+_OPAQUE_沫:1.0__JCROSS_沫_20_ _OPAQUE_沫:1.0__JCROSS_沫_66_ _OPAQUE_匸:1.0__JCROSS_沫_49_(
+  _OPAQUE_沫:1.0__JCROSS_沫_28_: _OPAQUE_廷:1.0__JCROSS_廷_6_ | _OPAQUE_沫:1.0__JCROSS_沫_12_,
+): _OPAQUE_廷:1.0__JCROSS_廷_6_ {
+  _OPAQUE_沫:1.0__JCROSS_沫_25_ _OPAQUE_沫:1.0__JCROSS_沫_46_ = _OPAQUE_沫:1.0__JCROSS_沫_28_ ?? _OPAQUE_沫:1.0__JCROSS_沫_9_;
+  return (_OPAQUE_沫:1.0__JCROSS_沫_58_, _OPAQUE_沫:1.0__JCROSS_沫_23_, _OPAQUE_沫:1.0__JCROSS_沫_51_) => {
+    _OPAQUE_沫:1.0__JCROSS_沫_25_ _OPAQUE_匸:1.0__JCROSS_沫_2_ = _OPAQUE_沫:1.0__JCROSS_沫_51_?._OPAQUE_匸:1.0__JCROSS_沫_42_;
+    return _OPAQUE_沫:1.0__JCROSS_沫_46_(_OPAQUE_沫:1.0__JCROSS_沫_58_, _OPAQUE_沫:1.0__JCROSS_沫_23_, {
+      ..._OPAQUE_沫:1.0__JCROSS_沫_51_,
+      _OPAQUE_匸:1.0__JCROSS_沫_42_: (_OPAQUE_匸:1.0__JCROSS_沫_14_) => {
+        if (_OPAQUE_匸:1.0__JCROSS_沫_14_ && _OPAQUE_沫:1.0__JCROSS_沫_37_ _OPAQUE_匸:1.0__JCROSS_沫_14_ === "_OPAQUE_沫:1.0__JCROSS_沫_47_") {
+          _OPAQUE_沫:1.0__JCROSS_沫_25_ _OPAQUE_匸:1.0__JCROSS_沫_56_ = _OPAQUE_匸:1.0__JCROSS_沫_14_ as _OPAQUE_廷:1.0__JCROSS_廷_1_<_OPAQUE_沫:1.0__JCROSS_沫_15_, _OPAQUE_沫:1.0__JCROSS_沫_30_>;
+          if (_OPAQUE_廷:1.0__JCROSS_廷_2_._OPAQUE_沫:1.0__JCROSS_沫_11_(_OPAQUE_匸:1.0__JCROSS_沫_56_._OPAQUE_沫:1.0__JCROSS_沫_54_)) {
+            _OPAQUE_匸:1.0__JCROSS_沫_56_._OPAQUE_沫:1.0__JCROSS_沫_54_ = _OPAQUE_匸:1.0__JCROSS_沫_56_._OPAQUE_沫:1.0__JCROSS_沫_54_._OPAQUE_沫:1.0__JCROSS_沫_17_((_OPAQUE_沫:1.0__JCROSS_沫_8_) => _OPAQUE_沫:1.0__JCROSS_沫_40_(_OPAQUE_沫:1.0__JCROSS_沫_8_));
+          }
+        }
+        return _OPAQUE_匸:1.0__JCROSS_沫_2_?.(_OPAQUE_匸:1.0__JCROSS_沫_14_, _OPAQUE_沫:1.0__JCROSS_沫_58_);
+      },
+    });
+  };
+}
+
+_OPAQUE_沫:1.0__JCROSS_沫_66_ _OPAQUE_沫:1.0__JCROSS_沫_13_(_OPAQUE_沫:1.0__JCROSS_沫_38_: _OPAQUE_沫:1.0__JCROSS_沫_15_): _OPAQUE_沫:1.0__JCROSS_沫_15_ {
+  return _OPAQUE_沫:1.0__JCROSS_沫_38_
+    ._OPAQUE_沫:1.0__JCROSS_沫_3_("&_OPAQUE_沫:1.0__JCROSS_沫_53_;", '"')
+    ._OPAQUE_沫:1.0__JCROSS_沫_3_("&#34;", '"')
+    ._OPAQUE_沫:1.0__JCROSS_沫_3_("&_OPAQUE_沫:1.0__JCROSS_沫_65_;", "'")
+    ._OPAQUE_沫:1.0__JCROSS_沫_3_("&#39;", "'")
+    ._OPAQUE_沫:1.0__JCROSS_沫_3_("&lt;", "<")
+    ._OPAQUE_沫:1.0__JCROSS_沫_3_("&#60;", "<")
+// _OPAQUE_式:0.5__JCROSS_VK_643_ [decoy-metadata]
+    ._OPAQUE_沫:1.0__JCROSS_沫_3_("&gt;", ">")
+    ._OPAQUE_沫:1.0__JCROSS_沫_3_("&#62;", ">")
+    ._OPAQUE_沫:1.0__JCROSS_沫_3_("&_OPAQUE_沫:1.0__JCROSS_沫_36_;", "&")
+    ._OPAQUE_沫:1.0__JCROSS_沫_3_("&#38;", "&");
+}
+
+_OPAQUE_沫:1.0__JCROSS_沫_66_ _OPAQUE_沫:1.0__JCROSS_沫_62_(_OPAQUE_沫:1.0__JCROSS_沫_38_: _OPAQUE_沫:1.0__JCROSS_沫_30_): _OPAQUE_沫:1.0__JCROSS_沫_30_ {
+  if (_OPAQUE_沫:1.0__JCROSS_沫_37_ _OPAQUE_沫:1.0__JCROSS_沫_38_ === "_OPAQUE_沫:1.0__JCROSS_沫_15_") {
+    return _OPAQUE_沫:1.0__JCROSS_沫_13_(_OPAQUE_沫:1.0__JCROSS_沫_38_);
+  }
+  if (!_OPAQUE_沫:1.0__JCROSS_沫_38_ || _OPAQUE_沫:1.0__JCROSS_沫_37_ _OPAQUE_沫:1.0__JCROSS_沫_38_ !== "_OPAQUE_沫:1.0__JCROSS_沫_47_") {
+    return _OPAQUE_沫:1.0__JCROSS_沫_38_;
+  }
+// _OPAQUE_漂:0.3__JCROSS_BX_450_ [decoy-metadata]
+  if (_OPAQUE_廷:1.0__JCROSS_廷_2_._OPAQUE_沫:1.0__JCROSS_沫_11_(_OPAQUE_沫:1.0__JCROSS_沫_38_)) {
+    return _OPAQUE_沫:1.0__JCROSS_沫_38_._OPAQUE_沫:1.0__JCROSS_沫_17_((_OPAQUE_沫:1.0__JCROSS_沫_71_) => _OPAQUE_沫:1.0__JCROSS_沫_62_(_OPAQUE_沫:1.0__JCROSS_沫_71_));
+  }
+  _OPAQUE_沫:1.0__JCROSS_沫_25_ _OPAQUE_沫:1.0__JCROSS_沫_63_ = _OPAQUE_沫:1.0__JCROSS_沫_38_ as _OPAQUE_廷:1.0__JCROSS_廷_1_<_OPAQUE_沫:1.0__JCROSS_沫_15_, _OPAQUE_沫:1.0__JCROSS_沫_30_>;
+  for (_OPAQUE_沫:1.0__JCROSS_沫_25_ [_OPAQUE_蔽:1.0__JCROSS_沫_6_, _OPAQUE_沫:1.0__JCROSS_沫_71_] of _OPAQUE_廷:1.0__JCROSS_廷_3_._OPAQUE_沫:1.0__JCROSS_沫_67_(_OPAQUE_沫:1.0__JCROSS_沫_63_)) {
+    _OPAQUE_沫:1.0__JCROSS_沫_63_[_OPAQUE_蔽:1.0__JCROSS_沫_6_] = _OPAQUE_沫:1.0__JCROSS_沫_62_(_OPAQUE_沫:1.0__JCROSS_沫_71_);
+  }
+  return _OPAQUE_沫:1.0__JCROSS_沫_63_;
+}
+
+_OPAQUE_沫:1.0__JCROSS_沫_66_ _OPAQUE_沫:1.0__JCROSS_沫_22_(_OPAQUE_沫:1.0__JCROSS_沫_29_: _OPAQUE_沫:1.0__JCROSS_沫_30_): _OPAQUE_沫:1.0__JCROSS_沫_10_ {
+  if (!_OPAQUE_沫:1.0__JCROSS_沫_29_ || _OPAQUE_沫:1.0__JCROSS_沫_37_ _OPAQUE_沫:1.0__JCROSS_沫_29_ !== "_OPAQUE_沫:1.0__JCROSS_沫_47_") {
+    return;
+  }
+  _OPAQUE_沫:1.0__JCROSS_沫_25_ _OPAQUE_沫:1.0__JCROSS_沫_16_ = (_OPAQUE_沫:1.0__JCROSS_沫_29_ as { _OPAQUE_沫:1.0__JCROSS_沫_16_?: _OPAQUE_沫:1.0__JCROSS_沫_30_ })._OPAQUE_沫:1.0__JCROSS_沫_16_;
+  if (!_OPAQUE_廷:1.0__JCROSS_廷_2_._OPAQUE_沫:1.0__JCROSS_沫_11_(_OPAQUE_沫:1.0__JCROSS_沫_16_)) {
+// _OPAQUE_廷:0.8__JCROSS_HE_768_ [decoy-metadata]
+    return;
+  }
+  for (_OPAQUE_沫:1.0__JCROSS_沫_25_ _OPAQUE_沫:1.0__JCROSS_沫_4_ of _OPAQUE_沫:1.0__JCROSS_沫_16_) {
+    if (!_OPAQUE_沫:1.0__JCROSS_沫_4_ || _OPAQUE_沫:1.0__JCROSS_沫_37_ _OPAQUE_沫:1.0__JCROSS_沫_4_ !== "_OPAQUE_沫:1.0__JCROSS_沫_47_") {
+      continue;
+    }
+    _OPAQUE_沫:1.0__JCROSS_沫_25_ _OPAQUE_沫:1.0__JCROSS_沫_72_ = _OPAQUE_沫:1.0__JCROSS_沫_4_ as { _OPAQUE_沫:1.0__JCROSS_沫_39_?: _OPAQUE_沫:1.0__JCROSS_沫_30_; _OPAQUE_沫:1.0__JCROSS_沫_1_?: _OPAQUE_沫:1.0__JCROSS_沫_30_ };
+    if (_OPAQUE_沫:1.0__JCROSS_沫_72_._OPAQUE_沫:1.0__JCROSS_沫_39_ !== "_OPAQUE_沫:1.0__JCROSS_沫_52_" || !_OPAQUE_沫:1.0__JCROSS_沫_72_._OPAQUE_沫:1.0__JCROSS_沫_1_) {
+      continue;
+    }
+    if (_OPAQUE_沫:1.0__JCROSS_沫_37_ _OPAQUE_沫:1.0__JCROSS_沫_72_._OPAQUE_沫:1.0__JCROSS_沫_1_ === "_OPAQUE_沫:1.0__JCROSS_沫_47_") {
+      _OPAQUE_沫:1.0__JCROSS_沫_72_._OPAQUE_沫:1.0__JCROSS_沫_1_ = _OPAQUE_沫:1.0__JCROSS_沫_62_(_OPAQUE_沫:1.0__JCROSS_沫_72_._OPAQUE_沫:1.0__JCROSS_沫_1_);
+    }
+  }
+}
+
+_OPAQUE_沫:1.0__JCROSS_沫_66_ _OPAQUE_沫:1.0__JCROSS_沫_69_(
+  _OPAQUE_沫:1.0__JCROSS_沫_50_: _OPAQUE_廷:1.0__JCROSS_廷_5_<_OPAQUE_沫:1.0__JCROSS_沫_37_ _OPAQUE_沫:1.0__JCROSS_沫_9_>,
+): _OPAQUE_廷:1.0__JCROSS_廷_5_<_OPAQUE_沫:1.0__JCROSS_沫_37_ _OPAQUE_沫:1.0__JCROSS_沫_9_> {
+  _OPAQUE_沫:1.0__JCROSS_沫_25_ _OPAQUE_沫:1.0__JCROSS_沫_19_ = _OPAQUE_沫:1.0__JCROSS_沫_50_._OPAQUE_沫:1.0__JCROSS_沫_21_._OPAQUE_沫:1.0__JCROSS_沫_55_(_OPAQUE_沫:1.0__JCROSS_沫_50_);
+  _OPAQUE_沫:1.0__JCROSS_沫_50_._OPAQUE_沫:1.0__JCROSS_沫_21_ = async () => {
+// _OPAQUE_弧:0.7__JCROSS_ZA_738_ [decoy-metadata]
+    _OPAQUE_沫:1.0__JCROSS_沫_25_ _OPAQUE_沫:1.0__JCROSS_沫_29_ = await _OPAQUE_沫:1.0__JCROSS_沫_19_();
+    _OPAQUE_沫:1.0__JCROSS_沫_22_(_OPAQUE_沫:1.0__JCROSS_沫_29_);
+    return _OPAQUE_沫:1.0__JCROSS_沫_29_;
+  };
+
+  _OPAQUE_沫:1.0__JCROSS_沫_25_ _OPAQUE_沫:1.0__JCROSS_沫_41_ = _OPAQUE_沫:1.0__JCROSS_沫_50_[_OPAQUE_廷:1.0__JCROSS_廷_4_._OPAQUE_沫:1.0__JCROSS_沫_45_]._OPAQUE_沫:1.0__JCROSS_沫_55_(_OPAQUE_沫:1.0__JCROSS_沫_50_);
+  (_OPAQUE_沫:1.0__JCROSS_沫_50_ as { [_OPAQUE_廷:1.0__JCROSS_廷_4_._OPAQUE_沫:1.0__JCROSS_沫_45_]: _OPAQUE_沫:1.0__JCROSS_沫_37_ _OPAQUE_沫:1.0__JCROSS_沫_41_ })[_OPAQUE_廷:1.0__JCROSS_廷_4_._OPAQUE_沫:1.0__JCROSS_沫_45_] =
+    _OPAQUE_沫:1.0__JCROSS_沫_66_ () {
+      _OPAQUE_沫:1.0__JCROSS_沫_25_ _OPAQUE_沫:1.0__JCROSS_沫_61_ = _OPAQUE_沫:1.0__JCROSS_沫_41_();
+      return {
+        async _OPAQUE_沫:1.0__JCROSS_沫_31_() {
+          _OPAQUE_沫:1.0__JCROSS_沫_25_ _OPAQUE_沫:1.0__JCROSS_沫_21_ = await _OPAQUE_沫:1.0__JCROSS_沫_61_._OPAQUE_沫:1.0__JCROSS_沫_31_();
+          if (!_OPAQUE_沫:1.0__JCROSS_沫_21_._OPAQUE_沫:1.0__JCROSS_沫_7_ && _OPAQUE_沫:1.0__JCROSS_沫_21_._OPAQUE_沫:1.0__JCROSS_沫_38_ && _OPAQUE_沫:1.0__JCROSS_沫_37_ _OPAQUE_沫:1.0__JCROSS_沫_21_._OPAQUE_沫:1.0__JCROSS_沫_38_ === "_OPAQUE_沫:1.0__JCROSS_沫_47_") {
+            _OPAQUE_沫:1.0__JCROSS_沫_25_ _OPAQUE_沫:1.0__JCROSS_沫_18_ = _OPAQUE_沫:1.0__JCROSS_沫_21_._OPAQUE_沫:1.0__JCROSS_沫_38_ as { _OPAQUE_沫:1.0__JCROSS_沫_34_?: _OPAQUE_沫:1.0__JCROSS_沫_30_; _OPAQUE_沫:1.0__JCROSS_沫_29_?: _OPAQUE_沫:1.0__JCROSS_沫_30_ };
+            _OPAQUE_沫:1.0__JCROSS_沫_22_(_OPAQUE_沫:1.0__JCROSS_沫_18_._OPAQUE_沫:1.0__JCROSS_沫_34_);
+            _OPAQUE_沫:1.0__JCROSS_沫_22_(_OPAQUE_沫:1.0__JCROSS_沫_18_._OPAQUE_沫:1.0__JCROSS_沫_29_);
+// _OPAQUE_絢:0.5__JCROSS_CC_247_ [decoy-metadata]
+          }
+          return _OPAQUE_沫:1.0__JCROSS_沫_21_;
+        },
+        async return(_OPAQUE_沫:1.0__JCROSS_沫_38_?: _OPAQUE_沫:1.0__JCROSS_沫_30_) {
+          return _OPAQUE_沫:1.0__JCROSS_沫_61_.return?.(_OPAQUE_沫:1.0__JCROSS_沫_38_) ?? { _OPAQUE_沫:1.0__JCROSS_沫_7_: true as _OPAQUE_沫:1.0__JCROSS_沫_25_, _OPAQUE_沫:1.0__JCROSS_沫_38_: _OPAQUE_沫:1.0__JCROSS_沫_12_ };
+        },
+        async _OPAQUE_沫:1.0__JCROSS_沫_70_(_OPAQUE_沫:1.0__JCROSS_沫_44_?: _OPAQUE_沫:1.0__JCROSS_沫_30_) {
+          return _OPAQUE_沫:1.0__JCROSS_沫_61_._OPAQUE_沫:1.0__JCROSS_沫_70_?.(_OPAQUE_沫:1.0__JCROSS_沫_44_) ?? { _OPAQUE_沫:1.0__JCROSS_沫_7_: true as _OPAQUE_沫:1.0__JCROSS_沫_25_, _OPAQUE_沫:1.0__JCROSS_沫_38_: _OPAQUE_沫:1.0__JCROSS_沫_12_ };
+        },
+      };
+    };
+  return _OPAQUE_沫:1.0__JCROSS_沫_50_;
+}
+
+_OPAQUE_沫:1.0__JCROSS_沫_20_ _OPAQUE_沫:1.0__JCROSS_沫_66_ _OPAQUE_式:1.0__JCROSS_沫_60_(_OPAQUE_沫:1.0__JCROSS_沫_28_: _OPAQUE_廷:1.0__JCROSS_廷_6_): _OPAQUE_廷:1.0__JCROSS_廷_6_ {
+  return (_OPAQUE_沫:1.0__JCROSS_沫_58_, _OPAQUE_沫:1.0__JCROSS_沫_23_, _OPAQUE_沫:1.0__JCROSS_沫_51_) => {
+    _OPAQUE_沫:1.0__JCROSS_沫_25_ _OPAQUE_沫:1.0__JCROSS_沫_32_ = _OPAQUE_沫:1.0__JCROSS_沫_28_(_OPAQUE_沫:1.0__JCROSS_沫_58_, _OPAQUE_沫:1.0__JCROSS_沫_23_, _OPAQUE_沫:1.0__JCROSS_沫_51_);
+    if (_OPAQUE_沫:1.0__JCROSS_沫_32_ && _OPAQUE_沫:1.0__JCROSS_沫_37_ _OPAQUE_沫:1.0__JCROSS_沫_32_ === "_OPAQUE_沫:1.0__JCROSS_沫_47_" && "_OPAQUE_沫:1.0__JCROSS_沫_26_" in _OPAQUE_沫:1.0__JCROSS_沫_32_) {
+      return _OPAQUE_廷:1.0__JCROSS_廷_7_._OPAQUE_沫:1.0__JCROSS_沫_5_(_OPAQUE_沫:1.0__JCROSS_沫_32_)._OPAQUE_沫:1.0__JCROSS_沫_26_((_OPAQUE_沫:1.0__JCROSS_沫_50_) =>
+        _OPAQUE_沫:1.0__JCROSS_沫_69_(_OPAQUE_沫:1.0__JCROSS_沫_50_),
+      );
+    }
+    return _OPAQUE_沫:1.0__JCROSS_沫_69_(_OPAQUE_沫:1.0__JCROSS_沫_32_);
+  };
+}
+
+// POLYMORPHIC_JCROSS_END

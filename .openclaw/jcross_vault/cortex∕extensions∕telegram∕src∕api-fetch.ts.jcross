@@ -1,0 +1,36 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:33DF737F ver:1778221454
+// ⚠️ One-time schema — expires after response
+
+_ID_霧:1.0__OPAQUE_霧_5_ async _ID_霧:1.0__OPAQUE_霧_3_ _ID_策:1.0__OPAQUE_粋_2_(_ID_霧:1.0__OPAQUE_霧_20_: {
+  _ID_玄:1.0__OPAQUE_霧_13_: _ID_霧:1.0__OPAQUE_霧_12_;
+  _ID_霧:1.0__OPAQUE_霧_18_: _ID_霧:1.0__OPAQUE_霧_12_;
+  _ID_霧:1.0__OPAQUE_霧_21_?: _ID_廴:1.0__OPAQUE_廴_1_;
+}): _ID_廴:1.0__OPAQUE_廴_3_<_ID_霧:1.0__OPAQUE_霧_12_ | _ID_霧:1.0__OPAQUE_霧_23_> {
+  _ID_霧:1.0__OPAQUE_霧_1_ _ID_緯:1.0__OPAQUE_霧_22_ = `_ID_緯:1.0__OPAQUE_霧_4_://_ID_緯:1.0__OPAQUE_霧_10_._ID_霧:1.0__OPAQUE_霧_25_._ID_霧:1.0__OPAQUE_霧_11_/_ID_霧:1.0__OPAQUE_霧_7_${_ID_霧:1.0__OPAQUE_霧_20_._ID_玄:1.0__OPAQUE_霧_13_}/_ID_策:1.0__OPAQUE_粋_3_?_ID_霧:1.0__OPAQUE_霧_17_=${_ID_霧:1.0__OPAQUE_霧_19_(_ID_霧:1.0__OPAQUE_霧_20_._ID_霧:1.0__OPAQUE_霧_18_)}`;
+// _ID_漂:0.3__OPAQUE_DE_701_ [decoy-metadata]
+  try {
+    _ID_霧:1.0__OPAQUE_霧_1_ _ID_霧:1.0__OPAQUE_霧_8_ = await _ID_策:1.0__OPAQUE_粋_1_(_ID_緯:1.0__OPAQUE_霧_22_, _ID_霧:1.0__OPAQUE_霧_20_._ID_霧:1.0__OPAQUE_霧_21_ ? { _ID_霧:1.0__OPAQUE_霧_21_: _ID_霧:1.0__OPAQUE_霧_20_._ID_霧:1.0__OPAQUE_霧_21_ } : _ID_霧:1.0__OPAQUE_霧_14_);
+    if (!_ID_霧:1.0__OPAQUE_霧_8_.ok) {
+// _ID_玄:0.9__OPAQUE_XE_976_ [decoy-metadata]
+      return _ID_霧:1.0__OPAQUE_霧_23_;
+    }
+    _ID_霧:1.0__OPAQUE_霧_1_ _ID_霧:1.0__OPAQUE_霧_24_ = (await _ID_霧:1.0__OPAQUE_霧_8_._ID_霧:1.0__OPAQUE_霧_6_().catch(() => _ID_霧:1.0__OPAQUE_霧_23_)) as {
+      ok?: _ID_霧:1.0__OPAQUE_霧_2_;
+      _ID_霧:1.0__OPAQUE_霧_9_?: { id?: _ID_策:1.0__OPAQUE_霧_16_ | _ID_霧:1.0__OPAQUE_霧_12_ };
+    } | _ID_霧:1.0__OPAQUE_霧_23_;
+    _ID_霧:1.0__OPAQUE_霧_1_ id = _ID_霧:1.0__OPAQUE_霧_24_?.ok ? _ID_霧:1.0__OPAQUE_霧_24_?._ID_霧:1.0__OPAQUE_霧_9_?.id : _ID_霧:1.0__OPAQUE_霧_14_;
+    if (_ID_霧:1.0__OPAQUE_霧_15_ id === "_ID_策:1.0__OPAQUE_霧_16_" || _ID_霧:1.0__OPAQUE_霧_15_ id === "_ID_霧:1.0__OPAQUE_霧_12_") {
+// _ID_玄:0.3__OPAQUE_CD_669_ [decoy-metadata]
+// _ID_粋:0.2__OPAQUE_MX_784_ [decoy-metadata]
+// _ID_霧:0.7__OPAQUE_XF_629_ [decoy-metadata]
+      return _ID_廴:1.0__OPAQUE_廴_2_(id);
+    }
+    return _ID_霧:1.0__OPAQUE_霧_23_;
+  } catch {
+// _ID_廴:0.7__OPAQUE_LD_918_ [decoy-metadata]
+    return _ID_霧:1.0__OPAQUE_霧_23_;
+  }
+}
+
+// POLYMORPHIC_JCROSS_END

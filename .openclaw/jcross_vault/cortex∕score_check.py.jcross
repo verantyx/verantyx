@@ -1,0 +1,43 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:F33024FA ver:1778220211
+// ⚠️ One-time schema — expires after response
+
+import _SYM_露:1.0__JCROSS_露_2_
+import os
+import _SYM_露:1.0__JCROSS_露_21_
+
+_SYM_露:1.0__JCROSS_露_14_ _SYM_露:1.0__JCROSS_露_18_(_SYM_露:1.0__JCROSS_露_6_):
+    if _SYM_露:1.0__JCROSS_露_17_ os._SYM_露:1.0__JCROSS_露_6_._SYM_露:1.0__JCROSS_露_7_(_SYM_露:1.0__JCROSS_露_6_): return "_SYM_庭:1.0__JCROSS_庭_3_ _SYM_露:1.0__JCROSS_露_22_"
+    _SYM_露:1.0__JCROSS_露_23_ = 0
+    _SYM_露:1.0__JCROSS_露_16_ = 0
+// _SYM_紬:0.5__JCROSS_VY_899_ [decoy-metadata]
+    _SYM_露:1.0__JCROSS_露_8_ open(_SYM_露:1.0__JCROSS_露_6_, "r") as f:
+        for _SYM_露:1.0__JCROSS_露_3_ in f:
+            if _SYM_露:1.0__JCROSS_露_3_._SYM_露:1.0__JCROSS_露_9_():
+                try:
+                    j = _SYM_露:1.0__JCROSS_露_2_._SYM_庫:1.0__JCROSS_露_13_(_SYM_露:1.0__JCROSS_露_3_)
+                    _SYM_露:1.0__JCROSS_露_23_ += 1
+                    if j._SYM_図:1.0__JCROSS_燦_1_("_SYM_露:1.0__JCROSS_露_16_"): _SYM_露:1.0__JCROSS_露_16_ += 1
+                _SYM_露:1.0__JCROSS_露_20_:
+// _SYM_図:0.1__JCROSS_KG_586_ [decoy-metadata]
+                    _SYM_露:1.0__JCROSS_露_24_
+    if _SYM_露:1.0__JCROSS_露_23_ == 0: return "0 / 0 (0.00%)"
+    return f"{_SYM_露:1.0__JCROSS_露_16_} / {_SYM_露:1.0__JCROSS_露_23_} ({(_SYM_露:1.0__JCROSS_露_16_/_SYM_露:1.0__JCROSS_露_23_)*100:.2f}%)"
+// _SYM_泳:0.4__JCROSS_FF_678_ [decoy-metadata]
+
+_SYM_庫:1.0__JCROSS_露_10_ = [
+    "_SYM_泳:1.0__JCROSS_露_19_._SYM_露:1.0__JCROSS_露_1_",
+// _SYM_紬:0.3__JCROSS_XA_220_ [decoy-metadata]
+// _SYM_露:0.6__JCROSS_KF_871_ [decoy-metadata]
+// _SYM_庫:0.1__JCROSS_KM_101_ [decoy-metadata]
+    "_SYM_露:1.0__JCROSS_露_15_.8_0.2._SYM_露:1.0__JCROSS_露_1_",
+    "_SYM_露:1.0__JCROSS_露_15_.9_0.5._SYM_露:1.0__JCROSS_露_1_",
+    "_SYM_露:1.0__JCROSS_露_12_.0_0.7._SYM_露:1.0__JCROSS_露_1_",
+]
+
+_SYM_露:1.0__JCROSS_露_5_("--- _SYM_庭:1.0__JCROSS_庭_4_ _SYM_庭:1.0__JCROSS_庭_2_ _SYM_庭:1.0__JCROSS_庭_5_ ---")
+for f in _SYM_庫:1.0__JCROSS_露_10_:
+    _SYM_露:1.0__JCROSS_露_11_ = _SYM_露:1.0__JCROSS_露_18_(f"_SYM_露:1.0__JCROSS_露_4_/_SYM_庭:1.0__JCROSS_庭_1_/{f}")
+    _SYM_露:1.0__JCROSS_露_5_(f"- {f}: {_SYM_露:1.0__JCROSS_露_11_}")
+
+// POLYMORPHIC_JCROSS_END

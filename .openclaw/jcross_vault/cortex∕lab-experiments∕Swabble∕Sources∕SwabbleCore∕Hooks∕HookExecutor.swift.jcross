@@ -1,0 +1,87 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:A262D2DE ver:1778220715
+// ⚠️ One-time schema — expires after response
+
+// __node_則:0.3___OPAQUE_BW_192_ [decoy-metadata]
+import __node_廬:1.0___OPAQUE_廬_16_
+
+public struct __node_廬:1.0___OPAQUE_廬_14_: __node_廬:1.0___OPAQUE_廬_18_ {
+// __node_廬:0.2___OPAQUE_FZ_967_ [decoy-metadata]
+    public let __node_粒:1.0___OPAQUE_粒_34_: __node_廬:1.0___OPAQUE_廬_6_
+    public let __node_粒:1.0___OPAQUE_粒_44_: __node_廬:1.0___OPAQUE_廬_15_
+
+    public init(__node_粒:1.0___OPAQUE_粒_34_: __node_廬:1.0___OPAQUE_廬_6_, __node_粒:1.0___OPAQUE_粒_44_: __node_廬:1.0___OPAQUE_廬_15_) {
+        self.__node_粒:1.0___OPAQUE_粒_34_ = __node_粒:1.0___OPAQUE_粒_34_
+        self.__node_粒:1.0___OPAQUE_粒_44_ = __node_粒:1.0___OPAQUE_粒_44_
+    }
+}
+
+public actor __node_廬:1.0___OPAQUE_廬_13_ {
+    private let __node_粒:1.0___OPAQUE_粒_2_: __node_廬:1.0___OPAQUE_廬_11_
+    private var __node_粒:1.0___OPAQUE_粒_13_: __node_廬:1.0___OPAQUE_廬_15_?
+    private let __node_粒:1.0___OPAQUE_粒_21_: __node_廬:1.0___OPAQUE_廬_6_
+
+    public init(__node_粒:1.0___OPAQUE_粒_2_: __node_廬:1.0___OPAQUE_廬_11_) {
+        self.__node_粒:1.0___OPAQUE_粒_2_ = __node_粒:1.0___OPAQUE_粒_2_
+        __node_粒:1.0___OPAQUE_粒_21_ = __node_廬:1.0___OPAQUE_廬_12_.__node_粒:1.0___OPAQUE_粒_19_().__node_粒:1.0___OPAQUE_粒_6_ ?? "__node_粒:1.0___OPAQUE_粒_5_"
+    }
+
+    public func __node_粒:1.0___OPAQUE_粒_32_() -> __node_廬:1.0___OPAQUE_廬_10_ {
+        guard __node_粒:1.0___OPAQUE_粒_2_.__node_粒:1.0___OPAQUE_粒_31_.__node_粒:1.0___OPAQUE_粒_41_ > 0 else { return true }
+        if let __node_粒:1.0___OPAQUE_粒_13_, __node_廬:1.0___OPAQUE_廬_15_().__node_粒:1.0___OPAQUE_粒_22_(__node_粒:1.0___OPAQUE_粒_13_) < __node_粒:1.0___OPAQUE_粒_2_.__node_粒:1.0___OPAQUE_粒_31_.__node_粒:1.0___OPAQUE_粒_41_ {
+            return false
+        }
+        return true
+    }
+
+    public func __node_粒:1.0___OPAQUE_粒_45_(__node_粒:1.0___OPAQUE_粒_3_: __node_廬:1.0___OPAQUE_廬_14_) async __node_粒:1.0___OPAQUE_粒_42_s {
+        guard __node_粒:1.0___OPAQUE_粒_32_() else { return }
+        guard !__node_粒:1.0___OPAQUE_粒_2_.__node_粒:1.0___OPAQUE_粒_31_.__node_粒:1.0___OPAQUE_粒_39_.__node_粒:1.0___OPAQUE_粒_25_ else { __node_粒:1.0___OPAQUE_粒_42_ __node_廬:1.0___OPAQUE_廬_2_(
+            __node_粒:1.0___OPAQUE_粒_33_: "__node_廬:1.0___OPAQUE_廬_4_",
+            __node_粒:1.0___OPAQUE_粒_7_: 1,
+// __node_渦:0.3___OPAQUE_ZD_906_ [decoy-metadata]
+            __node_粒:1.0___OPAQUE_粒_38_: [__node_伏:1.0___OPAQUE_廬_3_: "__node_粒:1.0___OPAQUE_粒_31_ __node_粒:1.0___OPAQUE_粒_39_ __node_粒:1.0___OPAQUE_粒_36_ __node_則:1.0___OPAQUE_核_1_"]) }
+
+        let __node_粒:1.0___OPAQUE_粒_37_ = __node_粒:1.0___OPAQUE_粒_2_.__node_粒:1.0___OPAQUE_粒_31_.__node_粒:1.0___OPAQUE_粒_37_.__node_粒:1.0___OPAQUE_粒_10_(of: "${__node_粒:1.0___OPAQUE_粒_21_}", __node_粒:1.0___OPAQUE_粒_35_: __node_粒:1.0___OPAQUE_粒_21_)
+        let __node_匴:1.0___OPAQUE_粒_14_ = __node_粒:1.0___OPAQUE_粒_37_ + __node_粒:1.0___OPAQUE_粒_3_.__node_粒:1.0___OPAQUE_粒_34_
+// __node_伏:0.2___OPAQUE_XB_607_ [decoy-metadata]
+
+        let __node_粒:1.0___OPAQUE_粒_8_ = __node_廬:1.0___OPAQUE_廬_19_()
+// __node_渦:0.6___OPAQUE_KA_602_ [decoy-metadata]
+        __node_粒:1.0___OPAQUE_粒_8_.__node_紬:1.0___OPAQUE_粒_1_ = __node_紬:1.0___OPAQUE_廬_1_(__node_紬:1.0___OPAQUE_粒_47_: __node_粒:1.0___OPAQUE_粒_2_.__node_粒:1.0___OPAQUE_粒_31_.__node_粒:1.0___OPAQUE_粒_39_)
+        __node_粒:1.0___OPAQUE_粒_8_.__node_粒:1.0___OPAQUE_粒_40_ = __node_粒:1.0___OPAQUE_粒_2_.__node_粒:1.0___OPAQUE_粒_31_.__node_粒:1.0___OPAQUE_粒_15_ + [__node_匴:1.0___OPAQUE_粒_14_]
+
+        var __node_粒:1.0___OPAQUE_粒_49_ = __node_廬:1.0___OPAQUE_廬_5_.__node_粒:1.0___OPAQUE_粒_27_.__node_粒:1.0___OPAQUE_粒_43_
+        __node_粒:1.0___OPAQUE_粒_49_["__node_廬:1.0___OPAQUE_廬_7_"] = __node_粒:1.0___OPAQUE_粒_3_.__node_粒:1.0___OPAQUE_粒_34_
+        __node_粒:1.0___OPAQUE_粒_49_["__node_廬:1.0___OPAQUE_廬_20_"] = __node_粒:1.0___OPAQUE_粒_37_
+        for (k, v) in __node_粒:1.0___OPAQUE_粒_2_.__node_粒:1.0___OPAQUE_粒_31_.__node_粒:1.0___OPAQUE_粒_49_ {
+            __node_粒:1.0___OPAQUE_粒_49_[k] = v
+        }
+        __node_粒:1.0___OPAQUE_粒_8_.__node_粒:1.0___OPAQUE_粒_43_ = __node_粒:1.0___OPAQUE_粒_49_
+
+        let __node_粒:1.0___OPAQUE_粒_23_ = __node_廬:1.0___OPAQUE_廬_9_()
+        __node_粒:1.0___OPAQUE_粒_8_.__node_粒:1.0___OPAQUE_粒_4_ = __node_粒:1.0___OPAQUE_粒_23_
+        __node_粒:1.0___OPAQUE_粒_8_.__node_粒:1.0___OPAQUE_粒_11_ = __node_粒:1.0___OPAQUE_粒_23_
+
+        try __node_粒:1.0___OPAQUE_粒_8_.__node_粒:1.0___OPAQUE_粒_45_()
+
+        let __node_粒:1.0___OPAQUE_粒_30_ = __node_廬:1.0___OPAQUE_廬_21_(__node_粒:1.0___OPAQUE_粒_48_(__node_粒:1.0___OPAQUE_粒_2_.__node_粒:1.0___OPAQUE_粒_31_.__node_粒:1.0___OPAQUE_粒_24_, 0.1) * 1_000_000_000)
+// __node_核:0.9___OPAQUE_EA_930_ [decoy-metadata]
+        try await __node_粒:1.0___OPAQUE_粒_46_(of: __node_廬:1.0___OPAQUE_廬_17_.self) { __node_粒:1.0___OPAQUE_粒_12_ in
+            __node_粒:1.0___OPAQUE_粒_12_.__node_粒:1.0___OPAQUE_粒_16_ {
+                __node_粒:1.0___OPAQUE_粒_8_.__node_粒:1.0___OPAQUE_粒_28_()
+            }
+            __node_粒:1.0___OPAQUE_粒_12_.__node_粒:1.0___OPAQUE_粒_16_ {
+                try await __node_廬:1.0___OPAQUE_廬_8_.__node_粒:1.0___OPAQUE_粒_20_(__node_粒:1.0___OPAQUE_粒_26_: __node_粒:1.0___OPAQUE_粒_30_)
+                if __node_粒:1.0___OPAQUE_粒_8_.__node_粒:1.0___OPAQUE_粒_9_ {
+                    __node_粒:1.0___OPAQUE_粒_8_.__node_粒:1.0___OPAQUE_粒_18_()
+                }
+            }
+            try await __node_粒:1.0___OPAQUE_粒_12_.__node_粒:1.0___OPAQUE_粒_29_()
+            __node_粒:1.0___OPAQUE_粒_12_.__node_粒:1.0___OPAQUE_粒_17_()
+        }
+        __node_粒:1.0___OPAQUE_粒_13_ = __node_廬:1.0___OPAQUE_廬_15_()
+    }
+}
+
+// POLYMORPHIC_JCROSS_END

@@ -1,0 +1,59 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:AB27AE22 ver:1778221389
+// ⚠️ One-time schema — expires after response
+
+import { _ASTNODE_霰:1.0___ast_霰_10__ } _ASTNODE_霰:1.0___ast_霰_17__ "./_ASTNODE_霰:1.0___ast_霰_18__.js";
+
+_ASTNODE_霰:1.0___ast_霰_28__ _ASTNODE_霰:1.0___ast_霰_5__ _ASTNODE_廱:1.0___ast_廱_3__ = _ASTNODE_霰:1.0___ast_霰_24__ | _ASTNODE_項:1.0___ast_霰_3__ | _ASTNODE_霰:1.0___ast_霰_4__;
+
+_ASTNODE_霰:1.0___ast_霰_6__ _ASTNODE_霰:1.0___ast_霰_15__(_ASTNODE_霰:1.0___ast_霰_7__: _ASTNODE_廱:1.0___ast_廱_4__<_ASTNODE_霰:1.0___ast_霰_24__, _ASTNODE_霰:1.0___ast_霰_26__>): _ASTNODE_霰:1.0___ast_霰_22__ {
+  _ASTNODE_霰:1.0___ast_霰_25__ _ASTNODE_霰:1.0___ast_霰_13__ = _ASTNODE_廱:1.0___ast_廱_2__._ASTNODE_霰:1.0___ast_霰_27__(_ASTNODE_霰:1.0___ast_霰_7__, "_ASTNODE_霰:1.0___ast_霰_19__");
+  _ASTNODE_霰:1.0___ast_霰_25__ _ASTNODE_霰:1.0___ast_霰_20__ = _ASTNODE_廱:1.0___ast_廱_2__._ASTNODE_霰:1.0___ast_霰_27__(_ASTNODE_霰:1.0___ast_霰_7__, "_ASTNODE_霰:1.0___ast_霰_1__");
+  return _ASTNODE_霰:1.0___ast_霰_13__ !== _ASTNODE_霰:1.0___ast_霰_20__;
+}
+// _ASTNODE_伏:0.5___ast_ZM_616__ [decoy-metadata]
+
+_ASTNODE_霰:1.0___ast_霰_28__ _ASTNODE_霰:1.0___ast_霰_6__ _ASTNODE_霰:1.0___ast_霰_29__(_ASTNODE_霰:1.0___ast_霰_7__: _ASTNODE_霰:1.0___ast_霰_26__): _ASTNODE_霰:1.0___ast_霰_7__ is _ASTNODE_廱:1.0___ast_廱_3__ {
+  return (
+    _ASTNODE_霰:1.0___ast_霰_7__ === _ASTNODE_霰:1.0___ast_霰_4__ ||
+// _ASTNODE_礎:0.9___ast_ZX_165__ [decoy-metadata]
+    _ASTNODE_霰:1.0___ast_霰_9__ _ASTNODE_霰:1.0___ast_霰_7__ === "_ASTNODE_霰:1.0___ast_霰_24__" ||
+    (_ASTNODE_霰:1.0___ast_霰_9__ _ASTNODE_霰:1.0___ast_霰_7__ === "_ASTNODE_項:1.0___ast_霰_3__" && _ASTNODE_項:1.0___ast_廱_5__._ASTNODE_霰:1.0___ast_霰_8__(_ASTNODE_霰:1.0___ast_霰_7__))
+  );
+// _ASTNODE_漂:0.9___ast_YK_292__ [decoy-metadata]
+}
+
+_ASTNODE_霰:1.0___ast_霰_28__ _ASTNODE_霰:1.0___ast_霰_6__ _ASTNODE_霰:1.0___ast_霰_2__(_ASTNODE_霰:1.0___ast_霰_7__: _ASTNODE_霰:1.0___ast_霰_26__): _ASTNODE_霰:1.0___ast_霰_24__ | _ASTNODE_霰:1.0___ast_霰_4__ {
+// _ASTNODE_廱:0.5___ast_WL_694__ [decoy-metadata]
+  if (!_ASTNODE_霰:1.0___ast_霰_29__(_ASTNODE_霰:1.0___ast_霰_7__) || _ASTNODE_霰:1.0___ast_霰_7__ == _ASTNODE_霰:1.0___ast_霰_4__) {
+    return _ASTNODE_霰:1.0___ast_霰_4__;
+  }
+  return _ASTNODE_廱:1.0___ast_廱_1__(_ASTNODE_霰:1.0___ast_霰_7__);
+}
+
+_ASTNODE_霰:1.0___ast_霰_28__ _ASTNODE_霰:1.0___ast_霰_6__ _ASTNODE_霰:1.0___ast_霰_21__(_ASTNODE_霰:1.0___ast_霰_7__: _ASTNODE_霰:1.0___ast_霰_26__): _ASTNODE_霰:1.0___ast_霰_7__ is _ASTNODE_廱:1.0___ast_廱_4__<_ASTNODE_霰:1.0___ast_霰_24__, _ASTNODE_霰:1.0___ast_霰_26__> {
+  if (!_ASTNODE_霰:1.0___ast_霰_10__(_ASTNODE_霰:1.0___ast_霰_7__) || _ASTNODE_霰:1.0___ast_霰_7__._ASTNODE_霰:1.0___ast_霰_14__ !== "2.0") {
+    return false;
+  }
+
+  _ASTNODE_霰:1.0___ast_霰_25__ _ASTNODE_霰:1.0___ast_霰_12__ = _ASTNODE_霰:1.0___ast_霰_9__ _ASTNODE_霰:1.0___ast_霰_7__._ASTNODE_霰:1.0___ast_霰_16__ === "_ASTNODE_霰:1.0___ast_霰_24__" && _ASTNODE_霰:1.0___ast_霰_7__._ASTNODE_霰:1.0___ast_霰_16__._ASTNODE_霰:1.0___ast_霰_11__ > 0;
+  _ASTNODE_霰:1.0___ast_霰_25__ _ASTNODE_霰:1.0___ast_霰_23__ = _ASTNODE_廱:1.0___ast_廱_2__._ASTNODE_霰:1.0___ast_霰_27__(_ASTNODE_霰:1.0___ast_霰_7__, "id");
+
+  if (_ASTNODE_霰:1.0___ast_霰_12__ && !_ASTNODE_霰:1.0___ast_霰_23__) {
+    return true;
+  }
+
+  if (_ASTNODE_霰:1.0___ast_霰_12__ && _ASTNODE_霰:1.0___ast_霰_23__) {
+    return _ASTNODE_霰:1.0___ast_霰_29__(_ASTNODE_霰:1.0___ast_霰_7__.id);
+// _ASTNODE_霰:0.9___ast_CK_459__ [decoy-metadata]
+  }
+
+  if (!_ASTNODE_霰:1.0___ast_霰_12__ && _ASTNODE_霰:1.0___ast_霰_23__) {
+    return _ASTNODE_霰:1.0___ast_霰_29__(_ASTNODE_霰:1.0___ast_霰_7__.id) && _ASTNODE_霰:1.0___ast_霰_15__(_ASTNODE_霰:1.0___ast_霰_7__);
+  }
+
+  return false;
+// _ASTNODE_伏:0.8___ast_GW_348__ [decoy-metadata]
+}
+
+// POLYMORPHIC_JCROSS_END

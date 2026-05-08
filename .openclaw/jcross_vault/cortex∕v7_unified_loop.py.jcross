@@ -1,0 +1,146 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:369841CB ver:1778220210
+// ⚠️ One-time schema — expires after response
+
+import os
+import re
+import _OPAQUE_礫:1.0___jcross_礫_134__
+import _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_56__
+import _OPAQUE_紬:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_55__
+import _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_73__
+import _OPAQUE_礫:1.0___jcross_礫_29__
+
+_OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_49__ = "/_OPAQUE_殻:1.0___jcross_殻_15__/_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_76__/_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_1__-_OPAQUE_礫:1.0___jcross_礫_77__/_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_1__-_OPAQUE_図:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_118__/._OPAQUE_礫:1.0___jcross_礫_7__/_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_123__"
+_OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_6__ = "/_OPAQUE_殻:1.0___jcross_殻_15__/_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_76__/_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_1__-_OPAQUE_礫:1.0___jcross_礫_77__/_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_1__-_OPAQUE_図:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_118__/_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_78__/_OPAQUE_礫:1.0___jcross_礫_124__/_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_82__/_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_113__"
+_OPAQUE_殻:1.0___jcross_殻_17__ = "_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_101__:26b"
+// _OPAQUE_淵:0.1___jcross_LC_428__ [decoy-metadata]
+_OPAQUE_紬:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_51__ = "_OPAQUE_紬:1.0___jcross_礫_70__://_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_6__:11434/_OPAQUE_紬:1.0___jcross_礫_98__/_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_99__"
+
+_OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_25__ = """[_OPAQUE_殻:1.0___jcross_殻_68__ _OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_52__]
+_OPAQUE_殻:1.0___jcross_殻_41__ _OPAQUE_礫:1.0___jcross_礫_111__ _OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_71__ _OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_3__ (V7 _OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_50__).
+_OPAQUE_殻:1.0___jcross_殻_41__ _OPAQUE_礫:1.0___jcross_礫_125__ _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_47__ _OPAQUE_図:1.0___jcross_礫_45__ _OPAQUE_礫:1.0___jcross_礫_147__, _OPAQUE_図:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_50__ _OPAQUE_礫:1.0___jcross_礫_42__, _OPAQUE_殻:1.0___jcross_殻_63__ _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_65__ _OPAQUE_礫:1.0___jcross_礫_109__ _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_26__ _OPAQUE_礫:1.0___jcross_礫_66__ a _OPAQUE_殻:1.0___jcross_殻_20__ _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_89__ _OPAQUE_礫:1.0___jcross_礫_116__.
+_OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_67__ is an _OPAQUE_礫:1.0___jcross_礫_81__ _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_92__ #_OPAQUE_殻:1.0___jcross_殻_2__.
+
+[_OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_19__ _OPAQUE_殻:1.0___jcross_殻_66__]
+<_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_95__>
+■ _OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_69__
+【空間座相】 [Z:0]
+【次元概念】 (_OPAQUE_殻:1.0___jcross_殻_30__ _OPAQUE_礫:1.0___jcross_礫_74__ _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_121__ _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_51__ _OPAQUE_礫:1.0___jcross_礫_22__ # e.g. #_OPAQUE_殻:1.0___jcross_殻_70__ #_OPAQUE_殻:1.0___jcross_殻_48__ #_OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_5__)
+【操作軌道】 (_OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_1__: [引: _OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_24__] or [反: _OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_24__])
+[本質記憶]
+// [metadata-stripped]
+</_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_95__>
+
+<_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_26__>
+(_OPAQUE_殻:1.0___jcross_殻_47__ _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_19__ _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_60__ _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_26__ to _OPAQUE_礫:1.0___jcross_礫_107__ _OPAQUE_図:1.0___jcross_礫_45__ _OPAQUE_礫:1.0___jcross_礫_20__)
+</_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_26__>
+
+_OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_27__ _OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_37__ / _OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_36__ _OPAQUE_殻:1.0___jcross_殻_46__:
+{_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_11__}
+"""
+
+_OPAQUE_礫:1.0___jcross_礫_149__ _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_113__(_OPAQUE_礫:1.0___jcross_礫_43__, _OPAQUE_礫:1.0___jcross_礫_90__=5):
+    _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_25__ = {"_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_57__": [_OPAQUE_礫:1.0___jcross_礫_43__], "_OPAQUE_礫:1.0___jcross_礫_90__": _OPAQUE_礫:1.0___jcross_礫_90__}
+// _OPAQUE_覇:0.9___jcross_EE_382__ [decoy-metadata]
+    try:
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+        _OPAQUE_礫:1.0___jcross_礫_130__ = _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_73__._OPAQUE_礫:1.0___jcross_礫_148__([_OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_6__, _OPAQUE_礫:1.0___jcross_礫_29__._OPAQUE_礫:1.0___jcross_礫_114__(_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_25__)], _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_112__=_OPAQUE_殻:1.0___jcross_殻_53__, _OPAQUE_礫:1.0___jcross_礫_68__=_OPAQUE_殻:1.0___jcross_殻_53__, _OPAQUE_礫:1.0___jcross_礫_108__={**os._OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_4__, "_OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_11__": _OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_49__})
+        if _OPAQUE_礫:1.0___jcross_礫_130__._OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_141__ == 0:
+            return _OPAQUE_礫:1.0___jcross_礫_29__._OPAQUE_匹:1.0___jcross_礫_49__(_OPAQUE_礫:1.0___jcross_礫_130__._OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_126__)._OPAQUE_図:1.0___jcross_覇_1__("_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_44__", [])
+    _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_91__ _OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_40__ as e:
+        _OPAQUE_礫:1.0___jcross_礫_97__(f"[_OPAQUE_殻:1.0___jcross_殻_54__ _OPAQUE_殻:1.0___jcross_殻_56__ _OPAQUE_殻:1.0___jcross_殻_22__]: {e}")
+        return []
+    return []
+
+_OPAQUE_礫:1.0___jcross_礫_149__ _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_8__(_OPAQUE_礫:1.0___jcross_礫_68__):
+    _OPAQUE_礫:1.0___jcross_礫_104__ = re._OPAQUE_礫:1.0___jcross_礫_75__(r"<_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_95__>(.*?)</_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_95__>", _OPAQUE_礫:1.0___jcross_礫_68__, re._OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_33__)
+    if _OPAQUE_礫:1.0___jcross_礫_104__:
+        return _OPAQUE_礫:1.0___jcross_礫_104__._OPAQUE_礫:1.0___jcross_礫_139__(1)._OPAQUE_礫:1.0___jcross_礫_96__()
+    return _OPAQUE_殻:1.0___jcross_殻_32__
+
+_OPAQUE_礫:1.0___jcross_礫_149__ _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_54__(_OPAQUE_礫:1.0___jcross_礫_68__):
+    _OPAQUE_礫:1.0___jcross_礫_104__ = re._OPAQUE_礫:1.0___jcross_礫_75__(r"<_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_26__>(.*?)</_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_26__>", _OPAQUE_礫:1.0___jcross_礫_68__, re._OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_33__)
+    if _OPAQUE_礫:1.0___jcross_礫_104__:
+        return _OPAQUE_礫:1.0___jcross_礫_104__._OPAQUE_礫:1.0___jcross_礫_139__(1)._OPAQUE_礫:1.0___jcross_礫_96__()
+    return _OPAQUE_礫:1.0___jcross_礫_68__._OPAQUE_礫:1.0___jcross_礫_96__()
+
+_OPAQUE_礫:1.0___jcross_礫_149__ _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_80__(_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_110__):
+    if _OPAQUE_礫:1.0___jcross_礫_85__ _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_110__: return
+    _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_122__ = _OPAQUE_礫:1.0___jcross_礫_27__(_OPAQUE_礫:1.0___jcross_礫_134__._OPAQUE_礫:1.0___jcross_礫_38__())[:8]
+    _OPAQUE_匹:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_105__ = os._OPAQUE_礫:1.0___jcross_礫_115__._OPAQUE_礫:1.0___jcross_礫_129__(_OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_49__, f"_OPAQUE_礫:1.0___jcross_礫_35__{_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_122__}._OPAQUE_礫:1.0___jcross_礫_142__")
+    _OPAQUE_礫:1.0___jcross_礫_34__ = _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_56__._OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_56__._OPAQUE_礫:1.0___jcross_礫_34__(_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_56__._OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_21__._OPAQUE_礫:1.0___jcross_礫_144__)._OPAQUE_漂:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_120__()
+    
+// [metadata-stripped]
+    _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_110__ = _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_110__._OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_69__("_OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_69__", f"_OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_21__{_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_122__}")
+    
+// [metadata-stripped]
+// _OPAQUE_紬:0.7___jcross_XX_780__ [decoy-metadata]
+    _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_13__ = f"{_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_110__}\n"
+    
+    _OPAQUE_礫:1.0___jcross_礫_22__ open(_OPAQUE_匹:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_105__, "w") as f:
+        f._OPAQUE_礫:1.0___jcross_礫_17__(_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_13__)
+    
+    _OPAQUE_礫:1.0___jcross_礫_97__(f"[_OPAQUE_殻:1.0___jcross_殻_68__] _OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_3__ _OPAQUE_殻:1.0___jcross_殻_58__ _OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_8__: {_OPAQUE_匹:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_105__}")
+
+_OPAQUE_礫:1.0___jcross_礫_149__ _OPAQUE_礫:1.0___jcross_礫_5__():
+    if _OPAQUE_礫:1.0___jcross_礫_85__ os._OPAQUE_礫:1.0___jcross_礫_115__._OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_67__(_OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_49__):
+// _OPAQUE_匹:0.8___jcross_ZZ_510__ [decoy-metadata]
+        os._OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_12__(_OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_49__)
+        
+    _OPAQUE_礫:1.0___jcross_礫_97__("\n" + "="*50)
+    _OPAQUE_礫:1.0___jcross_礫_97__(" _OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_71__ _OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_3__ V7: _OPAQUE_殻:1.0___jcross_殻_26__ _OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_28__ _OPAQUE_殻:1.0___jcross_殻_18__ _OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_39__ ")
+    _OPAQUE_礫:1.0___jcross_礫_97__("="*50 + "\n")
+    _OPAQUE_礫:1.0___jcross_礫_97__("_OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_7__ _OPAQUE_礫:1.0___jcross_礫_135__-_OPAQUE_礫:1.0___jcross_礫_16__ _OPAQUE_殻:1.0___jcross_殻_20__ _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_63__ is _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_117__.")
+    _OPAQUE_礫:1.0___jcross_礫_97__("_OPAQUE_殻:1.0___jcross_殻_61__ '_OPAQUE_礫:1.0___jcross_礫_32__' to _OPAQUE_礫:1.0___jcross_礫_146__.\n")
+// _OPAQUE_礫:0.3___jcross_YL_282__ [decoy-metadata]
+
+    while _OPAQUE_殻:1.0___jcross_殻_53__:
+        try:
+            _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_33__ = _OPAQUE_礫:1.0___jcross_礫_119__("\n[_OPAQUE_図:1.0___jcross_殻_16__] > ")
+            if _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_33__._OPAQUE_礫:1.0___jcross_礫_96__()._OPAQUE_図:1.0___jcross_礫_103__() in ['_OPAQUE_礫:1.0___jcross_礫_32__', '_OPAQUE_礫:1.0___jcross_礫_146__']: break
+            if _OPAQUE_礫:1.0___jcross_礫_85__ _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_33__._OPAQUE_礫:1.0___jcross_礫_96__(): continue
+
+            _OPAQUE_礫:1.0___jcross_礫_97__("\n[_OPAQUE_殻:1.0___jcross_殻_54__ _OPAQUE_殻:1.0___jcross_殻_56__] _OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_65__ _OPAQUE_殻:1.0___jcross_殻_43__ _OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_36__ _OPAQUE_殻:1.0___jcross_殻_46__ (Z-_OPAQUE_殻:1.0___jcross_殻_35__ _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_117__)...")
+            _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_138__ = _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_113__(_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_33__)
+            
+            if _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_138__:
+                _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_31__ = "\n\n"._OPAQUE_礫:1.0___jcross_礫_129__([f"_OPAQUE_殻:1.0___jcross_殻_58__ [{n['_OPAQUE_淵:1.0___jcross_礫_71__']}]:\n{n['_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_132__']}" for n in _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_138__])
+            else:
+                _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_31__ = "(_OPAQUE_殻:1.0___jcross_殻_42__: _OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_31__ L0 _OPAQUE_殻:1.0___jcross_殻_55__ _OPAQUE_殻:1.0___jcross_殻_12__)"
+
+            _OPAQUE_礫:1.0___jcross_礫_97__("[_OPAQUE_殻:1.0___jcross_殻_23__ 4] _OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_60__ _OPAQUE_殻:1.0___jcross_殻_29__ _OPAQUE_礫:1.0___jcross_礫_133__ _OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_13__...")
+            try:
+                _OPAQUE_匹:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_18__ = {
+                    "_OPAQUE_礫:1.0___jcross_礫_131__": _OPAQUE_殻:1.0___jcross_殻_17__,
+                    "_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_28__": _OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_25__._OPAQUE_漂:1.0___jcross_礫_140__(_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_11__=_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_31__) + f"\_OPAQUE_図:1.0___jcross_礫_48__ _OPAQUE_殻:1.0___jcross_殻_29__:\n{_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_33__}",
+                    "_OPAQUE_礫:1.0___jcross_礫_84__": _OPAQUE_殻:1.0___jcross_殻_38__,
+                    "_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_30__": {"_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_41__": 0.2}
+                }
+                
+                _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_26__ = _OPAQUE_紬:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_55__._OPAQUE_礫:1.0___jcross_礫_100__(_OPAQUE_紬:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_51__, _OPAQUE_礫:1.0___jcross_礫_29__=_OPAQUE_匹:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_18__)
+// _OPAQUE_殻:0.4___jcross_GA_304__ [decoy-metadata]
+                _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_102__ = _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_26__._OPAQUE_礫:1.0___jcross_礫_29__()._OPAQUE_図:1.0___jcross_覇_1__('_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_26__', '')
+                
+                _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_14__ = _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_8__(_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_102__)
+                _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_93__ = _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_54__(_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_102__)
+                
+                _OPAQUE_礫:1.0___jcross_礫_97__(f"\n[_OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_71__] > {_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_93__}")
+                
+                if _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_14__:
+                    _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_80__(_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_14__)
+                else:
+                    _OPAQUE_礫:1.0___jcross_礫_97__("[_OPAQUE_殻:1.0___jcross_殻_68__] _OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_64__: No <_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_95__> _OPAQUE_礫:1.0___jcross_礫_83__ _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_10__ by _OPAQUE_殻:1.0___jcross_殻_72__.")
+
+            _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_91__ _OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_40__ as e:
+                _OPAQUE_礫:1.0___jcross_礫_97__(f"[_OPAQUE_殻:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_34__ _OPAQUE_殻:1.0___jcross_殻_22__]: {e}")
+                
+        _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_91__ _OPAQUE_淵:1.0____OPAQUE_礫:1.0___jcross_礫_142___殻_44__:
+            break
+
+if _OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_53__ == "_OPAQUE_礫:1.0____OPAQUE_礫:1.0___jcross_礫_142___礫_88__":
+    _OPAQUE_礫:1.0___jcross_礫_5__()
+
+// POLYMORPHIC_JCROSS_END

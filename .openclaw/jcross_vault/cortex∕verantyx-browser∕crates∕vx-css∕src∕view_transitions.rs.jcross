@@ -1,0 +1,94 @@
+// POLYMORPHIC_JCROSS_BEGIN
+// schema:B0DC3E47 ver:1778220517
+// ⚠️ One-time schema — expires after response
+
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+// [metadata-stripped]
+
+_SYM_露:1.0__OPAQUE_露_11_ _SYM_露:1.0__OPAQUE_露_43_::_SYM_露:1.0__OPAQUE_露_46_::_SYM_殻:1.0__OPAQUE_殻_34_;
+
+// [metadata-stripped]
+// [metadata-stripped]
+_SYM_露:1.0__OPAQUE_露_2_ enum _SYM_殻:1.0__OPAQUE_殻_37_ { _SYM_殻:1.0__OPAQUE_殻_23_, _SYM_殻:1.0__OPAQUE_殻_11_, _SYM_殻:1.0__OPAQUE_殻_33_, _SYM_殻:1.0__OPAQUE_殻_40_, _SYM_殻:1.0__OPAQUE_殻_32_, _SYM_殻:1.0__OPAQUE_殻_9_ }
+
+// [metadata-stripped]
+// _SYM_縁:0.6__OPAQUE_CZ_807_ [decoy-metadata]
+// [metadata-stripped]
+_SYM_露:1.0__OPAQUE_露_2_ struct _SYM_殻:1.0__OPAQUE_殻_41_ {
+    _SYM_露:1.0__OPAQUE_露_2_ _SYM_露:1.0__OPAQUE_露_65_: _SYM_殻:1.0__OPAQUE_殻_13_,
+    _SYM_露:1.0__OPAQUE_露_2_ _SYM_露:1.0__OPAQUE_露_71_: _SYM_殻:1.0__OPAQUE_殻_5_<(_SYM_露:1.0__OPAQUE_露_73_, _SYM_露:1.0__OPAQUE_露_73_, _SYM_露:1.0__OPAQUE_露_73_, _SYM_露:1.0__OPAQUE_露_73_)>, // (x, y, w, h)
+    _SYM_露:1.0__OPAQUE_露_2_ _SYM_露:1.0__OPAQUE_露_21_: _SYM_殻:1.0__OPAQUE_殻_5_<(_SYM_露:1.0__OPAQUE_露_73_, _SYM_露:1.0__OPAQUE_露_73_, _SYM_露:1.0__OPAQUE_露_73_, _SYM_露:1.0__OPAQUE_露_73_)>,
+    _SYM_露:1.0__OPAQUE_露_2_ _SYM_露:1.0__OPAQUE_露_38_: _SYM_露:1.0__OPAQUE_露_80_,
+    _SYM_露:1.0__OPAQUE_露_2_ _SYM_露:1.0__OPAQUE_露_42_: _SYM_露:1.0__OPAQUE_露_80_,
+}
+
+// [metadata-stripped]
+_SYM_露:1.0__OPAQUE_露_2_ struct _SYM_殻:1.0__OPAQUE_殻_46_ {
+    _SYM_露:1.0__OPAQUE_露_2_ _SYM_露:1.0__OPAQUE_露_89_: _SYM_殻:1.0__OPAQUE_殻_37_,
+// _SYM_匵:0.7__OPAQUE_CB_333_ [decoy-metadata]
+    _SYM_露:1.0__OPAQUE_露_2_ _SYM_露:1.0__OPAQUE_露_17_: _SYM_殻:1.0__OPAQUE_殻_34_<_SYM_殻:1.0__OPAQUE_殻_13_, _SYM_殻:1.0__OPAQUE_殻_41_>, // _SYM_露:1.0__OPAQUE_露_55_-_SYM_露:1.0__OPAQUE_露_77_-_SYM_露:1.0__OPAQUE_露_65_ -> _SYM_殻:1.0__OPAQUE_殻_35_
+}
+
+_SYM_露:1.0__OPAQUE_露_25_ _SYM_殻:1.0__OPAQUE_殻_46_ {
+    _SYM_露:1.0__OPAQUE_露_2_ fn _SYM_露:1.0__OPAQUE_露_76_() -> _SYM_殻:1.0__OPAQUE_殻_29_ {
+        _SYM_殻:1.0__OPAQUE_殻_29_ {
+            _SYM_露:1.0__OPAQUE_露_89_: _SYM_殻:1.0__OPAQUE_殻_37_::_SYM_殻:1.0__OPAQUE_殻_9_,
+            _SYM_露:1.0__OPAQUE_露_17_: _SYM_殻:1.0__OPAQUE_殻_34_::_SYM_露:1.0__OPAQUE_露_76_(),
+        }
+    }
+
+// [metadata-stripped]
+    _SYM_露:1.0__OPAQUE_露_2_ fn _SYM_露:1.0__OPAQUE_露_67_(&_SYM_露:1.0__OPAQUE_露_45_ self) -> _SYM_露:1.0__OPAQUE_露_80_ {
+        if self._SYM_露:1.0__OPAQUE_露_89_ != _SYM_殻:1.0__OPAQUE_殻_37_::_SYM_殻:1.0__OPAQUE_殻_9_ { return false; }
+        self._SYM_露:1.0__OPAQUE_露_89_ = _SYM_殻:1.0__OPAQUE_殻_37_::_SYM_殻:1.0__OPAQUE_殻_11_;
+        self._SYM_露:1.0__OPAQUE_露_17_._SYM_露:1.0__OPAQUE_露_26_();
+        true // _SYM_殻:1.0__OPAQUE_殻_2_ _SYM_露:1.0__OPAQUE_露_30_ to _SYM_露:1.0__OPAQUE_露_66_ _SYM_殻:1.0__OPAQUE_殻_10_
+    }
+
+// [metadata-stripped]
+    _SYM_露:1.0__OPAQUE_露_2_ fn _SYM_露:1.0__OPAQUE_露_7_(&_SYM_露:1.0__OPAQUE_露_45_ self) {
+        if self._SYM_露:1.0__OPAQUE_露_89_ == _SYM_殻:1.0__OPAQUE_殻_37_::_SYM_殻:1.0__OPAQUE_殻_11_ {
+            self._SYM_露:1.0__OPAQUE_露_89_ = _SYM_殻:1.0__OPAQUE_殻_37_::_SYM_殻:1.0__OPAQUE_殻_33_;
+// [metadata-stripped]
+        }
+    }
+
+// [metadata-stripped]
+    _SYM_露:1.0__OPAQUE_露_2_ fn _SYM_露:1.0__OPAQUE_露_78_(&_SYM_露:1.0__OPAQUE_露_45_ self) {
+        if self._SYM_露:1.0__OPAQUE_露_89_ == _SYM_殻:1.0__OPAQUE_殻_37_::_SYM_殻:1.0__OPAQUE_殻_33_ {
+            self._SYM_露:1.0__OPAQUE_露_89_ = _SYM_殻:1.0__OPAQUE_殻_37_::_SYM_殻:1.0__OPAQUE_殻_40_;
+// [metadata-stripped]
+        }
+    }
+
+// [metadata-stripped]
+    _SYM_露:1.0__OPAQUE_露_2_ fn _SYM_露:1.0__OPAQUE_露_8_(&_SYM_露:1.0__OPAQUE_露_45_ self) {
+        self._SYM_露:1.0__OPAQUE_露_89_ = _SYM_殻:1.0__OPAQUE_殻_37_::_SYM_殻:1.0__OPAQUE_殻_9_;
+        self._SYM_露:1.0__OPAQUE_露_17_._SYM_露:1.0__OPAQUE_露_26_(); // _SYM_殻:1.0__OPAQUE_殻_15_ _SYM_案:1.0__OPAQUE_露_58_ _SYM_露:1.0__OPAQUE_露_61_
+    }
+
+// [metadata-stripped]
+    _SYM_露:1.0__OPAQUE_露_2_ fn _SYM_露:1.0__OPAQUE_露_27_(&self) -> _SYM_殻:1.0__OPAQUE_殻_13_ {
+// _SYM_漂:0.5__OPAQUE_ME_555_ [decoy-metadata]
+        let _SYM_露:1.0__OPAQUE_露_45_ _SYM_露:1.0__OPAQUE_露_23_ = _SYM_露:1.0__OPAQUE_露_85_![_SYM_漂:1.0__OPAQUE_露_51_!("🪄 _SYM_殻:1.0__OPAQUE_殻_43_ _SYM_殻:1.0__OPAQUE_殻_12_ _SYM_絡:1.0__OPAQUE_殻_3_ (_SYM_殻:1.0__OPAQUE_殻_6_: {:?}):", self._SYM_露:1.0__OPAQUE_露_89_)];
+        if self._SYM_露:1.0__OPAQUE_露_89_ != _SYM_殻:1.0__OPAQUE_殻_37_::_SYM_殻:1.0__OPAQUE_殻_9_ {
+            _SYM_露:1.0__OPAQUE_露_23_._SYM_露:1.0__OPAQUE_露_86_(_SYM_漂:1.0__OPAQUE_露_51_!("  - {} _SYM_露:1.0__OPAQUE_露_44_ _SYM_露:1.0__OPAQUE_露_84_ _SYM_露:1.0__OPAQUE_露_82_ _SYM_露:1.0__OPAQUE_露_31_", self._SYM_露:1.0__OPAQUE_露_17_._SYM_露:1.0__OPAQUE_露_4_()));
+// _SYM_案:0.5__OPAQUE_DV_199_ [decoy-metadata]
+// _SYM_幽:0.2__OPAQUE_BC_394_ [decoy-metadata]
+// _SYM_絡:0.9__OPAQUE_GD_714_ [decoy-metadata]
+            for (_SYM_露:1.0__OPAQUE_露_65_, _SYM_露:1.0__OPAQUE_露_36_) in &self._SYM_露:1.0__OPAQUE_露_17_ {
+                _SYM_露:1.0__OPAQUE_露_23_._SYM_露:1.0__OPAQUE_露_86_(_SYM_漂:1.0__OPAQUE_露_51_!("    [{}] _SYM_殻:1.0__OPAQUE_殻_17_ _SYM_案:1.0__OPAQUE_殻_27_: {}, _SYM_殻:1.0__OPAQUE_殻_30_ _SYM_案:1.0__OPAQUE_殻_27_: {}", _SYM_露:1.0__OPAQUE_露_65_, _SYM_露:1.0__OPAQUE_露_36_._SYM_露:1.0__OPAQUE_露_38_, _SYM_露:1.0__OPAQUE_露_36_._SYM_露:1.0__OPAQUE_露_42_));
+            }
+        }
+        _SYM_露:1.0__OPAQUE_露_23_._SYM_露:1.0__OPAQUE_露_18_("\n")
+    }
+}
+
+// POLYMORPHIC_JCROSS_END

@@ -1,0 +1,16 @@
+name: VerantyxWorkspace
+options:
+  bundleIdPrefix: com.verantyx
+targets:
+  VerantyxWorkspace-iOS:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources: [Sources]
+    info:
+      path: Info.plist
+      properties:
+        UILaunchScreen: {}
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        UIRequiresFullScreen: true
