@@ -15,11 +15,11 @@ This repository provides a unified macOS IDE (with a built-in CLI layer from `ve
 
 ## 🌟 Demo Video Area
 
-> *Watch Verantyx in action. The video below demonstrates the autonomous Agent Loop, real-time streaming, and Gatekeeper intervention in the IDE.*
+> **SLM Anchor Injection Demo:**  
+> *This video demonstrates Verantyx preventing the local SLM from relying on stale internal knowledge. By utilizing image anchor injection, the system forces the SLM to discard its pre-trained answers and autonomously execute the latest web searches to obtain factual, real-time data.*
 
 <p align="center">
-  <!-- To embed a local video or hosted video, use the video tag or markdown image link if it's a GIF. GitHub supports dragging and dropping .mov or .mp4 files directly here. -->
-  <video src="https://github.com/user-attachments/assets/your-video-id-here.mov" controls="controls" muted="muted" style="max-height:640px; width:100%; max-width: 800px;">
+  <video src="https://github.com/Ag3497120/verantyx-1/releases/download/v1.4.6/demo_compressed.mp4" controls="controls" muted="muted" style="max-height:640px; width:100%; max-width: 800px;">
     Your browser does not support the video tag.
   </video>
 </p>
