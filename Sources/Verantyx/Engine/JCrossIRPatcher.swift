@@ -375,7 +375,14 @@ public final class JCrossGraphPatchEngine {
         
         print("✅ [JCross Graph Patch Engine] Successfully committed changes to \(targetFile).")
         
-        // 3. (Future) Trigger JCross L1-L3 Re-indexing to update the semantic blackboard
+        // 3. Trigger JCross L1-L3 Re-indexing and instant L2.5 update
+        Task {
+            await L25IndexEngine.shared.updateEntryInstantly(
+                for: fileURL,
+                workspaceURL: workspace,
+                patchContext: "LLM_PATCH"
+            )
+        }
         // JCrossIRVault.shared.reindex(file: fileURL)
     }
     

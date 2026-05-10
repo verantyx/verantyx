@@ -276,6 +276,14 @@ final class TranspilationPipeline: ObservableObject {
                     vault.recordL15Diff(relativePath: todo.targetPath, oldSource: "", newSource: newSrc,
                                         context: "pipeline: \(task.prefix(50))")
                 }
+                
+                // 即時に L2.5 を更新して次のプロンプトに反映させる
+                await L25IndexEngine.shared.updateEntryInstantly(
+                    for: workspaceURL.appendingPathComponent(todo.targetPath),
+                    workspaceURL: workspaceURL,
+                    patchContext: "Task: \(task.prefix(15))"
+                )
+                
                 addLog(AppLanguage.shared.t("  ✅ Success: \(todo.targetPath)", "  ✅ 成功: \(todo.targetPath)"))
                 return
             } else {

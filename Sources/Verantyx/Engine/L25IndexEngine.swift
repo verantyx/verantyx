@@ -615,6 +615,49 @@ final class L25IndexEngine: ObservableObject {
         )
     }
 
+    /// クラウドLLMやルールベースでのコード修正（パッチ）適用直後に呼び出し、
+    /// 即座にL2.5地図を更新し、変更された意図やコンテキストをマップ上にマーキングする。
+    func updateEntryInstantly(for fileURL: URL, workspaceURL: URL, patchContext: String = "") async {
+        let relativePath = String(fileURL.path.dropFirst(workspaceURL.path.count + 1))
+        guard let source = try? String(contentsOf: fileURL, encoding: .utf8) else { return }
+        
+        if let entry = await generateL25Entry(source: source, relativePath: relativePath, language: fileURL.pathExtension.lowercased()) {
+            await MainActor.run {
+                var modifiedEntry = entry
+                if !patchContext.isEmpty {
+                    // 地図のトポロジー表記に変更ログを追記
+                    let newTopology = entry.kanjiTopology + " [📝修:\(patchContext.prefix(10))]"
+                    let shortPath = fileURL.lastPathComponent
+                    let tokens = entry.structureTokens.prefix(3).joined(separator: "+")
+                    let newIndexLine = "\(newTopology.prefix(30)) | \"\(shortPath): \(tokens)\" L\(entry.lineCount)F\(entry.functionCount)"
+                    
+                    modifiedEntry = L25SourceMapEntry(
+                        relativePath: entry.relativePath,
+                        language: entry.language,
+                        kanjiTopology: newTopology,
+                        structureTokens: entry.structureTokens,
+                        dependencies: entry.dependencies,
+                        lineCount: entry.lineCount,
+                        functionCount: entry.functionCount,
+                        complexityScore: entry.complexityScore,
+                        generatedAt: Date(),
+                        indexLine: newIndexLine
+                    )
+                }
+                
+                self.projectMap?.entries[relativePath] = modifiedEntry
+                self.projectMap?.generatedAt = Date()
+                if let entries = self.projectMap?.entries {
+                    self.projectMap?.globalTopology = self.synthesizeGlobalTopology(from: Array(entries.values))
+                }
+                if let map = self.projectMap {
+                    self.saveMap(map, workspaceURL: workspaceURL)
+                    self.addLog(AppLanguage.shared.t("✅ L2.5 instant update: \(relativePath) (\(patchContext))", "✅ L2.5 即時更新: \(relativePath) (\(patchContext))"))
+                }
+            }
+        }
+    }
+
     nonisolated private func generateKanjiRuleBased(
         source: String,
         language: String,
