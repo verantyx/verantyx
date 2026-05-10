@@ -1,7 +1,7 @@
 # Verantyx: Enterprise Gatekeeper IDE
 
 > [!CAUTION]
-> ## 🛑 突破できるなら、やってみろ (Break it if you can.)
+> ## 🛑 Break It If You Can
 > **To all Security Engineers, Red Teamers, and Cryptographers:**
 > Verantyx claims to achieve a "Zero-Trust AI Coding Protocol" via Semantic Air-Gapping. We transform raw business logic into a mathematically stripped topological skeleton (JCross IR) that is safely sent to external LLMs. 
 > 
