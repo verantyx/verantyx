@@ -12,7 +12,6 @@ struct AgentChatView: View {
     
     @State private var showVisualAnchorPrompt: Bool = false
     @State private var visualAnchorText: String = ""
-    @State private var showMiniExplorer: Bool = true
 
     enum Tab: String, CaseIterable {
         case workspace = "Workspace"
@@ -159,21 +158,6 @@ struct AgentChatView: View {
             }
             Spacer()
 
-            // Toggle Mini Explorer
-            Button {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                    showMiniExplorer.toggle()
-                }
-            } label: {
-                Image(systemName: "sidebar.top")
-                    .font(.system(size: 11))
-                    .foregroundStyle(showMiniExplorer ? Color(red: 0.4, green: 0.7, blue: 1.0) : Color(red: 0.5, green: 0.5, blue: 0.6))
-            }
-            .contentShape(Rectangle())
-            .buttonStyle(.plain)
-            .padding(.horizontal, 6)
-            .help(app.t("Toggle Mini File Explorer", "ミニエクスプローラーを切替"))
-
             // New session quick button
             Button {
                 app.newChatSession()
@@ -226,39 +210,33 @@ struct AgentChatView: View {
     // MARK: - Workspace (main chat)
 
     private var workspaceView: some View {
-        VStack(spacing: 0) {
-            if showMiniExplorer {
-                FileTreeView()
-                    .frame(minHeight: 150, maxHeight: 280)
-                    .background(Color(red: 0.1, green: 0.1, blue: 0.13))
-                
-                Divider().opacity(0.3)
-            }
+        chatTranscriptArea
+    }
+
+    private var chatTranscriptArea: some View {
+        ZStack(alignment: .bottomLeading) {
+            // NSTextView ベースのトランスクリプト。
+            // 単一テキストストレージのためメッセージをまたいでドラッグ選択・コピーができる。
+            ChatTranscriptView(messages: app.messages, isGenerating: app.isGenerating)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             
-            ZStack(alignment: .bottomLeading) {
-                // NSTextView ベースのトランスクリプト。
-                // 単一テキストストレージのためメッセージをまたいでドラッグ選択・コピーができる。
-                ChatTranscriptView(messages: app.messages, isGenerating: app.isGenerating)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                
-                if app.isGenerating {
-                    HStack(spacing: 8) {
-                        if let url = URL(string: "file:///Users/motonishikoudai/verantyx-cli/VerantyxIDE/Sources/Verantyx/Views/mp_.mp4") {
-                            VideoSpinnerView(videoURL: url, speed: 2.7)
-                                .frame(width: 18, height: 18)
-                        }
-                        Text("Generating...")
-                            .font(.system(size: 11, weight: .bold, design: .monospaced))
-                            .foregroundStyle(Color(red: 0.35, green: 0.85, blue: 0.80))
+            if app.isGenerating {
+                HStack(spacing: 8) {
+                    if let url = URL(string: "file:///Users/motonishikoudai/verantyx-cli/VerantyxIDE/Sources/Verantyx/Views/mp_.mp4") {
+                        VideoSpinnerView(videoURL: url, speed: 2.7)
+                            .frame(width: 18, height: 18)
                     }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(Color(red: 0.13, green: 0.13, blue: 0.16).opacity(0.85), in: Capsule())
-                    .overlay(Capsule().stroke(Color(red: 0.35, green: 0.85, blue: 0.80).opacity(0.3), lineWidth: 1))
-                    .padding(16)
-                    .transition(.opacity.combined(with: .move(edge: .bottom)))
-                    .animation(.easeInOut(duration: 0.3), value: app.isGenerating)
+                    Text("Generating...")
+                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        .foregroundStyle(Color(red: 0.35, green: 0.85, blue: 0.80))
                 }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(Color(red: 0.13, green: 0.13, blue: 0.16).opacity(0.85), in: Capsule())
+                .overlay(Capsule().stroke(Color(red: 0.35, green: 0.85, blue: 0.80).opacity(0.3), lineWidth: 1))
+                .padding(16)
+                .transition(.opacity.combined(with: .move(edge: .bottom)))
+                .animation(.easeInOut(duration: 0.3), value: app.isGenerating)
             }
         }
     }
@@ -304,22 +282,21 @@ struct AgentChatView: View {
 
     private var modelSelectorBar: some View {
         HStack(spacing: 8) {
-            // ── Target Mode & Model Sync Configuration ──────────────
+            // ── Gatekeeper Local Model Configuration ──────────────
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    // Target Mode
-                    Picker("", selection: $app.editingMode) {
-                        ForEach(OperationMode.allCases) { m in
-                            Text(m.displayName).tag(m)
-                        }
-                    }
-                    .labelsHidden()
-                    .frame(width: 120)
+                    Text("Gatekeeper")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundStyle(Color.green)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 4)
+                        .background(Color.green.opacity(0.1))
+                        .cornerRadius(4)
                     
                     // Ollama model picker
                     let modelBinding = Binding<String>(
-                        get: { app.getOllamaModel(for: app.editingMode) },
-                        set: { app.setOllamaModel($0, for: app.editingMode) }
+                        get: { app.getOllamaModel() },
+                        set: { app.setOllamaModel($0) }
                     )
                     
                     if app.ollamaModels.isEmpty {
@@ -336,19 +313,6 @@ struct AgentChatView: View {
                         .labelsHidden()
                         .frame(width: 140)
                     }
-                    
-                    // Enable mode button
-                    Button {
-                        app.switchModeAndEjectOldModel(to: app.editingMode)
-                    } label: {
-                        HStack(spacing: 4) {
-                            Image(systemName: "checkmark.circle.fill")
-                            Text(app.t("Enable Mode", "モードを有効にする"))
-                        }
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.small)
-                    .tint(app.editingMode == app.operationMode ? .green : .blue)
                     
                     Divider().frame(height: 16).opacity(0.5)
                     
@@ -573,10 +537,16 @@ struct AgentChatView: View {
                     Button {
                         showVisualAnchorPrompt = true
                     } label: {
-                        Image(systemName: "exclamationmark.lock.fill")
-                            .font(.system(size: 15))
-                            .foregroundStyle(Color(red: 0.9, green: 0.3, blue: 0.3))
-                            .frame(width: 26, height: 26)
+                        ZStack(alignment: .topTrailing) {
+                            Image(systemName: "exclamationmark.lock.fill")
+                                .font(.system(size: 15))
+                                .foregroundStyle(app.persistentTaskAnchor.isEmpty ? Color(red: 0.9, green: 0.3, blue: 0.3) : Color.orange)
+                                .frame(width: 26, height: 26)
+                            
+                            if !app.persistentTaskAnchor.isEmpty {
+                                Circle().fill(Color.orange).frame(width: 6, height: 6).offset(x: -2, y: 2)
+                            }
+                        }
                     }
                     .contentShape(Rectangle())
                     .buttonStyle(.plain)
@@ -585,7 +555,7 @@ struct AgentChatView: View {
                         VStack(alignment: .leading, spacing: 10) {
                             Text("Visual Anchor 注入")
                                 .font(.headline)
-                            Text("絶対に守らせたい指示を入力してください。")
+                            Text("1回のみ注入するか、毎ターン自動注入（Persistent Task）するか選択できます。\n空欄でSet Persistentを押すと解除されます。")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                             
@@ -599,7 +569,15 @@ struct AgentChatView: View {
                                 Button("Cancel") {
                                     showVisualAnchorPrompt = false
                                 }
-                                Button("Inject") {
+                                Button(app.persistentTaskAnchor.isEmpty ? "Set Persistent" : "Clear Persistent") {
+                                    app.persistentTaskAnchor = visualAnchorText
+                                    showVisualAnchorPrompt = false
+                                    visualAnchorText = ""
+                                }
+                                .buttonStyle(.bordered)
+                                .tint(app.persistentTaskAnchor.isEmpty ? .orange : .gray)
+                                
+                                Button("Inject Once") {
                                     guard !visualAnchorText.isEmpty else { return }
                                     let anchorBase64 = CognitiveAnchorEngine.shared.getCustomAnchor(text: visualAnchorText)
                                     // Base64からローカルファイルに書き出して添付する

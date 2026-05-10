@@ -208,8 +208,7 @@ struct HumanPriorityModeView: View {
                 }
             }
 
-            // CPU Activity Panel (PROCESS LOG より上、常時表示)
-            IsolatedCPUActivityPanel()
+            // Removed CPU Activity Panel per user request
 
             // Terminal (collapsible)
             if app.showProcessLog {
@@ -974,51 +973,70 @@ struct CodeEditorView: NSViewRepresentable {
         guard let textView = scrollView.documentView as? NSTextView else { return scrollView }
 
         textView.delegate = context.coordinator
-        textView.font = .monospacedSystemFont(ofSize: 13, weight: .regular)
-        textView.textColor = NSColor(red: 0.88, green: 0.88, blue: 0.95, alpha: 1.0)
-        textView.backgroundColor = NSColor(red: 0.09, green: 0.09, blue: 0.12, alpha: 1.0)
-        textView.isAutomaticQuoteSubstitutionEnabled = false
-        textView.isAutomaticDashSubstitutionEnabled = false
-        textView.isAutomaticSpellingCorrectionEnabled = false
-        textView.allowsUndo = true
-        textView.isRichText = false
-        textView.isEditable = isEditable
-        textView.isSelectable = true
-        textView.usesFindBar = true
-
-        // Padding
-        textView.textContainerInset = NSSize(width: 16, height: 10)
-
-        textView.textContainer?.widthTracksTextView = false
-        textView.textContainer?.containerSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
-        textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        
         textView.isHorizontallyResizable = true
-        textView.isVerticallyResizable = true
-        textView.autoresizingMask = [.width]
-
+        textView.isVerticallyResizable   = true
+        textView.autoresizingMask        = [.width]
+        textView.textContainer?.widthTracksTextView = false
+        textView.textContainer?.containerSize = CGSize(
+            width: CGFloat.greatestFiniteMagnitude,
+            height: CGFloat.greatestFiniteMagnitude
+        )
+        
+        textView.layoutManager?.allowsNonContiguousLayout = true
+        textView.layoutManager?.backgroundLayoutEnabled   = true
+        
+        textView.isEditable   = isEditable
+        textView.isSelectable = true
+        textView.usesFontPanel = false
+        textView.usesFindPanel = false
+        textView.allowsUndo   = true
+        
+        textView.font         = NSFont.monospacedSystemFont(ofSize: 13, weight: .regular)
+        textView.textColor    = NSColor(red: 0.88, green: 0.88, blue: 0.95, alpha: 1.0)
+        textView.backgroundColor = NSColor(red: 0.09, green: 0.09, blue: 0.12, alpha: 1.0)
+        textView.textContainerInset = NSSize(width: 8, height: 8)
+        
         scrollView.hasVerticalScroller = true
         scrollView.hasHorizontalScroller = true
         scrollView.autohidesScrollers = true
         scrollView.backgroundColor = NSColor(red: 0.09, green: 0.09, blue: 0.12, alpha: 1.0)
         
-        // Add line number ruler
-        let rulerView = LineNumberRulerView(textView: textView)
-        scrollView.verticalRulerView = rulerView
-        scrollView.hasVerticalRuler = true
-        scrollView.rulersVisible = true
+        // Temporarily disable the ruler to isolate layout bugs
+        // let rulerView = LineNumberRulerView(textView: textView)
+        // scrollView.verticalRulerView = rulerView
+        // scrollView.hasVerticalRuler = true
+        // scrollView.rulersVisible = true
 
         return scrollView
     }
 
     func updateNSView(_ scrollView: NSScrollView, context: Context) {
+        context.coordinator.parent = self
+        
         guard let textView = scrollView.documentView as? NSTextView else { return }
         if textView.isEditable != isEditable {
             textView.isEditable = isEditable
         }
         if textView.string != content {
             let selectedRange = textView.selectedRange()
+            
+            // Just set string directly
             textView.string = content
-            context.coordinator.applyHighlighting(to: textView)
+            
+            if let storage = textView.textStorage {
+                storage.beginEditing()
+                let fullRange = NSRange(location: 0, length: storage.length)
+                storage.addAttributes([
+                    .font: NSFont.monospacedSystemFont(ofSize: 13, weight: .regular),
+                    .foregroundColor: NSColor(red: 0.88, green: 0.88, blue: 0.95, alpha: 1.0)
+                ], range: fullRange)
+                storage.endEditing()
+            }
+            
+            // Critical for editable text views
+            textView.didChangeText()
+            
             // Restore selection if possible
             let safeLen = min(selectedRange.location + selectedRange.length, textView.string.count)
             if safeLen <= textView.string.count {
@@ -1039,7 +1057,7 @@ struct CodeEditorView: NSViewRepresentable {
                 parent.content = textView.string
                 parent.onEdit()
             }
-            applyHighlighting(to: textView)
+            // applyHighlighting(to: textView)
             
             // Redraw line numbers
             if let scrollView = textView.enclosingScrollView,
@@ -1058,16 +1076,33 @@ struct CodeEditorView: NSViewRepresentable {
             textStorage.beginEditing()
             let fullRange = NSRange(location: 0, length: textStorage.length)
             
-            // Apply background safely to reset
-            textStorage.removeAttribute(.foregroundColor, range: fullRange)
-            textStorage.removeAttribute(.font, range: fullRange)
+            // Apply default style safely to reset
+            let defaultColor = NSColor(red: 0.88, green: 0.88, blue: 0.95, alpha: 1.0)
+            let defaultFont = NSFont.monospacedSystemFont(ofSize: 13, weight: .regular)
+            textStorage.addAttribute(.foregroundColor, value: defaultColor, range: fullRange)
+            textStorage.addAttribute(.font, value: defaultFont, range: fullRange)
             
             var currentIndex = 0
             for token in tokens {
                 let tokenLength = token.text.utf16.count
                 if currentIndex + tokenLength <= fullRange.length {
                     let range = NSRange(location: currentIndex, length: tokenLength)
-                    let nsColor = NSColor(token.kind.color)
+                    
+                    let nsColor: NSColor
+                    switch token.kind {
+                    case .keyword:    nsColor = NSColor(red: 0.42, green: 0.62, blue: 0.99, alpha: 1.0)
+                    case .keyword2:   nsColor = NSColor(red: 0.73, green: 0.52, blue: 0.99, alpha: 1.0)
+                    case .string:     nsColor = NSColor(red: 0.99, green: 0.50, blue: 0.40, alpha: 1.0)
+                    case .comment:    nsColor = NSColor(red: 0.44, green: 0.68, blue: 0.44, alpha: 1.0)
+                    case .number:     nsColor = NSColor(red: 0.34, green: 0.90, blue: 0.80, alpha: 1.0)
+                    case .type:       nsColor = NSColor(red: 0.99, green: 0.85, blue: 0.42, alpha: 1.0)
+                    case .function_:  nsColor = NSColor(red: 0.40, green: 0.85, blue: 0.80, alpha: 1.0)
+                    case .attribute:  nsColor = NSColor(red: 0.75, green: 0.75, blue: 0.90, alpha: 1.0)
+                    case .operator_:  nsColor = NSColor(red: 0.95, green: 0.95, blue: 0.95, alpha: 1.0)
+                    case .punctuation:nsColor = NSColor(red: 0.70, green: 0.70, blue: 0.70, alpha: 1.0)
+                    case .plain:      nsColor = NSColor(red: 0.92, green: 0.92, blue: 0.92, alpha: 1.0)
+                    }
+                    
                     textStorage.addAttribute(.foregroundColor, value: nsColor, range: range)
                     
                     if token.kind == .keyword || token.kind == .keyword2 {
