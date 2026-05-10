@@ -88,13 +88,16 @@ final class JCrossVault: ObservableObject {
     // 変換対象の拡張子
     private static let targetExtensions: Set<String> = [
         "swift", "ts", "tsx", "js", "jsx", "py", "rs", "go", "kt", "java",
-        "cpp", "cc", "c", "h", "cs", "rb", "php", "sh", "yaml", "json"
+        "cpp", "cc", "c", "h", "cs", "rb", "php", "sh"
     ]
 
     // 除外パス
     nonisolated(unsafe) private static let excludedPaths: [String] = [
         ".openclaw", ".git", "node_modules", ".build", "build",
-        "DerivedData", ".DS_Store", "__pycache__", ".venv", "venv"
+        "DerivedData", ".DS_Store", "__pycache__", ".venv", "venv",
+        "target", "vendor", "dist", "out", "Pods", "env", ".env", "site-packages",
+        "third_party", "benchmarks", "benchmark", "test_data", "test-data",
+        "envs"
     ]
 
     // MARK: - Init
@@ -212,6 +215,17 @@ final class JCrossVault: ObservableObject {
     ) async {
         guard let vault else { return }
 
+        // バッチ全体で1つの irVault を共有し、最後に1回だけディスクへ書き込む（ディスクI/Oのボトルネックと上書きバグ解消）
+        let irVaultURL = vaultRoot.appendingPathComponent("ir_vault.enc")
+        let irVault    = JCrossIRVault(persistenceURL: irVaultURL)
+        if FileManager.default.fileExists(atPath: irVaultURL.path) {
+            try? irVault.loadEncrypted(from: irVaultURL)
+        }
+
+        // MainActor スイッチのオーバーヘッドを避けるため、バッチ開始時に1度だけ取得
+        let useOllama = await MainActor.run { GatekeeperModeState.shared.useOllamaNER }
+
+
         var index = VaultIndex(
             entries: [:],
             createdAt: Date(),
@@ -219,33 +233,68 @@ final class JCrossVault: ObservableObject {
             workspaceRoot: wsRoot.path
         )
 
-        for (i, fileURL) in files.enumerated() {
-            let relativePath = String(fileURL.path.dropFirst(wsRoot.path.count + 1))
-            let prog = Double(i) / Double(max(files.count, 1))
-            let rel  = relativePath
+        // JCrossCodeTranspiler.shared (MainActor) へのアクセスを一度だけ行い、
+        // nonisolated メソッドを呼び出すため参照を保持する
+        let transpiler = await PolymorphicJCrossTranspiler.shared
+        let totalFiles = files.count
 
-            // UI 更新は片道 Task で投げる（await しない）
-            if i % 5 == 0 || i == files.count - 1 {
-                Task { @MainActor [weak vault] in
-                    vault?.vaultStatus = .converting(progress: prog, currentFile: rel)
+        await withTaskGroup(of: (Int, String, VaultEntry?, String?).self) { group in
+            let concurrencyLimit = 32
+            var activeTasks = 0
+            var i = 0
+
+            func enqueueNext() {
+                guard i < totalFiles else { return }
+                let fileURL = files[i]
+                let idx = i
+                i += 1
+                activeTasks += 1
+                
+                group.addTask {
+                    let relativePath = String(fileURL.path.dropFirst(wsRoot.path.count + 1))
+                    do {
+                        let entry = try await vault.convertFile(
+                            fileURL: fileURL, relativePath: relativePath,
+                            transpiler: transpiler,
+                            vaultRootURL: vaultRoot,
+                            irVault: irVault,
+                            useOllamaNER: useOllama
+                        )
+                        return (idx, relativePath, entry, nil)
+                    } catch {
+                        return (idx, relativePath, nil, error.localizedDescription)
+                    }
                 }
             }
 
-            do {
-                let transpiler = await PolymorphicJCrossTranspiler.shared
-                let entry = try await vault.convertFile(
-                    fileURL: fileURL, relativePath: relativePath,
-                    transpiler: transpiler,
-                    vaultRootURL: vaultRoot
-                )
-                index.entries[relativePath] = entry
-                if i % 5 == 0 || i == files.count - 1 {
-                    let msg = "  [\(i+1)/\(files.count)] ✓ \(relativePath) (\(entry.nodeCount) nodes)"
+            // 初期タスク投入
+            while activeTasks < concurrencyLimit && i < totalFiles {
+                enqueueNext()
+            }
+
+            for await (idx, relativePath, entry, errDesc) in group {
+                activeTasks -= 1
+                
+                let prog = Double(idx) / Double(max(totalFiles, 1))
+                if idx % 10 == 0 || idx == totalFiles - 1 {
+                    Task { @MainActor [weak vault] in
+                        vault?.vaultStatus = .converting(progress: prog, currentFile: relativePath)
+                    }
+                }
+
+                if let entry = entry {
+                    index.entries[relativePath] = entry
+                    if idx % 10 == 0 || idx == totalFiles - 1 {
+                        let msg = "  [\(idx+1)/\(totalFiles)] ✓ \(relativePath) (\(entry.nodeCount) nodes)"
+                        await MainActor.run { vault.conversionLog.append(msg) }
+                    }
+                } else if let errorDesc = errDesc {
+                    let msg = "  [\(idx+1)/\(totalFiles)] ⚠️ \(relativePath): \(errorDesc)"
                     await MainActor.run { vault.conversionLog.append(msg) }
                 }
-            } catch {
-                let msg = "  [\(i+1)/\(files.count)] ⚠️ \(relativePath): \(error.localizedDescription)"
-                await MainActor.run { vault.conversionLog.append(msg) }
+
+                // 次のタスクを補充
+                enqueueNext()
             }
         }
 
@@ -255,6 +304,7 @@ final class JCrossVault: ObservableObject {
         if let data = try? JSONEncoder().encode(index) {
             try? data.write(to: idxURL, options: .atomic)
         }
+        try? irVault.saveEncrypted()
         JCrossVault._addGitignoreEntry(vaultRoot: vaultRoot, wsRoot: wsRoot)
 
         let count = index.entries.count
@@ -356,6 +406,13 @@ final class JCrossVault: ObservableObject {
 
         log("🔄 差分更新: \(changedFiles.count) ファイル")
         let transpiler = PolymorphicJCrossTranspiler.shared
+        let useOllama = GatekeeperModeState.shared.useOllamaNER
+        
+        let irVaultURL = vaultRootURL.appendingPathComponent("ir_vault.enc")
+        let irVault = JCrossIRVault(persistenceURL: irVaultURL)
+        if FileManager.default.fileExists(atPath: irVaultURL.path) {
+            try? irVault.loadEncrypted(from: irVaultURL)
+        }
 
         for relativePath in changedFiles {
             let fileURL = workspaceURL.appendingPathComponent(relativePath)
@@ -371,7 +428,9 @@ final class JCrossVault: ObservableObject {
                     fileURL: fileURL,
                     relativePath: relativePath,
                     transpiler: transpiler,
-                    vaultRootURL: currentVaultRoot
+                    vaultRootURL: currentVaultRoot,
+                    irVault: irVault,
+                    useOllamaNER: useOllama
                 )
                 vaultIndex?.entries[relativePath] = entry
                 log("  ✓ 更新: \(relativePath)")
@@ -379,6 +438,8 @@ final class JCrossVault: ObservableObject {
                 log("  ⚠️ 更新失敗: \(relativePath) — \(error.localizedDescription)")
             }
         }
+
+        try? irVault.saveEncrypted()
 
         vaultIndex?.lastUpdatedAt = Date()
         if let index = vaultIndex { saveIndex(index) }
@@ -538,7 +599,9 @@ final class JCrossVault: ObservableObject {
         fileURL: URL,
         relativePath: String,
         transpiler: PolymorphicJCrossTranspiler,
-        vaultRootURL: URL
+        vaultRootURL: URL,
+        irVault: JCrossIRVault,
+        useOllamaNER: Bool
     ) async throws -> VaultEntry {
         let source = try String(contentsOf: fileURL, encoding: .utf8)
         let lang   = JCrossCodeTranspiler.CodeLanguage.from(extension: fileURL.pathExtension)
@@ -547,8 +610,6 @@ final class JCrossVault: ObservableObject {
         // JCrossIRGenerator がソースを 6軸構造体 + ローカルVault に変換する。
         // 秘密軸（関数名・定数値等）は irVault に隔離。
         // LLMへ送信するのは ObfuscatedIRDocument のみ。
-        let irVaultURL = vaultRootURL.appendingPathComponent("ir_vault.enc")
-        let irVault    = JCrossIRVault(persistenceURL: irVaultURL)
         let irGen      = JCrossIRGenerator()
         let irDoc      = irGen.generateIR(from: source, language: lang, vault: irVault)
 
@@ -558,23 +619,22 @@ final class JCrossVault: ObservableObject {
 
         // LLM に送信するコンテキストは、識別子をシャッフルした構文構造 (Polymorphic) を使用する。
         // opaque な 6軸IR では LLM がコードを編集できないため。
-        let transpiled = await transpiler.transpile(source, language: lang, noiseLevel: 2)
+        let transpiled = await transpiler.transpileBackground(source, language: lang, noiseLevel: 2, useOllamaNER: useOllamaNER)
         let jcrossContent = transpiled.jcross
         let schemaID = transpiled.schemaID
 
         let nodeCount   = irDoc.nodes.count
         let secretCount = irVault.statistics.entriesWithSemantics
 
-        // Vault を暗号化保存
-        try? irVault.saveEncrypted()
-
         // .jcross / .schema.json ファイルを書き込む
-        let safeRelPath   = relativePath.replacingOccurrences(of: "/", with: "∕")
-        let jcrossRelPath = safeRelPath + ".jcross"
-        let schemaRelPath = safeRelPath + ".schema.json"
+        // v2.3: ディレクトリ階層を維持し、確実にディレクトリを作成する
+        let jcrossRelPath = relativePath + ".jcross"
+        let schemaRelPath = relativePath + ".schema.json"
 
         let jcrossFileURL = vaultRootURL.appendingPathComponent(jcrossRelPath)
         let schemaFileURL = vaultRootURL.appendingPathComponent(schemaRelPath)
+
+        try? FileManager.default.createDirectory(at: jcrossFileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
 
         try jcrossContent.write(to: jcrossFileURL, atomically: true, encoding: String.Encoding.utf8)
 
@@ -593,7 +653,7 @@ final class JCrossVault: ObservableObject {
         // ── BitNet L1 タグ生成 ──────────────────────────────────────────
         let langName      = fileURL.pathExtension.lowercased()
         let l1Tags        = await generateL1TagsViaBitNet(source: source, language: langName)
-        let l1TagsRelPath = safeRelPath + ".l1tags"
+        let l1TagsRelPath = relativePath + ".l1tags"
         let l1TagsFileURL = vaultRootURL.appendingPathComponent(l1TagsRelPath)
         if let l1Data = l1Tags.data(using: .utf8) {
             try? l1Data.write(to: l1TagsFileURL)

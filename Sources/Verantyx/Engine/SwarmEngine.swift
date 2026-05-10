@@ -263,7 +263,7 @@ public final class SwarmEngine: ObservableObject {
         swarmLogs.removeAll()
         alwaysApproveDiffs = false
         log("Received new mission: \(instruction)")
-        let opMode = await MainActor.run { AppState.shared?.operationMode ?? .autoSwarm }
+        let opMode = await MainActor.run { AppState.shared?.operationMode ?? .gatekeeper }
         let strategy = await MainActor.run { currentStrategy }
         onProgress("Swarm Mode Activated (\(opMode.rawValue), Strategy: \(strategy.rawValue)). Checking World Knowledge...")
         
@@ -347,7 +347,7 @@ public final class SwarmEngine: ObservableObject {
                         // In autoSwarm mode, Gemma can pick Ralph. If we are doing Ralph strategy (either manually or auto-selected)
                         let activeStrategy = await MainActor.run { self.currentStrategy }
                         // For autoSwarm, if we detect bugs, we might assume Ralph mode dynamically
-                        let isRalph = (opMode == .swarm && activeStrategy == .ralph) || (opMode == .autoSwarm && (taskDesc.lowercased().contains("fix") || taskDesc.lowercased().contains("debug")))
+                        let isRalph = activeStrategy == .ralph || taskDesc.lowercased().contains("fix") || taskDesc.lowercased().contains("debug")
                         
                         if isRalph && !isApproved {
                             var retryCount = 0
@@ -377,7 +377,7 @@ public final class SwarmEngine: ObservableObject {
                                 let reason = isDeadlocked ? "Deadlock Detected" : "Maximum retries (\(maxRetries)) reached"
                                 self.log("Cycle Breaker Activated: \(reason) for \(taskId). Halting infinite loop.", role: .securityChecker)
                                 
-                                if opMode == .autoSwarm {
+                                if opMode == .gatekeeper {
                                     self.log("Unresolvable bug detected. Requesting human permission to use Cloud LLM.", role: .router)
                                     
                                     // Construct SOS Payload for Cloud LLM
@@ -412,7 +412,7 @@ public final class SwarmEngine: ObservableObject {
                         }
                         
                         if isApproved {
-                            if opMode == .swarm && !self.alwaysApproveDiffs {
+                            if opMode == .gatekeeper && !self.alwaysApproveDiffs {
                                 self.activeAgents[agentIndex].proposedDiff = patch
                                 self.activeAgents[agentIndex].status = .awaitingDiffApproval
                                 
@@ -476,7 +476,7 @@ public final class SwarmEngine: ObservableObject {
     
     /// Router (Gemma): Translates ambiguous user input into mechanical tasks.
     private func planTasks(with instruction: String, modelId: String) async -> [SwarmTask] {
-        let opMode = await MainActor.run { AppState.shared?.operationMode ?? .autoSwarm }
+        let opMode = await MainActor.run { AppState.shared?.operationMode ?? .gatekeeper }
         let strategy = await MainActor.run { self.currentStrategy }
         log("Analyzing intent and generating task tree via \(modelId) in mode \(opMode.rawValue), strategy \(strategy.rawValue)...")
         
@@ -484,7 +484,7 @@ public final class SwarmEngine: ObservableObject {
         var isUltrawork = false
         var isRalph = false
         
-        if opMode == .autoSwarm {
+        if opMode == .gatekeeper {
             // Gemma automatically decides between Ultrawork and Ralph based on the instruction
             if instruction.lowercased().contains("debug") || instruction.lowercased().contains("fix") || instruction.lowercased().contains("bug") {
                 isRalph = true
@@ -596,8 +596,8 @@ public final class SwarmEngine: ObservableObject {
         
         var buffer = ""
         let codeOpt = await OllamaClient.shared.generate(model: modelId, prompt: prompt, maxTokens: 2048, temperature: 0.2) { token in
-            buffer += token
             let isInterrupted = await MainActor.run {
+                buffer += token
                 self.activeAgents[agentIndex].lastOutput = buffer
                 return self.activeAgents[agentIndex].isInterrupted
             }

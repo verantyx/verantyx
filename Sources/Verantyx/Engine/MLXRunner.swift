@@ -81,6 +81,11 @@ actor MLXRunner {
     private(set) var currentModelId: String? = nil
     private(set) var isLoaded: Bool = false
 
+    /// Persisted KV cache to enable zero-prefill generation across multiple turns.
+    private var activeKVCache: [KVCache]? = nil
+    /// The exact tokens that correspond to the state inside `activeKVCache`.
+    private var activePromptTokens: [Int] = []
+
     /// Pending vocab_size overrides discovered from mismatchedSize errors.
     /// Key: modelId, Value: actual vocab_size from weight tensors.
     /// Applied during buildPatchedDirectory to inject into config.json.
@@ -131,6 +136,8 @@ actor MLXRunner {
         isLoaded = false
         currentModelId = nil
         kvTokensConsumed = 0
+        activeKVCache = nil
+        activePromptTokens = []
         // Notify UI on main thread via Notification (MLXRunner is actor, no SwiftUI import)
         let displayName = name.components(separatedBy: "/").last ?? name
         await MainActor.run {
@@ -152,6 +159,7 @@ actor MLXRunner {
             return
         }
         container = nil; isLoaded = false; currentModelId = nil
+        activeKVCache = nil; activePromptTokens = []
         await MainActor.run { progressHandler("⟳ Loading \(modelId) into Unified Memory…") }
 
         var hub = defaultHubApi
@@ -977,7 +985,10 @@ actor MLXRunner {
             userInput = UserInput(prompt: prompt, images: mlxImages)
         }
 
-        try await box.perform { (context: ModelContext) in
+        let currentCache = self.activeKVCache
+        let currentPromptTokens = self.activePromptTokens
+
+        let (newCache, newPromptTokens, finishPayload) = try await box.perform { (context: ModelContext) -> ([KVCache]?, [Int], String) in
             let lmInput: LMInput
             do {
                 lmInput = try await context.processor.prepare(input: userInput)
@@ -985,6 +996,50 @@ actor MLXRunner {
                 let ids = context.tokenizer.encode(text: prompt)
                 lmInput = LMInput(tokens: .init(ids.map { Int32($0) }))
             }
+
+            let fullTokens = lmInput.text.tokens.asArray(Int.self)
+            var deltaTokens: [Int] = []
+            var cacheToUse: [KVCache]? = nil
+
+            // ── ZERO-PREFILL KV CACHE REUSE ────────────────────────────
+            if let existingCache = currentCache, !currentPromptTokens.isEmpty {
+                var matchCount = 0
+                for i in 0..<min(fullTokens.count, currentPromptTokens.count) {
+                    if fullTokens[i] == currentPromptTokens[i] {
+                        matchCount += 1
+                    } else { break }
+                }
+
+                if matchCount > 0 {
+                    let trimAmount = currentPromptTokens.count - matchCount
+                    if trimAmount > 0 {
+                        for cache in existingCache {
+                            cache.trim(trimAmount)
+                        }
+                    }
+                    deltaTokens = Array(fullTokens.dropFirst(matchCount))
+                    cacheToUse = existingCache
+                } else {
+                    deltaTokens = fullTokens
+                    cacheToUse = context.model.newCache(parameters: params)
+                }
+            } else {
+                deltaTokens = fullTokens
+                cacheToUse = context.model.newCache(parameters: params)
+            }
+
+            // If deltaTokens is completely empty, we must at least evaluate the last token
+            if deltaTokens.isEmpty, let last = fullTokens.last {
+                deltaTokens = [last]
+                if let cache = cacheToUse {
+                    for c in cache { c.trim(1) } // Roll back one token so we can re-evaluate it
+                }
+            }
+
+            let deltaInput = LMInput(tokens: MLXArray(deltaTokens.map { Int32($0) }))
+            let iterator = try TokenIterator(
+                input: deltaInput, model: context.model, cache: cacheToUse, parameters: params
+            )
 
             var allTokens: [Int] = []
 
@@ -1058,8 +1113,8 @@ actor MLXRunner {
                 return (result, inThink)
             }
 
-            let result = try MLXLMCommon.generate(
-                input: lmInput, parameters: params, context: context
+            let result = MLXLMCommon.generate(
+                input: deltaInput, context: context, iterator: iterator
             ) { newTokens -> GenerateDisposition in
                 // ⚠️ MLXLMCommon delivers the CUMULATIVE token array on every
                 // callback — NOT just the newly generated tokens. Using += would
@@ -1133,8 +1188,13 @@ actor MLXRunner {
             let finishPayload = budgetExceeded
                 ? result.output + "\n<!-- 💭 thinking budget reached -->"
                 : result.output
-            onFinish(finishPayload)
+            
+            return (cacheToUse, fullTokens + result.tokens, finishPayload)
         }
+        
+        self.activeKVCache = newCache
+        self.activePromptTokens = newPromptTokens
+        onFinish(finishPayload)
 
         // ── KV Cache accounting ────────────────────────────────────────────
         // Rough estimate: prompt chars + generated output chars, divided by 4.
@@ -1173,7 +1233,10 @@ actor MLXRunner {
             userInput = UserInput(prompt: prompt, images: mlxImages)
         }
 
-        return try await box.perform { (context: ModelContext) in
+        let currentCache = self.activeKVCache
+        let currentPromptTokens = self.activePromptTokens
+
+        let (newCache, newPromptTokens, finalOutput) = try await box.perform { (context: ModelContext) -> ([KVCache]?, [Int], String) in
             let lmInput: LMInput
             do {
                 lmInput = try await context.processor.prepare(input: userInput)
@@ -1181,15 +1244,58 @@ actor MLXRunner {
                 let ids = context.tokenizer.encode(text: prompt)
                 lmInput = LMInput(tokens: .init(ids.map { Int32($0) }))
             }
+            
+            let fullTokens = lmInput.text.tokens.asArray(Int.self)
+            var deltaTokens: [Int] = []
+            var cacheToUse: [KVCache]? = nil
+
+            if let existingCache = currentCache, !currentPromptTokens.isEmpty {
+                var matchCount = 0
+                for i in 0..<min(fullTokens.count, currentPromptTokens.count) {
+                    if fullTokens[i] == currentPromptTokens[i] {
+                        matchCount += 1
+                    } else { break }
+                }
+
+                if matchCount > 0 {
+                    let trimAmount = currentPromptTokens.count - matchCount
+                    if trimAmount > 0 {
+                        for cache in existingCache { cache.trim(trimAmount) }
+                    }
+                    deltaTokens = Array(fullTokens.dropFirst(matchCount))
+                    cacheToUse = existingCache
+                } else {
+                    deltaTokens = fullTokens
+                    cacheToUse = context.model.newCache(parameters: params)
+                }
+            } else {
+                deltaTokens = fullTokens
+                cacheToUse = context.model.newCache(parameters: params)
+            }
+
+            if deltaTokens.isEmpty, let last = fullTokens.last {
+                deltaTokens = [last]
+                if let cache = cacheToUse { for c in cache { c.trim(1) } }
+            }
+
+            let deltaInput = LMInput(tokens: MLXArray(deltaTokens.map { Int32($0) }))
+            let iterator = try TokenIterator(
+                input: deltaInput, model: context.model, cache: cacheToUse, parameters: params
+            )
+
             var all: [Int] = []
-            let result = try MLXLMCommon.generate(
-                input: lmInput, parameters: params, context: context
+            let result = MLXLMCommon.generate(
+                input: deltaInput, context: context, iterator: iterator
             ) { tokens -> GenerateDisposition in
-                // Same fix: MLXLMCommon passes cumulative array — use = not +=
                 all = tokens; return all.count >= maxTokens ? .stop : .more
             }
-            return result.output
+            
+            return (cacheToUse, fullTokens + result.tokens, result.output)
         }
+        
+        self.activeKVCache = newCache
+        self.activePromptTokens = newPromptTokens
+        return finalOutput
     }
 
     // MARK: - Download only (no load)

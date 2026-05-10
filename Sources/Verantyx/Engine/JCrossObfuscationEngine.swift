@@ -254,9 +254,11 @@ struct JCrossObfuscationPipeline {
             obfuscationLayers:  [
                 "arity_normalization",
                 "complete_opaquification",   // v2.2 新規: kind/TYPE/MEM をopaque統一
-                "random_hash_per_node",      // v2.2 新規: ハッシュ重複を排除
+                "random_hash_per_node",      // v2.2: ハッシュ重複を排除
                 "phantom_node_injection",
-                "topology_shuffling"
+                "topology_shuffling",
+                "function_fragmentation",    // v2.3: 関数境界の完全除去
+                "temporal_id_randomization"  // v2.3: 毎リクエストのIDシャッフル
             ]
         )
     }
@@ -272,7 +274,13 @@ struct JCrossObfuscationPipeline {
     func obfuscateTextFragment(_ raw: String) -> String {
         var lines = raw.components(separatedBy: "\n")
 
-        // ── v2.2 Layer: 完全Opaque化 ───────────────────────────────────────
+        // ── v2.3 Layer: Temporal Obfuscation (Function Fragmentation) ──────
+        // 関数境界やTop-Levelコメントを完全に削除し、全てのノードをフラットにする
+        lines = lines.filter { line in
+            !line.contains("// ── FUNC[") && !line.contains("// ── TOP-LEVEL NODES")
+        }
+
+        // ── v2.2/2.3 Layer: 完全Opaque化 + ノードIDランダム化 ───────────────
         // kind / TYPE / MEM / OP / CTRL / hash を完全に置換
         let opaquePatterns: [(pattern: String, replacement: String)] = [
             // kind: を opaque に
@@ -287,6 +295,11 @@ struct JCrossObfuscationPipeline {
             (#"\bCTRL:(?!opaque)\S+"#, "CTRL:opaque"),
             // hash: の固定値をランダムハッシュに（既存の0x... を置換）
             (#"\bhash:0x[0-9a-fA-F]+"#, "HASH:REPLACE_RANDOM"),
+            // v2.3: params, return, async, throw の隠匿（万が一残っていた場合）
+            (#"\bparams:\d+"#, "params:opaque"),
+            (#"\breturn:\d+"#, "return:opaque"),
+            (#"\basync:(true|false)"#, "async:opaque"),
+            (#"\bthrow:(true|false)"#, "throw:opaque"),
         ]
 
         lines = lines.map { line in
@@ -331,13 +344,35 @@ struct JCrossObfuscationPipeline {
             return result
         }
 
-        // ── v2.2 Layer C: Phantom Node Injection（ランダムハッシュ付き）──
+        // ── v2.3 Layer C: Synthetic Topology & Noise Equalization ──
         var obfuscatedLines: [String] = []
+        var blockNodesCount = 0
+        
         for line in lines {
             obfuscatedLines.append(line)
-            // 全ノード行にランダム密度でファントムを追加
-            if Double.random(in: 0..<1) < 0.20 && !line.trimmingCharacters(in: .whitespaces).isEmpty {
+            if !line.trimmingCharacters(in: .whitespaces).isEmpty && line.contains("NODE[") {
+                blockNodesCount += 1
+            }
+            
+            // ランダムにファントムを注入 (Synthetic Topology Injection)
+            if Double.random(in: 0..<1) < 0.25 && !line.trimmingCharacters(in: .whitespaces).isEmpty {
                 obfuscatedLines.append(makeTextPhantomLine())
+                blockNodesCount += 1
+            }
+            
+            // v2.3: Structural Noise Equalization
+            // 約20ノードごとに、チャンクサイズを均等化するためのランダムパディングを挿入
+            if blockNodesCount >= 20 {
+                let padCount = Int.random(in: 10...20)
+                for _ in 0..<padCount {
+                    obfuscatedLines.append(makeTextPhantomLine())
+                }
+                blockNodesCount = 0
+                // チャンク間にダミーの境界コメントをランダム挿入（Function Fragmentationの強化）
+                if Double.random(in: 0..<1) < 0.5 {
+                    let shardID = UUID().uuidString.prefix(4).uppercased()
+                    obfuscatedLines.append("// ── SHARD_BOUNDARY[\(shardID)] ──")
+                }
             }
         }
 
@@ -441,7 +476,7 @@ struct ObfuscationVerifier {
 
         var summary: String {
             """
-            [ObfuscationVerifier v2.2]
+            [ObfuscationVerifier v2.3]
               Original nodes  : \(originalNodeCount)
               Obfuscated nodes: \(obfuscatedNodeCount) (\(phantomNodeCount) phantoms)
               Unique hashes   : \(uniqueHashCount) / \(obfuscatedNodeCount)

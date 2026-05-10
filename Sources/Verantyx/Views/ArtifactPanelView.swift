@@ -46,7 +46,7 @@ struct ArtifactPanelView: View {
         // The Bool expression evaluated outside the closure could read a stale value
         // when AI Priority mode clears pendingDiff synchronously.
         .onChange(of: app.pendingDiff) { _, newDiff in
-            if newDiff != nil && app.operationMode == .human {
+            if newDiff != nil {
                 withAnimation(.easeInOut(duration: 0.15)) { activeTab = .diff }
             }
         }
@@ -146,7 +146,7 @@ struct ArtifactPanelView: View {
     }
 
     private var availableTabs: [DisplayTab] {
-        app.operationMode == .aiPriority ? [.preview, .code] : [.preview, .code, .diff]
+        return [.preview, .code, .diff]
     }
 
     // MARK: - Preview (WKWebView)

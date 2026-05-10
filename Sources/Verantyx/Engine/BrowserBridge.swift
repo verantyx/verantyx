@@ -1,5 +1,6 @@
 import Foundation
 import AppKit
+import Vision
 
 // MARK: - BrowserBridge
 //
@@ -302,12 +303,6 @@ actor BrowserBridge {
             throw BrowserError.ioError("Could not find window bounds for HID click")
         }
 
-        // Calculate absolute screen coordinates
-        let screenX = windowX + x
-        let screenY = windowY + y
-
-        let point = CGPoint(x: screenX, y: screenY)
-
         // Ensure browser is active
         await MainActor.run {
             if let app = NSRunningApplication(processIdentifier: pid) {
@@ -316,9 +311,50 @@ actor BrowserBridge {
         }
         try? await Task.sleep(nanoseconds: 100_000_000)
 
+        // --- Coordinate Calibration Phase ---
+        let calibStartPoint = NSEvent.mouseLocation
+        let screenHeight = NSScreen.screens.first?.frame.height ?? 0
+        let currentPoint = CGPoint(x: calibStartPoint.x, y: screenHeight - calibStartPoint.y)
+
+        let calibDelta: Double = 50.0
+        let calibTest = CGPoint(x: currentPoint.x + calibDelta, y: currentPoint.y + calibDelta)
+        
+        if let moveEvent = CGEvent(mouseEventSource: nil, mouseType: .mouseMoved, mouseCursorPosition: calibTest, mouseButton: .left) {
+            moveEvent.post(tap: .cghidEventTap)
+        }
+        try? await Task.sleep(nanoseconds: 30_000_000)
+        
+        let calibEndPoint = NSEvent.mouseLocation
+        let actualPoint = CGPoint(x: calibEndPoint.x, y: screenHeight - calibEndPoint.y)
+        
+        let actualDx = actualPoint.x - currentPoint.x
+        let actualDy = actualPoint.y - currentPoint.y
+        
+        var calibScaleX: Double = 1.0
+        var calibScaleY: Double = 1.0
+        
+        if abs(actualDx) > 1.0 && abs(actualDy) > 1.0 {
+            calibScaleX = calibDelta / actualDx
+            calibScaleY = calibDelta / actualDy
+        }
+        
+        // Return cursor to start
+        if let retEvent = CGEvent(mouseEventSource: nil, mouseType: .mouseMoved, mouseCursorPosition: currentPoint, mouseButton: .left) {
+            retEvent.post(tap: .cghidEventTap)
+        }
+        try? await Task.sleep(nanoseconds: 20_000_000)
+
+        // Apply Calibration
+        let uncalibratedScreenX = windowX + x
+        let uncalibratedScreenY = windowY + y
+        let targetPoint = CGPoint(
+            x: currentPoint.x + (uncalibratedScreenX - currentPoint.x) * calibScaleX,
+            y: currentPoint.y + (uncalibratedScreenY - currentPoint.y) * calibScaleY
+        )
+
         // Dispatch HID events
-        guard let mouseDown = CGEvent(mouseEventSource: nil, mouseType: .leftMouseDown, mouseCursorPosition: point, mouseButton: .left),
-              let mouseUp = CGEvent(mouseEventSource: nil, mouseType: .leftMouseUp, mouseCursorPosition: point, mouseButton: .left) else {
+        guard let mouseDown = CGEvent(mouseEventSource: nil, mouseType: .leftMouseDown, mouseCursorPosition: targetPoint, mouseButton: .left),
+              let mouseUp = CGEvent(mouseEventSource: nil, mouseType: .leftMouseUp, mouseCursorPosition: targetPoint, mouseButton: .left) else {
             throw BrowserError.ioError("Failed to create CGEvent")
         }
 
@@ -576,6 +612,28 @@ class SafariVisionBridge {
         try await enforceSafariBounds()
     }
 
+    func scrollDown() async throws {
+        let script = """
+        tell application "Safari"
+            do JavaScript "window.scrollBy({top: window.innerHeight * 0.8, behavior: 'smooth'});" in current tab of front window
+        end tell
+        """
+        try await runAppleScript(script)
+    }
+
+    func takeMultiFrameScreenshot(frameCount: Int = 4) async throws -> [String] {
+        var frames: [String] = []
+        for i in 0..<frameCount {
+            let base64 = try await takeScreenshot()
+            frames.append(base64)
+            if i < frameCount - 1 {
+                try await scrollDown()
+                try await Task.sleep(nanoseconds: 1_000_000_000) // wait for smooth scroll to finish
+            }
+        }
+        return frames
+    }
+
     func takeScreenshot() async throws -> String {
         if !CGPreflightScreenCaptureAccess() {
             CGRequestScreenCaptureAccess()
@@ -707,18 +765,55 @@ class SafariVisionBridge {
         try? await runAppleScript(script)
         try? await Task.sleep(nanoseconds: 100_000_000)
 
-        let screenX = windowX + logicalClickX
-        let screenY = windowY + logicalClickY
-        let targetPoint = CGPoint(x: screenX, y: screenY)
+        // Block mouse events UI overlay early for calibration
+        await MainActor.run { AppState.shared?.isAgentControllingMouse = true }
 
-        let startPoint = NSEvent.mouseLocation
+        // --- Coordinate Calibration Phase ---
+        // Verify how much a CGEvent physical coordinate actually moves the NSEvent logical coordinate.
+        let calibStartPoint = NSEvent.mouseLocation
         let screenHeight = NSScreen.screens.first?.frame.height ?? 0
-        let currentPoint = CGPoint(x: startPoint.x, y: screenHeight - startPoint.y)
+        let currentPoint = CGPoint(x: calibStartPoint.x, y: screenHeight - calibStartPoint.y)
+
+        let calibDelta: Double = 50.0
+        let calibTest = CGPoint(x: currentPoint.x + calibDelta, y: currentPoint.y + calibDelta)
+        
+        if let moveEvent = CGEvent(mouseEventSource: nil, mouseType: .mouseMoved, mouseCursorPosition: calibTest, mouseButton: .left) {
+            moveEvent.post(tap: .cghidEventTap)
+        }
+        try? await Task.sleep(nanoseconds: 30_000_000)
+        
+        let calibEndPoint = NSEvent.mouseLocation
+        let actualPoint = CGPoint(x: calibEndPoint.x, y: screenHeight - calibEndPoint.y)
+        
+        let actualDx = actualPoint.x - currentPoint.x
+        let actualDy = actualPoint.y - currentPoint.y
+        
+        var calibScaleX: Double = 1.0
+        var calibScaleY: Double = 1.0
+        
+        if abs(actualDx) > 1.0 && abs(actualDy) > 1.0 {
+            calibScaleX = calibDelta / actualDx
+            calibScaleY = calibDelta / actualDy
+            print("[Verantyx] Safari Calibration: Expected (\(calibDelta), \(calibDelta)), Got (\(actualDx), \(actualDy)) -> Adjust (\(calibScaleX), \(calibScaleY))")
+        } else {
+            print("[Verantyx] Safari Calibration: move failed or was zero: (\(actualDx), \(actualDy)). Keeping scale 1.0")
+        }
+        
+        // Return cursor to start
+        if let retEvent = CGEvent(mouseEventSource: nil, mouseType: .mouseMoved, mouseCursorPosition: currentPoint, mouseButton: .left) {
+            retEvent.post(tap: .cghidEventTap)
+        }
+        try? await Task.sleep(nanoseconds: 20_000_000)
+
+        // Apply Calibration
+        let uncalibratedScreenX = windowX + logicalClickX
+        let uncalibratedScreenY = windowY + logicalClickY
+        let targetPoint = CGPoint(
+            x: currentPoint.x + (uncalibratedScreenX - currentPoint.x) * calibScaleX,
+            y: currentPoint.y + (uncalibratedScreenY - currentPoint.y) * calibScaleY
+        )
         
         let entropy = await MainActor.run { AppState.shared?.lastEntropy }
-        
-        // Block mouse events UI overlay
-        await MainActor.run { AppState.shared?.isAgentControllingMouse = true }
         
         // Generate trajectory
         var path: [CGPoint] = []
@@ -794,8 +889,10 @@ class SafariVisionBridge {
         try? await runAppleScript(script)
         try? await Task.sleep(nanoseconds: 100_000_000)
 
+        let kEntropy = await MainActor.run { AppState.shared?.lastKeyboardEntropy }
+        
         let source = CGEventSource(stateID: .hidSystemState)
-        for char in text {
+        for (i, char) in text.enumerated() {
             let s = String(char)
             var buf = [UInt16](repeating: 0, count: s.utf16.count)
             let _ = s.utf16.map { $0 }.withUnsafeBufferPointer { ptr in
@@ -806,12 +903,31 @@ class SafariVisionBridge {
                 eventDown.keyboardSetUnicodeString(stringLength: buf.count, unicodeString: buf)
                 eventDown.post(tap: .cghidEventTap)
             }
-            try? await Task.sleep(nanoseconds: 20_000_000)
+            
+            // keystroke hold delay
+            let holdMs: UInt64
+            if let ke = kEntropy, !ke.isEmpty {
+                let e = ke[(i * 2) % ke.count]
+                holdMs = UInt64(10 + e * 40)
+            } else {
+                holdMs = UInt64(Int.random(in: 15...35))
+            }
+            try? await Task.sleep(nanoseconds: holdMs * 1_000_000)
+            
             if let eventUp = CGEvent(keyboardEventSource: source, virtualKey: 0, keyDown: false) {
                 eventUp.keyboardSetUnicodeString(stringLength: buf.count, unicodeString: buf)
                 eventUp.post(tap: .cghidEventTap)
             }
-            try? await Task.sleep(nanoseconds: 50_000_000)
+            
+            // keystroke interval delay
+            let intervalMs: UInt64
+            if let ke = kEntropy, !ke.isEmpty {
+                let e = ke[(i * 2 + 1) % ke.count]
+                intervalMs = UInt64(20 + e * 130)
+            } else {
+                intervalMs = UInt64(Int.random(in: 30...100))
+            }
+            try? await Task.sleep(nanoseconds: intervalMs * 1_000_000)
         }
     }
 
@@ -832,4 +948,32 @@ class SafariVisionBridge {
             }
         }
     }
+
+    func computeVisualSimilarity(base64A: String, base64B: String) -> Float {
+        guard let dataA = Data(base64Encoded: base64A),
+              let dataB = Data(base64Encoded: base64B),
+              let imgA = NSImage(data: dataA)?.cgImage(forProposedRect: nil, context: nil, hints: nil),
+              let imgB = NSImage(data: dataB)?.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
+            return 100.0
+        }
+        
+        let requestA = VNGenerateImageFeaturePrintRequest()
+        let requestB = VNGenerateImageFeaturePrintRequest()
+        
+        let handlerA = VNImageRequestHandler(cgImage: imgA, options: [:])
+        let handlerB = VNImageRequestHandler(cgImage: imgB, options: [:])
+        
+        try? handlerA.perform([requestA])
+        try? handlerB.perform([requestB])
+        
+        guard let obsA = requestA.results?.first as? VNFeaturePrintObservation,
+              let obsB = requestB.results?.first as? VNFeaturePrintObservation else {
+            return 100.0
+        }
+        
+        var distance: Float = 0
+        try? obsA.computeDistance(&distance, to: obsB)
+        return distance
+    }
 }
+

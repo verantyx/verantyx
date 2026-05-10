@@ -474,36 +474,11 @@ struct SettingsView: View {
                             .onSubmit { app.connectOllama() }
                     }
 
-                    rowLabel("Target Mode") {
-                        HStack(spacing: 12) {
-                            Picker("", selection: $app.editingMode) {
-                                ForEach(OperationMode.allCases) { m in
-                                    Text(m.displayName).tag(m)
-                                }
-                            }
-                            .frame(width: 150)
-                            
-                            Button {
-                                app.switchModeAndEjectOldModel(to: app.editingMode)
-                            } label: {
-                                HStack(spacing: 4) {
-                                    Image(systemName: "checkmark.circle.fill")
-                                    Text(app.t("Enable Mode", "モードを有効にする"))
-                                }
-                            }
-                            .buttonStyle(.borderedProminent)
-                            .controlSize(.small)
-                            .tint(app.editingMode == app.operationMode ? .green : .blue)
-                        }
-                    }
-
-                    Divider().opacity(0.2)
-
                     rowLabel("Ollama model") {
                         HStack(spacing: 6) {
                             let modelBinding = Binding<String>(
-                                get: { app.getOllamaModel(for: app.editingMode) },
-                                set: { app.setOllamaModel($0, for: app.editingMode) }
+                                get: { app.getOllamaModel() },
+                                set: { app.setOllamaModel($0) }
                             )
                             
                             if app.ollamaModels.isEmpty {

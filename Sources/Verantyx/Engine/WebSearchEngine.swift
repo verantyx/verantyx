@@ -76,10 +76,21 @@ actor WebSearchEngine {
         videoFrames: [String]? = nil
     ) async -> WebSearchResult {
 
-        let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? query
+        // AIがクエリ全体をダブルクォーテーションで囲んで出力した場合の完全一致検索（検索失敗）を防ぐ
+        var cleanQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        if cleanQuery.hasPrefix("\"") && cleanQuery.hasSuffix("\"") && cleanQuery.count >= 2 {
+            cleanQuery = String(cleanQuery.dropFirst().dropLast())
+        }
+        
+        // シングルクォーテーションの場合も同様に除去
+        if cleanQuery.hasPrefix("'") && cleanQuery.hasSuffix("'") && cleanQuery.count >= 2 {
+            cleanQuery = String(cleanQuery.dropFirst().dropLast())
+        }
+
+        let encodedQuery = cleanQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? cleanQuery
         let searchURL = engine.searchURL(for: encodedQuery)
 
-        return await browse(url: searchURL, preferredSource: preferredSource, originalQuery: query, entropy: entropy, keyboardEntropy: keyboardEntropy, videoFrames: videoFrames)
+        return await browse(url: searchURL, preferredSource: preferredSource, originalQuery: cleanQuery, entropy: entropy, keyboardEntropy: keyboardEntropy, videoFrames: videoFrames)
     }
 
     // MARK: - Main: browse URL
@@ -99,18 +110,15 @@ actor WebSearchEngine {
         var currentKeyboardEntropy = keyboardEntropy
         
         // ── 🧩 Biometric Entropy Collection & Fully Automatic Mode 🧩 ──
-        var isEntropyStale = false
-        var isAutoMode = false
-        
-        await MainActor.run {
+        let (isAutoMode, isEntropyStale) = await MainActor.run { () -> (Bool, Bool) in
             let savedSamplesCount = UserDefaults.standard.integer(forKey: "bio_samples_count")
             if savedSamplesCount >= 200 {
-                isAutoMode = true
+                return (true, false)
             } else {
                 if let ts = AppState.shared?.lastEntropyTimestamp {
-                    isEntropyStale = Date().timeIntervalSince(ts) > 300
+                    return (false, Date().timeIntervalSince(ts) > 300)
                 } else {
-                    isEntropyStale = true
+                    return (false, true)
                 }
             }
         }
@@ -176,7 +184,7 @@ actor WebSearchEngine {
             if let extracted = await QwenVideoAnalyzer.shared.extractEntropyFromVideo(base64Frames: frames) {
                 finalEntropy = extracted
             }
-            if let target = await QwenVideoAnalyzer.shared.identifyTargetCoordinates(screenshotBase64: frames.last!) {
+            if let target = await QwenVideoAnalyzer.shared.identifyTargetCoordinates(screenshotBase64: frames) {
                 finalTarget = target
             }
         }

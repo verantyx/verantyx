@@ -89,32 +89,7 @@ struct AIModeLayoutView: View {
 
 
 
-            // Switch to Human mode
-            Button {
-                withAnimation(.easeInOut(duration: 0.25)) {
-                    app.operationMode = .human
-                }
-            } label: {
-                HStack(spacing: 5) {
-                    Image(systemName: "person.fill")
-                        .font(.system(size: 10))
-                    Text(app.t("To Human Mode", "Human Mode へ"))
-                        .font(.system(size: 11, weight: .semibold))
-                }
-                .foregroundStyle(Color(red: 0.88, green: 0.88, blue: 0.96))
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
-                .background(
-                    RoundedRectangle(cornerRadius: 6)
-                        .fill(Color.white.opacity(0.08))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 6)
-                                .stroke(Color.white.opacity(0.12), lineWidth: 0.5)
-                        )
-                )
-            }
-            .contentShape(Rectangle())
-            .buttonStyle(.plain)
+
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 7)

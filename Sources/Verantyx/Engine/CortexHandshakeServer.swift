@@ -95,6 +95,7 @@ final class CortexHandshakeServer: ObservableObject {
                     }
                     if let sp = skillsPath {
                         AppState.shared?.cortexSkillsPath = sp
+                        UserDefaults.standard.set(sp, forKey: "cortex_skills_path")
                     }
                     AppState.shared?.cortexSwarmActive = swarmActive
                     AppState.shared?.isCortexConnected = true

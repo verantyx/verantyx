@@ -101,7 +101,7 @@ struct SwarmMonitorView: View {
                 Spacer().frame(height: 8)
             }
             
-            if app.operationMode == .swarm {
+            if app.operationMode == .gatekeeper {
                 HStack {
                     Text("Swarm Strategy:")
                         .font(.system(size: 12))

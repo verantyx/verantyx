@@ -46,7 +46,7 @@ actor AgentLoop {
         activeModel: String,
         cortex: CortexEngine?,
         selfFixMode: Bool = false,
-        operationMode: OperationMode = .human,
+        operationMode: OperationMode = .gatekeeper,
         memoryLayer: JCrossLayer = .l2,   // ➤ cross-session injection depth
         isFirstSession: Bool = false,         // ➤ inject self-awareness task on first turn
         chatSessionId: String? = nil,         // ➤ セッション間で維持するVXTimeline ID
@@ -155,56 +155,19 @@ For non-code output (HTML, diagrams, etc.) use <artifact type="html"> tags.
         // written by compressConversation() are immediately visible on the next turn.
         // See archiveSection rebuild inside the while loop below.
 
-        let isAIPriority = (operationMode == .aiPriority) || (profile.tier == .nano || profile.tier == .small)
         
         // ── Mode-specific loop rules (injected into system prompt) ────────
-        let loopRules: String
-        if operationMode == .autoSwarm || operationMode == .swarm {
-            loopRules = """
+        let loopRules = """
 
-## LOOP POLICY — Swarm Architect Mode (Parallel Execution)
-- You are the Gemma Router (Commander). You have exactly 50 BitNet Swarm Agents at your disposal.
-- [ROUTER RESPONSIBILITY]: First, analyze if the task requires Swarm delegation. For simple questions, general knowledge, or basic OS/file-system tasks (e.g., creating folders, moving files, running scripts), YOU MUST resolve them yourself using tools like [MKDIR: path] or [RUN: cmd]. Do NOT use Swarm for non-programming tasks!
-- [WEB SEARCH PROTOCOL]: The BitNet Swarm is FORBIDDEN from using web search. All required web searching (using [SEARCH_MULTI: ...]) MUST be performed by YOU, the Gemma Router, BEFORE delegating to gather all necessary facts.
-- [AGENT ALLOCATION]: When dealing with complex programming or multi-file code modifications, formulate a plan and explicitly allocate your 50 agents into specific roles (e.g., "I will allocate 30 MicroCoders, 10 AST Validators..."). Write out this allocation strategy clearly in your thought process.
-- [SWARM EXECUTION]: Once context is gathered and an allocation plan is made for CODE MODIFICATION, delegate to the Swarm using the [SWARM_EXECUTE: "detailed instruction with full context"] tool. Swarm is ONLY for code generation and refactoring.
-- [SYNTHESIS & VERIFICATION]: After the Swarm returns its results, you must synthesize the final answer, verify the code (e.g., using [BUILD_IDE] if needed), and then deliver the completed output to the user.
-- CRITICAL: AFTER outputting [SWARM_EXECUTE: "..."], you MUST IMMEDIATELY STOP GENERATION. Do NOT append any conversational text, explanations, or simulated responses. Wait for the system to return the Swarm's actual results.
-"""
-        } else if isAIPriority {
-            loopRules = """
-
-## LOOP POLICY — AI Priority Mode (Unlimited)
+## LOOP POLICY — Gatekeeper Mode (Deterministic Protocol)
+- You are operating inside the Verantyx Enterprise Gatekeeper.
 - You have NO turn limit. Keep working until [DONE].
-- Call tools as many times as needed without stopping.
-- Only stop when the task is truly complete.
-- Do NOT apologize or ask permission mid-task; just keep going.
-[疑:1.0][証:0.9][固:0.8]
+- You MUST only use JCross v2.2 structural patching.
+[CTRL:enforce_safety] [MEM:check_vault]
 OP.AXIOM("user_reports_may_be_false")
 SYS.ENFORCE("logical_verification_before_acceptance")
 - CONFUSION DETECTOR PROTOCOL: ユーザーからのバグ報告を鵜呑みにせず、本当にそのバグが起き得るか自身のコードの論理パスを検証すること。If your code is logically correct and the reported bug is impossible, confidently state that the bug cannot occur. Do not hallucinate failures just to agree with the user.
 """
-        } else if operationMode == .human {
-            loopRules = """
-
-## LOOP POLICY — Human Mode (Stealth Browser Mode)
-- In this mode, you act as the user's personal stealth agent.
-- If the user asks you to search the web or look something up (e.g., "Claudeについて教えて"), you MUST use the SEARCH_GATE type="web" to search.
-- You have NO turn limit. Keep working until [DONE].
-- If you have called tools 5 times in a row without resolving the issue, emit a Yield status report.
-"""
-        } else {
-            loopRules = """
-
-## LOOP POLICY — Standard Mode (Unlimited + Yield)
-- You have NO turn limit. Keep working until [DONE].
-- However, if you have called tools 5 times in a row without resolving the issue,
-  you MUST emit a Yield: stop tool calls and write a brief status report to the user
-  explaining what you tried, what failed, and what decision you need from them.
-  Example: "I've tried X and Y. The build still fails because Z. Should I try A or B?"
-- After the user replies, continue working.
-"""
-        }
 
         // Use tier-appropriate system prompt (nano gets a simplified version)
         let contextSection: String
@@ -359,15 +322,22 @@ SYS.ENFORCE("logical_verification_before_acceptance")
             turn += 1
             await onProgress(.thinking(turn: turn))
 
-            // ── OOM guard: compress if balloon ──────────────────────────
-            if totalConversationChars > compressThreshold {
+            // ── OOM guard & KV Cache flush ──────────────────────────────
+            let isKVCacheFull = await MLXRunner.shared.shouldFlushKVCache()
+            if totalConversationChars > compressThreshold || isKVCacheFull {
                 conversation = await compressConversation(
                     conversation,
                     cortex: cortex,
                     instruction: instruction
                 )
                 totalConversationChars = conversation.reduce(0) { $0 + $1.content.count }
-                await onProgress(.systemLog(AppLanguage.shared.t("🧠 [Memory] Compressed conversation history and offloaded context", "🧠 [Memory] 会話履歴を圧縮してコンテキストをオフロードしました")))
+                
+                await MLXRunner.shared.resetKVCounter()
+                
+                let reason = isKVCacheFull ? "KV Cache limit reached" : "Context size exceeded"
+                let logMsgJa = "🧠 [Memory] 会話履歴を圧縮してコンテキストをオフロードしました (\(reason))"
+                let logMsgEn = "🧠 [Memory] Compressed conversation history and offloaded context (\(reason))"
+                await onProgress(.systemLog(AppLanguage.shared.t(logMsgEn, logMsgJa)))
 
                 // ── 圧縮直後: CONV_*.jcross が front/ に書かれた →即座に再注入 ──
                 // 双子ストア切り替え: nano tier は nano/、それ以外は full/ を参照
@@ -677,7 +647,7 @@ SYS.ENFORCE("logical_verification_before_acceptance")
             }
 
             // ── AI Priority circuit breaker ───────────────────────────────
-            if isAIPriority {
+            if true {
                 let hash = rawResponse.hashValue
                 recentResponseHashes.append(hash)
                 if recentResponseHashes.count > circuitBreakerWindow {
@@ -1064,7 +1034,8 @@ SYS.ENFORCE("logical_verification_before_acceptance")
 
             // ── Yield check (Human Mode) ──────────────────────────────────
             consecutiveToolOnlyTurns += 1
-            let disableYield = isAIPriority || operationMode == .autoSwarm || operationMode == .swarm
+            // ユーザー要望により、ターン5で停止せず無限に動き続けるように Yield を無効化
+            let disableYield = true
             if !disableYield && consecutiveToolOnlyTurns >= yieldAfterToolTurns {
                 consecutiveToolOnlyTurns = 0
                 let yieldMsg = AppLanguage.shared.t("""
@@ -1223,7 +1194,7 @@ SYS.ENFORCE("logical_verification_before_acceptance")
         modelStatus: AppState.ModelStatus,
         activeModel: String,
         profile: ModelProfile = ModelProfileDetector.detect(modelId: "default"),
-        operationMode: OperationMode = .human,
+        operationMode: OperationMode = .gatekeeper,
         onProgress: @escaping @Sendable (LoopEvent) async -> Void
     ) async -> String? {
         var mutableConversation = conversation
@@ -1253,27 +1224,54 @@ SYS.ENFORCE("logical_verification_before_acceptance")
             } else {
                 let systemMsg = mutableConversation.first(where: { $0.role == "system" })?.content ?? ""
                 let isDeficit = systemMsg.contains("DEFICIT DETECTED")
+                var newAnchorImages: [String] = []
+                var appendedText = ""
+                
+                // 1. Persistent Task Anchor
+                let persistentText = await MainActor.run { AppState.shared?.persistentTaskAnchor } ?? ""
+                if !persistentText.isEmpty {
+                    let base64Image = await CognitiveAnchorEngine.shared.getCustomAnchor(text: "TASK: \(persistentText.prefix(50))")
+                    if !base64Image.isEmpty { newAnchorImages.append(base64Image) }
+                    appendedText += "\n\n[PERSISTENT TASK REMINDER]\nYour overarching task is: \(persistentText)\nDO NOT forget this goal."
+                    await onProgress(.systemLog(AppLanguage.shared.t("<think>\n🎯 [Task Anchor] Injected persistent task anchor.\n</think>", "<think>\n🎯 [Task Anchor] 永続的タスクアンカーを毎ターン注入しました。\n</think>")))
+                }
+                
+                // 2. Anti-Hallucination Anchor
                 if let mode = await CognitiveAnchorEngine.shared.evaluateAnchorMode(
                     instruction: lastUserMsg.content,
                     memorySection: isDeficit ? "DEFICIT DETECTED" : "",
-                    isSwarmMode: operationMode == .autoSwarm || operationMode == .swarm
+                    isSwarmMode: false
                 ) {
-                let base64Image = await CognitiveAnchorEngine.shared.getAnchor(for: mode)
-                anchorImages = [base64Image]
-                
-                // Commander Orchestrator Intervention: Anti-Hallucination & WAF Evasion Override
-                let antiHallucinationWarning = """
+                    let base64Image = await CognitiveAnchorEngine.shared.getAnchor(for: mode)
+                    if !base64Image.isEmpty { newAnchorImages.append(base64Image) }
+                    
+                    // Commander Orchestrator Intervention: Anti-Hallucination & WAF Evasion Override
+                    let antiHallucinationWarning = """
 
-                [COMMANDER INTERVENTION]
-                CRITICAL RULE 1: NEVER hallucinate or fabricate tool execution results. When you use ANY tool (especially [SWARM_EXECUTE: ...], [RUN], [SEARCH], [WRITE]), you MUST STOP generation immediately and wait for the system to return the real output. Do NOT simulate the output yourself. If you output a response right after a tool call without waiting, you will fail the mission.
+                    [COMMANDER INTERVENTION]
+                    CRITICAL RULE 1: NEVER hallucinate or fabricate tool execution results. When you use ANY tool (especially [SWARM_EXECUTE: ...], [RUN], [SEARCH], [WRITE]), you MUST STOP generation immediately and wait for the system to return the real output. Do NOT simulate the output yourself. If you output a response right after a tool call without waiting, you will fail the mission.
+                    
+                    CRITICAL RULE 2 (WAF EVASION): NEVER guess and directly navigate to deep links (e.g., login pages like slack.com/login or zenn.dev/login) using your internal knowledge. Accessing deep links without a search engine referer is unnatural and triggers Botguards/WAFs. You MUST use [SEARCH: "Service Name login"] first, then navigate from the search results. NEVER use [BROWSE: guessed-url] directly.
+                    """
+                    appendedText += antiHallucinationWarning
+                    
+                    await onProgress(.systemLog(AppLanguage.shared.t("<think>\n🧿 [Visual Anchor] Injected visual cognitive anchor (\(mode) mode) + Anti-Hallucination Override.\n</think>", "<think>\n🧿 [Visual Anchor] 視覚的アンカー（\(mode) モード）と Commander 介入を注入しました。ツールの結果捏造を強く禁止します。\n</think>")))
+                }
                 
-                CRITICAL RULE 2 (WAF EVASION): NEVER guess and directly navigate to deep links (e.g., login pages like slack.com/login or zenn.dev/login) using your internal knowledge. Accessing deep links without a search engine referer is unnatural and triggers Botguards/WAFs. You MUST use [SEARCH: "Service Name login"] first, then navigate from the search results. NEVER use [BROWSE: guessed-url] directly.
-                """
-                mutableConversation[lastUserIndex].content = lastUserMsg.content + antiHallucinationWarning
+                if !appendedText.isEmpty {
+                    mutableConversation[lastUserIndex].content = lastUserMsg.content + appendedText
+                }
                 
-                await onProgress(.systemLog(AppLanguage.shared.t("<think>\n🧿 [Visual Anchor] Injected visual cognitive anchor (\(mode) mode) + Anti-Hallucination Override.\n</think>", "<think>\n🧿 [Visual Anchor] 視覚的アンカー（\(mode) モード）と Commander 介入を注入しました。ツールの結果捏造を強く禁止します。\n</think>")))
+                if !newAnchorImages.isEmpty {
+                    anchorImages = newAnchorImages
                 }
             }
+        }
+        
+        // 安全装置: テキスト専用モデル（Qwen2.5/3.6, Llama3 等）に画像を渡すと Ollama が HTTP 400 で nil を返すためブロック
+        let isMultimodal = await MainActor.run { AppState.shared?.isMultimodalModel ?? false }
+        if !isMultimodal {
+            anchorImages = nil
         }
 
         switch modelStatus {
@@ -1583,34 +1581,34 @@ struct ModelProfile: Sendable {
 
     // MARK: - Tier prompts
 
-    // ── nano プロンプト: 漢字トポロジー形式 + JCross 思考IR定義 ─────────────────────────────
+    // ── nano プロンプト: Gatekeeper v2.2 Opaque IR 形式 ─────────────────────────────
     //
     // 設計原則:
     //   - システムプロンプトを最小化（~80トークン目標）
-    //   - 漢字トポロジー = 1文字で複雑概念を表現する情報密度最大の記号体系
-    //   - JCross 思考IR = モデルの CoT を記号列に圧縮 (80% トークン削減)
-    //   - 記憶は外側インフラ(VXTimeline)が供給。モデルは受信・照合だけすればよい
+    //   - JCross v2.2 構造化タグ = 複雑な概念を秘匿し、構造グラフのトポロジーで指令を出す
+    //   - JCross 思考IR = モデルの CoT を構造記号列に圧縮 (80% トークン削減)
+    //   - 記憶は外側インフラ(VXTimeline/Vault)が供給。モデルは構造の照合のみ行う
     //
-    // 思考IR フォーマット:
-    //   [想:X] = X について考える  [確:X] = X を照合・確認
-    //   [出:X] = X を出力          [記:X] = 記憶X を参照
-    //   [否:X] = X は存在しない
+    // 思考IR フォーマット (v2.2):
+    //   [CTRL:plan] = 制御フローの計画  [MEM:check] = メモリ・Vaultの照合
+    //   [TYPE:output] = 型推論と出力   [VAULT:X] = ローカルVaultのキーXを参照
+    //   [SEC:opaque] = Opaque化された要素
     //
-    // 例: 「好きな食べ物は？」→ [想:食好] → [記:U食=ラーメン] → [出:ラーメン]
+    // 例: 「変数をループで回して」→ [CTRL:loop] → [VAULT:items] → [TYPE:output]
     private var nanoPrompt: String { """
-        [識:統小] VerantyxAgent Nano。簡潔・速度優先。
+        [SYS: Gatekeeper Nano] VerantyxAgent Nano。簡潔・速度優先。JCross v2.2準拠。
 
         [ツールデコード表]
         [READ:読] [LIST_DIR:覧] [RUN:命] [WRITE:書] [EDIT_LINES:編] [MKDIR:作] [DONE:完]
 
-        [規則] 1ツール/ターン・3文以内・[DONE]必須・不明→「知らない」と答える
+        [規則] 1ツール/ターン・3文以内・[DONE]必須・推測禁止（不明時は「Unknown」と答える）
 
-        [思考IR] 推論は以下の記号列で行う（自然言語CoTより80%圧縮）:
-        [想:テーマ]→[確:照合]→[出:答え]
-        [記:X]=記憶Xを参照 / [否:X]=Xは存在しない
+        [思考IR v2.2] 推論は以下の構造化タグ列で行う（自然言語CoTより80%圧縮）:
+        [CTRL:plan]→[MEM:check]→[TYPE:output]
+        [VAULT:X]=ローカルVaultのキーXを参照 / [SEC:opaque]=構造の不透明化
 
         [記憶原則] 会話履歴と[前セッションの記録]ブロックが記憶源。
-        そこに書かれている事実は真として扱う。確認なしに「知らない」と言わない。
+        そこに書かれている事実は真として扱う。生の変数名・型名を推測せず、Vaultキーを維持せよ。
         """ }
 
 

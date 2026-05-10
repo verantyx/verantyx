@@ -555,21 +555,20 @@ final class L25IndexEngine: ObservableObject {
         }
     }
     //
-    // ⚠️ BitNet が必須。未インストール時はエントリを生成しない。
-    //    ルールベースフォールバックは廃止。
+    // ⚠️ LLM推論（BitNet等）は遅延の最大の原因となるため廃止し、
+    //    完全なルールベース（100%決定論的かつ高速）に移行しました。
 
-    /// BitNet で1ファイルを L2.5 エントリに変換する。
-    /// BitNet が未起動/未インストールの場合は nil を返す。
+    /// ルールベースで1ファイルを L2.5 エントリに変換する。
     nonisolated func generateL25Entry(
         source: String,
         relativePath: String,
         language: String
     ) async -> L25SourceMapEntry? {
-        guard let kanjiTopology = await generateKanjiViaBitNet(
+        let kanjiTopology = generateKanjiRuleBased(
             source: source,
             language: language,
             relativePath: relativePath
-        ) else { return nil }
+        )
 
         // 構造トークン・依存・行数を軽量抽出 (BitNetのプロンプト補助用・非公開)
         let lines = source.components(separatedBy: "\n")
@@ -616,54 +615,56 @@ final class L25IndexEngine: ObservableObject {
         )
     }
 
-    nonisolated private func generateKanjiViaBitNet(
+    nonisolated private func generateKanjiRuleBased(
         source: String,
         language: String,
         relativePath: String
-    ) async -> String? {
-        guard BitNetConfig.load()?.isValid == true else {
-            let warned = await MainActor.run { self.hasWarnedBitNetMissing }
-            if !warned {
-                await MainActor.run {
-                    self.hasWarnedBitNetMissing = true
-                    self.addLog(AppLanguage.shared.t("⚠️ BitNet not configured: required for L2.5", "⚠️ BitNet未設定: L2.5には必須です"))
-                    self.addLog("📦 Install: ollama pull bitnet_b1_58-large")
-                    self.bitnetMissingAction?()
-                }
-            }
-            return nil
+    ) -> String {
+        var scores: [(String, Double)] = []
+        let lower = source.lowercased()
+
+        // 1. 拡張子/言語ベース
+        switch language.lowercased() {
+        case "swift":    scores.append(("[迅:1.0]", 1.0))
+        case "rs", "rust": scores.append(("[錆:1.0]", 1.0))
+        case "py", "python": scores.append(("[蛇:1.0]", 1.0))
+        case "ts", "tsx", "typescript": scores.append(("[型:1.0]", 1.0))
+        case "go":       scores.append(("[駆:1.0]", 1.0))
+        default:         scores.append(("[碼:1.0]", 1.0))
         }
 
-        // BitNetに渡すのは最初の40行のみ (2048トークン以内に収める)
-        let snippet = source.components(separatedBy: "\n").prefix(40).joined(separator: "\n")
+        // 2. アーキテクチャ/役割ベース
+        let lowerPath = relativePath.lowercased()
+        if lowerPath.contains("view") || lowerPath.contains("ui") || lower.contains("render") {
+            scores.append(("[視:0.9]", 0.9))
+        }
+        if lowerPath.contains("engine") || lowerPath.contains("manager") || lowerPath.contains("controller") {
+            scores.append(("[機:0.9]", 0.9))
+        }
+        if lowerPath.contains("model") || lowerPath.contains("store") || lowerPath.contains("vault") {
+            scores.append(("[蔵:0.8]", 0.8))
+        }
+
+        // 3. コンテンツ（処理内容）ベース
+        if lower.contains("async") || lower.contains("await") || lower.contains("actor") || lower.contains("thread") {
+            scores.append(("[並:0.8]", 0.8))
+        }
+        if lower.contains("encrypt") || lower.contains("crypto") || lower.contains("aes") || lower.contains("hash") {
+            scores.append(("[秘:0.9]", 0.9))
+        }
+        if lower.contains("network") || lower.contains("http") || lower.contains("urlsession") || lower.contains("fetch") {
+            scores.append(("[網:0.8]", 0.8))
+        }
+        if lower.contains("test") || lower.contains("assert") || lower.contains("expect") {
+            scores.append(("[験:0.8]", 0.8))
+        }
+
+        // 上位のタグを合成（最大4つ）
+        let top = scores.sorted { $0.1 > $1.1 }.prefix(4).map { $0.0 }.joined()
+        
+        // 構造名も一部抽出して付与
         let tokenNames = relativePath.components(separatedBy: "/").last?.components(separatedBy: ".").first ?? ""
-
-        let prompt = """
-        ### Instruction:
-        You are a code summarizer. Analyze this \(language) code and output EXACTLY ONE LINE.
-
-        Output format (L1 compact Kanji topology):
-        [漢字A:1.0][漢字B:0.9] MainClass FuncName1 FuncName2
-
-        Rules:
-        - Output ONE LINE only. No explanation. No newlines.
-        - Use 2-4 Kanji characters from this set based on code role:
-          機=engine/manager, 視=view/UI, 記=memory/cache, 令=commander/orchestrator
-          蔵=vault/store, 変=converter/transpiler, 構=builder/factory, 路=router/dispatch
-          迅=swift/fast, 錆=rust, 型=typescript, 蛇=python, 并=concurrent, 守=gatekeeper
-        - After Kanji tags, list up to 3 main class/function names from the code.
-        - Do NOT output JCross IR format (no ■ NODE, no OP.FACT, no 【】brackets).
-
-        Classes/functions found: \(tokenNames)
-        Language: \(language)
-        Code (first 40 lines):
-        \(snippet.prefix(600))
-        ### Response:
-        """
-
-        let result = await BitNetCommanderEngine.shared.generate(prompt: prompt, systemPrompt: "")
-        // 出力が多行になった場合は1行目のみ使用
-        return result?.components(separatedBy: "\n").first(where: { !$0.trimmingCharacters(in: .whitespaces).isEmpty })
+        return "\(top.isEmpty ? "[碼:1.0]" : top) \(tokenNames)"
     }
 
     // MARK: - グローバルトポロジー合成
@@ -695,7 +696,10 @@ final class L25IndexEngine: ObservableObject {
 
     nonisolated private func collectTargetFiles(workspaceURL: URL) -> [URL] {
         let targetExts: Set<String> = ["swift", "rs", "ts", "tsx", "py", "go", "kt", "java", "cpp", "c", "h"]
-        let excludedPaths = [".openclaw", ".git", "node_modules", ".build", "DerivedData", "__pycache__"]
+        let excludedPaths = [
+            ".openclaw", ".git", "node_modules", ".build", "build", "DerivedData", "__pycache__",
+            "target", "vendor", "dist", "out", "Pods", "env", ".env", "site-packages", "third_party"
+        ]
         var result: [URL] = []
 
         guard let enumerator = FileManager.default.enumerator(
@@ -746,7 +750,10 @@ final class L25IndexEngine: ObservableObject {
     /// collectTargetFiles の static ラッパー。nonisolated でバックグラウンド安全。
     nonisolated static func collectFiles(workspaceURL: URL) -> [URL] {
         let targetExts: Set<String> = ["swift", "rs", "ts", "tsx", "py", "go", "kt", "java", "cpp", "c", "h"]
-        let excludedPaths = [".openclaw", ".git", "node_modules", ".build", "DerivedData", "__pycache__"]
+        let excludedPaths = [
+            ".openclaw", ".git", "node_modules", ".build", "build", "DerivedData", "__pycache__",
+            "target", "vendor", "dist", "out", "Pods", "env", ".env", "site-packages", "third_party"
+        ]
         var result: [URL] = []
         guard let enumerator = FileManager.default.enumerator(
             at: workspaceURL,

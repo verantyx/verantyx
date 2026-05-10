@@ -738,7 +738,7 @@ final class MCPEngine: ObservableObject {
             let config = MCPServerConfig(
                 name: "verantyx-compiler",
                 transport: .stdio,
-                command: "sh -c \"cd /Users/motonishikoudai/verantyx-cli && /usr/local/bin/node --import tsx _verantyx-cortex/src/mcp/server.ts\"",
+                command: "sh -c \"cd /Users/motonishikoudai/verantyx-cli && /usr/local/bin/node --import tsx cortex/src/mcp/server.ts\"",
                 mode: .ai
             )
             servers.append(config)
@@ -750,7 +750,7 @@ final class MCPEngine: ObservableObject {
             let config = MCPServerConfig(
                 name: "tool-search-oss",
                 transport: .stdio,
-                command: "sh -c \"cd /Users/motonishikoudai/verantyx-cli/tool-search-oss && /usr/local/bin/node --import tsx/esm src/server.ts\"",
+                command: "sh -c \"cd /Users/motonishikoudai/verantyx-cli/tools && /usr/local/bin/node --import tsx/esm src/server.ts\"",
                 mode: .ai
             )
             servers.append(config)

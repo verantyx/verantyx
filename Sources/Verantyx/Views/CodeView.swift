@@ -97,37 +97,37 @@ struct SafeCodeTextView: NSViewRepresentable {
             capped = content
         }
 
+        // インデント（タブ）を空白に変換して、行番号追加時にレイアウトが崩れないようにする
+        let safeCapped = capped.replacingOccurrences(of: "\t", with: "    ")
+
         // ── 行番号付きプレーンテキスト構築 ────────────────────────────
-        // NSAttributedString の per-line build は禁止。
-        // plain String を組み立ててから一括で属性を付与する。
         let plainText: String
         if showLineNumbers {
-            let rawLines = capped.components(separatedBy: "\n")
+            let rawLines = safeCapped.components(separatedBy: "\n")
             let width = max(2, String(rawLines.count).count)
             plainText = rawLines.enumerated()
                 .map { (i, line) in String(format: "%\(width)d  ", i + 1) + line }
                 .joined(separator: "\n")
         } else {
-            plainText = capped
+            plainText = safeCapped
         }
 
-        // ── NSTextStorage に一括設定 ────────────────────────────────
-        // setAttributedString は禁止 (巨大 NSMutableAttributedString → Typesetter デッドロック)
-        // tv.string = ... で plain string を設定してから属性を addAttributes で付与する
+        // ── テキスト設定 ────────────────────────────────
+        // NSTextViewの string プロパティを使って安全に設定する
+        tv.string = plainText
         guard let storage = tv.textStorage else { return }
 
-        // beginEditing/endEditing で変更をバッチ化
+        // 属性をバッチで適用
         storage.beginEditing()
-        storage.setAttributedString(NSAttributedString(string: plainText))
         let fullRange = NSRange(location: 0, length: storage.length)
 
-        // 全体属性を一括付与（Typesetter は1パスで処理できる）
+        // 全体属性（フォントとコードの文字色）
         storage.addAttributes([
             .font: monoFont,
             .foregroundColor: textColor
         ], range: fullRange)
 
-        // 行番号部分を薄い色で上書き
+        // 行番号部分のみ薄い色を適用
         if showLineNumbers {
             let rawLines = plainText.components(separatedBy: "\n")
             let numWidth = max(2, String(rawLines.count).count) + 2  // +2 for "  " separator

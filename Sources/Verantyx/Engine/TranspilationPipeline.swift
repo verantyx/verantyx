@@ -134,21 +134,26 @@ final class TranspilationPipeline: ObservableObject {
             return
         }
 
-        // Step 3: 1 ファイルずつ処理
-        for (idx, _) in generatedTodos.enumerated() {
-            currentTodoIndex = idx
-            guard todos[idx].status == .pending else { continue }
-            addLog("⚙️ [\(idx+1)/\(generatedTodos.count)] \(todos[idx].relativePath)")
-            await processSingleTodo(
-                index: idx, task: task, mapString: mapString,
-                maxRetries: maxRetries, workspaceURL: workspaceURL, langPair: langPair
-            )
+        // ユーザー要望により、裏側での順次処理を止め、生成したTODOをチャット欄に注入して処理を委譲する
+        let lines = generatedTodos.enumerated()
+            .map { "[\($0.0+1)] \($0.1.relativePath) → \($0.1.targetPath)" }
+            .joined(separator: "\n")
+            
+        let promptToInject = """
+        [システム: パイプラインがL2.5 TODOリストを生成しました。以下に従って順次作業してください]
+        
+        \(lines)
+        
+        対象タスク: \(task)
+        """
+        
+        await MainActor.run {
+            AppState.shared?.inputText = promptToInject
+            AppState.shared?.sendMessage()
         }
-
-        let succeeded = todos.filter { $0.status == .succeeded }.count
-        let failed    = todos.filter { $0.status == .failed }.count
-        addLog(AppLanguage.shared.t("✅ Complete: Success \(succeeded) / Failed \(failed) / Total \(todos.count)", "✅ 完了: 成功 \(succeeded) / 失敗 \(failed) / 合計 \(todos.count)"))
-        await savePipelineResultToMemory(task: task, succeeded: succeeded, failed: failed, workspaceURL: workspaceURL)
+        
+        addLog(AppLanguage.shared.t("✅ TODOリストをチャット欄に注入しました。以後の作業はチャットで引き継がれます。", "✅ TODO list injected into chat. Work will continue there."))
+        return
     }
 
     // MARK: - Step 2: TODO リスト生成 (BitNet Commander)

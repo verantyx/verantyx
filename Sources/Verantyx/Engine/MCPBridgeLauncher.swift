@@ -285,9 +285,9 @@ final class MCPBridgeLauncher: ObservableObject {
         let scriptCandidates: [(script: String, root: URL)] = [
             // .openclaw-release
             (".openclaw-release/src/verantyx/mcp/server.ts", verantyxCLI),
-            // _verantyx-cortex
-            ("_verantyx-cortex/src/verantyx/mcp/server.ts", verantyxCLI),
-            ("_verantyx-cortex/src/mcp/server.ts",          verantyxCLI),
+            // cortex
+            ("cortex/src/verantyx/mcp/server.ts", verantyxCLI),
+            ("cortex/src/mcp/server.ts",          verantyxCLI),
             // src 直下
             ("src/verantyx/mcp/server.ts",                  verantyxCLI),
         ]
@@ -316,7 +316,7 @@ final class MCPBridgeLauncher: ObservableObject {
     /// ⚠️ nonisolated: proc.waitUntilExit() を含むため
     ///    必ずバックグラウンドスレッド（Task.detached）から呼ぶこと。
     nonisolated private func findNode() async -> URL? {
-        let home = await MainActor.run { AppState.shared?.cortexWorkspacePath ?? AppState.shared?.workspaceURL?.path } ?? "/tmp"
+        let home = NSHomeDirectory()
         // Fast path: known Homebrew / nvm / system locations
         let knownPaths = [
             "/opt/homebrew/bin/node",

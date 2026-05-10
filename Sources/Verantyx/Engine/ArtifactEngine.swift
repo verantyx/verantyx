@@ -9,87 +9,45 @@ import SwiftUI
 //   .gatekeeper    — Local LLM as Commander; external API sees JCross IR only
 
 enum OperationMode: String, CaseIterable, Codable, Identifiable {
-    case aiPriority    = "AI_Priority"
-    case human         = "Human"
-    case humanPriority = "Human_Priority"
     case gatekeeper    = "Gatekeeper"
-    case autoSwarm     = "Auto_Swarm"
-    case swarm         = "Swarm"
 
     var id: String { rawValue }
 
     var icon: String {
         switch self {
-        case .aiPriority:    return "bolt.fill"
-        case .human:         return "person.fill"
-        case .humanPriority: return "keyboard"
         case .gatekeeper:    return "shield.lefthalf.filled"
-        case .autoSwarm:     return "infinity.circle.fill"
-        case .swarm:         return "square.stack.3d.up.fill"
         }
     }
 
     var accentColor: Color {
         switch self {
-        case .aiPriority:    return Color(red: 1.0,  green: 0.35, blue: 0.25)
-        case .human:         return Color(red: 0.4,  green: 0.75, blue: 1.0)
-        case .humanPriority: return Color(red: 0.55, green: 1.0,  blue: 0.65)
         case .gatekeeper:    return Color(red: 0.2,  green: 0.9,  blue: 0.5)
-        case .autoSwarm:     return Color(red: 0.9,  green: 0.2,  blue: 0.5)
-        case .swarm:         return Color(red: 0.8,  green: 0.4,  blue: 0.8)
         }
     }
 
     var description: String {
         switch self {
-        case .aiPriority:
-            return L("No approvals, unlimited MCP, fullscreen AI chat", "承認なし・MCP無制限・フルスクリーンチャット")
-        case .human:
-            return L("Diff confirmation, 60s MCP limit, standard IDE", "Diff確認あり・MCP 60秒制限・通常IDE")
-        case .humanPriority:
-            return L("VS Code style: Code editor centered, AI right", "VS Codeスタイル: コードエディタ中心・AIチャット右")
         case .gatekeeper:
-            return L("Local LLM commander, JCross IR only, source hidden", "ローカルLLMが司令官・外部APIはJCross IRのみ・ソースコード非公開")
-        case .autoSwarm:
-            return L("Fully autonomous Swarm: Automatically switches strategies", "完全自動スウォーム: タスクに応じて戦略を自動切替・承認なし")
-        case .swarm:
-            return L("Manual Swarm: Choose Ultrawork or Ralph, requires approvals", "手動スウォーム: Ultrawork/Ralphを手動切替・Diff承認あり")
+            return L("Enterprise Gatekeeper IDE", "エンタープライズ向け Gatekeeper IDE")
         }
     }
     
     var displayName: String {
         switch self {
-        case .aiPriority:    return L("AI Priority", "AI優先")
-        case .human:         return L("Human", "ヒューマン")
-        case .humanPriority: return L("Human Priority", "ヒューマン優先")
         case .gatekeeper:    return L("Gatekeeper", "ゲートキーパー")
-        case .autoSwarm:     return L("Auto Swarm", "完全自動スウォーム")
-        case .swarm:         return L("Swarm", "スウォーム")
         }
     }
 
     /// Short 2-letter badge displayed in the toolbar chip
     var badge: String {
         switch self {
-        case .aiPriority:    return "AI"
-        case .human:         return "HM"
-        case .humanPriority: return "HP"
         case .gatekeeper:    return "GK"
-        case .autoSwarm:     return "AS"
-        case .swarm:         return "SW"
         }
     }
 
     /// Next mode in the cycle
     var next: OperationMode {
-        switch self {
-        case .human:         return .humanPriority
-        case .humanPriority: return .aiPriority
-        case .aiPriority:    return .gatekeeper
-        case .gatekeeper:    return .autoSwarm
-        case .autoSwarm:     return .swarm
-        case .swarm:         return .human
-        }
+        return .gatekeeper
     }
 }
 

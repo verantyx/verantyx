@@ -55,8 +55,14 @@ final class WHYHookInstaller {
         let fm = FileManager.default
 
         // 1. ホームディレクトリに ~/.openclaw/agents/ を展開
-        let homeAgentsDir = FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent(".openclaw/agents", isDirectory: true)
+        let homeAgentsDir: URL
+        if let customPath = UserDefaults.standard.string(forKey: "cortex_skills_path") {
+            let baseAgents = URL(fileURLWithPath: customPath).deletingLastPathComponent()
+            homeAgentsDir = baseAgents.appendingPathComponent("hooks", isDirectory: true)
+        } else {
+            homeAgentsDir = FileManager.default.homeDirectoryForCurrentUser
+                .appendingPathComponent(".openclaw/agents", isDirectory: true)
+        }
         do {
             try fm.createDirectory(at: homeAgentsDir, withIntermediateDirectories: true)
             try copyPayload(payload, to: homeAgentsDir, fm: fm)

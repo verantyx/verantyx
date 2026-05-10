@@ -11,9 +11,20 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.4.1</string>
+	<string>0.1</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.verantyx.ide</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>verantyx</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
-	<string>1778072814</string>
+	<string>1778383263</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>13.0</string>
 	<key>NSAppTransportSecurity</key>

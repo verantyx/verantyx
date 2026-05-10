@@ -140,11 +140,29 @@ struct VerantyxApp: App {
     @AppStorage("cortex_onboarding_dismissed") private var cortexDismissed = false
     @State private var showCortexOnboarding = false
 
+    @Environment(\.openWindow) private var openWindow
+
     var body: some Scene {
-        WindowGroup {
+        MenuBarExtra("Verantyx OS Agent", systemImage: "asterisk") {
+            Button("verantyx-ideを起動") {
+                openWindow(id: "main-ide")
+                NSApp.activate(ignoringOtherApps: true)
+                if let window = NSApp.windows.first(where: { $0.title != "" && $0.title != "Window" }) {
+                    window.makeKeyAndOrderFront(nil)
+                }
+            }
+            Button("Toggle Spotlight (Control x3)") {
+                SpotlightPanelManager.shared.panel?.toggle()
+            }
+            Divider()
+            Button("Quit Verantyx") {
+                NSApp.terminate(nil)
+            }
+        }
+        // Main IDE Window
+        WindowGroup(id: "main-ide") {
             MainSplitView()
                 .environmentObject(appState)
-                .frame(minWidth: 900, minHeight: 580)
                 .onAppear {
                     AppState.shared = appState
                     delegate.appState = appState
@@ -161,8 +179,6 @@ struct VerantyxApp: App {
                     MCPSkillSync.shared.startPolling()
                     ExtensionHostManager.shared.start()
 
-                    // ── WHY Hook + Agent Payload バンドルインストール ─────────
-                    // DMG に同梱済み。ダウンロード不要。バージョン更新時のみ実行。
                     WHYHookInstaller.shared.installIfNeeded(workspaceURL: appState.workspaceURL)
 
                     let wsURL = appState.workspaceURL
@@ -170,63 +186,24 @@ struct VerantyxApp: App {
                         await SessionMemoryArchiver.shared.indexSkills(workspaceRoot: wsURL)
                     }
 
-                    // ── L2.5 インデックス起動 (0.3秒後: UIが描画された後) ──────
-                    // MainActor をブロックしないよう Task.detached(priority: .utility) で実行する。
-                    // loadAndIncrementalUpdate 内部の await をバックグラウンドで完結させ、
-                    // 完了通知のみ MainActor で受け取る。
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         Task.detached(priority: .utility) {
-                            guard await appState.operationMode == .human else { return }
+                            guard await appState.operationMode == .gatekeeper else { return }
                             guard let ws = await appState.workspaceURL else { return }
                             await L25IndexEngine.shared.loadAndIncrementalUpdate(workspaceURL: ws)
-                            let count = await L25IndexEngine.shared.projectMap?.fileCount ?? 0
-                            if count > 0 {
-                                await MainActor.run {
-                                    appState.addSystemMessage(AppLanguage.shared.t("🗺️ L2.5 ready: \(count) files", "🗺️ L2.5 準備完了: \(count) ファイル"))
-                                }
-                            }
                         }
                     }
-
-                    if !cortexDismissed {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-                            showCortexOnboarding = true
-                        }
-                    }
+                    
+                    // ── Initialize OS Agent Spotlight UI ──
+                    SpotlightPanelManager.shared.setup(appState: appState)
                 }
-                // ── Cortex Onboarding Sheet ──────────────────────────────
-                .sheet(isPresented: $showCortexOnboarding) {
-                    CortexOnboardingSheet(isPresented: $showCortexOnboarding)
-                        .preferredColorScheme(.dark)
-                }
-                // ── AI-triggered restart dialog ──────────────────────
-                .alert(appState.t("🔨 Build Complete — Restart?", "🔨 ビルド完了 — 再起動しますか？"),
-                       isPresented: $appState.showRestartAlert) {
-                    Button(appState.t("Restart", "再起動する"), role: .destructive) {
-                        appState.performRestart()
+                .onOpenURL { url in
+                    if url.scheme == "verantyx" {
+                        SpotlightPanelManager.shared.panel?.makeKeyAndOrderFront(nil)
+                        NSApp.activate(ignoringOtherApps: true)
                     }
-                    Button(appState.t("Later", "後で"), role: .cancel) {
-                        appState.showRestartAlert = false
-                    }
-                } message: {
-                    Text(appState.t("AI has successfully applied a patch and built it.\nQuit and rebuild the app to apply changes.", "AI がパッチを適用してビルドに成功しました。\nアプリを終了してリビルドすると変更が有効になります。"))
-                }
-                // CloseButton guard via SwiftUI scene lifecycle
-                .onReceive(
-                    NotificationCenter.default.publisher(
-                        for: NSWindow.willCloseNotification)) { notification in
-                    guard let window = notification.object as? NSWindow,
-                          window.isKeyWindow else { return }
-                    guard appState.isDirty else { return }
-                    // If dirty, re-open the window and show the alert
-                    // (NSWindowDelegate would be cleaner but requires more wiring)
-                    window.makeKeyAndOrderFront(nil)
-                    showCloseGuard(window: window, state: appState)
                 }
         }
-        .windowStyle(.titleBar)
-        .windowToolbarStyle(.unified)
-        .defaultSize(width: 1280, height: 800)
         .commands {
             CommandGroup(replacing: .newItem) {}
 
@@ -302,5 +279,187 @@ struct VerantyxApp: App {
             default: break  // キャンセル — window was re-opened above
             }
         }
+    }
+}
+import SwiftUI
+import AppKit
+
+// MARK: - Spotlight Panel (Floating, Transparent window)
+
+class SpotlightPanel: NSPanel {
+    init(contentRect: NSRect, backing: NSWindow.BackingStoreType, defer flag: Bool) {
+        super.init(contentRect: contentRect, styleMask: [.nonactivatingPanel, .fullSizeContentView, .borderless], backing: backing, defer: flag)
+        
+        self.isFloatingPanel = true
+        self.level = .floating
+        self.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+        self.titleVisibility = .hidden
+        self.titlebarAppearsTransparent = true
+        self.isMovableByWindowBackground = true
+        self.isOpaque = false
+        self.backgroundColor = .clear
+        self.hasShadow = true
+    }
+    
+    override var canBecomeKey: Bool { return true }
+    override var canBecomeMain: Bool { return true }
+    
+    func toggle() {
+        if self.isVisible {
+            self.orderOut(nil)
+        } else {
+            self.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+        }
+    }
+}
+
+// MARK: - Spotlight Manager
+
+@MainActor
+class SpotlightPanelManager {
+    static let shared = SpotlightPanelManager()
+    
+    var panel: SpotlightPanel?
+    
+    func setup(appState: AppState) {
+        guard panel == nil else { return }
+        
+        let view = SpotlightView()
+            .environmentObject(appState)
+        
+        let hostingView = NSHostingView(rootView: view)
+        
+        let rect = NSRect(x: 0, y: 0, width: 700, height: 80)
+        let newPanel = SpotlightPanel(contentRect: rect, backing: .buffered, defer: false)
+        newPanel.contentView = hostingView
+        newPanel.center()
+        
+        self.panel = newPanel
+        
+        // Control x3 shortcut detection
+        var controlPressTimes: [Date] = []
+        let handleFlagsChanged: (NSEvent) -> Void = { event in
+            // Control key codes: 59 (left), 62 (right)
+            if event.keyCode == 59 || event.keyCode == 62 {
+                if event.modifierFlags.contains(.control) {
+                    let now = Date()
+                    controlPressTimes.append(now)
+                    if controlPressTimes.count > 3 {
+                        controlPressTimes.removeFirst(controlPressTimes.count - 3)
+                    }
+                    if controlPressTimes.count == 3 {
+                        let diff = now.timeIntervalSince(controlPressTimes[0])
+                        if diff < 0.8 { // 3 presses within 0.8 seconds
+                            self.panel?.toggle()
+                            controlPressTimes.removeAll()
+                        }
+                    }
+                }
+            }
+        }
+        
+        NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { event in
+            handleFlagsChanged(event)
+            return event
+        }
+        
+        NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { event in
+            handleFlagsChanged(event)
+        }
+        
+        // Escape to close
+        NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+            if event.keyCode == 53 && self.panel?.isVisible == true {
+                self.panel?.orderOut(nil)
+                return nil
+            }
+            return event
+        }
+    }
+}
+
+// MARK: - Spotlight View (SwiftUI)
+
+struct SpotlightView: View {
+    @EnvironmentObject var appState: AppState
+    @State private var query: String = ""
+    @State private var isThinking: Bool = false
+    @FocusState private var isFocused: Bool
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Image(systemName: "sparkles")
+                    .font(.system(size: 24))
+                    .foregroundColor(.accentColor)
+                    .rotationEffect(.degrees(isThinking ? 360 : 0))
+                    .animation(isThinking ? Animation.linear(duration: 2).repeatForever(autoreverses: false) : .default, value: isThinking)
+                
+                TextField("Ask Verantyx Cortex...", text: $query)
+                    .font(.system(size: 24, weight: .light))
+                    .textFieldStyle(PlainTextFieldStyle())
+                    .focused($isFocused)
+                    .onSubmit {
+                        executeCommand()
+                    }
+                
+                if isThinking {
+                    ProgressView()
+                        .scaleEffect(0.8)
+                }
+            }
+            .padding(20)
+            .background(VisualEffectView(material: .hudWindow, blendingMode: .behindWindow))
+            .cornerRadius(16)
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(Color.white.opacity(0.1), lineWidth: 1)
+            )
+        }
+        .onAppear {
+            isFocused = true
+        }
+    }
+    
+    private func executeCommand() {
+        guard !query.isEmpty else { return }
+        let text = query
+        query = ""
+        isThinking = true
+        
+        // Pass intent to Cortex Orchestrator
+        Task {
+            // OS Agent execution loop goes here.
+            appState.addSystemMessage("🧠 OS Agent evaluating: \(text)")
+            
+            // Simulation of execution via Web Gemini / Browser Bridge
+            try? await Task.sleep(nanoseconds: 2_000_000_000)
+            
+            await MainActor.run {
+                isThinking = false
+                SpotlightPanelManager.shared.panel?.orderOut(nil)
+                // Actually launch target app here via AppleScript or Agent execution
+            }
+        }
+    }
+}
+
+// Blur effect wrapper
+struct VisualEffectView: NSViewRepresentable {
+    let material: NSVisualEffectView.Material
+    let blendingMode: NSVisualEffectView.BlendingMode
+    
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let view = NSVisualEffectView()
+        view.material = material
+        view.blendingMode = blendingMode
+        view.state = .active
+        return view
+    }
+    
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {
+        nsView.material = material
+        nsView.blendingMode = blendingMode
     }
 }

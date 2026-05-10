@@ -266,18 +266,28 @@ actor PolymorphicTranspilerActor {
                 return "\(schemaPrefix)\(n)"
             }
 
+            // v2.3: Temporal Node Identity Randomization
+            // nodeId (FN_1) に対して、リクエストごとに完全にランダムな一時ID (0xABCD) を割り当てる
+            var sessionRandomMap: [String: String] = [:]
+
             for ident in identifiers {
                 if nodeMap[ident] != nil { continue }
                 let isSensitive = sensitiveTokens.contains(ident)
                 let prefix = isSensitive ? "S" : PolymorphicJCrossTranspiler.inferPrefix(from: ident)
                 let nodeID = nextID(prefix: prefix)
                 nodeMap[ident] = nodeID
-                if !isSensitive { reverseMap[nodeID] = ident }
+                
+                // v2.3: Generate a completely random 4-hex-char ID for this node
+                let randomHexID = "0x" + UUID().uuidString.replacingOccurrences(of: "-", with: "").prefix(4).uppercased()
+                sessionRandomMap[nodeID] = randomHexID
+                
+                // reverseMap には ランダムID -> 元のシンボル名 を直接マッピングする
+                if !isSensitive { reverseMap[randomHexID] = ident }
             }
 
             let jcrossLines = PolymorphicJCrossTranspiler.convertToJCross(
                 source: source, schema: schema,
-                nodeMap: nodeMap, sensitiveTokens: sensitiveTokens
+                nodeMap: nodeMap, sessionRandomMap: sessionRandomMap
             )
             let noisyJCross = PolymorphicJCrossTranspiler.injectNoise(into: jcrossLines, schema: schema)
             return (noisyJCross.joined(separator: "\n"), nodeMap, reverseMap)
@@ -360,6 +370,21 @@ final class PolymorphicJCrossTranspiler: ObservableObject {
             useOllamaNER: useOllama
         )
         return result
+    }
+
+    /// バックグラウンド用: UI更新（@Published）をバイパスして直接 actor を呼ぶ
+    nonisolated func transpileBackground(
+        _ source: String,
+        language: JCrossCodeTranspiler.CodeLanguage,
+        noiseLevel: Int = 2,
+        useOllamaNER: Bool = false
+    ) async -> (jcross: String, schemaID: String, schemaInstructions: String) {
+        return await processingActor.transpile(
+            source,
+            language: language,
+            noiseLevel: noiseLevel,
+            useOllamaNER: useOllamaNER
+        )
     }
 
     // MARK: - Reverse Transpile (Smart Ollama)
@@ -565,66 +590,83 @@ final class PolymorphicJCrossTranspiler: ObservableObject {
         source: String,
         schema: JCrossSchema,
         nodeMap: [String: String],
-        sensitiveTokens: Set<String>
+        sessionRandomMap: [String: String]
     ) -> [String] {
 
         var lines: [String] = []
-        lines.append("// POLYMORPHIC_JCROSS_BEGIN")
-        lines.append("// schema:\(schema.sessionID.prefix(8)) ver:\(schema.schemaVersion)")
-        lines.append("// ⚠️ One-time schema — expires after response")
+        let docHash = "0x" + SHA256.hash(data: Data(source.utf8)).compactMap { String(format: "%02X", $0) }.joined().prefix(6)
+        
+        lines.append("// JCROSS_6AXIS_BEGIN")
+        lines.append("// lang:swift doc:\(docHash)")
         lines.append("")
 
         let sourceLines = source.components(separatedBy: "\n")
+        var currentFunc: String? = nil
+        var currentFuncLines: [String] = []
+
+        func flushFunc() {
+            guard let f = currentFunc else { return }
+            lines.append("// ── FUNC[\(f)] params:\(Int.random(in: 0...3)) return:\(Int.random(in: 0...1)) async:\(Bool.random()) throw:\(Bool.random())")
+            
+            // 重複排除 (順序維持)
+            var seen = Set<String>()
+            let uniqueNodes = currentFuncLines.filter { seen.insert($0).inserted }
+            for n in uniqueNodes { lines.append(n) }
+            
+            // Phantom node injection (45% density)
+            let phantomCount = Int(Double(uniqueNodes.count) * 0.45)
+            for _ in 0..<phantomCount {
+                let h = "0x" + UUID().uuidString.replacingOccurrences(of: "-", with: "").prefix(8).lowercased()
+                let nid = "0x" + UUID().uuidString.replacingOccurrences(of: "-", with: "").prefix(4).uppercased()
+                let arity = ["", " ARITY:class.reduced", " ARITY:class.standard", " ARITY:class.multiway", " ARITY:class.nullary"].randomElement()!
+                lines.append("  NODE[\(nid)] kind:opaque TYPE:opaque MEM:opaque HASH:\(h)\(arity)")
+            }
+            lines.append("")
+            currentFunc = nil
+            currentFuncLines = []
+        }
+
+        var topLevelNodes: [String] = []
+
         for line in sourceLines {
-            if line.trimmingCharacters(in: .whitespaces).hasPrefix("//") ||
-               line.trimmingCharacters(in: .whitespaces).hasPrefix("#") {
-                lines.append("// [metadata-stripped]")
-                continue
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            if trimmed.hasPrefix("func ") || trimmed.hasPrefix("private func ") || trimmed.hasPrefix("public func ") {
+                flushFunc()
+                let fHash = "0x" + UUID().uuidString.replacingOccurrences(of: "-", with: "").prefix(4).uppercased()
+                currentFunc = fHash
             }
-
-            var converted = line
-
-            // センシティブトークンを先に置換（シークレット括弧で囲む）
+            
             for (real, nodeID) in nodeMap {
-                if sensitiveTokens.contains(real) && converted.contains(real) {
-                    converted = converted.replacingOccurrences(
-                        of: real,
-                        with: "\(schema.secretOpen)\(nodeID)\(schema.secretClose)"
-                    )
-                }
-            }
-
-            // 通常識別子をノード括弧で置換（長い順）
-            let sortedMap = nodeMap.filter { !sensitiveTokens.contains($0.key) }
-                .sorted { $0.key.count > $1.key.count }
-
-            for (real, nodeID) in sortedMap {
-                if converted.contains(real) {
-                    // カテゴリタグを生成
-                    let category = inferCategory(from: real)
-                    let kanjiSym = schema.kanjiCategoryMap[category] ?? "変"
-                    let tag = "\(schema.tagOpen)\(kanjiSym):1.0\(schema.tagClose)"
-                    let nodeToken = "\(schema.nodeOpen)\(nodeID)\(schema.nodeClose)"
-
-                    // OP コマンドを生成（行の先頭で関数定義の場合のみ）
-                    let isDefLine = line.trimmingCharacters(in: .whitespaces).hasPrefix("func ") ||
-                                   line.trimmingCharacters(in: .whitespaces).hasPrefix("def ")
-                    if isDefLine && category == "function" {
-                        let opName = schema.opNameMap["OP.FUNC"] ?? "OP.FUNC"
-                        converted = converted.replacingOccurrences(
-                            of: real,
-                            with: "\(tag)\(opName)(\(nodeToken))"
-                        )
-                    } else {
-                        converted = converted.replacingOccurrences(of: real, with: "\(tag)\(nodeToken)")
+                if trimmed.contains(real) {
+                    // 単語境界の簡易チェック
+                    let isWordBoundary = trimmed.range(of: "\\b\\Q\(real)\\E\\b", options: .regularExpression) != nil
+                    if isWordBoundary || !real.allSatisfy({ $0.isLetter || $0.isNumber }) {
+                        let h = "0x" + UUID().uuidString.replacingOccurrences(of: "-", with: "").prefix(8).lowercased()
+                        // v2.3: Use the pre-generated random ID from sessionRandomMap instead of SHA256 deterministic hash
+                        let nid = sessionRandomMap[nodeID] ?? ("0x" + UUID().uuidString.replacingOccurrences(of: "-", with: "").prefix(4).uppercased())
+                        let arity = ["", " ARITY:class.reduced", " ARITY:class.standard", " ARITY:class.multiway", " ARITY:class.nullary"].randomElement()!
+                        let n = "  NODE[\(nid)] kind:opaque TYPE:opaque MEM:opaque HASH:\(h)\(arity)"
+                        
+                        if currentFunc != nil {
+                            currentFuncLines.append(n)
+                        } else {
+                            topLevelNodes.append(n)
+                        }
                     }
                 }
             }
+        }
+        flushFunc()
 
-            lines.append(converted)
+        if !topLevelNodes.isEmpty {
+            lines.append("// ── TOP-LEVEL NODES")
+            var seen = Set<String>()
+            let uniqueTop = topLevelNodes.filter { seen.insert($0).inserted }
+            for n in uniqueTop { lines.append(n) }
+            lines.append("")
         }
 
-        lines.append("// POLYMORPHIC_JCROSS_END")
+        lines.append("// JCROSS_6AXIS_END")
         return lines
     }
 

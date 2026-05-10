@@ -52,10 +52,10 @@ actor QwenVideoAnalyzer {
     }
     
     /// Screenshot -> Target Coordinate extraction (Targeting Phase)
-    func identifyTargetCoordinates(screenshotBase64: String, targetDescription: String = "Search Box or Input Field", model: String = "qwen2.5-vl:27b") async -> [Double]? {
+    func identifyTargetCoordinates(screenshotBase64: [String], targetDescription: String = "Search Box or Input Field", model: String = "qwen2.5-vl:27b") async -> [Double]? {
         let prompt = """
-        You are a high-precision Vision model analyzing a web browser screenshot.
-        Find the exact coordinates (X, Y) of the '\(targetDescription)'.
+        You are a high-precision Vision model analyzing a sequence of web browser screenshots (scrolling frames).
+        Find the exact coordinates (X, Y) of the '\(targetDescription)' in the LAST frame, or the most relevant frame if it's stationary.
         Output ONLY a valid JSON array representing the center coordinate: [x, y]
         Do not output any markdown formatting or explanations.
         """
@@ -64,12 +64,12 @@ actor QwenVideoAnalyzer {
             (role: "user", content: prompt)
         ]
         
-        print("[QwenVideoAnalyzer] Analyzing screenshot for '\(targetDescription)' using \(model)...")
+        print("[QwenVideoAnalyzer] Analyzing \(screenshotBase64.count) frames for '\(targetDescription)' using \(model)...")
         
         guard let jsonString = await OllamaClient.shared.generateConversation(
             model: model,
             messages: messages,
-            imagesForLastUserMessage: [screenshotBase64],
+            imagesForLastUserMessage: screenshotBase64,
             maxTokens: 128,
             temperature: 0.1
         ) else {

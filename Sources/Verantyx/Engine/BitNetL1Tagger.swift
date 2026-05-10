@@ -2,20 +2,20 @@ import Foundation
 
 // MARK: - BitNetL1Tagger
 //
-// BitNet b1.58 を使い、ソースコードから JCross L1 漢字トポロジータグを抽出する。
+// BitNet b1.58 を使い、ソースコードから JCross v2.2 構造メタデータ (L1トポロジータグ) を抽出する。
 //
 // 設計原則（Test A 実験結果に基づく）:
 //   - 適度な長さの英語指示文（~30トークン）が最も安定した出力を引き出す
-//   - 出力フォーマットは JSON より単純な [漢:score] を要求する（1-bitの限界）
-//   - 失敗時はルールベースフォールバックで漢字を割り当てる
+//   - 出力フォーマットは JCross v2.2 の 6-Axis Opaque タグ群を要求する
+//   - 失敗時はルールベースフォールバックで構造タグを割り当てる
 //
-// 出力例: "[核:1.0][技:0.9][修:0.8][記:0.7]"
+// 出力例: "[CTRL_async:1.0][SEC_hash:0.9][TYPE_opaque:0.8]"
 //
 // ゲートキーパーモードでの役割:
-//   source → BitNetL1Tagger → L1tags (.l1tags)    ← このファイルが担う
-//   source → PolymorphicJCrossTranspiler → JCross IR + schema  ← 既存
-//   L1tags + JCross IR → Claude (Worker) → JCross diff
-//   JCross diff + schema → BitNetReverseTranspiler → 実コード変更  ← 別ファイル
+//   source → BitNetL1Tagger → v2.2 tags (.l1tags)    ← このファイルが担う
+//   source → JCrossIRGenerator → 6-Axis IR + Vault分離
+//   V2.2 tags + JCross IR → Cloud LLM → JCross diff
+//   JCross diff + schema → VaultPatcher → 実コード変更
 
 final class BitNetL1Tagger: @unchecked Sendable {
 
@@ -26,11 +26,11 @@ final class BitNetL1Tagger: @unchecked Sendable {
 
     // MARK: - Public API
 
-    /// ソースコードから L1 漢字トポロジータグを生成する。
+    /// ソースコードから L1 構造トポロジータグ (v2.2) を生成する。
     /// - Parameters:
     ///   - code: ソースコード（先頭 200 行を使用）
     ///   - language: プログラミング言語名（ヒントとして使用）
-    /// - Returns: "[核:1.0][技:0.9][修:0.8]" 形式の文字列
+    /// - Returns: "[CTRL_async:1.0][SEC_hash:0.9]" 形式の文字列
     func generateL1Tags(from code: String, language: String) async -> String {
         guard let config = BitNetConfig.load(), config.isValid else {
             // BitNet 未インストール → ルールベースフォールバック
@@ -42,11 +42,12 @@ final class BitNetL1Tagger: @unchecked Sendable {
 
         // Test A スタイル: 適度な長さの英語指示 + 明確な出力形式の例示
         let prompt = """
-        You are a code analyzer. Read the following \(language) code and extract \
-        3 to 5 Japanese kanji characters that best represent its core concepts. \
-        Format your answer EXACTLY as: [漢1:1.0][漢2:0.9][漢3:0.8] \
+        You are a JCross v2.2 structural analyzer. Read the following \(language) code and extract \
+        3 to 5 Gatekeeper IR structural tags that best represent its core operations. \
+        Format your answer EXACTLY as: [CTRL_loop:1.0][MEM_alloc:0.9][TYPE_opaque:0.8] \
+        Valid prefixes: CTRL_, MEM_, TYPE_, SCOPE_, NET_, SEC_. \
         Use scores from 1.0 (most central) to 0.7 (supporting). \
-        Output only the kanji tags on one line, nothing else.
+        Output only the structural tags on one line, nothing else.
 
         Code:
         \(snippet)
@@ -150,17 +151,17 @@ final class BitNetL1Tagger: @unchecked Sendable {
 
     // MARK: - L1 Tag Parser
 
-    /// モデルの出力から [漢:score] パターンを抽出する。
+    /// モデルの出力から [TAG:score] パターンを抽出する。
     /// エコーされたプロンプト部分は無視し、タグ行のみを取り出す。
     private func parseL1Tags(from raw: String) -> String {
         // "Tags:" の後に来る行を探す（エコー対策）
         let lines = raw.components(separatedBy: "\n")
         for line in lines.reversed() {
             let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
-            // [漢字:数値] パターンが含まれる行を探す
+            // [TAG_NAME:数値] パターンが含まれる行を探す
             if trimmed.contains("[") && trimmed.contains(":") && trimmed.contains("]") {
-                // パターン検証: [X:Y.Z] 形式
-                let regex = try? NSRegularExpression(pattern: #"\[[^\]:]+:\d\.\d\]"#)
+                // パターン検証: [XXX_YYY:Z.W] 形式
+                let regex = try? NSRegularExpression(pattern: #"\\[[A-Za-z0-9_]+:\\d\\.\\d\\]"#)
                 let range = NSRange(trimmed.startIndex..., in: trimmed)
                 let matches = regex?.numberOfMatches(in: trimmed, range: range) ?? 0
                 if matches > 0 {
@@ -173,47 +174,47 @@ final class BitNetL1Tagger: @unchecked Sendable {
 
     // MARK: - Rule-based Fallback
 
-    /// BitNet 未使用時のルールベース漢字タグ生成。
-    /// ファイル言語・キーワードの出現頻度から代表的な漢字を割り当てる。
+    /// BitNet 未使用時のルールベースタグ生成。
+    /// ファイル言語・キーワードの出現頻度から代表的な v2.2 タグを割り当てる。
     private func ruleBasedTags(for code: String, language: String) -> String {
         var scores: [(String, Double)] = []
 
         // 言語ベースタグ
         switch language.lowercased() {
-        case "swift":    scores.append(("[迅:1.0]", 1.0))
-        case "rust":     scores.append(("[錆:1.0]", 1.0))
-        case "python":   scores.append(("[蛇:1.0]", 1.0))
+        case "swift":    scores.append(("[TYPE_swift:1.0]", 1.0))
+        case "rust":     scores.append(("[MEM_safe:1.0]", 1.0))
+        case "python":   scores.append(("[TYPE_dynamic:1.0]", 1.0))
         case "typescript", "javascript":
-                         scores.append(("[型:1.0]", 1.0))
-        case "go":       scores.append(("[駆:1.0]", 1.0))
-        default:         scores.append(("[码:1.0]", 1.0))
+                         scores.append(("[TYPE_opaque:1.0]", 1.0))
+        case "go":       scores.append(("[CTRL_goroutine:1.0]", 1.0))
+        default:         scores.append(("[TYPE_opaque:1.0]", 1.0))
         }
 
         // コンテンツベースタグ（キーワード検出）
         let lower = code.lowercased()
         if lower.contains("async") || lower.contains("await") || lower.contains("actor") {
-            scores.append(("[並:0.9]", 0.9))
+            scores.append(("[CTRL_async:0.9]", 0.9))
         }
         if lower.contains("encrypt") || lower.contains("secret") || lower.contains("token") || lower.contains("key") {
-            scores.append(("[秘:0.9]", 0.9))
+            scores.append(("[SEC_hash:0.9]", 0.9))
         }
         if lower.contains("network") || lower.contains("http") || lower.contains("url") || lower.contains("socket") {
-            scores.append(("[網:0.8]", 0.8))
+            scores.append(("[NET_ipc:0.8]", 0.8))
         }
         if lower.contains("database") || lower.contains("sql") || lower.contains("store") || lower.contains("cache") {
-            scores.append(("[蔵:0.8]", 0.8))
+            scores.append(("[MEM_store:0.8]", 0.8))
         }
         if lower.contains("test") || lower.contains("spec") || lower.contains("assert") {
-            scores.append(("[験:0.8]", 0.8))
+            scores.append(("[TEST_assert:0.8]", 0.8))
         }
         if lower.contains("view") || lower.contains("ui") || lower.contains("render") || lower.contains("layout") {
-            scores.append(("[画:0.7]", 0.7))
+            scores.append(("[SCOPE_ui:0.7]", 0.7))
         }
         if lower.contains("parse") || lower.contains("decode") || lower.contains("encode") {
-            scores.append(("[解:0.7]", 0.7))
+            scores.append(("[DATA_parse:0.7]", 0.7))
         }
         if lower.contains("error") || lower.contains("throw") || lower.contains("catch") {
-            scores.append(("[障:0.7]", 0.7))
+            scores.append(("[CTRL_catch:0.7]", 0.7))
         }
 
         // 上位5つを返す

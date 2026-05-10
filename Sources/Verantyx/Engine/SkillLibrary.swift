@@ -60,12 +60,17 @@ actor SkillLibrary {
 
     // ── Storage root ──────────────────────────────────────────────────────
     // Shared with MCP server. Must match ENGINE_ROOT/skills in server.ts.
-    let skillsDir: URL = {
-        let base = FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent(".openclaw/memory/skills", isDirectory: true)
+    var skillsDir: URL {
+        let base: URL
+        if let customPath = UserDefaults.standard.string(forKey: "cortex_skills_path") {
+            base = URL(fileURLWithPath: customPath)
+        } else {
+            base = FileManager.default.homeDirectoryForCurrentUser
+                .appendingPathComponent(".openclaw/memory/skills", isDirectory: true)
+        }
         try? FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
         return base
-    }()
+    }
 
     // ── In-memory index ───────────────────────────────────────────────────
     private var index: [String: SkillNode] = [:]   // name → node

@@ -150,6 +150,7 @@ final class AppState: ObservableObject {
     // Self-Fix mode — when true, next message(s) target IDE self-modification
     // Must be explicitly toggled by user pressing the "Self Fix" button.
     @Published var selfFixMode: Bool = false
+    @Published var persistentTaskAnchor: String = "" // 毎ターン自動注入されるタスクの画像アンカー
     /// Set to true when the AI calls [RESTART_IDE] — triggers a restart alert in the UI.
     @Published var showRestartAlert: Bool = false
     @Published var requiresHumanPuzzle: Bool = false
@@ -233,12 +234,11 @@ final class AppState: ObservableObject {
     @Published var activeChatTab: Int = 0   // 0=workspace, 1=history, 2=thinking
 
     // Operation Mode (AI Priority vs Human)
-    @Published var operationMode: OperationMode = .human {
+    @Published var operationMode: OperationMode = .gatekeeper {
         didSet {
             UserDefaults.standard.set(operationMode.rawValue, forKey: "operation_mode")
             // Sync MCPEngine execution mode
-            let mcpMode: MCPServerConfig.ExecutionMode = operationMode == .aiPriority ? .ai : .human
-            Task { MCPEngine.shared.setMode(mcpMode) }
+            Task { MCPEngine.shared.setMode(.ai) }
             
             // Auto-toggle JCross view and Gatekeeper State
             if operationMode == .gatekeeper {
@@ -249,23 +249,13 @@ final class AppState: ObservableObject {
                 showGatekeeperRawCode = true
             }
             
-            // Sync editing mode
-            if editingMode != operationMode {
-                editingMode = operationMode
-            }
-            
-            // L2.5 変換の制御 (人間優先モードでのみ有効にする)
-            if operationMode == .human {
-                if L25IndexEngine.shared.hasPausedMap || L25IndexEngine.shared.isStopped {
-                    L25IndexEngine.shared.resumeIndexing()
-                } else if let ws = workspaceURL, !L25IndexEngine.shared.isIndexing {
-                    Task { @MainActor in
-                        await L25IndexEngine.shared.loadAndIncrementalUpdate(workspaceURL: ws)
-                    }
-                }
-            } else {
-                if L25IndexEngine.shared.isIndexing {
-                    L25IndexEngine.shared.cancelIndexing()
+
+            // L2.5 変換の制御
+            if L25IndexEngine.shared.hasPausedMap || L25IndexEngine.shared.isStopped {
+                L25IndexEngine.shared.resumeIndexing()
+            } else if let ws = workspaceURL, !L25IndexEngine.shared.isIndexing {
+                Task { @MainActor in
+                    await L25IndexEngine.shared.loadAndIncrementalUpdate(workspaceURL: ws)
                 }
             }
         }
@@ -441,8 +431,9 @@ final class AppState: ObservableObject {
         switch modelStatus {
         case .ollamaReady(let m):
             let mm = m.lowercased()
-            return mm.contains("llava") || mm.contains("vision")
-                || mm.contains("gemma") || mm.contains("qwen") && mm.contains("vl")
+            return mm.contains("llava") || mm.contains("vision") || mm.contains("vl")
+                || mm.contains("gemma") || mm.contains("qwen3")
+                || (mm.contains("qwen") && mm.contains("vl"))
                 || mm.contains("minicpm") || mm.contains("moondream")
                 || mm.contains("bakllava") || mm.contains("cogvlm")
         case .mlxReady(let m):
@@ -490,9 +481,7 @@ final class AppState: ObservableObject {
         case "system_prompt":
             systemPrompt = value
         case "operation_mode":
-            if value == "aiPriority" || value == "ai" { operationMode = .aiPriority }
-            else if value == "humanPriority" || value == "Human Priority" { operationMode = .humanPriority }
-            else { operationMode = .human }
+            operationMode = .gatekeeper
         case "temperature":
             if let d = Double(value) { temperature = max(0.0, min(2.0, d)) }
             else { return "⚠️ Invalid temperature: \(value) (expected 0.0–2.0)" }
@@ -545,84 +534,32 @@ final class AppState: ObservableObject {
     // nano/small モデル選択時に AI Priority を強制するフラグ
     @Published var isNanoSmallModelActive: Bool = false
 
-    // MARK: - Mode & Model Sync
+    // MARK: - Gatekeeper Model Sync
 
-    @Published var editingMode: OperationMode = .human
-
-    func getOllamaModel(for mode: OperationMode) -> String {
-        if mode == .gatekeeper {
-            return GatekeeperPipelineState.shared.config.intentOllamaModel
-        }
-        return UserDefaults.standard.string(forKey: "model_for_\(mode.rawValue)") ?? UserDefaults.standard.string(forKey: "active_ollama_model") ?? "gemma4:26b"
+    func getOllamaModel() -> String {
+        return GatekeeperPipelineState.shared.config.intentOllamaModel
     }
 
-    func setOllamaModel(_ model: String, for mode: OperationMode) {
-        if mode == .gatekeeper {
-            var config = GatekeeperPipelineState.shared.config
-            config.intentOllamaModel = model
-            GatekeeperPipelineState.shared.config = config
-            config.save()
-        } else {
-            UserDefaults.standard.set(model, forKey: "model_for_\(mode.rawValue)")
-        }
+    func setOllamaModel(_ model: String) {
+        var config = GatekeeperPipelineState.shared.config
+        config.intentOllamaModel = model
+        GatekeeperPipelineState.shared.config = config
+        config.save()
         
-        if mode == operationMode && activeOllamaModel != model {
+        if activeOllamaModel != model {
             activeOllamaModel = model
         }
     }
 
-    func switchModeAndEjectOldModel(to mode: OperationMode) {
-        Task {
-            let loaded = await OllamaClient.shared.loadedModels()
-            for m in loaded {
-                await OllamaClient.shared.unloadModel(m.name)
-            }
-            
-            await MainActor.run {
-                operationMode = mode
-                let targetModel = getOllamaModel(for: mode)
-                if activeOllamaModel != targetModel {
-                    activeOllamaModel = targetModel
-                }
-                connectOllama()
-            }
-        }
-    }
-
-    // モデル変更時: nano/small → AI Priority 強制、large/giant → human に復帰
+    // Active Gatekeeper Local Model
     @Published var activeOllamaModel: String = {
-        UserDefaults.standard.string(forKey: "active_ollama_model") ?? "gemma4:26b"
+        GatekeeperPipelineState.shared.config.intentOllamaModel.isEmpty ? "gemma4:26b" : GatekeeperPipelineState.shared.config.intentOllamaModel
     }() {
         didSet {
-            UserDefaults.standard.set(activeOllamaModel, forKey: "active_ollama_model")
-            
-            // Sync current model back to the current operation mode configuration
-            if operationMode == .gatekeeper {
-                var config = GatekeeperPipelineState.shared.config
-                config.intentOllamaModel = activeOllamaModel
-                GatekeeperPipelineState.shared.config = config
-                config.save()
-            } else {
-                UserDefaults.standard.set(activeOllamaModel, forKey: "model_for_\(operationMode.rawValue)")
-            }
-
-            let tier = ModelProfileDetector.detect(modelId: activeOllamaModel).tier
-            let isSmall = (tier == .nano || tier == .small)
-            let wasSmall = isNanoSmallModelActive
-            isNanoSmallModelActive = isSmall
-
-            if isSmall && operationMode != .aiPriority {
-                operationMode = .aiPriority
-                addSystemMessage(
-                    "🧠 [Nano Cortex] \(tier.displayName) モデルを検出。" +
-                    "AI Priority + VX-Loop + ConfusionDetector を自動有効化しました"
-                )
-            } else if !isSmall && wasSmall && operationMode == .aiPriority {
-                operationMode = .human
-                addSystemMessage(
-                    "💬 [モード復帰] \(tier.displayName) モデルに切り替えました。Human モードに戻りました"
-                )
-            }
+            var config = GatekeeperPipelineState.shared.config
+            config.intentOllamaModel = activeOllamaModel
+            GatekeeperPipelineState.shared.config = config
+            config.save()
         }
     }
 
@@ -643,14 +580,12 @@ final class AppState: ObservableObject {
         refreshFiles()
         // ── ワークスペース追加時に L2.5 地図を自動生成 ───────────────────
         // @MainActor な buildProjectMap を Task で安全に呼び出す
-        if operationMode == .human {
-            Task { @MainActor in
+        Task { @MainActor in
                 await L25IndexEngine.shared.buildProjectMap(workspaceURL: url)
                 let count = L25IndexEngine.shared.projectMap?.fileCount ?? 0
                 self.addSystemMessage(AppLanguage.shared.t("🗺️ L2.5 map generation complete: \(count) files", "🗺️ L2.5 地図生成完了: \(count) ファイル"))
             }
         }
-    }
 
     /// Progressive directory scan — yields partial results as they arrive.
     /// First batch appears in ~200ms for most workspaces. Tree shows before scan completes.
@@ -726,8 +661,8 @@ final class AppState: ObservableObject {
     }
 
     @Published var showGatekeeperRawCode: Bool = {
-        let raw = UserDefaults.standard.string(forKey: "operation_mode") ?? OperationMode.human.rawValue
-        let mode = OperationMode(rawValue: raw) ?? .human
+        let raw = UserDefaults.standard.string(forKey: "operation_mode") ?? OperationMode.gatekeeper.rawValue
+        let mode = OperationMode(rawValue: raw) ?? .gatekeeper
         return mode != .gatekeeper
     }() {
         didSet {
@@ -1027,10 +962,8 @@ final class AppState: ObservableObject {
             } else if inferenceMode == .cloudDirect || inferenceMode == .privacyShield || inferenceMode == .paranoiaMode {
                 await runHybrid(instruction: text)
             } else if agentLoopEnabled {
-                if editingMode == .human {
-                    await MainActor.run { self.requiresHumanPuzzle = true }
-                }
                 
+
                 // Pass images to agent loop so the model can see them
                 let history = Array(self.messages.dropLast())
                 await runAgentLoop(instruction: text,
@@ -1140,8 +1073,7 @@ final class AppState: ObservableObject {
                         modifiedContent: code,
                         hunks: DiffEngine.compute(original: selectedFileContent, modified: code)
                     )
-                    if operationMode == .aiPriority { autoApplyDiff(diff) }
-                    else { pendingDiff = diff; showDiff = true }
+                    pendingDiff = diff; showDiff = true
                 }
             }
             return
@@ -1186,13 +1118,8 @@ final class AppState: ObservableObject {
                     modifiedContent: code,
                     hunks: DiffEngine.compute(original: selectedFileContent, modified: code)
                 )
-                if operationMode == .aiPriority {
-                    // AI Priority: auto-apply without confirmation
-                    autoApplyDiff(diff)
-                } else {
-                    pendingDiff = diff
-                    showDiff = true
-                }
+                pendingDiff = diff
+                showDiff = true
             }
         }
     }
@@ -1236,12 +1163,7 @@ final class AppState: ObservableObject {
         // nano/small モデルはユーザーが operationMode を手動変更していても
         // 常に AI Priority ループで動作させる（VX-Loop + ConfusionDetector が必須なため）
         // ただし、Swarm Mode は特別に維持する
-        let snap_operationMode: OperationMode
-        if operationMode == .autoSwarm {
-            snap_operationMode = operationMode
-        } else {
-            snap_operationMode = isNanoSmallModelActive ? .aiPriority : operationMode
-        }
+        let snap_operationMode: OperationMode = .gatekeeper
 
         // Build image context suffix so models that read text still see the filename
         var imageContext = ""
@@ -1820,7 +1742,6 @@ final class AppState: ObservableObject {
         if let raw = ud.string(forKey: "operation_mode"),
            let o = OperationMode(rawValue: raw) {
             operationMode = o
-            editingMode = o
         }
 
         // ── Notification ───────────────────────────────────────────────────

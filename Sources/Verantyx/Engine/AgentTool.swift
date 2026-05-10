@@ -29,6 +29,7 @@ enum AgentTool {
     case openSafari(url: String)
     case openChrome(url: String)
     case visionBrowse(url: String)                // NEW: vision based navigation
+    case visionSearchFlow(query: String)          // NEW: visual multi-frame search flow
     case visionSnapshot                           // NEW: manual screenshot update
     case visionAct(action: String)                // NEW: vision UI interaction
     // ── JCross Memory ────────────────────────────────────────────────────────
@@ -82,6 +83,7 @@ struct AgentToolCall: Identifiable {
         case .openSafari(let url):         return "🧡 safari: \(url)"
         case .openChrome(let url):         return "🟢 chrome: \(url)"
         case .visionBrowse(let url):       return "👁️ vision_browse: \(url)"
+        case .visionSearchFlow(let q):     return "👁️ vision_search: \(q)"
         case .visionSnapshot:              return "👁️ vision_snapshot"
         case .visionAct(let action):       return "👁️ vision_act: \(action)"
         case .jcrossQuery(let q):          return "🧠 jcross_query: \(q)"
@@ -150,6 +152,7 @@ struct AgentToolParser {
     [EVAL_JS: script]         JS実: ブラウザでJS実行
     [SAFARI: url] [CHROME: url]    ブラウザで開く（Cookie利用可）
     [VISION_BROWSE: url]      視覧: ブラウザでURLを開きスクショ撮影
+    [VISION_SEARCH_FLOW: q]   視索: Google検索を開き、複数回スクロールして動画フレームを撮影
     [VISION_SNAPSHOT]         視撮: 現在の画面を再スクショして更新
     [VISION_ACT: action]      視動: "click x y" や "type text" を実行しスクショ
     [JCROSS_QUERY: terms]     脳召: 過去記憶を検索
@@ -445,6 +448,8 @@ struct AgentToolParser {
                 tools.append(.openChrome(url: m))
             } else if let m = match(trimmed, pattern: #"\[VISION_BROWSE:\s*([^\]]+)\]"#) {
                 tools.append(.visionBrowse(url: m))
+            } else if let m = match(trimmed, pattern: #"\[VISION_SEARCH_FLOW:\s*([^\]]+)\]"#) {
+                tools.append(.visionSearchFlow(query: m))
             } else if trimmed.contains("[VISION_SNAPSHOT]") {
                 tools.append(.visionSnapshot)
             } else if let m = match(trimmed, pattern: #"\[VISION_ACT:\s*([^\]]+)\]"#) {
@@ -717,7 +722,7 @@ actor AgentToolExecutor {
 
             let isAutoWrite = await MainActor.run { 
                 guard let state = AppState.shared else { return false }
-                return state.operationMode == .aiPriority || state.operationMode == .autoSwarm || state.autoApproveDiffs 
+                return state.autoApproveDiffs 
             }
 
             if isAutoWrite {
@@ -878,7 +883,7 @@ actor AgentToolExecutor {
 
             let isAutoWrite = await MainActor.run { 
                 guard let state = AppState.shared else { return false }
-                return state.operationMode == .aiPriority || state.operationMode == .autoSwarm || state.autoApproveDiffs 
+                return state.autoApproveDiffs 
             }
 
             if isAutoWrite {
@@ -971,16 +976,46 @@ actor AgentToolExecutor {
         case .visionBrowse(let url):
             do {
                 try await SafariVisionBridge.shared.navigate(url)
-                let base64 = try await SafariVisionBridge.shared.takeScreenshot()
-                await CognitiveAnchorEngine.shared.setVisionScreenshot(base64)
-                return "[VISION_BROWSE: \(url)]\nScreenshot taken and injected to context. Use [VISION_ACT] to interact."
+                let frames = try await SafariVisionBridge.shared.takeMultiFrameScreenshot(frameCount: 4)
+                if let lastFrame = frames.last {
+                    await CognitiveAnchorEngine.shared.setVisionScreenshot(lastFrame)
+                }
+                await MainActor.run {
+                    AppState.shared?.lastVideoFrames = frames
+                }
+                return "[VISION_BROWSE: \(url)]\nCaptured \(frames.count) scrolling frames and injected to context. Use [VISION_ACT] to interact."
+            } catch { return "[VISION ERROR] \(error.localizedDescription)" }
+
+        case .visionSearchFlow(let query):
+            let cleanQuery = query.trimmingCharacters(in: CharacterSet(charactersIn: "\"' "))
+            let encodedQuery = cleanQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? cleanQuery
+            let url = "https://www.google.com/search?q=\(encodedQuery)"
+            do {
+                try await SafariVisionBridge.shared.navigate(url)
+                try await Task.sleep(nanoseconds: 1_000_000_000)
+                let frames = try await SafariVisionBridge.shared.takeMultiFrameScreenshot(frameCount: 4)
+                
+                // Set the last frame as the main context for vision screenshot
+                if let lastFrame = frames.last {
+                    await CognitiveAnchorEngine.shared.setVisionScreenshot(lastFrame)
+                }
+                
+                await MainActor.run {
+                    AppState.shared?.lastVideoFrames = frames
+                }
+                return "[VISION_SEARCH_FLOW: \(query)]\nGoogle search executed. \(frames.count) frames captured via scrolling. Use [VISION_ACT] to click targets or type."
             } catch { return "[VISION ERROR] \(error.localizedDescription)" }
 
         case .visionSnapshot:
             do {
-                let base64 = try await SafariVisionBridge.shared.takeScreenshot()
-                await CognitiveAnchorEngine.shared.setVisionScreenshot(base64)
-                return "[VISION_SNAPSHOT]\nScreenshot updated and injected to context."
+                let frames = try await SafariVisionBridge.shared.takeMultiFrameScreenshot(frameCount: 4)
+                if let lastFrame = frames.last {
+                    await CognitiveAnchorEngine.shared.setVisionScreenshot(lastFrame)
+                }
+                await MainActor.run {
+                    AppState.shared?.lastVideoFrames = frames
+                }
+                return "[VISION_SNAPSHOT]\nCaptured \(frames.count) scrolling frames. Screenshot updated and injected to context."
             } catch { return "[VISION ERROR] \(error.localizedDescription)" }
 
         case .visionAct(let action):
@@ -988,30 +1023,23 @@ actor AgentToolExecutor {
                 let parts = action.split(separator: " ")
                 guard let cmd = parts.first else { return "[VISION ERROR] Empty action" }
                 
+                let framesBefore = await MainActor.run { AppState.shared?.lastVideoFrames }
+                
                 if cmd == "click" && parts.count >= 3 {
                     let x = Double(parts[1]) ?? 0.0
                     let y = Double(parts[2]) ?? 0.0
                     
-                    let target = CGPoint(x: x, y: y)
-                    if let last = lastVisionClickTarget {
-                        let distance = hypot(last.x - target.x, last.y - target.y)
-                        if distance < 30.0 {
-                            consecutiveClickLoopCount += 1
-                        } else {
-                            consecutiveClickLoopCount = 0
-                        }
-                    }
-                    lastVisionClickTarget = target
-                    
                     if consecutiveClickLoopCount >= 3 {
                         consecutiveClickLoopCount = 0 // reset so it can try elsewhere later
-                        return "[VISION ERROR] VISION_BLOCKED: You have clicked near (\(x), \(y)) multiple times without success. The UI is not responding to your clicks here. DO NOT click here again. You MUST try a different tool (like scrolling or typing) or ask the human."
+                        return "[VISION ERROR] VISION_BLOCKED: You have clicked near these coordinates multiple times without success (the screen visually did not change). DO NOT click here again. You MUST try a different tool (like scrolling or typing) or ask the human."
                     }
                     
                     try await SafariVisionBridge.shared.hidClick(x: x, y: y)
                 } else if cmd == "type" && parts.count >= 2 {
                     let text = action.dropFirst(5).trimmingCharacters(in: .whitespaces)
                     try await SafariVisionBridge.shared.typeText(text)
+                } else if cmd == "scroll" {
+                    try await SafariVisionBridge.shared.scrollDown()
                 }
                 
                 // Auto-store vision action in JCross memory (L1-L3)
@@ -1025,9 +1053,38 @@ actor AgentToolExecutor {
                     )
                 }
                 
-                try await Task.sleep(nanoseconds: 1_000_000_000) // Delay for UI reaction
-                let base64 = try await SafariVisionBridge.shared.takeScreenshot()
-                await CognitiveAnchorEngine.shared.setVisionScreenshot(base64)
+                try await Task.sleep(nanoseconds: 2_000_000_000) // Delay for UI reaction / load
+                let frames = try await SafariVisionBridge.shared.takeMultiFrameScreenshot(frameCount: 4)
+                
+                // Visual Similarity Loop Detection
+                if cmd == "click", let beforeFrame = framesBefore?.last, let afterFrame = frames.last {
+                    let distance = SafariVisionBridge.shared.computeVisualSimilarity(base64A: beforeFrame, base64B: afterFrame)
+                    if distance < 10.0 { // threshold for "no significant visual change"
+                        consecutiveClickLoopCount += 1
+                        
+                        // If it's starting to loop, try to scroll-retry automatically
+                        if consecutiveClickLoopCount == 2 {
+                            try await SafariVisionBridge.shared.scrollDown()
+                            try await Task.sleep(nanoseconds: 1_000_000_000)
+                            let retryFrames = try await SafariVisionBridge.shared.takeMultiFrameScreenshot(frameCount: 4)
+                            if let retryLast = retryFrames.last {
+                                await CognitiveAnchorEngine.shared.setVisionScreenshot(retryLast)
+                            }
+                            await MainActor.run { AppState.shared?.lastVideoFrames = retryFrames }
+                            return "[VISION_ACT: \(action)]\nAction performed, but NO VISUAL CHANGE was detected. The system automatically scrolled down to retry. Please find the target in this new view and try clicking again."
+                        }
+                    } else {
+                        consecutiveClickLoopCount = 0
+                    }
+                }
+                
+                if let lastFrame = frames.last {
+                    await CognitiveAnchorEngine.shared.setVisionScreenshot(lastFrame)
+                }
+                
+                await MainActor.run {
+                    AppState.shared?.lastVideoFrames = frames
+                }
                 
                 if cmd == "click" {
                     return """

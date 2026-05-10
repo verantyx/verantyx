@@ -51,15 +51,25 @@ public actor CognitiveAnchorEngine {
     public func getAnchor(for mode: CognitiveAnchorMode) -> String {
         switch mode {
         case .doubt:
-            return redPixelBase64
+            return renderDynamicAnchor(
+                text: "DOUBT / VERIFY",
+                backgroundColor: NSColor.red,
+                textColor: NSColor.white,
+                width: 128, height: 128
+            ) ?? ""
         case .logic:
-            return bluePixelBase64
+            return renderDynamicAnchor(
+                text: "LOGIC ONLY",
+                backgroundColor: NSColor.blue,
+                textColor: NSColor.white,
+                width: 128, height: 128
+            ) ?? ""
         case .searchForce:
             return renderDynamicAnchor(
                 text: "[ SEARCH REQUIRED ]\nKNOWLEDGE BOUNDARY DETECTED",
                 backgroundColor: NSColor.systemYellow,
                 textColor: NSColor.black
-            ) ?? redPixelBase64
+            ) ?? ""
         case .temporal:
             let formatter = DateFormatter()
             formatter.dateFormat = "yyyy-MM-dd HH:mm"
@@ -68,19 +78,19 @@ public actor CognitiveAnchorEngine {
                 text: "CURRENT TIME:\n\(nowStr)\nKNOWLEDGE OUTDATED.\nYOU MUST USE WEB SEARCH.",
                 backgroundColor: NSColor.black,
                 textColor: NSColor.green
-            ) ?? bluePixelBase64
+            ) ?? ""
         case .memoryDeficit:
             return renderDynamicAnchor(
                 text: "[ MEMORY DEFICIT ]\nL1-L3 CACHE MISS.\nSEARCH REQUIRED TO AUTO-COMPLETE.",
                 backgroundColor: NSColor.systemPurple,
                 textColor: NSColor.white
-            ) ?? redPixelBase64
+            ) ?? ""
         case .swarmCommander:
             return renderDynamicAnchor(
                 text: "🔥 ROUTER MODE ACTIVE 🔥\nEXECUTION FORBIDDEN.\nDELEGATE ALL TASKS TO SWARM.",
                 backgroundColor: NSColor(red: 0.8, green: 0.0, blue: 0.0, alpha: 1.0),
                 textColor: NSColor.white
-            ) ?? redPixelBase64
+            ) ?? ""
         }
     }
     
@@ -90,7 +100,7 @@ public actor CognitiveAnchorEngine {
             text: "CRITICAL DIRECTIVE:\n" + text,
             backgroundColor: NSColor(red: 0.8, green: 0.0, blue: 0.0, alpha: 1.0),
             textColor: NSColor.white
-        ) ?? redPixelBase64
+        ) ?? ""
     }
     
     /// 現在のプロンプトのコンテキスト（文字やツール利用状況）から、

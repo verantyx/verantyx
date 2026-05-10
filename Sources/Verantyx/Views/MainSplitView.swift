@@ -15,7 +15,6 @@ struct MainSplitView: View {
     @State private var showSettings     = false
     @State private var showMCPQuick     = false
     @State private var showExtensionStore = false
-    @State private var showModeSelector = false
 
     /// True once any non-system message exists — locks the mode toggle
     private var chatStarted: Bool {
@@ -25,24 +24,7 @@ struct MainSplitView: View {
     var body: some View {
         ZStack {
             Group {
-                if app.operationMode == .aiPriority {
-                    // ── AI Priority: Gemini + Artifact layout ──────────────
-                    AIModeLayoutView()
-                        .environmentObject(app)
-                        .transition(.asymmetric(
-                            insertion: .move(edge: .trailing).combined(with: .opacity),
-                            removal:   .move(edge: .trailing).combined(with: .opacity)
-                        ))
-                } else if app.operationMode == .humanPriority {
-                    // ── Human Priority: VS Code-style IDE ─────────────────
-                    HumanPriorityModeView()
-                        .environmentObject(app)
-                        .transition(.asymmetric(
-                            insertion: .move(edge: .bottom).combined(with: .opacity),
-                            removal:   .move(edge: .bottom).combined(with: .opacity)
-                        ))
-                } else if app.operationMode == .gatekeeper {
-                    // ── Gatekeeper Mode: Human Priority layout + GK overlay ─
+                    // ── Enterprise Gatekeeper Mode Layout ─
                     ZStack {
                         HumanPriorityModeView()
                             .environmentObject(app)
@@ -66,26 +48,6 @@ struct MainSplitView: View {
                         }
                         .allowsHitTesting(false)
                     }
-                    .transition(.asymmetric(
-                        insertion: .move(edge: .top).combined(with: .opacity),
-                        removal:   .move(edge: .top).combined(with: .opacity)
-                    ))
-                } else if app.operationMode == .autoSwarm || app.operationMode == .swarm {
-                    // ── Swarm Mode: Multi-Agent Monitor ────────────────────
-                    SwarmMonitorView()
-                        .environmentObject(app)
-                        .transition(.asymmetric(
-                            insertion: .move(edge: .leading).combined(with: .opacity),
-                            removal:   .move(edge: .leading).combined(with: .opacity)
-                        ))
-                } else {
-                    // ── Human Mode: standard 4-pane IDE ───────────────────
-                    humanModeLayout
-                        .transition(.asymmetric(
-                            insertion: .move(edge: .leading).combined(with: .opacity),
-                            removal:   .move(edge: .leading).combined(with: .opacity)
-                        ))
-                }
 
                 // ── MCP Quick Panel global overlay (⌘⇧M) ────────────────────────
                 if showMCPQuick {
@@ -133,21 +95,7 @@ struct MainSplitView: View {
             ExtensionUIPanelView()
                 .zIndex(105)
                 
-            // ── Mode Selector Overlay ─────────────────────────────────────
-            if showModeSelector {
-                Color.black.opacity(0.55)
-                    .ignoresSafeArea()
-                    .onTapGesture { withAnimation(.easeOut(duration: 0.18)) { showModeSelector = false } }
-                    .transition(.opacity)
-                    .zIndex(110)
-                
-                ModeSelectorOverlay(onDismiss: {
-                    withAnimation(.easeOut(duration: 0.18)) { showModeSelector = false }
-                })
-                .environmentObject(app)
-                .transition(.scale(scale: 0.96).combined(with: .opacity))
-                .zIndex(111)
-            }
+            // Removed Mode Selector Overlay
         }
         .toolbar { toolbarContent }
         .onAppear { app.connectOllama() }
@@ -448,7 +396,7 @@ struct MainSplitView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             // ── Human Mode: pending approval banner ──────────────────
-            if app.operationMode == .human, let diff = app.pendingDiff {
+            if app.operationMode == .gatekeeper, let diff = app.pendingDiff {
                 humanApprovalBanner(diff: diff)
             }
 
@@ -565,34 +513,7 @@ struct MainSplitView: View {
             }
         }
 
-        // ── Operation Mode chip ──
-        ToolbarItem(placement: .automatic) {
-            Button {
-                guard !chatStarted else { return }
-                withAnimation(.easeOut(duration: 0.18)) {
-                    showModeSelector = true
-                }
-            } label: {
-                HStack(spacing: 4) {
-                    Image(systemName: app.operationMode.icon)
-                        .font(.system(size: 12))
-                    Text(app.operationMode.badge)
-                        .font(.system(size: 9, weight: .bold, design: .monospaced))
-                }
-                .foregroundStyle(chatStarted
-                                 ? app.operationMode.accentColor.opacity(0.35)
-                                 : app.operationMode.accentColor)
-            }
-            .contentShape(Rectangle())
-            .buttonStyle(.plain)
-            .disabled(chatStarted)
-            .help(chatStarted
-                  ? app.t("Mode cannot be changed after chat has started", "モードはチャット開始後に変更できません")
-                  : app.t("Current: " + app.operationMode.displayName + " (click to change)",
-                          "現在: " + app.operationMode.displayName + " (クリックで変更)"))
-        }
-
-
+        // Removed Operation Mode chip
 
         // ── MCP Quick Panel toggle (⌘⇧M) ───────────────────────────────────
         ToolbarItem(placement: .primaryAction) {
@@ -686,68 +607,3 @@ struct MainSplitView: View {
     }
 }
 
-// MARK: - ModeSelectorOverlay
-struct ModeSelectorOverlay: View {
-    @EnvironmentObject var app: AppState
-    let onDismiss: () -> Void
-
-    let modes: [OperationMode] = [.human, .humanPriority, .aiPriority, .gatekeeper, .autoSwarm, .swarm]
-
-    var body: some View {
-        VStack(spacing: 16) {
-            Text(app.t("Select Operation Mode", "オペレーションモードを選択"))
-                .font(.system(size: 16, weight: .bold))
-                .foregroundStyle(.white)
-            
-            VStack(spacing: 8) {
-                ForEach(modes, id: \.self) { mode in
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            app.switchModeAndEjectOldModel(to: mode)
-                        }
-                        onDismiss()
-                    } label: {
-                        HStack(spacing: 12) {
-                            Image(systemName: mode.icon)
-                                .font(.system(size: 18))
-                                .foregroundStyle(mode.accentColor)
-                                .frame(width: 24)
-                            
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(mode.displayName)
-                                    .font(.system(size: 14, weight: .semibold))
-                                    .foregroundStyle(.white)
-                                Text(mode.description)
-                                    .font(.system(size: 11))
-                                    .foregroundStyle(Color(red: 0.6, green: 0.6, blue: 0.7))
-                            }
-                            Spacer()
-                            if app.operationMode == mode {
-                                Image(systemName: "checkmark")
-                                    .font(.system(size: 14, weight: .bold))
-                                    .foregroundStyle(Color(red: 0.4, green: 0.8, blue: 1.0))
-                            }
-                        }
-                        .padding(12)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(app.operationMode == mode ? Color.white.opacity(0.1) : Color.white.opacity(0.04))
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .strokeBorder(app.operationMode == mode ? mode.accentColor.opacity(0.5) : Color.clear, lineWidth: 1)
-                        )
-                    }
-                    .contentShape(Rectangle())
-                    .buttonStyle(.plain)
-                    .contentShape(Rectangle())
-                }
-            }
-        }
-        .padding(24)
-        .frame(width: 440)
-        .background(Color(red: 0.12, green: 0.12, blue: 0.15))
-        .cornerRadius(12)
-        .shadow(color: .black.opacity(0.5), radius: 20, y: 10)
-    }
-}
