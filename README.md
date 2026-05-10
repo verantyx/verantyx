@@ -1,5 +1,14 @@
 # Verantyx: Enterprise Gatekeeper IDE
 
+> [!CAUTION]
+> ## 🛑 突破できるなら、やってみろ (Break it if you can.)
+> **To all Security Engineers, Red Teamers, and Cryptographers:**
+> Verantyx claims to achieve a "Zero-Trust AI Coding Protocol" via Semantic Air-Gapping. We transform raw business logic into a mathematically stripped topological skeleton (JCross IR) that is safely sent to external LLMs. 
+> 
+> **The Challenge:** We challenge you to reverse-engineer proprietary business logic, original variable names, or core algorithms *solely* from our JCross IR outputs. If you can break our anonymity layer or find a side-channel statistical vulnerability, show us. 
+> 
+> **Are you ready to audit the future of Enterprise AI?** 👉 [Audit the Gatekeeper Architecture](#-the-gatekeeper-architecture)
+
 ## Overview
 
 **Verantyx** is an enterprise-grade AI IDE designed to solve the critical security dilemma of modern software development: **How can organizations leverage powerful cloud LLMs (like Claude 3.7 or GPT-4o) without exposing their proprietary, confidential source code?**
