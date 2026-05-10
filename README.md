@@ -1,73 +1,67 @@
-# Verantyx: The Ultimate AI Control IDE
+# Verantyx: Enterprise Gatekeeper IDE
 
 ## Overview
 
-Welcome to the unified **Verantyx** repository. This project is the culmination and consolidation of everything we have learned and built across multiple antecedent projects:
-- `verantyx`
-- `verantyx-logic`
-- `verantyx-cortex`
-- `tool-search-oss`
-- `verantyx-pure-through`
+**Verantyx** is an enterprise-grade AI IDE designed to solve the critical security dilemma of modern software development: **How can organizations leverage powerful cloud LLMs (like Claude 3.7 or GPT-4o) without exposing their proprietary, confidential source code?**
 
-By merging these disparate engines, we have created a single, powerful platform whose sole, laser-focused theme is **"Controlling AI."** 
+Verantyx introduces a paradigm shift through its exclusive **Gatekeeper Mode architecture**. Instead of operating as a traditional AI coding assistant that transmits your raw IP to third-party servers, Verantyx utilizes a secure, neuro-symbolic pipeline orchestrated entirely on your local machine.
 
-This repository provides a unified macOS IDE (with a built-in CLI layer from `verantyx-cli`) designed to manage, steer, and safely execute autonomous AI agents. Instead of simply building an AI application, Verantyx is a meta-tool—an IDE *for* AI—allowing humans to direct agent loops, monitor deep contextual memory (JCross Tri-Layer Architecture), and securely authorize local and cloud LLM actions.
+## 🛡️ The Gatekeeper Architecture
 
-## 🌟 Demo Video Area
+Enterprise codebases contain trade secrets, proprietary algorithms, and sensitive infrastructure logic. Sending this data to cloud APIs is often a severe compliance and security violation.
 
-> **SLM Anchor Injection Demo:**  
-> *This video demonstrates Verantyx preventing the local SLM from relying on stale internal knowledge. By utilizing image anchor injection, the system forces the SLM to discard its pre-trained answers and autonomously execute the latest web searches to obtain factual, real-time data.*
+Verantyx solves this via a dual-model approach:
+1. **The Local Orchestrator (SLM):** A local edge model (e.g., Qwen 2.5/3, Llama 3) runs securely on your local GPU/Apple Silicon. It parses your raw source code and abstracts it into an anonymized, topological Intermediate Representation (IR) known as the **JCross L2.5 Map**.
+2. **The Cloud Worker (LLM):** The external cloud LLM receives *only* the obfuscated JCross IR (Kanji topology, structural outlines, and type definitions). It generates logic updates based purely on structural intent, completely blind to your actual business logic and variable values.
+3. **The Integration Phase:** The local orchestrator receives the generated structural patches and safely weaves them back into the raw source code locally.
+
+Your actual code never leaves your machine. Only the skeleton does.
+
+## 🌟 Demo: Visual Task Anchors & SLM Control
+
+> **Persistent Modality Hacking:**  
+> *Verantyx enforces continuous goal alignment on local SLMs using our custom `CognitiveAnchorEngine`. By injecting dynamic, real-time visual anchors (e.g., [ DOUBT / VERIFY ] or [ PERSISTENT TASK ]) into the image stream at every turn, Verantyx prevents the local model from hallucinating or losing track of the overarching pipeline task across 10,000+ turns.*
 
 <p align="center">
-  <video src="https://github.com/Ag3497120/verantyx-1/releases/download/v1.4.6/demo_compressed.mp4" controls="controls" muted="muted" style="max-height:640px; width:100%; max-width: 800px;">
+  <video src="https://github.com/Ag3497120/Verantyx/releases/download/v0.1/demo_compressed.mp4" controls="controls" muted="muted" style="max-height:640px; width:100%; max-width: 800px;">
     Your browser does not support the video tag.
   </video>
 </p>
 
-## ✨ What Can Verantyx Do?
+## ✨ Key Enterprise Features
 
-Verantyx is engineered to bring unparalleled transparency, security, and autonomy to your engineering workflows. Its capabilities include:
-
-- **Unified macOS IDE & CLI:** A native SwiftUI IDE that integrates the raw terminal power of `verantyx-cli`. Use the UI to visualize operations, or the CLI to integrate with Unix pipelines.
-- **Agent Loop Execution:** Run complex, multi-step ReAct loops locally (via Ollama/BitNet) or in the cloud (Anthropic Claude). The IDE streams real-time thinking (`<think>`) and tool execution statuses so you always know what the GPU is doing.
-- **JCross Tri-Layer Memory:** An autonomous spatial memory engine. Verantyx automatically compresses, indexes (Kanji topology), and stores past decisions into a unified `.jcross` knowledge graph, preventing context overflow and hallucination over thousands of turns.
-- **Gatekeeper Security:** Never blindly trust external APIs. The Gatekeeper intervenes and securely manages file access, obfuscating sensitive business logic into semantic intermediate representations (IR) before external LLMs ever see them.
-- **MCP (Model Context Protocol) Integration:** Natively exposes a suite of memory, search, and system management tools via MCP servers, allowing platforms like Claude Desktop and Antigravity to interface directly with your local workspace.
-- **Stealth Browser Automation (`verantyx-browser`):** A custom browser engine designed to emulate human biological data (mouse bezier curves, typo-driven typing algorithms) to bypass automated bot protections while researching and scraping data.
+- **Zero-Trust AI Coding:** Total IP protection. Source code is decoupled into Abstract Syntax Trees and JCross representations before any network request is made.
+- **Transpilation Pipeline:** Seamlessly migrate massive legacy codebases (e.g., Swift to Rust) autonomously. The built-in pipeline divides the project into thousands of JCross L2.5 TODOs, feeding them sequentially to the local agent loop without context overflow.
+- **JCross Tri-Layer Spatial Memory:** Prevent infinite-loop hallucinations and context degradation. Verantyx compresses decisions and structural knowledge into local `.jcross` files (L1 Kanji, L2 Logic, L3 Context), retrieving them only when the local SLM needs them.
+- **Native macOS SwiftUI IDE:** A high-performance, native UI that gives human operators complete visibility into the AI's internal `<think>` processes, memory retrievals, and Gatekeeper translations.
 
 ## 📂 Project Structure
 
-This monorepo is structured to separate the core IDE, the autonomous logic cortex, and the external tool bindings:
-
 ```text
 .
-├── cli/                 # The macOS Swift IDE and CLI app wrappers
-│   ├── VerantyxIDE/     # Main SwiftUI Application project (Verantyx.app)
-│   ├── verantyx-browser/# Rust-based stealth browser automation engine
-│   └── Verantyx-Logic/  # Legacy logic modules being migrated
-├── cortex/              # The brain: Agentic loop, JCross Memory, and MCP servers
-│   ├── src/verantyx/    # Core TypeScript orchestrators and memory engines
-│   ├── jcross-memory/   # Rust implementations for fast JCross memory parsing
-│   └── apps/ios/        # Experimental mobile companions
-├── tools/               # External tool definitions and OSS catalog
+├── cli/                 # The macOS Swift IDE and Desktop application
+│   ├── VerantyxIDE/     # Main SwiftUI IDE (Enterprise Gatekeeper UI)
+│   └── verantyx-browser/# Rust-based stealth browser automation for secure research
+├── cortex/              # The Agentic Brain & Memory Engine
+│   ├── src/verantyx/    # Core TypeScript Gatekeeper routing and memory engines
+│   └── jcross-memory/   # High-speed Rust parsers for JCross IR
 └── README.md            # This file
 ```
 
-## 🚀 Getting Started
+## 🚀 Deployment & Build
 
-### 1. Download the Latest Release
-Head over to the [Releases](https://github.com/Ag3497120/verantyx-1/releases) page and download the latest `VerantyxIDE-x.x.x.dmg`.
+Verantyx is designed for internal enterprise deployments.
 
-### 2. Connect Your Agents
-Verantyx can act as an MCP Server for Antigravity or Claude Desktop. Configure your MCP settings to point to the built-in `cortex/src/verantyx/mcp/server.ts` to expose the JCross memory and workspace tools.
+### Building from Source (macOS)
+Requires Xcode 15+ and macOS 14.0+. Apple Silicon (M1/M2/M3/M4) is highly recommended for running the local SLM Gatekeeper.
 
-### 3. Build from Source
-If you wish to compile the IDE yourself:
 ```bash
 cd cli/VerantyxIDE
-bash package_dmg.sh 1.4.6
+bash package_dmg.sh 2.0.0
 ```
-*(Requires Xcode 15+ and macOS 14.0+)*
+
+### Local Model Requirements
+The Gatekeeper Mode requires a local Ollama or MLX instance running a multimodal-capable edge model (e.g., Qwen3-VL, Llama-3-Vision) to process Visual Task Anchors.
 
 ---
-*Your machine is no longer just a computer. With Verantyx, it is a tireless, controllable, and secure engineering swarm.*
+*Verantyx: Secure your IP. Empower your architecture. Control the AI.*
