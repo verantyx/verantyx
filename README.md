@@ -1,18 +1,18 @@
 # Verantyx: Enterprise Gatekeeper IDE
 
-> 「社内の機密コードを1ミリもクラウドに漏らさず、DeepSeek-V4 / Claude に全自動リファクタリングさせるmacOS専用シールド」
+> **"A macOS-exclusive shield that lets DeepSeek-V4 and Claude fully refactor your enterprise codebase—without leaking a single byte of proprietary logic to the cloud."**
 
 <p align="center">
   <img src="demo.gif" alt="Verantyx Gatekeeper Demo" style="max-height:640px; width:100%; max-width: 800px;">
 </p>
 
 ## 🚀 Quick Start
-誰でもコピペ3行でデーモンを立ち上げられます：
+Launch the Gatekeeper daemon instantly with just 3 lines of code:
 
 ```bash
 git clone https://github.com/Ag3497120/Verantyx.git
 cd Verantyx/cli/VerantyxIDE
-bash package_dmg.sh 2.0.0
+bash package_dmg.sh 2.4.0
 ```
 
 ---
