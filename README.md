@@ -1,6 +1,6 @@
 # Verantyx: Enterprise Gatekeeper IDE
 
-> **"A macOS-exclusive shield that lets DeepSeek-V4 and Claude fully refactor your enterprise codebase—without leaking a single byte of proprietary logic to the cloud."**
+> **A macOS-exclusive Zero-Knowledge Proxy IDE. Let Frontier LLMs fully refactor your code without ever leaking your proprietary secrets to the cloud.**
 
 <p align="center">
   <img src="demo.gif" alt="Verantyx Gatekeeper Demo" style="max-height:640px; width:100%; max-width: 800px;">
