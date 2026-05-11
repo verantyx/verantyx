@@ -51,9 +51,10 @@ if [ "$SIGN_MODE" = "developer_id" ]; then
   DEV_ID_TEAM=$(echo "$DEV_ID_CERT" | grep -oE '\([A-Z0-9]{10}\)' | tr -d '()')
   echo "   Team ID (from cert): $DEV_ID_TEAM"
   xcodebuild \
+    -project "VerantyxIDE/Verantyx.xcodeproj" \
     -scheme "$SCHEME" \
     -configuration "$CONFIGURATION" \
-    -destination "platform=macOS" \
+    -destination "platform=macOS,arch=arm64" \
     CODE_SIGN_STYLE="Manual" \
     CODE_SIGN_IDENTITY="$DEV_ID_CERT" \
     DEVELOPMENT_TEAM="$DEV_ID_TEAM" \
@@ -65,9 +66,10 @@ if [ "$SIGN_MODE" = "developer_id" ]; then
     build 2>&1 | grep -E "error:|warning:|SUCCEEDED|FAILED" | tail -10
 else
   xcodebuild \
+    -project "VerantyxIDE/Verantyx.xcodeproj" \
     -scheme "$SCHEME" \
     -configuration "$CONFIGURATION" \
-    -destination "platform=macOS" \
+    -destination "platform=macOS,arch=arm64" \
     CODE_SIGN_STYLE="Manual" \
     CODE_SIGN_IDENTITY="-" \
     CODE_SIGNING_REQUIRED=NO \

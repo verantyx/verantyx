@@ -1,5 +1,22 @@
 # Verantyx: Enterprise Gatekeeper IDE
 
+> 「社内の機密コードを1ミリもクラウドに漏らさず、DeepSeek-V4 / Claude に全自動リファクタリングさせるmacOS専用シールド」
+
+<p align="center">
+  <img src="demo.gif" alt="Verantyx Gatekeeper Demo" style="max-height:640px; width:100%; max-width: 800px;">
+</p>
+
+## 🚀 Quick Start
+誰でもコピペ3行でデーモンを立ち上げられます：
+
+```bash
+git clone https://github.com/Ag3497120/Verantyx.git
+cd Verantyx/cli/VerantyxIDE
+bash package_dmg.sh 2.0.0
+```
+
+---
+
 > [!CAUTION]
 > ## 🛑 Break It If You Can
 > **To all Security Engineers, Red Teamers, and Cryptographers:**
@@ -26,16 +43,7 @@ Verantyx solves this via a dual-model approach:
 
 Your actual code never leaves your machine. Only the skeleton does.
 
-## 🌟 Demo: Visual Task Anchors & SLM Control
 
-> **Persistent Modality Hacking:**  
-> *Verantyx enforces continuous goal alignment on local SLMs using our custom `CognitiveAnchorEngine`. By injecting dynamic, real-time visual anchors (e.g., [ DOUBT / VERIFY ] or [ PERSISTENT TASK ]) into the image stream at every turn, Verantyx prevents the local model from hallucinating or losing track of the overarching pipeline task across 10,000+ turns.*
-
-<p align="center">
-  <video src="https://github.com/Ag3497120/Verantyx/releases/download/v0.1/demo_compressed.mp4" controls="controls" muted="muted" style="max-height:640px; width:100%; max-width: 800px;">
-    Your browser does not support the video tag.
-  </video>
-</p>
 
 ## ✨ Key Enterprise Features
 
