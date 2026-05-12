@@ -381,10 +381,28 @@ class SpotlightPanelManager {
 
 // MARK: - Spotlight View (SwiftUI)
 
+struct SpotlightLogView: View {
+    @ObservedObject var logStore: AppState.ProcessLogStore
+    
+    var body: some View {
+        if let lastLog = logStore.entries.last {
+            HStack {
+                Text("\(lastLog.prefix) \(lastLog.text)")
+                    .font(.system(size: 11, design: .monospaced))
+                    .foregroundColor(.gray)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                Spacer()
+            }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 15)
+        }
+    }
+}
+
 struct SpotlightView: View {
     @EnvironmentObject var appState: AppState
     @State private var query: String = ""
-    @State private var isThinking: Bool = false
     @FocusState private var isFocused: Bool
     
     var body: some View {
@@ -392,9 +410,9 @@ struct SpotlightView: View {
             HStack {
                 Image(systemName: "sparkles")
                     .font(.system(size: 24))
-                    .foregroundColor(.accentColor)
-                    .rotationEffect(.degrees(isThinking ? 360 : 0))
-                    .animation(isThinking ? Animation.linear(duration: 2).repeatForever(autoreverses: false) : .default, value: isThinking)
+                    .foregroundColor(appState.isGenerating ? .orange : .accentColor)
+                    .rotationEffect(.degrees(appState.isGenerating ? 360 : 0))
+                    .animation(appState.isGenerating ? Animation.linear(duration: 2).repeatForever(autoreverses: false) : .default, value: appState.isGenerating)
                 
                 TextField("Ask Verantyx Cortex...", text: $query)
                     .font(.system(size: 24, weight: .light))
@@ -403,22 +421,36 @@ struct SpotlightView: View {
                     .onSubmit {
                         executeCommand()
                     }
+                    .disabled(appState.isGenerating)
                 
-                if isThinking {
+                if appState.isGenerating {
                     ProgressView()
                         .scaleEffect(0.8)
                 }
             }
             .padding(20)
-            .background(VisualEffectView(material: .hudWindow, blendingMode: .behindWindow))
-            .cornerRadius(16)
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.white.opacity(0.1), lineWidth: 1)
-            )
+            
+            if appState.isGenerating {
+                SpotlightLogView(logStore: appState.logStore)
+            }
         }
+        .background(VisualEffectView(material: .hudWindow, blendingMode: .behindWindow))
+        .cornerRadius(16)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+        )
         .onAppear {
             isFocused = true
+        }
+        .onChange(of: appState.isGenerating) { isGenerating in
+            if !isGenerating && query.isEmpty {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    if !appState.isGenerating {
+                        SpotlightPanelManager.shared.panel?.orderOut(nil)
+                    }
+                }
+            }
         }
     }
     
@@ -426,20 +458,18 @@ struct SpotlightView: View {
         guard !query.isEmpty else { return }
         let text = query
         query = ""
-        isThinking = true
         
         // Pass intent to Cortex Orchestrator
         Task {
-            // OS Agent execution loop goes here.
-            appState.addSystemMessage("🧠 OS Agent evaluating: \(text)")
-            
-            // Simulation of execution via Web Gemini / Browser Bridge
-            try? await Task.sleep(nanoseconds: 2_000_000_000)
-            
             await MainActor.run {
-                isThinking = false
-                SpotlightPanelManager.shared.panel?.orderOut(nil)
-                // Actually launch target app here via AppleScript or Agent execution
+                // OS Agent execution loop goes here. Bypasses Gatekeeper to use Hybrid/AgentLoop.
+                appState.sendMessage(with: text, forceBypassGatekeeper: true)
+                
+                // Bring the main window to front but keep spotlight open
+                if let window = NSApp.windows.first(where: { $0.title != "" && $0.title != "Window" && !($0 is SpotlightPanel) }) {
+                    window.makeKeyAndOrderFront(nil)
+                }
+                SpotlightPanelManager.shared.panel?.makeKeyAndOrderFront(nil)
             }
         }
     }
