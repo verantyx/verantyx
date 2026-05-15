@@ -270,11 +270,13 @@ struct AgentToolParser {
     [DONE: 登録完了]
 
     例G「Parallels内のXAMPPエラーを直して」→ ハイブリッド探査(CLI+GUI):
-    <think>エラー解決→まず知識を疑い網並検索→GUIとCLIで調査</think>
+    <think>エラー解決→まず知識を疑い網並検索→GUIとCLIで調査。注意: prlctl exec はバックグラウンド(Session 0)で動くため、GUIのポップアップエラーが出ると永遠にブロックするか無言で死ぬ。その場合、CLIでの深追いをやめて [VISION_ACT] で直接Windows画面のStartボタンを押し、UI上にエラーを出して読み取る。</think>
     [SEARCH_MULTI: XAMPP Apache start error Windows 11 fix 2025]
-    [VISION_ACT: click XAMPP Start button to see literal error]
-    [RUN: prlctl exec "Windows 11" cmd /c "netstat -ano"]
-    (※これらを組み合わせて最も効率よく原因を特定し、自ら修正する)
+    [RUN: prlctl exec "Windows 11" cmd /c "C:\xampp\apache\bin\httpd.exe -t"]
+    (※もし何も出力されずに exit: 255 で落ちたりタイムアウトした場合、裏でDLL不足等のポップアップが出ている証拠)
+    [VISION_ACT: click 100 200] (※XAMPPのStartボタンを直接クリックしてポップアップを画面に出す)
+    [VISION_SNAPSHOT] (※表示されたエラーダイアログを読む: VCRUNTIME140.dll missing等)
+    [RUN: prlctl exec "Windows 11" powershell -Command "Invoke-WebRequest -Uri 'https://aka.ms/vs/17/release/vc_redist.x64.exe' -OutFile 'C:\vc_redist.exe'; Start-Process -Wait -FilePath 'C:\vc_redist.exe' -ArgumentList '/quiet', '/norestart'"]
     [DONE: 修正完了]
     """
     }
@@ -1552,15 +1554,28 @@ actor AgentToolExecutor {
             process.standardOutput = stdoutPipe
             process.standardError  = stderrPipe
 
+            let timeoutTask = Task {
+                try? await Task.sleep(nanoseconds: 45_000_000_000) // 45 seconds timeout
+                if process.isRunning {
+                    process.terminate()
+                }
+            }
+
             do { try process.run() } catch { return "✗ Could not launch: \(error)" }
             let out = String(data: stdoutPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
             let err = String(data: stderrPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
             process.waitUntilExit()
+            timeoutTask.cancel()
 
             var result = ""
             if !out.isEmpty { result += out.trimmingCharacters(in: .newlines) }
             if !err.isEmpty { result += (result.isEmpty ? "" : "\n") + "[stderr] " + err.trimmingCharacters(in: .newlines) }
-            result += "\n[exit: \(process.terminationStatus)]"
+            
+            if process.terminationReason == .uncaughtSignal {
+                result += "\n[exit: timeout (45s) or killed]"
+            } else {
+                result += "\n[exit: \(process.terminationStatus)]"
+            }
             return result
         }.value
     }
