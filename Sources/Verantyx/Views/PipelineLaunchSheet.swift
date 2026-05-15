@@ -202,7 +202,7 @@ struct PipelineLaunchSheet: View {
                     Spacer()
                     Button("今すぐ生成") {
                         if let ws = app.workspaceURL {
-                            Task { await L25IndexEngine.shared.buildProjectMap(workspaceURL: ws) }
+                            Task { await L25IndexEngine.shared.loadAndIncrementalUpdate(workspaceURL: ws) }
                         }
                     }
                     .buttonStyle(.bordered)

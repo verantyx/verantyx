@@ -261,6 +261,19 @@ final class AppState: ObservableObject {
         }
     }
 
+    // ── Non-Coding Task Routing ──
+    enum NonCodingTaskEngine: String, CaseIterable, Codable {
+        case localAgent = "Local Agent (Safe)"
+        case cloudDirect = "Cloud Direct (MCP Tools)"
+    }
+    
+    @Published var nonCodingTaskEngine: NonCodingTaskEngine = {
+        let raw = UserDefaults.standard.string(forKey: "non_coding_engine") ?? NonCodingTaskEngine.localAgent.rawValue
+        return NonCodingTaskEngine(rawValue: raw) ?? .localAgent
+    }() {
+        didSet { UserDefaults.standard.set(nonCodingTaskEngine.rawValue, forKey: "non_coding_engine") }
+    }
+
     // ── Swarm Strategy ──
     enum SwarmStrategy: String, CaseIterable, Codable, Identifiable {
         case auto      = "Auto"
@@ -581,7 +594,7 @@ final class AppState: ObservableObject {
         // ── ワークスペース追加時に L2.5 地図を自動生成 ───────────────────
         // @MainActor な buildProjectMap を Task で安全に呼び出す
         Task { @MainActor in
-                await L25IndexEngine.shared.buildProjectMap(workspaceURL: url)
+                await L25IndexEngine.shared.loadAndIncrementalUpdate(workspaceURL: url)
                 let count = L25IndexEngine.shared.projectMap?.fileCount ?? 0
                 self.addSystemMessage(AppLanguage.shared.t("🗺️ L2.5 map generation complete: \(count) files", "🗺️ L2.5 地図生成完了: \(count) ファイル"))
             }
@@ -751,8 +764,7 @@ final class AppState: ObservableObject {
 
     /// Start a fresh chat  (old session saved automatically).
     func newChatSession() {
-        // 新規セッション開始時は常にフォルダ選択ダイアログを開く
-        openWorkspace()
+        // 新規セッション開始時は常にフォルダ選択ダイアログを開く処理を削除（FileTreeViewのボタンに一本化）
 
         // Before clearing, archive the current session progressively
         if let currentId = sessions.activeSessionId,
@@ -775,10 +787,10 @@ final class AppState: ObservableObject {
         let currentId = newSession.id
         let layer = sessions.activeSession?.activeLayer ?? .l2
         Task {
-            let injection = SessionMemoryArchiver.shared.buildCrossSessionInjection(
-                topK: 5,
+            let useNanoStore = self.isNanoSmallModelActive
+            let injection = SessionMemoryArchiver.shared.buildZonePriorityInjection(
                 layer: layer,
-                excludingSessionId: currentId
+                useNanoStore: useNanoStore
             )
             if !injection.isEmpty {
                 await MainActor.run {
@@ -841,7 +853,7 @@ final class AppState: ObservableObject {
 
     // MARK: - Agent actions
 
-    func sendMessage(with overrideText: String? = nil) {
+    func sendMessage(with overrideText: String? = nil, forceBypassGatekeeper: Bool = false) {
         let text = (overrideText ?? inputText).trimmingCharacters(in: .whitespacesAndNewlines)
         let hasAttachments = !attachedImages.isEmpty || !attachedFiles.isEmpty
         guard !text.isEmpty || hasAttachments, !isGenerating else { return }
@@ -955,15 +967,36 @@ final class AppState: ObservableObject {
                 await MainActor.run { self.messages = trimmed }
             }
 
-            // Route: Gatekeeper Mode → 新フロー (6軸IR → GraphPatch JSON → Vault復元)
-            if await MainActor.run(body: { GatekeeperModeState.shared.isEnabled }) {
-                // GatekeeperChatBridge が isGenerating = false まで責任を持つ
-                await GatekeeperChatBridge.shared.run(instruction: text, appState: self)
+            // Route: Smart Router
+            let isGatekeeperEnabled = forceBypassGatekeeper ? false : await MainActor.run(body: { GatekeeperModeState.shared.isEnabled })
+            let isPipeline = await self.isPipelineIntent(text: text)
+
+            if isGatekeeperEnabled && isPipeline {
+                // Gatekeeper Mode → 新フロー (6軸IR → GraphPatch JSON → Vault復元)
+                await GatekeeperChatBridge.shared.run(instruction: text, images: snapshotImages as! [String], appState: self)
+            } else if isGatekeeperEnabled && !isPipeline {
+                // Non-Coding Task during Gatekeeper Mode
+                await MainActor.run {
+                    let msg = self.t("🧭 Smart Router: Routing non-coding task to \(self.nonCodingTaskEngine.rawValue)",
+                                     "🧭 Smart Router: 非コーディングタスクと判定されたため \(self.nonCodingTaskEngine.rawValue) にルーティングします")
+                    self.addSystemMessage(msg)
+                }
+                
+                let engine = await MainActor.run { self.nonCodingTaskEngine }
+                if engine == .cloudDirect {
+                    // Bypass Gatekeeper, send to Cloud Model
+                    await runHybrid(instruction: text)
+                } else {
+                    // Local Agent
+                    let history = Array(self.messages.dropLast())
+                    await runAgentLoop(instruction: text,
+                                       images: snapshotImages,
+                                       files: snapshotFiles,
+                                       previousMessages: history)
+                }
             } else if inferenceMode == .cloudDirect || inferenceMode == .privacyShield || inferenceMode == .paranoiaMode {
                 await runHybrid(instruction: text)
             } else if agentLoopEnabled {
-                
-
                 // Pass images to agent loop so the model can see them
                 let history = Array(self.messages.dropLast())
                 await runAgentLoop(instruction: text,
@@ -987,8 +1020,21 @@ final class AppState: ObservableObject {
     /// BitNet が使える場合は1.58bモデルで高速分類。
     /// BitNet 未インストールの場合はキーワードルールで判定。
     private func isPipelineIntent(text: String) async -> Bool {
+        let lower = text.lowercased()
+        
+        // ── 強い否定キーワード（チャット/情報検索タスク） ──
+        let nonPipelineKeywords = ["ニュース", "news", "教えて", "検索", "search", "what", "how", "why", "天候", "天気", "weather", "株価"]
+        if nonPipelineKeywords.contains(where: { lower.contains($0) }) { 
+            // 変換系の強いキーワードが含まれていない限りチャットとみなす
+            let strongPipeline = ["変換", "書き換え", "convert", "transpile", "migrate", "一括変換"]
+            if !strongPipeline.contains(where: { lower.contains($0) }) {
+                return false 
+            }
+        }
+
         // LanguageDetector が言語非依存で判定 (BitNet 優先 → ルールベースフォールバック)
         if LanguageDetector.isPipelineIntent(text) { return true }
+        
         // BitNet による追加分類
         if BitNetConfig.load()?.isValid == true {
             let classifyPrompt = """

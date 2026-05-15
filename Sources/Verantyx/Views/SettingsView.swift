@@ -455,50 +455,12 @@ struct SettingsView: View {
             // Active backend status
             settingsCard {
                 VStack(alignment: .leading, spacing: 12) {
-                    rowLabel("Active backend") {
-                        HStack(spacing: 6) {
-                            Circle().fill(app.statusColor).frame(width: 7, height: 7)
-                            Text(app.statusLabel)
-                                .font(.system(size: 11, design: .monospaced))
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-
-                    Divider().opacity(0.2)
-
                     rowLabel("Ollama endpoint") {
                         TextField("http://localhost:11434", text: $app.ollamaEndpoint)
                             .textFieldStyle(.roundedBorder)
                             .font(.system(size: 11, design: .monospaced))
                             .frame(width: 200)
                             .onSubmit { app.connectOllama() }
-                    }
-
-                    rowLabel("Ollama model") {
-                        HStack(spacing: 6) {
-                            let modelBinding = Binding<String>(
-                                get: { app.getOllamaModel() },
-                                set: { app.setOllamaModel($0) }
-                            )
-                            
-                            if app.ollamaModels.isEmpty {
-                                TextField("gemma4:26b", text: modelBinding)
-                                    .textFieldStyle(.roundedBorder)
-                                    .font(.system(size: 11, design: .monospaced))
-                                    .frame(width: 200)
-                            } else {
-                                Picker("", selection: modelBinding) {
-                                    ForEach(app.ollamaModels, id: \.self) { m in
-                                        Text(m).tag(m)
-                                    }
-                                }
-                                .frame(width: 200)
-                            }
-                            Button("↺") { testConnection() }
-                                .buttonStyle(.borderedProminent)
-                                .controlSize(.small)
-                                .disabled(testingConnection)
-                        }
                     }
 
                     if let result = connectionTestResult {
@@ -1129,6 +1091,19 @@ struct SettingsView: View {
                             .font(.system(size: 10, design: .monospaced)).foregroundStyle(.secondary)
                         }
                     }
+
+                    Divider().opacity(0.2)
+                    
+                    rowLabel("Non-Coding Tasks (e.g. Q&A, Search)") {
+                        Picker("", selection: $app.nonCodingTaskEngine) {
+                            ForEach(AppState.NonCodingTaskEngine.allCases, id: \.self) { engine in
+                                Text(engine.rawValue).tag(engine)
+                            }
+                        }
+                        .frame(width: 220)
+                    }
+                    Text("Choose how simple tasks that do not modify the codebase are handled.")
+                        .font(.system(size: 11)).foregroundStyle(.secondary)
                 }
             }
         }

@@ -192,10 +192,21 @@ actor HybridEngine {
             userMessage = instruction
         }
 
-        let result = await cloud.send(systemPrompt: systemPrompt, userMessage: userMessage, provider: provider)
+        let text = await CloudAgenticClient.shared.runAgenticLoop(
+            systemPrompt: systemPrompt,
+            userMessage: userMessage,
+            provider: provider,
+            onStep: onStep
+        )
 
-        switch result {
-        case .success(let text):
+        if text.starts(with: "❌") {
+            return HybridResult(
+                explanation: text,
+                modifiedCode: nil,
+                mode: .cloudDirect,
+                cloudProvider: provider
+            )
+        } else {
             let (modifiedCode, explanation) = parseCodeResponse(text)
             await onStep("✅ \(provider.rawValue) responded (\(text.count) chars)")
             return HybridResult(
@@ -204,14 +215,6 @@ actor HybridEngine {
                 mode: .cloudDirect,
                 cloudProvider: provider,
                 processingSteps: ["Cloud direct: \(provider.rawValue)"]
-            )
-
-        case .failure(let error):
-            return HybridResult(
-                explanation: "❌ \(error.localizedDescription)",
-                modifiedCode: nil,
-                mode: .cloudDirect,
-                cloudProvider: provider
             )
         }
     }

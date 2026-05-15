@@ -341,6 +341,8 @@ final class L25IndexEngine: ObservableObject {
                 self.projectMap = map
                 self.addLog(AppLanguage.shared.t("📂 Loaded L2.5 cache: \(map.fileCount) files", "📂 L2.5 キャッシュ読み込み: \(map.fileCount) ファイル"))
             }
+        } else {
+            await MainActor.run { self.projectMap = nil }
         }
         var entries: [String: L25SourceMapEntry] = await MainActor.run { self.projectMap?.entries ?? [:] }
         let total = max(files.count, 1)
@@ -445,6 +447,8 @@ final class L25IndexEngine: ObservableObject {
                 self.projectMap = loadedMap
                 self.addLog(AppLanguage.shared.t("📂 Loaded L2.5 cache: \(loadedMap.fileCount) files", "📂 L2.5 キャッシュ読み込み: \(loadedMap.fileCount) ファイル"))
             }
+        } else {
+            await MainActor.run { self.projectMap = nil }
         }
 
         let isIdx = await MainActor.run { self.isIndexing }

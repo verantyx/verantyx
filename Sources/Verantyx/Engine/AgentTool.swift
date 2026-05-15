@@ -216,6 +216,9 @@ struct AgentToolParser {
           プレースホルダー板: {{workspace}}、{{file}}、{{target}} などで汎用化する。
     必⑬  連続操作: マークダウンや長文コードを生成した場合でも、後続の操作（例: [VISION_ACT] による投稿やクリック）が指示されているなら、**必ず同じ返答の最後に**該当ツールを呼び出すこと。テキスト生成だけで満足して[DONE]を出さない。
     必⑭  Swarm委譲: [SWARM_EXECUTE]を使用した場合、その直後に文章を続けて自ら回答を生成してはならない（ハルシネーション禁止）。ツール呼び出しで**直ちにテキスト生成を停止**し、システムの実行結果を待つこと。
+    必⑮  事前の知識補完: エラー修正時は闇雲に操作する前に **必ず** [SEARCH_MULTI: エラー内容] で最新の解決手順や確実なURL・フラグを調べてから調査計画を立てること。
+    必⑯  ハイブリッド探査 (CLI+GUI): Parallels(VM)等の調査は [RUN: prlctl exec ...] によるコマンド操作と、[VISION_ACT] で「実際にアプリのボタンを押し、UI上のエラーを直接見る」人間らしいGUI操作を **両方組み合わせて** 最も効率的な手段で自律解決すること。
+    禁⑰  対話ボット化禁止: 検索した結果を「アドバイス」としてユーザーに教えるだけで終了してはならない。必ずお前自身の手(RUN/VISION)で直せ。
 
     ── §実例 FEW-SHOT ────────────────────────────────────────────────────────
     例A「Swift 6の並行処理は？」→ 網並必須:
@@ -261,20 +264,18 @@ struct AgentToolParser {
     ```
     [GIT_COMMIT: backup: pre-scaffold]
     [MKDIR: src]
-    [WRITE: Cargo.toml]```toml
-    [package]
-    name = "{{project}}"
-    version = "0.1.0"
-    edition = "2021"
-    ```[/WRITE]
-    [WRITE: src/main.rs]```rust
-    fn main() { println!("Hello, world!"); }
-    ```[/WRITE]
-    ```
-    [/FORGE_SKILL]
-    [DONE: Rustワークスペース作成 & スキル登録完了]
-    -- 次回は [USE_SKILL: init_rust_workspace|project=my_app] の1行で同等の処理が完了する --
+    [WRITE: Cargo.toml]...[/WRITE]
+    [WRITE: src/main.rs]...[/WRITE]
+    ```[/FORGE_SKILL]
+    [DONE: 登録完了]
 
+    例G「Parallels内のXAMPPエラーを直して」→ ハイブリッド探査(CLI+GUI):
+    <think>エラー解決→まず知識を疑い網並検索→GUIとCLIで調査</think>
+    [SEARCH_MULTI: XAMPP Apache start error Windows 11 fix 2025]
+    [VISION_ACT: click XAMPP Start button to see literal error]
+    [RUN: prlctl exec "Windows 11" cmd /c "netstat -ano"]
+    (※これらを組み合わせて最も効率よく原因を特定し、自ら修正する)
+    [DONE: 修正完了]
     """
     }
 
@@ -425,6 +426,11 @@ struct AgentToolParser {
                 } else {
                     tools.append(.runCommand(m))
                 }
+            } else if let m = match(trimmed, pattern: #"\[([a-z][a-z0-9_\-\.]*\s+[^\]]+)\]"#) {
+                // 一般化されたフォールバック: モデルが [RUN: <cmd>] を忘れ、[git status] や [prlctl list]、
+                // [npm install] のように「小文字のコマンド名 + スペース + 引数」の形式で出力した場合、
+                // これらをすべて自動的に .runCommand として処理する。大文字始まり（[Step 1]等）やコロン付き（[error: 1]）は除外。
+                tools.append(.runCommand(m))
             } else if let m = match(trimmed, pattern: #"\[WORKSPACE:\s*([^\]]+)\]"#) {
                 tools.append(.setWorkspace(expandHome(m)))
             } else if let m = match(trimmed, pattern: #"\[DONE[:\s]*([^\]]*)\]"#) {

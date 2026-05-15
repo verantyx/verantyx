@@ -404,6 +404,7 @@ struct SpotlightView: View {
     @EnvironmentObject var appState: AppState
     @State private var query: String = ""
     @FocusState private var isFocused: Bool
+    @State private var showTranscript: Bool = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -430,7 +431,14 @@ struct SpotlightView: View {
             }
             .padding(20)
             
-            if appState.isGenerating {
+            if showTranscript {
+                Divider().background(Color.white.opacity(0.1))
+                
+                ChatTranscriptView(messages: appState.messages, isGenerating: appState.isGenerating)
+                    .frame(height: 400)
+                    .padding()
+                
+                Divider().background(Color.white.opacity(0.1))
                 SpotlightLogView(logStore: appState.logStore)
             }
         }
@@ -442,14 +450,12 @@ struct SpotlightView: View {
         )
         .onAppear {
             isFocused = true
+            showTranscript = false
         }
-        .onChange(of: appState.isGenerating) { isGenerating in
-            if !isGenerating && query.isEmpty {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                    if !appState.isGenerating {
-                        SpotlightPanelManager.shared.panel?.orderOut(nil)
-                    }
-                }
+        .onReceive(NotificationCenter.default.publisher(for: NSWindow.didResignKeyNotification)) { notif in
+            // Optional: When user clicks away and the panel hides, reset state.
+            if let window = notif.object as? SpotlightPanel {
+                // If it closes, we can clear the view next time it opens.
             }
         }
     }
@@ -459,16 +465,23 @@ struct SpotlightView: View {
         let text = query
         query = ""
         
+        showTranscript = true
+        
         // Pass intent to Cortex Orchestrator
         Task {
             await MainActor.run {
+                // 自動的に Visual Anchor をロードして注入 (毎回の送信時に強制適用)
+                let anchorPath = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(".verantyx/memory/visual_anchor.png")
+                if let img = NSImage(contentsOf: anchorPath) {
+                    let attached = AttachedImage(name: "visual_anchor.png", url: anchorPath, nsImage: img)
+                    // 既存の添付画像に加えてアンカーを強制追加
+                    appState.attachedImages.append(attached)
+                }
+                
                 // OS Agent execution loop goes here. Bypasses Gatekeeper to use Hybrid/AgentLoop.
                 appState.sendMessage(with: text, forceBypassGatekeeper: true)
                 
-                // Bring the main window to front but keep spotlight open
-                if let window = NSApp.windows.first(where: { $0.title != "" && $0.title != "Window" && !($0 is SpotlightPanel) }) {
-                    window.makeKeyAndOrderFront(nil)
-                }
+                // Do not bring the main window to front! Keep it in the expanded Spotlight.
                 SpotlightPanelManager.shared.panel?.makeKeyAndOrderFront(nil)
             }
         }

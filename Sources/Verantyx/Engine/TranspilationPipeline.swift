@@ -114,7 +114,7 @@ final class TranspilationPipeline: ObservableObject {
         // Step 1: L2.5 地図 (既に生成済みなら再利用)
         if l25Engine.projectMap == nil {
             addLog(AppLanguage.shared.t("🗺️ Step 1: BitNet generating L2.5 source code map...", "🗺️ Step 1: L2.5 ソースコード地図を BitNet が生成中..."))
-            await l25Engine.buildProjectMap(workspaceURL: workspaceURL)
+            await l25Engine.loadAndIncrementalUpdate(workspaceURL: workspaceURL)
         } else {
             addLog(AppLanguage.shared.t("🗺️ Step 1: Reusing L2.5 map (\(l25Engine.projectMap?.fileCount ?? 0) files)", "🗺️ Step 1: L2.5 地図を再利用 (\(l25Engine.projectMap?.fileCount ?? 0) ファイル)"))
         }

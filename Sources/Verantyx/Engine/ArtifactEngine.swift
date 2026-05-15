@@ -75,6 +75,7 @@ struct Artifact: Identifiable {
         case mermaid  = "mermaid"
         case code     = "code"
         case svg      = "svg"
+        case browser  = "browser"
 
         var defaultTitle: String {
             switch self {
@@ -83,6 +84,7 @@ struct Artifact: Identifiable {
             case .mermaid:  return "Diagram"
             case .code:     return "Code"
             case .svg:      return "SVG"
+            case .browser:  return "Live Browser"
             }
         }
 
@@ -93,6 +95,7 @@ struct Artifact: Identifiable {
             case .mermaid:  return "arrow.triangle.branch"
             case .code:     return "chevron.left.forwardslash.chevron.right"
             case .svg:      return "squareshape.controlhandles.on.squareshape.controlhandles"
+            case .browser:  return "safari"
             }
         }
 

@@ -957,14 +957,13 @@ actor MLXRunner {
         //                        (1.0 = no penalty; 1.1-1.3 is the practical range)
         // repetitionContextSize: 64   — sliding window of past tokens to inspect
         //                        (larger = catches longer phrase loops; default is 20)
-        // maxKVSize:             4096 — activates RotatingKVCache; old KV entries are
-        //                        overwritten instead of accumulating across turns.
-        //                        This prevents stale KV state from causing repetition.
+        // maxKVSize: 4096 — 削除 (mlx-swift-examples の RotatingKVCache に
+        //                   keep > idx 時にクラッシュするバグがあるため使用しない。
+        //                   メモリ管理は AgentLoop の kvFlushThreshold で行う)
         // temperature:           caller-provided (default raised to 0.6 from 0.1;
         //                        near-zero temperatures are near-deterministic and
         //                        amplify repetition loops once one starts)
         let params = GenerateParameters(
-            maxKVSize: 4096,
             temperature: Float(temperature),
             repetitionPenalty: 1.15,
             repetitionContextSize: 64
@@ -1212,7 +1211,6 @@ actor MLXRunner {
         guard let box = container else { throw MLXError.notLoaded }
         // Same anti-repetition params as streamGenerateTokens
         let params = GenerateParameters(
-            maxKVSize: 4096,
             temperature: Float(temperature),
             repetitionPenalty: 1.15,
             repetitionContextSize: 64
@@ -1287,7 +1285,21 @@ actor MLXRunner {
             let result = MLXLMCommon.generate(
                 input: deltaInput, context: context, iterator: iterator
             ) { tokens -> GenerateDisposition in
-                all = tokens; return all.count >= maxTokens ? .stop : .more
+                all = tokens
+                if all.count >= maxTokens { return .stop }
+                
+                // Decode only the last 20 tokens to prevent O(N^2) slowdown
+                let recentTokens = Array(all.suffix(20))
+                let text = context.tokenizer.decode(tokens: recentTokens)
+                let eosSignals = [
+                    "<end_of_turn>", "<|eot_id|>", "<|im_end|>",
+                    "<eos>", "</s>", "<|end|>"
+                ]
+                if eosSignals.contains(where: { text.contains($0) }) {
+                    return .stop
+                }
+                
+                return .more
             }
             
             return (cacheToUse, fullTokens + result.tokens, result.output)

@@ -529,6 +529,15 @@ final class PolymorphicJCrossTranspiler: ObservableObject {
                 withTemplate: "__UNKNOWN__"
             )
         }
+        
+        // Final scrub: remove any remaining NODE[0x...] or FIELD[0x...] lines
+        result = result.components(separatedBy: "\n")
+            .filter {
+                let trimmed = $0.trimmingCharacters(in: .whitespaces)
+                return !trimmed.hasPrefix("NODE[") && !trimmed.hasPrefix("FIELD[")
+            }
+            .joined(separator: "\n")
+            
         return result.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
@@ -580,6 +589,14 @@ final class PolymorphicJCrossTranspiler: ObservableObject {
                 withTemplate: ""
             )
         }
+        
+        // Final scrub: remove any remaining NODE[0x...] or FIELD[0x...] lines
+        result = result.components(separatedBy: "\n")
+            .filter {
+                let trimmed = $0.trimmingCharacters(in: .whitespaces)
+                return !trimmed.hasPrefix("NODE[") && !trimmed.hasPrefix("FIELD[")
+            }
+            .joined(separator: "\n")
 
         return result.trimmingCharacters(in: .whitespacesAndNewlines)
     }

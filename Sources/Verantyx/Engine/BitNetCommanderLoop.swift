@@ -86,7 +86,7 @@ final class BitNetCommanderLoop: ObservableObject {
         await buildL1KanjiIndex(workspaceURL: workspaceURL)
         phase = .buildingMap
         addLog(AppLanguage.shared.t("🗺️ Phase 2: Building L2.5 index map...", "🗺️ Phase 2: L2.5 索引地図を構築中..."))
-        await l25Engine.buildProjectMap(workspaceURL: workspaceURL)
+        await l25Engine.loadAndIncrementalUpdate(workspaceURL: workspaceURL)
 
         let l25Map = l25Engine.mapString(maxFiles: 50)
         let index  = buildIndexString()
@@ -220,7 +220,7 @@ final class BitNetCommanderLoop: ObservableObject {
     private func buildL1KanjiIndex(workspaceURL: URL) async {
         // L25IndexEngine がファイルスキャン+L1要約を行う
         // (既存実装を活用。L1要約はindexLine = 漢字タグ行)
-        await l25Engine.buildProjectMap(workspaceURL: workspaceURL)
+        await l25Engine.loadAndIncrementalUpdate(workspaceURL: workspaceURL)
         let count = l25Engine.projectMap?.fileCount ?? 0
         addLog(AppLanguage.shared.t("  🔤 L1 conversion complete: \(count) files", "  🔤 L1 変換完了: \(count) ファイル"))
     }

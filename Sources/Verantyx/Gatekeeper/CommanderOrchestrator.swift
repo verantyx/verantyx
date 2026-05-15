@@ -62,7 +62,7 @@ final class CommanderOrchestrator: ObservableObject {
     // MARK: - Entry Point
 
     /// ユーザーメッセージを受け取り、全フローを実行する
-    func handleUserMessage(_ message: String) async {
+    func handleUserMessage(_ message: String, images: [String] = []) async {
         guard !isProcessing else { return }
         isProcessing = true
         defer {
@@ -70,17 +70,46 @@ final class CommanderOrchestrator: ObservableObject {
             Task { @MainActor [weak self] in self?.flushRemainingMessages() }
         }
 
+        // Vault が最新のファイルを把握できるよう、実行前に必ず差分を更新する
+        await vault.updateDelta()
+
         appendMessage(.user(message))
         let isJp = AppLanguage.shared.isJapanese
+
+        var currentUserMessage = message
+
+        if !images.isEmpty {
+            appendMessage(.system(isJp ? "👁️ 添付画像を Local Vision Model (\(state.commanderModel)) で解析中..." : "👁️ Analyzing attached images via Local Vision Model (\(state.commanderModel))..."))
+            let visionPrompt = isJp ? "この画像の内容を詳細に説明してください。特にUI要素、コードスニペット、エラー画面、アーキテクチャ図に焦点を当ててください。" : "Describe the contents of this image in detail, particularly focusing on UI elements, code snippets, errors, or any architectural diagrams."
+            let ollamaModel = state.commanderModel
+            if let description = await OllamaClient.shared.generateConversation(
+                model: ollamaModel,
+                messages: [(role: "user", content: visionPrompt)],
+                imagesForLastUserMessage: images,
+                maxTokens: 1024,
+                temperature: 0.2
+            ) {
+                currentUserMessage += "\n\n[Local Vision Analysis of Attached Image]\n" + description
+                appendMessage(.system(isJp ? "✅ 画像解析完了。" : "✅ Image analysis complete."))
+            } else {
+                appendMessage(.system(isJp ? "⚠️ 画像解析に失敗しました。画像の内容は無視されます。" : "⚠️ Failed to analyze image. Image content will be ignored."))
+            }
+        }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         // 外側ループ: Commander 自律制御ループ
         // Commander が continueLoop=true を返す間、ユーザー入力なしで
         // 次のバッチを自動処理する。安全キャップ: maxOuterIterations。
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        
+        // ── AMSCP (Adaptive-Mesh Sequential Convex Programming) 軌道制御変数 ──
+        var trustRegionSize = 5       // トラスト領域：1バッチあたりの最大処理ファイル数
+        var systemCovariance = 0.0    // システムの不確実性（ビルドエラー等による軌道逸脱率）
+        let keepOutZones = ["Auth", "Security", "Config", "Settings", ".env"] // 障害物（確率的制約）
+        // ──────────────────────────────────────────────────────────────────
+
         var outerIteration = 0
         let maxOuterIterations = 500
-        var currentUserMessage = message
         var shouldContinue = true
         var totalFilesApplied = 0
         var lastWorkerSummary = ""
@@ -103,7 +132,13 @@ final class CommanderOrchestrator: ObservableObject {
                     : "🔁 Batch \(outerIteration): Selecting next files... (~\(countRemainingSourceFiles()) remaining)"))
             }
 
-            let commanderPlan = await runCommander(userMessage: currentUserMessage, iteration: outerIteration)
+            let commanderPlan = await runCommander(
+                userMessage: currentUserMessage, 
+                iteration: outerIteration,
+                trustRegionSize: trustRegionSize,
+                systemCovariance: systemCovariance,
+                keepOutZones: keepOutZones
+            )
             appendMessage(.commander(commanderPlan.explanation))
 
             if commanderPlan.relevantFiles.isEmpty && !commanderPlan.continueLoop {
@@ -119,6 +154,7 @@ final class CommanderOrchestrator: ObservableObject {
             var buildErrorMessage = ""
             var diffsToApply: [(String, String, JCrossVault.VaultEntry?, URL)] = []
             var maxRetries = 3
+            var fallbackCount = 0
             var currentInstruction = commanderPlan.workerInstructions.isEmpty
                 ? currentUserMessage : commanderPlan.workerInstructions
 
@@ -129,12 +165,31 @@ final class CommanderOrchestrator: ObservableObject {
                 let relatedFiles = commanderPlan.relevantFiles.isEmpty
                     ? inferRelevantFiles(from: currentInstruction)
                     : commanderPlan.relevantFiles
-                let vaultContext = await buildVaultContext(from: relatedFiles)
+
+                // ── Obstacle Avoidance (Keep-Out Zones) ──
+                var safeFiles: [String] = []
+                for file in relatedFiles {
+                    let isObstacle = keepOutZones.contains { file.localizedCaseInsensitiveContains($0) }
+                    if isObstacle {
+                        appendMessage(.system(isJp ? "🛡️ 障害物回避: \(file) は Keep-Out Zone のため除外されました" : "🛡️ Obstacle Avoidance: \(file) excluded (Keep-Out Zone)"))
+                    } else {
+                        safeFiles.append(file)
+                    }
+                }
+                // Trust Region でバッチサイズを制限
+                let filesToProcess = Array(safeFiles.prefix(trustRegionSize))
+                if filesToProcess.count < safeFiles.count {
+                    appendMessage(.system(isJp ? "📉 トラスト領域制限: \(safeFiles.count)ファイル中 \(trustRegionSize)ファイルのみ処理" : "📉 Trust Region Limit: processing \(trustRegionSize) out of \(safeFiles.count) files"))
+                }
+
+                let vaultContext = await buildVaultContext(from: filesToProcess)
 
                 workerResult = await runWorker(
                     userMessage: currentInstruction,
                     commanderPlan: commanderPlan,
-                    vaultContext: vaultContext
+                    vaultContext: vaultContext,
+                    trustRegionSize: trustRegionSize,
+                    systemCovariance: systemCovariance
                 )
                 lastWorkerSummary = workerResult.summary
                 phase = .workerThinking
@@ -160,10 +215,8 @@ final class CommanderOrchestrator: ObservableObject {
                     let pct = Int((Double(processedDiffs) / Double(max(1, validDiffs.count))) * 100.0)
                     await MainActor.run { self.phase = .commanderPlanning(step: "🔄 [\(pct)%] \(diff.path)") }
 
-                    let knownNewPrefixes = ["verantyx-windows-target/", "verantyx-browser-target/"]
-                    let isNewFile = knownNewPrefixes.contains(where: { diff.path.hasPrefix($0) })
-                    var targetEntry = isNewFile ? nil : vault.vaultIndex?.entries[diff.path]
-                    if targetEntry == nil, !isNewFile, let index = vault.vaultIndex {
+                    var targetEntry = vault.vaultIndex?.entries[diff.path]
+                    if targetEntry == nil, let index = vault.vaultIndex {
                         let norm = diff.path.trimmingCharacters(in: .init(charactersIn: "/"))
                         targetEntry = index.entries.values.first {
                             let ep = $0.relativePath.lowercased()
@@ -171,7 +224,6 @@ final class CommanderOrchestrator: ObservableObject {
                         }
                     }
 
-                    let targetRoot = vault.workspaceURL.appendingPathComponent("verantyx-windows-target")
                     let originalContent: String
                     let schemaID: String
                     let targetFileURL: URL
@@ -183,21 +235,22 @@ final class CommanderOrchestrator: ObservableObject {
                             (try? String(contentsOf: srcURL, encoding: .utf8)) ?? ""
                         }.value
                         schemaID = entry.schemaSessionID
-                        var rel = entry.relativePath
-                        if rel.hasSuffix(".swift") { rel = rel.replacingOccurrences(of: ".swift", with: ".rs") }
-                        targetFileURL = targetRoot.appendingPathComponent(rel)
+                        targetFileURL = vault.workspaceURL.appendingPathComponent(entry.relativePath)
                         isActuallyNew = false
                     } else {
                         originalContent = ""; schemaID = ""
-                        var rel = diff.path
-                        if rel.hasPrefix("verantyx-windows-target/") { rel = String(rel.dropFirst("verantyx-windows-target/".count)) }
-                        targetFileURL = targetRoot.appendingPathComponent(rel)
+                        targetFileURL = vault.workspaceURL.appendingPathComponent(diff.path)
                         isActuallyNew = true
                     }
 
                     let restored: String
                     if isActuallyNew {
-                        restored = sanitizeNewFileContent(diff.content, fileExtension: targetFileURL.pathExtension)
+                        let isJCross = diff.content.contains("_JCROSS_") || diff.content.contains("__node_") || diff.content.contains("_AST_") || diff.content.contains("// POLYMORPHIC_JCROSS") || diff.content.contains("JCROSS_") || diff.content.contains("NODE[")
+                        if isJCross {
+                            restored = PolymorphicJCrossTranspiler.ruleBasedFallbackWithoutSchema(diff.content)
+                        } else {
+                            restored = sanitizeNewFileContent(diff.content, fileExtension: targetFileURL.pathExtension)
+                        }
                     } else {
                         guard let r = await transpiler.reverseTranspile(jcross: diff.content, originalContent: originalContent, schemaID: schemaID) else {
                             hasBuildError = true
@@ -214,10 +267,11 @@ final class CommanderOrchestrator: ObservableObject {
                     }.value
 
                     if cu.pathExtension.lowercased() == "toml", cu.lastPathComponent == "Cargo.toml" {
+                        let wsURL = vault.workspaceURL
                         await Task.detached(priority: .utility) { [weak self] in
                             guard let self = self else { return }
                             self.sanitizeCargoToml(tomlURL: cu)
-                            self.ensureWorkspaceCargoToml(targetRoot: targetRoot, manifestURL: cu)
+                            self.ensureWorkspaceCargoToml(targetRoot: wsURL, manifestURL: cu)
                             self.injectCargoTargetIfNeeded(tomlURL: cu)
                         }.value
                     }
@@ -242,14 +296,41 @@ final class CommanderOrchestrator: ObservableObject {
 
                 if hasBuildError {
                     buildErrorMessage = allErrors
+                    
+                    // ── Covariance Steering & Adaptive Mesh (SCP) ──
+                    systemCovariance = min(1.0, systemCovariance + 0.5) // 軌道の不確実性が上昇
+                    trustRegionSize = max(1, trustRegionSize / 2) // トラスト領域の縮小（安全側へフォールバック）
+                    appendMessage(.system(isJp ? "⚠️ エラー検知：状態共分散上昇 (Covariance: \(systemCovariance))。トラスト領域を \(trustRegionSize) に縮小" : "⚠️ Error detected: Covariance \(systemCovariance). Shrinking Trust Region to \(trustRegionSize)"))
+                    // ───────────────────────────────────────────────
+                    
                     appendMessage(.system("❌ Build error. Retrying... (\(maxRetries) left)"))
                     currentInstruction = "Fix build errors:\n```\n\(buildErrorMessage)\n```\nProvide CORRECTED diffs."
                     maxRetries -= 1
                     if maxRetries < 0 {
-                        appendMessage(.system(isJp ? "⚠️ リトライ上限到達。" : "⚠️ Retry limit reached."))
-                        break innerLoop
+                        if fallbackCount == 0 {
+                            appendMessage(.system(isJp ? "⚠️ リトライ上限到達。根本的バグの可能性があるためクラウドLLMへ差し戻し..." : "⚠️ Retry limit reached. Escalating fundamental fix to Cloud LLM..."))
+                            currentInstruction = "CRITICAL: You failed 3 times. Your generated JCross IR still fails to compile.\nErrors:\n\(allErrors)\nDO NOT USE YOUR PREVIOUS LOGIC. Re-think your entire approach from scratch and provide a completely new valid solution."
+                            fallbackCount += 1
+                            maxRetries = 1 // 最後の泣きの1回（フルリセット）
+                            systemCovariance = 1.0
+                            trustRegionSize = 1
+                            diffsToApply.removeAll()
+                            continue
+                        } else {
+                            appendMessage(.system(isJp ? "🚨 差し戻しも失敗しました。安全のためバッチ停止。" : "🚨 Escalation failed. Halting batch."))
+                            diffsToApply.removeAll() // 🚨 CRITICAL FIX: Do not apply broken files
+                            shouldContinue = false   // 🚨 CRITICAL FIX: Stop the entire Commander loop if a batch fails completely
+                            break innerLoop
+                        }
                     }
                 } else {
+                    // ── Covariance Steering & Adaptive Mesh (SCP) ──
+                    systemCovariance = max(0.0, systemCovariance - 0.2) // 軌道安定により不確実性が減少
+                    trustRegionSize = min(20, trustRegionSize + 2) // トラスト領域の拡大（メッシュを荒くして計算効率化）
+                    if !diffsToApply.isEmpty {
+                        appendMessage(.system(isJp ? "✅ バッチ成功：軌道安定。トラスト領域を \(trustRegionSize) に拡大" : "✅ Batch success: Orbit stable. Expanding Trust Region to \(trustRegionSize)"))
+                    }
+                    // ───────────────────────────────────────────────
                     break innerLoop
                 }
             } // end innerLoop
@@ -312,6 +393,23 @@ final class CommanderOrchestrator: ObservableObject {
             appendMessage(.system(isJp
                 ? "🎉 完了: \(totalFilesApplied) ファイルを変換しました (\(outerIteration) バッチ)"
                 : "🎉 Done: Converted \(totalFilesApplied) files (\(outerIteration) batches)"))
+                
+            // ── Auto-Launch Web App Preview ──
+            let packageJsonURL = vault.workspaceURL.appendingPathComponent("frontend/package.json")
+            if FileManager.default.fileExists(atPath: packageJsonURL.path) {
+                appendMessage(.system(isJp ? "🌐 Webサーバーを起動し、プレビューを表示します..." : "🌐 Starting development server..."))
+                let process = Process()
+                process.executableURL = URL(fileURLWithPath: "/bin/bash")
+                process.arguments = ["-c", "cd '\(vault.workspaceURL.appendingPathComponent("frontend").path)' && npm run dev"]
+                try? process.run()
+                
+                Task { @MainActor in
+                    let artifact = Artifact(type: .browser, content: "http://localhost:5173", title: "Live Preview")
+                    AppState.shared?.ingestArtifact(artifact)
+                }
+            }
+            // ────────────────────────────────
+
             // タスク完了ログを near/ に保存 → 次回セッション boot() で「前回の続き」として参照
             let tL1 = "タスク完了: \(totalFilesApplied)ファイル変換 (\(outerIteration)バッチ)"
             let tL2 = """
@@ -335,7 +433,8 @@ final class CommanderOrchestrator: ObservableObject {
         }
 
         phase = .commanderPlanning(step: isJp ? "最終回答を生成中..." : "Generating final response...")
-        let finalResponse = await generateFinalResponse(userMessage: message, workerSummary: lastWorkerSummary)
+        let finalSummaryText = "Applied changes to \(totalFilesApplied) files successfully."
+        let finalResponse = await generateFinalResponse(userMessage: message, workerSummary: finalSummaryText, success: totalFilesApplied > 0)
         appendMessage(.assistant(finalResponse))
         appendMessage(.system(isJp ? "🧠 remember() 実行完了。" : "🧠 remember() executed."))
 
@@ -371,7 +470,13 @@ final class CommanderOrchestrator: ObservableObject {
     //
     // Commander は relevantFiles として次に変換すべきソースファイルを返す。
     // この値が buildVaultContext に渡され、Worker への JCross コンテキストになる。
-    private func runCommander(userMessage: String, iteration: Int = 1) async -> CommanderPlan {
+    private func runCommander(
+        userMessage: String, 
+        iteration: Int = 1,
+        trustRegionSize: Int = 5,
+        systemCovariance: Double = 0.0,
+        keepOutZones: [String] = []
+    ) async -> CommanderPlan {
         let projectStructure = buildProjectSummary()
         let alreadyConvertedSummary = buildAlreadyConvertedSummary()
         let remainingCount = countRemainingSourceFiles()
@@ -381,6 +486,7 @@ final class CommanderOrchestrator: ObservableObject {
         You are the Commander of the Verantyx Cognitive System. Batch \(iteration).
         Your role: select the next SOURCE files to process, AND decide if more batches are needed.
 
+
         PROJECT STRUCTURE (source files):
         \(projectStructure)
 
@@ -388,6 +494,11 @@ final class CommanderOrchestrator: ObservableObject {
         \(alreadyConvertedSummary.isEmpty ? "(none yet)" : alreadyConvertedSummary)
 
         ESTIMATED REMAINING SOURCE FILES: \(remainingCount)
+
+        [AMSCP CONTROL PARAMETERS]
+        TRUST REGION (MAX BATCH SIZE): \(trustRegionSize)
+        SYSTEM COVARIANCE (ERROR RATE): \(systemCovariance)
+        OBSTACLES (KEEP-OUT ZONES): \(keepOutZones.joined(separator: ", "))
 
         USER REQUEST: \(userMessage)
 
@@ -401,7 +512,9 @@ final class CommanderOrchestrator: ObservableObject {
         }
 
         RULES:
-        - Select 5-10 SOURCE files per batch (not already-converted target files).
+        - Select up to \(trustRegionSize) SOURCE files per batch (not already-converted target files).
+        - DO NOT select any files matching the OBSTACLES (Keep-Out Zones).
+        - If SYSTEM COVARIANCE > 0.0, it means the previous batch had build errors. Output strictly safer, more constrained worker instructions.
         - Set continue_loop=true if REMAINING > 0 after this batch.
         - Set continue_loop=false when all source files have been converted.
         - For non-bulk tasks (Q&A, single file edits), set continue_loop=false.
@@ -441,6 +554,14 @@ final class CommanderOrchestrator: ObservableObject {
 
     /// まだ変換されていないソースファイルの推定数
     private func countRemainingSourceFiles() -> Int {
+        if let map = L25IndexEngine.shared.projectMap {
+            let targetPatterns = ["-clone", "-target", "-windows", "-linux", "-android", "-rust"]
+            let total = map.entries.count
+            let converted = map.entries.keys.filter { path in
+                targetPatterns.contains(where: { path.lowercased().contains($0) })
+            }.count
+            return max(0, total - converted)
+        }
         guard let index = vault.vaultIndex else { return 0 }
         let targetPatterns = ["-clone", "-target", "-windows", "-linux", "-android", "-rust"]
         let total = index.entries.keys.filter {
@@ -455,8 +576,18 @@ final class CommanderOrchestrator: ObservableObject {
     /// ターゲットディレクトリ（変換先）に既に存在するファイルをサマリー化。
     /// Commander に渡すことで「何がまだ変換されていないか」を判断させる。
     private func buildAlreadyConvertedSummary() -> String {
-        guard let index = vault.vaultIndex else { return "" }
         let targetPatterns = ["-clone", "-target", "-windows", "-linux", "-android", "-rust"]
+        
+        if let map = L25IndexEngine.shared.projectMap {
+            return map.entries.keys
+                .filter { path in targetPatterns.contains(where: { path.lowercased().contains($0) }) }
+                .sorted()
+                .prefix(50)
+                .map { "  ✅ \($0)" }
+                .joined(separator: "\n")
+        }
+        
+        guard let index = vault.vaultIndex else { return "" }
         let converted = index.entries.keys
             .filter { path in targetPatterns.contains(where: { path.lowercased().contains($0) }) }
             .sorted()
@@ -487,19 +618,40 @@ final class CommanderOrchestrator: ObservableObject {
     private func runWorker(
         userMessage: String,
         commanderPlan: CommanderPlan,
-        vaultContext: String
+        vaultContext: String,
+        trustRegionSize: Int,
+        systemCovariance: Double
     ) async -> WorkerResult {
         let systemPrompt = await buildWorkerSystemPrompt()
 
+        let projectSummary = buildProjectSummary()
+        
         let userContent = """
         \(commanderPlan.workerInstructions)
 
-        \(vaultContext.isEmpty ? "" : "AVAILABLE CONTEXT (JCross IR):\n" + vaultContext)
+        AVAILABLE PROJECT STRUCTURE (L2.5):
+        \(projectSummary)
+
+        \(vaultContext.isEmpty ? "" : "TARGET FILES (JCross IR):\n" + vaultContext)
         """
+
+        // ── Visual Anchor ──
+        let reasoningText = commanderPlan.workerInstructions.trimmingCharacters(in: .whitespacesAndNewlines)
+        let anchorText = """
+        DO NOT HALLUCINATE. FOLLOW STRICT JCROSS SYNTAX.
+        Trust Region: \(trustRegionSize) | Covariance: \(systemCovariance)
+        
+        <THINKING_SCAFFOLD>
+        \(reasoningText)
+        </THINKING_SCAFFOLD>
+        """
+        let anchorImgBase64 = await CognitiveAnchorEngine.shared.getCustomAnchor(title: "COGNITIVE REASONING SCAFFOLD", text: anchorText)
+        // ───────────────────
 
         let response = await callExternalAPIWithTools(
             systemPrompt: systemPrompt,
-            userMessage: userContent
+            userMessage: userContent,
+            imageBase64: anchorImgBase64
         )
 
         return response
@@ -507,7 +659,8 @@ final class CommanderOrchestrator: ObservableObject {
 
     private func callExternalAPIWithTools(
         systemPrompt: String,
-        userMessage: String
+        userMessage: String,
+        imageBase64: String? = nil
     ) async -> WorkerResult {
         let provider = state.workerProvider
         let isJp = AppLanguage.shared.isJapanese
@@ -515,6 +668,7 @@ final class CommanderOrchestrator: ObservableObject {
         let responseResult = await CloudAPIClient.shared.send(
             systemPrompt: systemPrompt,
             userMessage: userMessage,
+            imageBase64: imageBase64,
             provider: provider
         )
         
@@ -535,18 +689,16 @@ final class CommanderOrchestrator: ObservableObject {
         )
     }
 
-    private func generateFinalResponse(userMessage: String, workerSummary: String) async -> String {
+    private func generateFinalResponse(userMessage: String, workerSummary: String, success: Bool) async -> String {
         let prompt = """
         User request: \(userMessage)
         Worker result: \(workerSummary.prefix(500))
         """
 
-        return await callCommander(
-            prompt: prompt,
-            systemPrompt: """
+        let sysPrompt = success ? """
             You are the Commander AI. 
             The Worker has just returned JCross IR modifications for the user's request.
-            You have already decoded the modifications, verified them locally (simulated build inside Verantyx-IDE), and applied them.
+            You have already decoded the modifications, verified them locally (simulated build inside Verantyx-IDE), and applied them successfully.
             
             YOUR TASK:
             Write a final response to the user in Japanese summarizing what was done.
@@ -554,7 +706,22 @@ final class CommanderOrchestrator: ObservableObject {
             - DO NOT repeat the prompt.
             - DO NOT output "### Assistant".
             - ONLY output the final Japanese response.
+            """ : """
+            You are the Commander AI. 
+            The Worker attempted to fulfill the user's request, but the generated modifications FAILED local build verification or were rejected.
+            NO changes were applied to the user's files.
+            
+            YOUR TASK:
+            Write an apologetic final response to the user in Japanese explaining that the operation failed safety checks.
+            - Explicitly state that NO files were modified to protect the system.
+            - DO NOT repeat the prompt.
+            - DO NOT output "### Assistant".
+            - ONLY output the final Japanese response.
             """
+
+        return await callCommander(
+            prompt: prompt,
+            systemPrompt: sysPrompt
         )
     }
 
@@ -807,7 +974,13 @@ final class CommanderOrchestrator: ObservableObject {
     // MARK: - Helpers
 
     private func buildProjectSummary() -> String {
-        if let index = vault.vaultIndex {
+        if let map = L25IndexEngine.shared.projectMap {
+            let paths = map.entries.keys.sorted()
+            return paths.prefix(300).map { path in
+                let summary = map.entries[path]?.indexLine ?? ""
+                return "📄 \(path) (\(summary))"
+            }.joined(separator: "\n")
+        } else if let index = vault.vaultIndex {
             let paths = index.entries.keys.sorted()
             let filteredPaths = paths.filter { path in
                 !path.contains(".build/") && !path.contains(".git/") && !path.contains("node_modules/") && !path.hasPrefix(".")
@@ -842,13 +1015,16 @@ final class CommanderOrchestrator: ObservableObject {
 
         ## Critical Rules
         1. All identifiers (e.g. _JCROSS_核_1_) are node IDs — preserve them EXACTLY.
-        2. DO NOT rewrite entire files. Output ONLY the modified sections.
+        2. 🚨 NO OMISSION PROTOCOL: You MUST output the ENTIRE file content. Do NOT omit any lines or use `// ...`. Verantyx overwrites the file entirely with your output, so omitted lines are permanently deleted!
         3. DO NOT use XML action tags (<ReadFile>, <function_result>, etc.).
         4. Secrets (∮...∲ style) are permanently redacted — leave exactly as-is.
         5. NEVER attempt to decode or reverse-engineer node IDs.
         6. FOLDER CLONING: Output converted code to the target clone folder ONLY.
            Example: verantyx-windows-target/src/path/file.rs
            NEVER overwrite original source files.
+        7. 🚨 ANTI-HALLUCINATION PROTOCOL: DO NOT invent new `NODE[0xHEX]` or `HASH:0xHEX` structures.
+           Verantyx strictly validates all hashes against local AST state. If you make up a fake hash, the build will fatally crash.
+           To insert brand new logic, write the RAW UNCOMMENTED code directly (e.g. `pub struct Message { ... }`). Do NOT wrap it in fake JCross nodes, and do NOT comment out the new code.
 
         ## AI-to-AI Collaboration Protocol
         You are a sub-agent under Commander control.
@@ -940,12 +1116,23 @@ Rule: think semantically in <thought>, output JCROSS_* in <action><payload>.
 
 
     private func inferRelevantFiles(from message: String) -> [String] {
+        if let map = L25IndexEngine.shared.projectMap {
+            let matches = map.entries.keys.filter { path in
+                let filename = URL(fileURLWithPath: path).lastPathComponent.lowercased()
+                let baseName = filename.components(separatedBy: ".").first ?? filename
+                let summary = map.entries[path]?.indexLine.lowercased() ?? ""
+                let lowerMsg = message.lowercased()
+                return lowerMsg.contains(baseName) || (!summary.isEmpty && lowerMsg.contains(summary))
+            }
+            return Array(matches.prefix(5))
+        }
         guard let index = vault.vaultIndex else { return [] }
-        return index.entries.keys.filter { path in
+        let matches = index.entries.keys.filter { path in
             let filename = URL(fileURLWithPath: path).lastPathComponent.lowercased()
             let baseName = filename.components(separatedBy: ".").first ?? filename
             return message.lowercased().contains(baseName)
         }
+        return Array(matches.prefix(5))
     }
 
     // MARK: - Vault Context Builder (async)
@@ -967,8 +1154,10 @@ Rule: think semantically in <thought>, output JCROSS_* in <action><payload>.
                     let prefix = path.hasSuffix("/") ? path : path + "/"
                     for key in index.entries.keys where key.hasPrefix(prefix) || key.contains(path) {
                         resolvedPaths.insert(key)
+                        if resolvedPaths.count >= 10 { break }
                     }
                 }
+                if resolvedPaths.count >= 10 { break }
             }
             for path in resolvedPaths {
                 if let entry = index.entries[path] {
@@ -1726,13 +1915,7 @@ Rule: think semantically in <thought>, output JCROSS_* in <action><payload>.
                 }
             }
 
-            // verantyx-windows-target/ プレフィックス正規化
-            if relativePath.hasPrefix("verantyx-windows-target/") {
-                relativePath = String(relativePath.dropFirst("verantyx-windows-target/".count))
-            }
-
-            let targetRoot = workspaceURL.appendingPathComponent("verantyx-windows-target")
-            let fileURL = targetRoot.appendingPathComponent(relativePath)
+            let fileURL = workspaceURL.appendingPathComponent(relativePath)
             results.append((fileURL, code, relativePath))
         }
 

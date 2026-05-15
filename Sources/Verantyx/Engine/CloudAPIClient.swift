@@ -78,6 +78,7 @@ actor CloudAPIClient {
     func send(
         systemPrompt: String,
         userMessage: String,
+        imageBase64: String? = nil,
         provider: CloudProvider,
         modelOverride: String? = nil
     ) async -> Result<String, CloudError> {
@@ -89,16 +90,16 @@ actor CloudAPIClient {
         let model = modelOverride ?? provider.defaultModel
 
         switch provider {
-        case .claude:   return await callClaude(systemPrompt: systemPrompt, userMessage: userMessage, model: model, apiKey: key)
-        case .openai:   return await callOpenAI(systemPrompt: systemPrompt, userMessage: userMessage, model: model, apiKey: key)
-        case .gemini:   return await callGemini(systemPrompt: systemPrompt, userMessage: userMessage, model: model, apiKey: key)
+        case .claude:   return await callClaude(systemPrompt: systemPrompt, userMessage: userMessage, imageBase64: imageBase64, model: model, apiKey: key)
+        case .openai:   return await callOpenAI(systemPrompt: systemPrompt, userMessage: userMessage, imageBase64: imageBase64, model: model, apiKey: key)
+        case .gemini:   return await callGemini(systemPrompt: systemPrompt, userMessage: userMessage, imageBase64: imageBase64, model: model, apiKey: key)
         case .deepseek: return await callDeepSeek(systemPrompt: systemPrompt, userMessage: userMessage, model: model, apiKey: key)
         }
     }
 
     // MARK: - Anthropic Claude
 
-    private func callClaude(systemPrompt: String, userMessage: String, model: String, apiKey: String) async -> Result<String, CloudError> {
+    private func callClaude(systemPrompt: String, userMessage: String, imageBase64: String?, model: String, apiKey: String) async -> Result<String, CloudError> {
         let url = URL(string: "https://api.anthropic.com/v1/messages")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -107,12 +108,17 @@ actor CloudAPIClient {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.timeoutInterval = 120
 
+        var userContent: [[String: Any]] = [["type": "text", "text": userMessage]]
+        if let img = imageBase64 {
+            userContent.append(["type": "image", "source": ["type": "base64", "media_type": "image/jpeg", "data": img]])
+        }
+
         let body: [String: Any] = [
             "model": model,
             "max_tokens": CloudProvider.claude.maxTokens,
             "system": systemPrompt,
             "messages": [
-                ["role": "user", "content": userMessage]
+                ["role": "user", "content": userContent]
             ]
         ]
 
@@ -142,7 +148,7 @@ actor CloudAPIClient {
 
     // MARK: - OpenAI GPT
 
-    private func callOpenAI(systemPrompt: String, userMessage: String, model: String, apiKey: String) async -> Result<String, CloudError> {
+    private func callOpenAI(systemPrompt: String, userMessage: String, imageBase64: String?, model: String, apiKey: String) async -> Result<String, CloudError> {
         let url = URL(string: "https://api.openai.com/v1/chat/completions")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -150,12 +156,22 @@ actor CloudAPIClient {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.timeoutInterval = 120
 
+        let userContent: Any
+        if let img = imageBase64 {
+            userContent = [
+                ["type": "text", "text": userMessage],
+                ["type": "image_url", "image_url": ["url": "data:image/jpeg;base64,\(img)"]]
+            ]
+        } else {
+            userContent = userMessage
+        }
+
         let body: [String: Any] = [
             "model": model,
             "max_tokens": CloudProvider.openai.maxTokens,
             "messages": [
                 ["role": "system", "content": systemPrompt],
-                ["role": "user",   "content": userMessage]
+                ["role": "user",   "content": userContent]
             ]
         ]
 
@@ -186,17 +202,22 @@ actor CloudAPIClient {
 
     // MARK: - Google Gemini
 
-    private func callGemini(systemPrompt: String, userMessage: String, model: String, apiKey: String) async -> Result<String, CloudError> {
+    private func callGemini(systemPrompt: String, userMessage: String, imageBase64: String?, model: String, apiKey: String) async -> Result<String, CloudError> {
         let url = URL(string: "https://generativelanguage.googleapis.com/v1beta/models/\(model):generateContent?key=\(apiKey)")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.timeoutInterval = 120
 
+        var parts: [[String: Any]] = [["text": userMessage]]
+        if let img = imageBase64 {
+            parts.append(["inlineData": ["mimeType": "image/jpeg", "data": img]])
+        }
+
         let body: [String: Any] = [
             "system_instruction": ["parts": [["text": systemPrompt]]],
             "contents": [
-                ["role": "user", "parts": [["text": userMessage]]]
+                ["role": "user", "parts": parts]
             ],
             "generationConfig": [
                 "maxOutputTokens": CloudProvider.gemini.maxTokens,
@@ -292,5 +313,132 @@ enum CloudError: Error, LocalizedError {
         case .parseError:              return "Failed to parse cloud API response."
         case .networkError(let msg):   return "Network error: \(msg)"
         }
+    }
+}
+import Foundation
+
+// A helper for CloudAPIClient to support multi-turn Agentic Tool use (currently only Anthropic)
+actor CloudAgenticClient {
+    static let shared = CloudAgenticClient()
+    
+    func runAgenticLoop(
+        systemPrompt: String,
+        userMessage: String,
+        provider: CloudProvider,
+        onStep: @escaping @Sendable (String) async -> Void
+    ) async -> String {
+        guard provider == .claude else {
+            // Fallback for non-claude models
+            switch await CloudAPIClient.shared.send(systemPrompt: systemPrompt, userMessage: userMessage, provider: provider) {
+            case .success(let text): return text
+            case .failure(let err): return "❌ Error: \(err.localizedDescription)"
+            }
+        }
+        
+        guard let apiKey = await CloudAPIClient.shared.apiKey(for: .claude), !apiKey.isEmpty else {
+            return "❌ Error: No Anthropic API Key"
+        }
+        
+        let mcpTools = await MainActor.run { MCPEngine.shared.connectedTools }
+        let claudeTools = mcpTools.compactMap { t -> [String: Any]? in
+            guard let schemaData = try? JSONEncoder().encode(t.inputSchema),
+                  let schemaDict = try? JSONSerialization.jsonObject(with: schemaData) as? [String: Any] else {
+                return nil
+            }
+            return [
+                "name": "\(t.serverName)__\(t.name)".replacingOccurrences(of: "-", with: "_"),
+                "description": t.description,
+                "input_schema": [
+                    "type": "object",
+                    "properties": schemaDict
+                ]
+            ]
+        }
+        
+        var messages: [[String: Any]] = [
+            ["role": "user", "content": userMessage]
+        ]
+        
+        var finalResponse = ""
+        let model = UserDefaults.standard.string(forKey: "anthropic_model") ?? "claude-sonnet-4-5"
+        
+        for turn in 1...10 {
+            await onStep("☁️ Anthropic Agent Turn \(turn)...")
+            
+            var body: [String: Any] = [
+                "model": model,
+                "max_tokens": 8192,
+                "system": systemPrompt,
+                "messages": messages
+            ]
+            if !claudeTools.isEmpty {
+                body["tools"] = claudeTools
+            }
+            
+            let url = URL(string: "https://api.anthropic.com/v1/messages")!
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue(apiKey, forHTTPHeaderField: "x-api-key")
+            request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.timeoutInterval = 120
+            request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+            
+            do {
+                let (data, response) = try await URLSession.shared.data(for: request)
+                guard let httpRes = response as? HTTPURLResponse, httpRes.statusCode == 200 else {
+                    let errStr = String(data: data, encoding: .utf8) ?? ""
+                    return "❌ API Error: \(errStr)"
+                }
+                
+                guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                      let content = json["content"] as? [[String: Any]] else {
+                    return "❌ Parse Error"
+                }
+                
+                messages.append(["role": "assistant", "content": content])
+                
+                // Check if tool use
+                let toolUses = content.filter { $0["type"] as? String == "tool_use" }
+                if toolUses.isEmpty {
+                    // Done
+                    finalResponse = content.compactMap { $0["text"] as? String }.joined(separator: "\n")
+                    break
+                }
+                
+                // Execute tools
+                var toolResults: [[String: Any]] = []
+                for toolUse in toolUses {
+                    guard let toolUseId = toolUse["id"] as? String,
+                          let toolNameRaw = toolUse["name"] as? String,
+                          let toolInput = toolUse["input"] as? [String: Any] else { continue }
+                    
+                    // Decode serverName__toolName
+                    let parts = toolNameRaw.components(separatedBy: "__")
+                    let serverName = parts.count > 1 ? parts[0].replacingOccurrences(of: "_", with: "-") : parts[0]
+                    let toolName = parts.count > 1 ? parts.dropFirst().joined(separator: "__").replacingOccurrences(of: "_", with: "-") : toolNameRaw
+                    
+                    await onStep("🔧 Executing Tool: \(serverName)/\(toolName)")
+                    
+                    let resultText = await MCPEngine.shared.callTool(serverName: serverName, toolName: toolName, arguments: toolInput, mode: .ai)
+
+                    toolResults.append([
+                        "type": "tool_result",
+                        "tool_use_id": toolUseId,
+                        "content": resultText
+                    ])
+                }
+                
+                messages.append([
+                    "role": "user",
+                    "content": toolResults
+                ])
+                
+            } catch {
+                return "❌ Network Error: \(error.localizedDescription)"
+            }
+        }
+        
+        return finalResponse
     }
 }

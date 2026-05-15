@@ -283,6 +283,7 @@ struct ArtifactPanelView: View {
         case .mermaid:  return Color(red: 0.45, green: 0.75, blue: 1.00)
         case .code:     return Color(red: 0.70, green: 0.55, blue: 1.00)
         case .svg:      return Color(red: 0.98, green: 0.70, blue: 0.30)
+        case .browser:  return Color(red: 0.20, green: 0.80, blue: 0.90)
         }
     }
 
@@ -324,6 +325,14 @@ struct ArtifactWebView: NSViewRepresentable {
     }
 
     func updateNSView(_ wv: WKWebView, context: Context) {
+        if artifact.type == .browser {
+            let targetURL = artifact.content.trimmingCharacters(in: .whitespacesAndNewlines)
+            if let url = URL(string: targetURL), wv.url?.absoluteString != targetURL {
+                wv.load(URLRequest(url: url))
+            }
+            return
+        }
+
         let html = buildHTML(for: artifact)
         let newHash = html.hashValue
         // Skip reload when content hasn't changed (prevents streaming-driven flicker)
@@ -462,6 +471,9 @@ struct ArtifactWebView: NSViewRepresentable {
             </body>
             </html>
             """
+            
+        case .browser:
+            return "" // handled in updateNSView
         }
     }
 

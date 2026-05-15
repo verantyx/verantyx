@@ -95,9 +95,9 @@ public actor CognitiveAnchorEngine {
     }
     
     /// 任意のテキストを含むカスタム視覚アンカーを生成する
-    public func getCustomAnchor(text: String) -> String {
+    public func getCustomAnchor(title: String = "CRITICAL DIRECTIVE", text: String) -> String {
         return renderDynamicAnchor(
-            text: "CRITICAL DIRECTIVE:\n" + text,
+            text: "[\(title)]\n\n" + text,
             backgroundColor: NSColor(red: 0.8, green: 0.0, blue: 0.0, alpha: 1.0),
             textColor: NSColor.white
         ) ?? ""
@@ -134,32 +134,13 @@ public actor CognitiveAnchorEngine {
     // MARK: - Dynamic Image Generation
     
     /// 動的にテキストを描画した画像を生成し、PNG Base64 として返す
-    private func renderDynamicAnchor(text: String, backgroundColor: NSColor, textColor: NSColor, width: CGFloat = 500, height: CGFloat = 200) -> String? {
-        let size = NSSize(width: width, height: height)
-        let image = NSImage(size: size)
-        
-        image.lockFocus()
-        
-        // 背景の塗りつぶし
-        backgroundColor.setFill()
-        let rect = NSRect(origin: .zero, size: size)
-        rect.fill()
-        
-        // ノイズ効果（Visual Attack/Hacking）
-        // ランダムな線や点を描画して、Vision Encoder に「異常事態」を強く認知させる
-        for _ in 0..<50 {
-            let path = NSBezierPath()
-            path.move(to: NSPoint(x: CGFloat.random(in: 0...width), y: CGFloat.random(in: 0...height)))
-            path.line(to: NSPoint(x: CGFloat.random(in: 0...width), y: CGFloat.random(in: 0...height)))
-            NSColor(calibratedWhite: CGFloat.random(in: 0...1), alpha: 0.3).setStroke()
-            path.stroke()
-        }
-        
-        // テキスト描画の設定
+    private func renderDynamicAnchor(text: String, backgroundColor: NSColor, textColor: NSColor, width: CGFloat = 800, height: CGFloat? = nil) -> String? {
+        // Set up attributes
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = .center
+        paragraphStyle.alignment = .left
+        paragraphStyle.lineBreakMode = .byWordWrapping
         
-        let font = NSFont.monospacedSystemFont(ofSize: 24, weight: .heavy)
+        let font = NSFont.monospacedSystemFont(ofSize: 20, weight: .bold)
         let attributes: [NSAttributedString.Key: Any] = [
             .font: font,
             .foregroundColor: textColor,
@@ -167,17 +148,43 @@ public actor CognitiveAnchorEngine {
         ]
         
         let attributedString = NSAttributedString(string: text, attributes: attributes)
-        let stringSize = attributedString.size()
         
-        // 中央に配置
-        let textRect = NSRect(
-            x: (size.width - stringSize.width) / 2,
-            y: (size.height - stringSize.height) / 2,
-            width: stringSize.width,
-            height: stringSize.height
+        // Calculate needed height if not provided
+        let textWidth = width - 80 // 40px padding on each side
+        let boundingRect = attributedString.boundingRect(
+            with: NSSize(width: textWidth, height: .greatestFiniteMagnitude),
+            options: [.usesLineFragmentOrigin, .usesFontLeading]
         )
         
-        attributedString.draw(in: textRect)
+        let finalHeight = height ?? max(400, boundingRect.height + 80)
+        let size = NSSize(width: width, height: finalHeight)
+        let image = NSImage(size: size)
+        
+        image.lockFocus()
+        
+        // Background
+        backgroundColor.setFill()
+        let rect = NSRect(origin: .zero, size: size)
+        rect.fill()
+        
+        // Noise effect
+        for _ in 0..<100 {
+            let path = NSBezierPath()
+            path.move(to: NSPoint(x: CGFloat.random(in: 0...width), y: CGFloat.random(in: 0...finalHeight)))
+            path.line(to: NSPoint(x: CGFloat.random(in: 0...width), y: CGFloat.random(in: 0...finalHeight)))
+            NSColor(calibratedWhite: CGFloat.random(in: 0...1), alpha: 0.15).setStroke()
+            path.stroke()
+        }
+        
+        // Draw Text
+        let textRect = NSRect(
+            x: 40,
+            y: size.height - boundingRect.height - 40,
+            width: textWidth,
+            height: boundingRect.height
+        )
+        
+        attributedString.draw(with: textRect, options: [.usesLineFragmentOrigin, .usesFontLeading])
         
         image.unlockFocus()
         

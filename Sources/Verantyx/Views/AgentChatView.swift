@@ -293,26 +293,49 @@ struct AgentChatView: View {
                         .background(Color.green.opacity(0.1))
                         .cornerRadius(4)
                     
-                    // Ollama model picker
-                    let modelBinding = Binding<String>(
-                        get: { app.getOllamaModel() },
-                        set: { app.setOllamaModel($0) }
-                    )
-                    
-                    if app.ollamaModels.isEmpty {
-                        TextField("gemma4:26b", text: modelBinding)
-                            .textFieldStyle(.roundedBorder)
-                            .font(.system(size: 11, design: .monospaced))
-                            .frame(width: 130)
-                    } else {
-                        Picker("", selection: modelBinding) {
-                            ForEach(app.ollamaModels, id: \.self) { m in
-                                Text(m).tag(m)
+                    // Unified MLX & Ollama model picker
+                    let unifiedBinding = Binding<String>(
+                        get: {
+                            if case .mlxReady(let m) = app.modelStatus { return m }
+                            if case .ollamaReady(let m) = app.modelStatus { return m }
+                            let cmd = GatekeeperModeState.shared.commanderModel
+                            if cmd.contains("mlx") { return app.activeMlxModel }
+                            return app.getOllamaModel()
+                        },
+                        set: { newVal in
+                            GatekeeperModeState.shared.commanderModel = newVal
+                            if newVal.contains("mlx") {
+                                app.activeMlxModel = newVal
+                                app.loadMLXModel(model: newVal)
+                            } else {
+                                app.setOllamaModel(newVal)
+                                app.connectOllama()
                             }
                         }
-                        .labelsHidden()
-                        .frame(width: 140)
+                    )
+                    
+                    Picker("", selection: unifiedBinding) {
+                        if !MLXRunner.popularModels.isEmpty {
+                            Section(header: Text("MLX (Native)")) {
+                                ForEach(MLXRunner.popularModels) { m in
+                                    Text(m.displayName).tag(m.id)
+                                }
+                            }
+                        }
+                        if !app.ollamaModels.isEmpty {
+                            Section(header: Text("Ollama (Local)")) {
+                                ForEach(app.ollamaModels, id: \.self) { m in
+                                    Text(m).tag(m)
+                                }
+                            }
+                        } else {
+                            Section(header: Text("Ollama (Not Connected)")) {
+                                Text("gemma4:26b").tag("gemma4:26b")
+                            }
+                        }
                     }
+                    .labelsHidden()
+                    .frame(width: 170)
                     
                     Divider().frame(height: 16).opacity(0.5)
                     

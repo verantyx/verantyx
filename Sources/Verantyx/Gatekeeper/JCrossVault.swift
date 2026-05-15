@@ -88,7 +88,8 @@ final class JCrossVault: ObservableObject {
     // 変換対象の拡張子
     private static let targetExtensions: Set<String> = [
         "swift", "ts", "tsx", "js", "jsx", "py", "rs", "go", "kt", "java",
-        "cpp", "cc", "c", "h", "cs", "rb", "php", "sh"
+        "cpp", "cc", "c", "h", "cs", "rb", "php", "sh",
+        "css", "scss", "html", "htm", "json", "md", "txt", "yaml", "yml", "toml", "xml", "csv"
     ]
 
     // 除外パス
@@ -638,15 +639,9 @@ final class JCrossVault: ObservableObject {
 
         try jcrossContent.write(to: jcrossFileURL, atomically: true, encoding: String.Encoding.utf8)
 
-        // スキーマメタデータ（6軸プロトコルバージョン情報）
-        let schemaMeta: [String: String] = [
-            "documentID":      schemaID,
-            "protocolVersion": irDoc.protocolVersion,
-            "language":        lang.rawValue,
-            "generatedAt":     ISO8601DateFormatter().string(from: irDoc.generatedAt),
-            "obfLayers":       obfDoc.obfuscationLayers.joined(separator: ",")
-        ]
-        if let schemaData = try? JSONEncoder().encode(schemaMeta) {
+        // 逆変換に必要なセッションデータ（スキーママップ、NodeMap、ReverseMap）を保存
+        if let sessionData = await transpiler.getSessionData(for: schemaID),
+           let schemaData = try? JSONEncoder().encode(sessionData) {
             try? schemaData.write(to: schemaFileURL)
         }
 

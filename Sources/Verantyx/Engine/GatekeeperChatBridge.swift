@@ -20,7 +20,7 @@ final class GatekeeperChatBridge: Sendable {
     static let shared = GatekeeperChatBridge()
     private init() {}
 
-    func run(instruction: String, appState: AppState) async {
+    func run(instruction: String, images: [String] = [], appState: AppState) async {
         let vaultStatus = await MainActor.run {
             GatekeeperModeState.shared.vault.vaultStatus
         }
@@ -45,8 +45,9 @@ final class GatekeeperChatBridge: Sendable {
             // MainActor を手放さないままデッドロックするため、
             // 独立した MainActor Task として起動する。
             let capturedInstruction = instruction
+            let capturedImages = images
             Task { @MainActor in
-                await CommanderOrchestrator.shared.handleUserMessage(capturedInstruction)
+                await CommanderOrchestrator.shared.handleUserMessage(capturedInstruction, images: capturedImages)
                 appState.isGenerating = false
             }
 

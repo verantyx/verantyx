@@ -60,7 +60,7 @@ struct HumanPriorityModeView: View {
                     } right: {
                         // ③ Inner split: [Code Editor] | [AI Chat]
                         ResizableHSplit(
-                            minLeft: 400, maxLeft: 99999, minRight: 280, initialLeft: 99999
+                            minLeft: 400, maxLeft: 99999, minRight: 280, initialLeft: 600
                         ) {
                             // ── Center: Code Editor ────────────────────────────
                             codeEditorPanel
@@ -144,7 +144,7 @@ struct HumanPriorityModeView: View {
             Button(app.t("Start Conversion", "変換を開始する")) {
                 if let ws = targetWorkspaceForL25 {
                     Task { @MainActor in
-                        await L25IndexEngine.shared.buildProjectMap(workspaceURL: ws)
+                        await L25IndexEngine.shared.loadAndIncrementalUpdate(workspaceURL: ws)
                     }
                 }
             }
@@ -176,55 +176,58 @@ struct HumanPriorityModeView: View {
 
             Divider().opacity(0.3)
 
-            // Editor body
-            switch activeCenterTab {
-            case .code:
-                if let url = app.selectedFile {
-                    let isJCrossMode = GatekeeperModeState.shared.isEnabled && !app.showGatekeeperRawCode
-                    CodeEditorView(
-                        content: $editorContent,
-                        language: editorLanguage,
-                        isEditable: !isJCrossMode,
-                        onEdit: {
-                            if !isJCrossMode {
-                                hasUnsavedChanges = true
-                                saveStatus = .unsaved
-                            }
-                        }
-                    )
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else {
-                    emptyEditorState
-                }
-            case .diff:
-                SideBySideDiffView()
-                    .environmentObject(app)
-            case .artifact:
-                if let art = app.currentArtifact {
-                    ArtifactWebView(artifact: art)
-                        .id(art.id)
-                } else {
-                    emptyEditorState
-                }
-            }
-
-            // Removed CPU Activity Panel per user request
-
-            // Terminal (collapsible)
+            // Editor body & Terminal
             if app.showProcessLog {
-                Divider().opacity(0.3)
                 ResizableVSplit(
-                    minTop: 0, maxTop: 0, minBottom: 80, initialTop: 0
+                    minTop: 200, maxTop: 99999, minBottom: 80, initialTop: 600
                 ) {
-                    EmptyView()
+                    editorBody
                 } bottom: {
-                    TerminalPanelView(terminal: app.terminal)
-                        .environmentObject(app)
+                    VStack(spacing: 0) {
+                        Divider().opacity(0.3)
+                        TerminalPanelView(terminal: app.terminal)
+                            .environmentObject(app)
+                    }
                 }
-                .frame(height: 200)
+            } else {
+                editorBody
             }
         }
         .background(Color(red: 0.10, green: 0.10, blue: 0.13))
+    }
+
+    @ViewBuilder
+    private var editorBody: some View {
+        switch activeCenterTab {
+        case .code:
+            if let url = app.selectedFile {
+                let isJCrossMode = GatekeeperModeState.shared.isEnabled && !app.showGatekeeperRawCode
+                CodeEditorView(
+                    content: $editorContent,
+                    language: editorLanguage,
+                    isEditable: !isJCrossMode,
+                    onEdit: {
+                        if !isJCrossMode {
+                            hasUnsavedChanges = true
+                            saveStatus = .unsaved
+                        }
+                    }
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                emptyEditorState
+            }
+        case .diff:
+            SideBySideDiffView()
+                .environmentObject(app)
+        case .artifact:
+            if let art = app.currentArtifact {
+                ArtifactWebView(artifact: art)
+                    .id(art.id)
+            } else {
+                emptyEditorState
+            }
+        }
     }
 
     // MARK: - Editor Tab Bar
@@ -356,27 +359,7 @@ struct HumanPriorityModeView: View {
                     .foregroundStyle(Color(red: 0.38, green: 0.38, blue: 0.50))
             }
 
-            Button(action: { app.openWorkspace() }) {
-                HStack(spacing: 6) {
-                    Image(systemName: "folder.badge.plus")
-                    Text("Open Workspace")
-                }
-                .font(.system(size: 12, weight: .medium))
-                .foregroundStyle(Color(red: 0.4, green: 0.75, blue: 1.0))
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color(red: 0.13, green: 0.22, blue: 0.36).opacity(0.6))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color(red: 0.4, green: 0.75, blue: 1.0).opacity(0.3), lineWidth: 1)
-                        )
-                )
-                .contentShape(Rectangle())
-            }
-            .contentShape(Rectangle())
-            .buttonStyle(.plain)
+
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(red: 0.09, green: 0.09, blue: 0.12))
@@ -1171,7 +1154,7 @@ struct IsolatedL25HeaderButton: View {
         } else {
             Button {
                 if let ws = app.workspaceURL {
-                    Task { await L25IndexEngine.shared.buildProjectMap(workspaceURL: ws) }
+                    Task { await L25IndexEngine.shared.loadAndIncrementalUpdate(workspaceURL: ws) }
                 }
             } label: {
                 Label("Map", systemImage: "map")
