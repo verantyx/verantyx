@@ -40,9 +40,9 @@ class SelfUpdater: ObservableObject {
                 if latest.compare(currentVersion, options: .numeric) == .orderedDescending {
                     self.updateAvailable = true
                     
-                    // Find ZIP asset
-                    if let zipAsset = assets.first(where: { ($0["name"] as? String ?? "").hasSuffix(".zip") }),
-                       let urlString = zipAsset["browser_download_url"] as? String,
+                    // Find DMG asset
+                    if let dmgAsset = assets.first(where: { ($0["name"] as? String ?? "").hasSuffix(".dmg") }),
+                       let urlString = dmgAsset["browser_download_url"] as? String,
                        let downloadURL = URL(string: urlString) {
                         self.pkgDownloadURL = downloadURL
                     }
@@ -62,7 +62,7 @@ class SelfUpdater: ObservableObject {
         isDownloading = true
         errorMessage = nil
         
-        let destination = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("VerantyxUpdate_\(latestVersion).zip")
+        let destination = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("VerantyxUpdate_\(latestVersion).dmg")
         
         // Remove old file if exists
         try? FileManager.default.removeItem(at: destination)
@@ -88,9 +88,14 @@ class SelfUpdater: ObservableObject {
                 while kill -0 \(ProcessInfo.processInfo.processIdentifier) 2>/dev/null; do
                     sleep 0.5
                 done
-                rm -rf /Applications/Verantyx.app
-                unzip -q -o "\(destination.path)" -d /Applications/
-                open /Applications/Verantyx.app
+                MOUNT_INFO=$(hdiutil attach "\(destination.path)" -nobrowse)
+                MOUNT_POINT=$(echo "$MOUNT_INFO" | grep "/Volumes/" | awk -F '\t' '{print $3}' | xargs)
+                if [ -n "$MOUNT_POINT" ]; then
+                    rm -rf /Applications/Verantyx.app
+                    cp -R "$MOUNT_POINT/Verantyx.app" /Applications/
+                    hdiutil detach "$MOUNT_POINT"
+                    open /Applications/Verantyx.app
+                fi
                 """
                 let scriptURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("verantyx_update.sh")
                 try script.write(to: scriptURL, atomically: true, encoding: .utf8)
