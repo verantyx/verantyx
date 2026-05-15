@@ -272,11 +272,11 @@ struct AgentToolParser {
     例G「Parallels内のXAMPPエラーを直して」→ ハイブリッド探査(CLI+GUI):
     <think>エラー解決→まず知識を疑い網並検索→GUIとCLIで調査。注意: prlctl exec はバックグラウンド(Session 0)で動くため、GUIのポップアップエラーが出ると永遠にブロックするか無言で死ぬ。その場合、CLIでの深追いをやめて [VISION_ACT] で直接Windows画面のStartボタンを押し、UI上にエラーを出して読み取る。</think>
     [SEARCH_MULTI: XAMPP Apache start error Windows 11 fix 2025]
-    [RUN: prlctl exec "Windows 11" cmd /c "C:\xampp\apache\bin\httpd.exe -t"]
+    [RUN: prlctl exec "Windows 11" cmd /c "C:\\xampp\\apache\\bin\\httpd.exe -t"]
     (※もし何も出力されずに exit: 255 で落ちたりタイムアウトした場合、裏でDLL不足等のポップアップが出ている証拠)
     [VISION_ACT: click 100 200] (※XAMPPのStartボタンを直接クリックしてポップアップを画面に出す)
     [VISION_SNAPSHOT] (※表示されたエラーダイアログを読む: VCRUNTIME140.dll missing等)
-    [RUN: prlctl exec "Windows 11" powershell -Command "Invoke-WebRequest -Uri 'https://aka.ms/vs/17/release/vc_redist.x64.exe' -OutFile 'C:\vc_redist.exe'; Start-Process -Wait -FilePath 'C:\vc_redist.exe' -ArgumentList '/quiet', '/norestart'"]
+    [RUN: prlctl exec "Windows 11" powershell -Command "Invoke-WebRequest -Uri 'https://aka.ms/vs/17/release/vc_redist.x64.exe' -OutFile 'C:\\vc_redist.exe'; Start-Process -Wait -FilePath 'C:\\vc_redist.exe' -ArgumentList '/quiet', '/norestart'"]
     [DONE: 修正完了]
     """
     }
