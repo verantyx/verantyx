@@ -1110,5 +1110,15 @@ if __name__ == "__main__":
 // JCROSS_6AXIS_END
 ```
 
+## 🧠 Verantyx Cortex: OS-Level Agent
+
+Verantyx isn't just an enterprise code editor—it functions as a fully integrated, OS-level AI assistant.
+
+- **Instant Invocation:** Press `Control` 3 times from anywhere on your Mac to summon the Verantyx Cortex Spotlight UI.
+- **Autonomous Resolution:** Ask it to fix errors, install missing dependencies, or control applications.
+- **Deep Integration:** It can directly execute shell commands, operate local applications (like Parallels Desktop or Microsoft Teams), and navigate the web to solve complex environment issues autonomously.
+
+[![Verantyx Cortex OS-Level Agent](assets/verantyx-cortex-demo.gif)](https://github.com/Ag3497120/Verantyx/blob/release_verantyx/assets/verantyx-cortex-demo.mp4)
+
 ---
 *Verantyx: Secure your IP. Empower your architecture. Control the AI.*
