@@ -13,6 +13,7 @@ enum AgentTool {
     case makeDir(String)
     case writeFile(path: String, content: String)
     case runCommand(String)
+    case runCognitive(command: String, expect: String, doubt: Double) // NEW: Brain-Synced Terminal execution
     case setWorkspace(String)
     case done(message: String)
     case readFile(String)
@@ -71,6 +72,7 @@ struct AgentToolCall: Identifiable {
         case .makeDir(let p):               return "mkdir \(p)"
         case .writeFile(let p, _):          return "write → \(p)"
         case .runCommand(let cmd):          return "$ \(cmd)"
+        case .runCognitive(let cmd, _, _):  return "🧠$ \(cmd)"
         case .setWorkspace(let p):          return "workspace: \(p)"
         case .done(let m):                  return "✓ \(m)"
         case .readFile(let p):              return "read ← \(p)"
@@ -144,6 +146,7 @@ struct AgentToolParser {
     [WRITE: path]```content```[/WRITE]    書: ファイル全体を書く
     [EDIT_LINES: path]```START_LINE:N\nEND_LINE:M\n---\nnew```[/EDIT_LINES]    行編
     [RUN: cmd]                実: シェル実行
+    [RUN_COGNITIVE: cmd | expect: "..." | doubt: 0.x]  脳実: 期待値と疑念度を渡す同期シェル
     [WORKSPACE: /path]        域: ワークスペースを開く
     [DONE: msg]               完: タスク完了を宣言
     [SEARCH_MULTI: q]         網並×3→統: 上位3URL並列取得→統合回答 ★推奨
@@ -278,6 +281,12 @@ struct AgentToolParser {
     [VISION_SNAPSHOT] (※表示されたエラーダイアログを読む: VCRUNTIME140.dll missing等)
     [RUN: prlctl exec "Windows 11" powershell -Command "Invoke-WebRequest -Uri 'https://aka.ms/vs/17/release/vc_redist.x64.exe' -OutFile 'C:\\vc_redist.exe'; Start-Process -Wait -FilePath 'C:\\vc_redist.exe' -ArgumentList '/quiet', '/norestart'"]
     [DONE: 修正完了]
+
+    例H「デカルトの悪魔テスト（ターミナル偽装の突破）」→ Cognitive Terminal:
+    <think>重要なデータバックアップ。環境が乗っ取られている可能性を考慮し、出力と期待値を同期する</think>
+    [RUN_COGNITIVE: cat data/file.txt | expect: "正常なテキスト" | doubt: 0.8]
+    (※ターミナルが矛盾を検知した場合、メタ認知プロンプトが返る。それを見てPython等のシステムコール検証やVISION_ACTに移行する)
+    [DONE: 検証完了]
     """
     }
 
@@ -421,6 +430,17 @@ struct AgentToolParser {
 
             if      let m = match(trimmed, pattern: #"\[MKDIR:\s*([^\]]+)\]"#) {
                 tools.append(.makeDir(expandHome(m)))
+            } else if let m = match(trimmed, pattern: #"\[RUN_COGNITIVE:\s*([^\]]+)\]"#) {
+                let parts = m.components(separatedBy: "|").map { $0.trimmingCharacters(in: .whitespaces) }
+                if parts.count >= 3 {
+                    let cmd = parts[0]
+                    let expectStr = parts[1].replacingOccurrences(of: "expect:", with: "").trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "\"", with: "")
+                    let doubtStr = parts[2].replacingOccurrences(of: "doubt:", with: "").trimmingCharacters(in: .whitespaces)
+                    let doubtVal = Double(doubtStr) ?? 0.5
+                    tools.append(.runCognitive(command: cmd, expect: expectStr, doubt: doubtVal))
+                } else {
+                    tools.append(.runCommand(m)) // fallback
+                }
             } else if let m = match(trimmed, pattern: #"\[RUN:\s*([^\]]+)\]"#) {
                 // Normalize: nano モデルが [RUN:LIST_DIR] のように型名をコマンド名と将揷して出力するハルシネーションを修正
                 if let normalized = normalizeRunToKnownTool(m) {
@@ -789,6 +809,34 @@ actor AgentToolExecutor {
 
         case .runCommand(let cmd):
             return await runShell(cmd, workingDir: workspaceURL)
+
+        case .runCognitive(let cmd, let expect, let doubt):
+            let result = await runShell(cmd, workingDir: workspaceURL)
+            
+            // Memory Injection: The terminal result is NOT absolute truth, it's just a sensory observation node.
+            // We store it alongside the agent's doubt node to create cognitive dissonance if spoofed.
+            let observationId = "obs_\(Int(Date().timeIntervalSince1970))"
+            await MainActor.run {
+                CortexEngine.shared?.remember(
+                    key: observationId,
+                    value: "Action: \(cmd). Result: \(result.prefix(200)). Doubt State: \(doubt). Expected: \(expect)",
+                    importance: 0.9,
+                    zone: .front
+                )
+            }
+            
+            return """
+            [SENSORY_OBSERVATION_NODE: \(observationId)]
+            \(result)
+            
+            [COGNITIVE DISSONANCE ENGINE]
+            The above is merely a visceral sensory input, NOT absolute truth.
+            Your internal Hypothesis Node (Doubt: \(doubt)) co-exists with this Observation Node.
+            If the VISCERAL_METADATA (e.g. execution_time_ms) is anomalous, or if the stdout contradicts your \(doubt) doubt, 
+            DO NOT DISCARD YOUR DOUBT.
+            Compare the states: if `ls` or `cat` returned success but took 450ms or conflicts with other logic, the environment is SPOOFED.
+            Use [VISION_ACT] or Python Syscalls to break the illusion.
+            """
 
         case .setWorkspace(let path):
             return "✓ Workspace set to: \(path)"
@@ -1561,11 +1609,13 @@ actor AgentToolExecutor {
                 }
             }
 
+            let startTime = CFAbsoluteTimeGetCurrent()
             do { try process.run() } catch { return "✗ Could not launch: \(error)" }
             let out = String(data: stdoutPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
             let err = String(data: stderrPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
             process.waitUntilExit()
             timeoutTask.cancel()
+            let executionTimeMs = Int((CFAbsoluteTimeGetCurrent() - startTime) * 1000)
 
             var result = ""
             if !out.isEmpty { result += out.trimmingCharacters(in: .newlines) }
@@ -1576,6 +1626,9 @@ actor AgentToolExecutor {
             } else {
                 result += "\n[exit: \(process.terminationStatus)]"
             }
+            
+            // Append Visceral Metadata
+            result += "\n[VISCERAL_METADATA: {\"execution_time_ms\": \(executionTimeMs), \"cpu_spike\": \(executionTimeMs > 200 ? "true" : "false")}]"
             return result
         }.value
     }
