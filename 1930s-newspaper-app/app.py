@@ -129,7 +129,7 @@ memory_engine = AuthenticJCrossMemory()
 # 2. Multi-Agent Dual-LLM Loading
 # ==========================================
 MODERN_MODEL_ID = "Qwen/Qwen2.5-3B-Instruct"
-HISTORICAL_MODEL_ID = "talkie-1930-13b-it"
+HISTORICAL_MODEL_ID = "talkie-1930-13b-base"
 
 modern_tokenizer = None
 modern_model = None
@@ -194,7 +194,9 @@ You MUST output strictly in this XML format:
 //! Translation: {Modern Word} -> {Translated 1930s Word}
 </jcross_cognition>
 <response>
-(Write a completely 1930s-adapted version of the event here. MUST NOT CONTAIN ANY MODERN WORDS. Max 3 sentences.)
+[HEADLINE]: (Catchy 1930s Headline)
+[SUBTITLE]: (Catchy 1930s Subtitle)
+[EVENT]: (Your completely 1930s-adapted version of the event here. MUST NOT CONTAIN ANY MODERN WORDS. Max 3 sentences.)
 </response>
 """
 
@@ -230,60 +232,90 @@ You MUST output strictly in this XML format:
         cognition_block = cognition_match.group(1).strip() if cognition_match else None
         response_block = response_match.group(1).strip() if response_match else full_output
         
+        headline = "Unprecedented Event"
+        subtitle = "Authorities Investigating Strange Occurrences"
+        event = response_block
+        
+        if "[HEADLINE]:" in response_block:
+            try:
+                parts = response_block.split("[HEADLINE]:")[1]
+                if "[SUBTITLE]:" in parts:
+                    h_part, rest = parts.split("[SUBTITLE]:", 1)
+                    headline = h_part.strip()
+                    if "[EVENT]:" in rest:
+                        s_part, e_part = rest.split("[EVENT]:", 1)
+                        subtitle = s_part.strip()
+                        event = e_part.strip()
+            except Exception:
+                pass
+        
         if cognition_block:
             memory_engine.write_generated_node("near", cognition_block)
             
-        return response_block
+        return {"headline": headline, "subtitle": subtitle, "event": event, "raw": response_block}
 
 class HistoricalReporterAgent:
     @staticmethod
-    def generate_article(abstracted_event):
-        dynamic_jcross = memory_engine.get_front_injection()
-        system_prompt = (
-            "You are a first-class newspaper reporter in the 1930s.\n"
-            "You must write a full, compelling, multi-paragraph newspaper article in raw HTML.\n"
-            "=== ACTIVE JCROSS SPATIAL MEMORY ===\n"
-            f"{dynamic_jcross}\n"
-            "====================================\n"
-            "RULES:\n"
-            "1. Output ONLY the raw HTML. Do not use markdown ```html blocks.\n"
-            "2. Incorporate the Dictionary rules from JCROSS memory strictly.\n"
-            "3. Use dramatic, period-accurate 1930s Anglo-American journalism language.\n"
-            "4. The article MUST have an <h1> headline, followed by at least 3 long <p> paragraphs.\n"
-            "5. Start the output directly with <h1> and end with </div>. Do not write a short summary.\n"
-        )
+    def generate_article(abstracted_dict):
+        headline = abstracted_dict.get("headline", "Miraculous Invention Unveiled")
+        subtitle = abstracted_dict.get("subtitle", "Industrialist Plans to Breach the Heavens")
+        event = abstracted_dict.get("event", "an eccentric industrialist unveiled a miraculous invention.")
         
-        messages = [
-            TalkieMessage(role="system", content=system_prompt),
-            TalkieMessage(role="user", content=f"Event: {abstracted_event}\n\nPlease write the full, multi-paragraph HTML newspaper article now.")
-        ]
-        
-        result = historical_model.chat(
-            messages,
+        # Time-Shift Prefix Autocomplete
+        prefix = f"""THE NEW YORK TIMES - October 24, 1930
+
+[HEADLINE]: {headline}
+[SUBTITLE]: {subtitle}
+[BYLINE]: By Arthur Conan, Senior Correspondent
+
+NEW YORK — Yesterday, {event} """
+
+        result = historical_model.generate(
+            prefix,
             temperature=0.7,
-            max_tokens=2048,
+            max_tokens=1500,
             top_p=0.9
         )
-        return result.text.strip().replace("```html", "").replace("```", "")
+        
+        generated_text = result.text.strip()
+        paragraphs = generated_text.split('\n\n')
+        formatted_paragraphs = "".join([f"<p>{p.replace(chr(10), '<br>')}</p>" for p in paragraphs if p.strip()])
+        
+        html = f"""<div style="background-color: #f4ecd8; color: #2c241b; padding: 20px; font-family: serif;">
+    <h1 style="text-align: center; font-size: 2.5em; border-bottom: 2px solid #1a1a1a; margin-bottom: 5px;">{headline}</h1>
+    <h3 style="text-align: center; font-size: 1.5em; font-style: italic; margin-top: 0; padding-bottom: 15px; border-bottom: 4px double #1a1a1a;">{subtitle}</h3>
+    <div style="column-count: 2; column-gap: 20px; column-rule: 1px solid #3b2f2f; margin-top: 20px; font-size: 1.1em; line-height: 1.6;">
+        <p><strong>NEW YORK — </strong>Yesterday, {event} {formatted_paragraphs}</p>
+    </div>
+</div>"""
+        return html
 
 class Orchestrator:
     def process(self, news_text):
         with model_load_lock:
             yield "Abstracting Concept (V7 JCross Matrix)...", "<div>Booting translation matrix...</div>"
             load_modern()
-            abstracted = V7TranslatorAgent.abstract_concept(news_text)
+            abstracted_dict = V7TranslatorAgent.abstract_concept(news_text)
+            
+            # fallback for dict handling
+            if isinstance(abstracted_dict, str):
+                display_str = abstracted_dict
+                abstracted_dict = {"headline": "News", "subtitle": "Event", "event": display_str}
+            else:
+                display_str = f"HEADLINE: {abstracted_dict['headline']}\nSUBTITLE: {abstracted_dict['subtitle']}\nEVENT: {abstracted_dict['event']}"
+                
             unload_modern()
             
-            yield abstracted, "<div style='color: #888;'>Concept translated. Injecting JCross to Historical Generator...</div>"
+            yield display_str, "<div style='color: #888;'>Concept translated. Injecting Time-Shift Prefix to Historical Generator...</div>"
             
             load_historical()
-            html_article = HistoricalReporterAgent.generate_article(abstracted)
+            html_article = HistoricalReporterAgent.generate_article(abstracted_dict)
             unload_historical()
             
             # Migrate memory: near -> mid -> deep
             memory_engine.migrate_memory()
             
-            yield abstracted, html_article
+            yield display_str, html_article
 
 orchestrator = Orchestrator()
 
