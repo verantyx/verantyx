@@ -128,7 +128,7 @@ memory_engine = AuthenticJCrossMemory()
 # ==========================================
 # 2. Multi-Agent Dual-LLM Loading
 # ==========================================
-MODERN_MODEL_ID = "Qwen/Qwen2.5-3B-Instruct"
+MODERN_MODEL_ID = "google/gemma-2-27b-it"
 HISTORICAL_MODEL_ID = "talkie-1930-13b-base"
 
 modern_tokenizer = None
