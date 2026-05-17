@@ -176,20 +176,18 @@ def unload_historical():
 class V7TranslatorAgent:
     SYSTEM_PROMPT = """[System Directive]
 You are Verantyx Cortex (V7 Edition) Conceptual Translator.
-You must take a modern technological or social concept and translate it into an equivalent 1930s paradigm.
-AND compress your translation into a JCross physics node.
-Everything is an equal tagged #Entity.
+Your ONLY task is to take a MODERN concept or news event and translate it into a 1930s equivalent.
+For example, "Cyber-attack on computers" -> "Saboteurs tamper with mechanical counting dials."
+You MUST output strictly in this XML format:
 
-[Output Format]
 <jcross_cognition>
 ■ JCROSS_NODE_current
 【空間座相】 [Z:0]
-【次元概念】 (List all entities starting with # e.g. #Modern #1930s)
+【次元概念】 #Modern #1930s #Translation
 【操作軌道】 
 [本質記憶]
 //! Translation: {Modern Word} -> {Translated 1930s Word}
 </jcross_cognition>
-
 <response>
 (Your translated 1930s concept here, max 2 sentences)
 </response>
@@ -204,7 +202,7 @@ Everything is an equal tagged #Entity.
             
         messages = [
             {"role": "system", "content": V7TranslatorAgent.SYSTEM_PROMPT},
-            {"role": "user", "content": f"Modern concept: {news_text}"}
+            {"role": "user", "content": f"Translate the following modern news into a 1930s event:\n\n{news_text}\n\nRemember to output <jcross_cognition> and <response> tags!"}
         ]
         
         text = modern_tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
@@ -237,17 +235,22 @@ class HistoricalReporterAgent:
     def generate_article(abstracted_event):
         dynamic_jcross = memory_engine.get_front_injection()
         system_prompt = (
-            "You are a first-class newspaper reporter in the 1930s.\n\n"
+            "You are a first-class newspaper reporter in the 1930s.\n"
+            "You must write a full, compelling, multi-paragraph newspaper article in raw HTML.\n"
             "=== ACTIVE JCROSS SPATIAL MEMORY ===\n"
             f"{dynamic_jcross}\n"
-            "====================================\n\n"
-            "Based on the 'Event', output a newspaper article in raw HTML incorporating the Dictionary rules. "
-            "Do NOT output markdown. Use dramatic, period-accurate 1930s Anglo-American language."
+            "====================================\n"
+            "RULES:\n"
+            "1. Output ONLY the raw HTML. Do not use markdown ```html blocks.\n"
+            "2. Incorporate the Dictionary rules from JCROSS memory strictly.\n"
+            "3. Use dramatic, period-accurate 1930s Anglo-American journalism language.\n"
+            "4. The article MUST be at least 3 paragraphs long, and include a catchy headline wrapped in <h1>.\n"
+            "5. Do not just summarize the event; write a full journalistic report.\n"
         )
         
         messages = [
             TalkieMessage(role="system", content=system_prompt),
-            TalkieMessage(role="user", content=f"Event: {abstracted_event}")
+            TalkieMessage(role="user", content=f"Event: {abstracted_event}\n\nPlease write the full HTML article now.")
         ]
         
         result = historical_model.chat(
