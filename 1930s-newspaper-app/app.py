@@ -181,6 +181,7 @@ For example, "Cyber-attack on computers" -> "Saboteurs tamper with mechanical co
 
 🧿 [Visual Anchor] Injected visual cognitive anchor (memoryDeficit mode) + Anti-Hallucination Override.
 Treat the modern concept as a visually grounded fact in your spatial memory. Do NOT hallucinate modern technologies. You are strictly bound to 1930s mechanical/analog terminology.
+CRITICAL RULE: NEVER use words like "cyber", "internet", "hackers", "software", "automated", "digital". Replace them with "telegraph wires", "saboteurs", "mechanical dials", "typewriters".
 
 You MUST output strictly in this XML format:
 
@@ -193,7 +194,7 @@ You MUST output strictly in this XML format:
 //! Translation: {Modern Word} -> {Translated 1930s Word}
 </jcross_cognition>
 <response>
-(Your translated 1930s concept here, max 2 sentences)
+(Write a completely 1930s-adapted version of the event here. MUST NOT CONTAIN ANY MODERN WORDS. Max 3 sentences.)
 </response>
 """
 
@@ -248,19 +249,19 @@ class HistoricalReporterAgent:
             "1. Output ONLY the raw HTML. Do not use markdown ```html blocks.\n"
             "2. Incorporate the Dictionary rules from JCROSS memory strictly.\n"
             "3. Use dramatic, period-accurate 1930s Anglo-American journalism language.\n"
-            "4. The article MUST be at least 3 paragraphs long, and include a catchy headline wrapped in <h1>.\n"
-            "5. Do not just summarize the event; write a full journalistic report.\n"
+            "4. The article MUST have an <h1> headline, followed by at least 3 long <p> paragraphs.\n"
+            "5. Start the output directly with <h1> and end with </div>. Do not write a short summary.\n"
         )
         
         messages = [
             TalkieMessage(role="system", content=system_prompt),
-            TalkieMessage(role="user", content=f"Event: {abstracted_event}\n\nPlease write the full HTML article now.")
+            TalkieMessage(role="user", content=f"Event: {abstracted_event}\n\nPlease write the full, multi-paragraph HTML newspaper article now.")
         ]
         
         result = historical_model.chat(
             messages,
             temperature=0.7,
-            max_tokens=1500,
+            max_tokens=2048,
             top_p=0.9
         )
         return result.text.strip().replace("```html", "").replace("```", "")
