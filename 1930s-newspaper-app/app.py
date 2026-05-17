@@ -9,6 +9,7 @@ import uuid
 import datetime
 import gc
 import shutil
+import requests
 
 # Add local talkie module to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "talkie", "src"))
@@ -128,32 +129,35 @@ memory_engine = AuthenticJCrossMemory()
 # ==========================================
 # 2. Multi-Agent Dual-LLM Loading
 # ==========================================
-MODERN_MODEL_ID = "google/gemma-4-26B-A4B-it"
-HISTORICAL_MODEL_ID = "talkie-1930-13b-base"
+OLLAMA_MODELS = {"modern": "gemma4:26b", "historical": "talkie13b"}
+HF_MODELS = {"modern": "google/gemma-4-26B-A4B-it", "historical": "talkie-1930-13b-base"}
 
 modern_tokenizer = None
 modern_model = None
 historical_model = None
 model_load_lock = threading.Lock()
 
-def load_modern():
+def load_modern(use_ollama=False):
+    if use_ollama: return
     global modern_tokenizer, modern_model
+    model_id = HF_MODELS["modern"]
     if modern_model is None:
-        print(f"[Modern Agent] Loading {MODERN_MODEL_ID}...")
+        print(f"[Modern Agent] Loading {model_id}...")
         try:
-            modern_tokenizer = AutoTokenizer.from_pretrained(MODERN_MODEL_ID)
+            modern_tokenizer = AutoTokenizer.from_pretrained(model_id)
         except AttributeError:
             print("[Warning] Tokenizer config is broken. Falling back to gemma-2-27b-it tokenizer.")
             modern_tokenizer = AutoTokenizer.from_pretrained("google/gemma-2-27b-it")
             
         modern_model = AutoModelForCausalLM.from_pretrained(
-            MODERN_MODEL_ID, 
+            model_id, 
             device_map="auto", 
             torch_dtype=torch.float16,
             low_cpu_mem_usage=True
         )
 
-def unload_modern():
+def unload_modern(use_ollama=False):
+    if use_ollama: return
     global modern_tokenizer, modern_model
     modern_model = None
     modern_tokenizer = None
@@ -161,14 +165,17 @@ def unload_modern():
     if torch.cuda.is_available(): torch.cuda.empty_cache()
     if torch.backends.mps.is_available(): torch.mps.empty_cache()
 
-def load_historical():
+def load_historical(use_ollama=False):
+    if use_ollama: return
     global historical_model
+    model_id = HF_MODELS["historical"]
     if historical_model is None:
         device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
-        print(f"[Historical Agent] Loading {HISTORICAL_MODEL_ID}...")
-        historical_model = Talkie(HISTORICAL_MODEL_ID, device=device)
+        print(f"[Historical Agent] Loading {model_id}...")
+        historical_model = Talkie(model_id, device=device)
 
-def unload_historical():
+def unload_historical(use_ollama=False):
+    if use_ollama: return
     global historical_model
     historical_model = None
     gc.collect()
@@ -206,29 +213,50 @@ You MUST output strictly in this XML format:
 """
 
     @staticmethod
-    def abstract_concept(news_text):
+    def abstract_concept(news_text, use_ollama=False):
         # Rust Engine Query Simulator
         past_translation = memory_engine.search_jcross(news_text)
         if past_translation:
             return past_translation.split("->")[-1].strip() + " (Recalled from JCross)"
             
-        messages = [
-            {"role": "system", "content": V7TranslatorAgent.SYSTEM_PROMPT},
-            {"role": "user", "content": f"Translate the following modern news into a 1930s event:\n\n{news_text}\n\nRemember to output <jcross_cognition> and <response> tags!"}
-        ]
-        
-        text = modern_tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-        inputs = modern_tokenizer([text], return_tensors="pt").to(modern_model.device)
-        
-        outputs = modern_model.generate(
-            inputs.input_ids,
-            max_new_tokens=300,
-            temperature=0.2,
-            do_sample=True,
-        )
-        
-        output_ids = outputs[0][len(inputs.input_ids[0]):]
-        full_output = modern_tokenizer.decode(output_ids, skip_special_tokens=True).strip()
+        if use_ollama:
+            model_id = OLLAMA_MODELS["modern"]
+            print(f"[Modern Agent] Calling Ollama API for {model_id}...")
+            payload = {
+                "model": model_id,
+                "prompt": f"Translate the following modern news into a 1930s event:\n\n{news_text}\n\nRemember to output <jcross_cognition> and <response> tags!",
+                "system": V7TranslatorAgent.SYSTEM_PROMPT,
+                "stream": False,
+                "options": {
+                    "temperature": 0.2,
+                    "num_predict": 300
+                }
+            }
+            try:
+                res = requests.post("http://localhost:11434/api/generate", json=payload)
+                res.raise_for_status()
+                full_output = res.json().get("response", "").strip()
+            except Exception as e:
+                print(f"[Ollama Error] {e}")
+                full_output = f"<response>\n[HEADLINE]: Ollama Error\n[SUBTITLE]: Could not reach local Ollama\n[EVENT]: The engine failed. Error: {e}\n</response>"
+        else:
+            messages = [
+                {"role": "system", "content": V7TranslatorAgent.SYSTEM_PROMPT},
+                {"role": "user", "content": f"Translate the following modern news into a 1930s event:\n\n{news_text}\n\nRemember to output <jcross_cognition> and <response> tags!"}
+            ]
+            
+            text = modern_tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+            inputs = modern_tokenizer([text], return_tensors="pt").to(modern_model.device)
+            
+            outputs = modern_model.generate(
+                inputs.input_ids,
+                max_new_tokens=300,
+                temperature=0.2,
+                do_sample=True,
+            )
+            
+            output_ids = outputs[0][len(inputs.input_ids[0]):]
+            full_output = modern_tokenizer.decode(output_ids, skip_special_tokens=True).strip()
         
         # Authentic parsing from v7_unified_loop.py
         cognition_match = re.search(r"<jcross_cognition>(.*?)</jcross_cognition>", full_output, re.DOTALL)
@@ -261,7 +289,7 @@ You MUST output strictly in this XML format:
 
 class HistoricalReporterAgent:
     @staticmethod
-    def generate_article(abstracted_dict):
+    def generate_article(abstracted_dict, use_ollama=False):
         headline = abstracted_dict.get("headline", "Miraculous Invention Unveiled")
         subtitle = abstracted_dict.get("subtitle", "Industrialist Plans to Breach the Heavens")
         event = abstracted_dict.get("event", "an eccentric industrialist unveiled a miraculous invention.")
@@ -275,14 +303,35 @@ class HistoricalReporterAgent:
 
 NEW YORK — Yesterday, {event} """
 
-        result = historical_model.generate(
-            prefix,
-            temperature=0.7,
-            max_tokens=1500,
-            top_p=0.9
-        )
-        
-        generated_text = result.text.strip()
+        if use_ollama:
+            model_id = OLLAMA_MODELS["historical"]
+            print(f"[Historical Agent] Calling Ollama API for {model_id}...")
+            payload = {
+                "model": model_id,
+                "prompt": prefix,
+                "raw": True,  # Prevent formatting as chat
+                "stream": False,
+                "options": {
+                    "temperature": 0.7,
+                    "top_p": 0.9,
+                    "num_predict": 1500
+                }
+            }
+            try:
+                res = requests.post("http://localhost:11434/api/generate", json=payload)
+                res.raise_for_status()
+                generated_text = res.json().get("response", "").strip()
+            except Exception as e:
+                print(f"[Ollama Error] {e}")
+                generated_text = f"Ollama connection failed: {e}"
+        else:
+            result = historical_model.generate(
+                prefix,
+                temperature=0.7,
+                max_tokens=1500,
+                top_p=0.9
+            )
+            generated_text = result.text.strip()
         paragraphs = generated_text.split('\n\n')
         formatted_paragraphs = "".join([f"<p>{p.replace(chr(10), '<br>')}</p>" for p in paragraphs if p.strip()])
         
@@ -296,11 +345,11 @@ NEW YORK — Yesterday, {event} """
         return html
 
 class Orchestrator:
-    def process(self, news_text):
+    def process(self, news_text, use_ollama=False):
         with model_load_lock:
             yield "Abstracting Concept (V7 JCross Matrix)...", "<div>Booting translation matrix...</div>"
-            load_modern()
-            abstracted_dict = V7TranslatorAgent.abstract_concept(news_text)
+            load_modern(use_ollama)
+            abstracted_dict = V7TranslatorAgent.abstract_concept(news_text, use_ollama)
             
             # fallback for dict handling
             if isinstance(abstracted_dict, str):
@@ -309,13 +358,13 @@ class Orchestrator:
             else:
                 display_str = f"HEADLINE: {abstracted_dict['headline']}\nSUBTITLE: {abstracted_dict['subtitle']}\nEVENT: {abstracted_dict['event']}"
                 
-            unload_modern()
+            unload_modern(use_ollama)
             
             yield display_str, "<div style='color: #888;'>Concept translated. Injecting Time-Shift Prefix to Historical Generator...</div>"
             
-            load_historical()
-            html_article = HistoricalReporterAgent.generate_article(abstracted_dict)
-            unload_historical()
+            load_historical(use_ollama)
+            html_article = HistoricalReporterAgent.generate_article(abstracted_dict, use_ollama)
+            unload_historical(use_ollama)
             
             # Migrate memory: near -> mid -> deep
             memory_engine.migrate_memory()
@@ -324,11 +373,11 @@ class Orchestrator:
 
 orchestrator = Orchestrator()
 
-def ui_handler(news_text):
+def ui_handler(news_text, use_ollama):
     if not news_text:
         yield "Please enter a news item.", "<div>Please enter a news item.</div>"
         return
-    for result in orchestrator.process(news_text):
+    for result in orchestrator.process(news_text, use_ollama):
         yield result
 
 # ==========================================
@@ -340,13 +389,14 @@ with gr.Blocks(theme=gr.themes.Monochrome(), title="Authentic Verantyx V7 Proxy"
     
     with gr.Row():
         with gr.Column(scale=2):
+            use_ollama_checkbox = gr.Checkbox(label="Use Local Ollama Mode", value=True, info="Dynamically calls gemma4:26b & talkie13b via local Ollama API")
             news_input = gr.Textbox(label="Current News", lines=2)
             generate_btn = gr.Button("⚙️ Execute V7 Loop", variant="primary")
             abstract_output = gr.Textbox(label="Historical Concept", interactive=False, lines=2)
         with gr.Column(scale=3):
             article_output = gr.HTML(label="1930s Newspaper Layout")
             
-    generate_btn.click(fn=ui_handler, inputs=[news_input], outputs=[abstract_output, article_output])
+    generate_btn.click(fn=ui_handler, inputs=[news_input, use_ollama_checkbox], outputs=[abstract_output, article_output])
 
 if __name__ == "__main__":
     app.launch(server_name="0.0.0.0", server_port=7860, share=False)
