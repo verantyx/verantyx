@@ -165,8 +165,7 @@ def unload_modern(use_ollama=False):
     if torch.cuda.is_available(): torch.cuda.empty_cache()
     if torch.backends.mps.is_available(): torch.mps.empty_cache()
 
-def load_historical(use_ollama=False):
-    if use_ollama: return
+def load_historical(use_hybrid=False):
     global historical_model
     model_id = HF_MODELS["historical"]
     if historical_model is None:
@@ -174,8 +173,7 @@ def load_historical(use_ollama=False):
         print(f"[Historical Agent] Loading {model_id}...")
         historical_model = Talkie(model_id, device=device)
 
-def unload_historical(use_ollama=False):
-    if use_ollama: return
+def unload_historical(use_hybrid=False):
     global historical_model
     historical_model = None
     gc.collect()
@@ -303,35 +301,13 @@ class HistoricalReporterAgent:
 
 NEW YORK — Yesterday, {event} """
 
-        if use_ollama:
-            model_id = OLLAMA_MODELS["historical"]
-            print(f"[Historical Agent] Calling Ollama API for {model_id}...")
-            payload = {
-                "model": model_id,
-                "prompt": prefix,
-                "raw": True,  # Prevent formatting as chat
-                "stream": False,
-                "options": {
-                    "temperature": 0.7,
-                    "top_p": 0.9,
-                    "num_predict": 1500
-                }
-            }
-            try:
-                res = requests.post("http://localhost:11434/api/generate", json=payload)
-                res.raise_for_status()
-                generated_text = res.json().get("response", "").strip()
-            except Exception as e:
-                print(f"[Ollama Error] {e}")
-                generated_text = f"Ollama connection failed: {e}"
-        else:
-            result = historical_model.generate(
-                prefix,
-                temperature=0.7,
-                max_tokens=1500,
-                top_p=0.9
-            )
-            generated_text = result.text.strip()
+        result = historical_model.generate(
+            prefix,
+            temperature=0.7,
+            max_tokens=1500,
+            top_p=0.9
+        )
+        generated_text = result.text.strip()
         paragraphs = generated_text.split('\n\n')
         formatted_paragraphs = "".join([f"<p>{p.replace(chr(10), '<br>')}</p>" for p in paragraphs if p.strip()])
         
@@ -345,11 +321,11 @@ NEW YORK — Yesterday, {event} """
         return html
 
 class Orchestrator:
-    def process(self, news_text, use_ollama=False):
+    def process(self, news_text, use_hybrid=False):
         with model_load_lock:
             yield "Abstracting Concept (V7 JCross Matrix)...", "<div>Booting translation matrix...</div>"
-            load_modern(use_ollama)
-            abstracted_dict = V7TranslatorAgent.abstract_concept(news_text, use_ollama)
+            load_modern(use_hybrid)
+            abstracted_dict = V7TranslatorAgent.abstract_concept(news_text, use_hybrid)
             
             # fallback for dict handling
             if isinstance(abstracted_dict, str):
@@ -358,13 +334,13 @@ class Orchestrator:
             else:
                 display_str = f"HEADLINE: {abstracted_dict['headline']}\nSUBTITLE: {abstracted_dict['subtitle']}\nEVENT: {abstracted_dict['event']}"
                 
-            unload_modern(use_ollama)
+            unload_modern(use_hybrid)
             
             yield display_str, "<div style='color: #888;'>Concept translated. Injecting Time-Shift Prefix to Historical Generator...</div>"
             
-            load_historical(use_ollama)
-            html_article = HistoricalReporterAgent.generate_article(abstracted_dict, use_ollama)
-            unload_historical(use_ollama)
+            load_historical(use_hybrid)
+            html_article = HistoricalReporterAgent.generate_article(abstracted_dict, use_hybrid)
+            unload_historical(use_hybrid)
             
             # Migrate memory: near -> mid -> deep
             memory_engine.migrate_memory()
@@ -373,11 +349,11 @@ class Orchestrator:
 
 orchestrator = Orchestrator()
 
-def ui_handler(news_text, use_ollama):
+def ui_handler(news_text, use_hybrid):
     if not news_text:
         yield "Please enter a news item.", "<div>Please enter a news item.</div>"
         return
-    for result in orchestrator.process(news_text, use_ollama):
+    for result in orchestrator.process(news_text, use_hybrid):
         yield result
 
 # ==========================================
@@ -389,14 +365,14 @@ with gr.Blocks(theme=gr.themes.Monochrome(), title="Authentic Verantyx V7 Proxy"
     
     with gr.Row():
         with gr.Column(scale=2):
-            use_ollama_checkbox = gr.Checkbox(label="Use Local Ollama Mode", value=True, info="Dynamically calls gemma4:26b & talkie13b via local Ollama API")
+            use_hybrid_checkbox = gr.Checkbox(label="Use Hybrid Mode (Gemma4: Ollama + Talkie: Transformers)", value=True, info="Offloads Gemma4 to local Ollama, but keeps Talkie in Transformers")
             news_input = gr.Textbox(label="Current News", lines=2)
             generate_btn = gr.Button("⚙️ Execute V7 Loop", variant="primary")
             abstract_output = gr.Textbox(label="Historical Concept", interactive=False, lines=2)
         with gr.Column(scale=3):
             article_output = gr.HTML(label="1930s Newspaper Layout")
             
-    generate_btn.click(fn=ui_handler, inputs=[news_input, use_ollama_checkbox], outputs=[abstract_output, article_output])
+    generate_btn.click(fn=ui_handler, inputs=[news_input, use_hybrid_checkbox], outputs=[abstract_output, article_output])
 
 if __name__ == "__main__":
     app.launch(server_name="0.0.0.0", server_port=7860, share=False)
