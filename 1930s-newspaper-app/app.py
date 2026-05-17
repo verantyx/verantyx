@@ -140,7 +140,12 @@ def load_modern():
     global modern_tokenizer, modern_model
     if modern_model is None:
         print(f"[Modern Agent] Loading {MODERN_MODEL_ID}...")
-        modern_tokenizer = AutoTokenizer.from_pretrained(MODERN_MODEL_ID)
+        try:
+            modern_tokenizer = AutoTokenizer.from_pretrained(MODERN_MODEL_ID)
+        except AttributeError:
+            print("[Warning] Tokenizer config is broken. Falling back to gemma-2-27b-it tokenizer.")
+            modern_tokenizer = AutoTokenizer.from_pretrained("google/gemma-2-27b-it")
+            
         modern_model = AutoModelForCausalLM.from_pretrained(
             MODERN_MODEL_ID, 
             device_map="auto", 
